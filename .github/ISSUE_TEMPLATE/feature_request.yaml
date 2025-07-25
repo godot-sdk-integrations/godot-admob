@@ -38,7 +38,7 @@ body:
     options:
       - 4.3.stable
       - 4.4.1.stable
-      - 4.5.dev
+      - 4.5.stable
       - 4.x
       - Other
     default: 1
@@ -55,6 +55,7 @@ body:
       - macOS 15
       - macOS (other)
       - Android 14
+      - Android 15
       - Android (other)
       - Other OS
     default: 0
@@ -71,6 +72,7 @@ body:
       - "3.2"
       - "3.3"
       - "4.0"
+      - "5.0"
       - Other
     default: 4
   validations:
@@ -81,14 +83,12 @@ body:
     label: OS Plugin Is Running On
     description: What operating system the plugin (and your app) is running on?
     options:
-      - Android 12
       - Android 13
       - Android 14
+      - Android 15
       - Android (other)
-      - iOS 18.1
-      - iOS 18.2
-      - iOS 18.3
-      - iOS 18.4
+      - iOS 18.x
+      - iOS 18.5
       - iOS (other)
     default: 2
   validations:
