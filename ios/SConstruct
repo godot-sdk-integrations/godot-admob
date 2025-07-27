@@ -30,7 +30,7 @@ opts.Add(EnumVariable('arch', "Compilation Architecture", '', ['', 'arm64', 'x86
 opts.Add(BoolVariable('simulator', "Compilation platform", 'no'))
 opts.Add(BoolVariable('use_llvm', "Use the LLVM / Clang compiler", 'no'))
 opts.Add('target_name', 'Resulting file name.', '')
-opts.Add(PathVariable('target_path', 'The path where the lib is installed.', 'bin/lib/'))
+opts.Add(PathVariable('target_path', 'The path where the lib is installed.', 'build/lib/'))
 opts.Add(EnumVariable('version', 'Godot version to target', '', valid_godot_versions))
 
 # Updates the environment with the option variables.
@@ -68,13 +68,13 @@ architecture_directory = ''
 if env['simulator']:
 	architecture_directory = 'ios-arm64_x86_64-simulator'
 	sdk_name = 'iphonesimulator'
-	env.Append(CCFLAGS=['-mios-simulator-version-min={min_ios_version}'])
-	env.Append(LINKFLAGS=["-mios-simulator-version-min={min_ios_version}"])
+	env.Append(CCFLAGS=[f'-mios-simulator-version-min={min_ios_version}'])
+	env.Append(LINKFLAGS=[f"-mios-simulator-version-min={min_ios_version}"])
 else:
 	architecture_directory = 'ios-arm64'
 	sdk_name = 'iphoneos'
-	env.Append(CCFLAGS=['-miphoneos-version-min={min_ios_version}'])
-	env.Append(LINKFLAGS=["-miphoneos-version-min={min_ios_version}"])
+	env.Append(CCFLAGS=[f'-miphoneos-version-min={min_ios_version}'])
+	env.Append(LINKFLAGS=[f"-miphoneos-version-min={min_ios_version}"])
 
 try:
 	sdk_path = decode_utf8(subprocess.check_output(['xcrun', '--sdk', sdk_name, '--show-sdk-path']).strip())
@@ -106,6 +106,7 @@ env.Append(LINKFLAGS=["-arch", env['arch'], '-isysroot', sdk_path, '-F' + sdk_pa
 
 env.Append(CCFLAGS=["$IOS_SDK_PATH"])
 env.Prepend(CXXFLAGS=['-DIOS_ENABLED'])
+env.Prepend(CXXFLAGS=['-DAPPLE_EMBEDDED_ENABLED'])
 env.Prepend(CXXFLAGS=['-DVERSION_4_0'])
 
 
@@ -143,7 +144,8 @@ env.Append(CPPPATH=[
 	f'{plugin_name}/adformat',
 	f'{plugin_name}/model',
 	'godot',
-	'godot/platform/ios'
+	'godot/platform/ios',
+	'godot/drivers/apple_embedded'
 ])
 
 # tweak this if you want to use different folders, or more folders, to store your source code in.

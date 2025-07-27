@@ -240,12 +240,29 @@ Dictionary AdmobPlugin::get_landscape_adaptive_banner_size(int width) {
 }
 
 CGFloat AdmobPlugin::getAdWidth() {
-	UIView* rootView = [UIApplication sharedApplication].keyWindow.rootViewController.view;
-	CGRect frame = rootView.frame;
+	UIWindow *window = nil;
+	for (UIWindowScene* windowScene in [UIApplication sharedApplication].connectedScenes) {
+		if (windowScene.activationState == UISceneActivationStateForegroundActive) {
+			for (UIWindow *w in windowScene.windows) {
+				if (w.isKeyWindow) {
+					window = w;
+					break;
+				}
+			}
+			if (window) break;
+		}
+	}
 
-	if (@available(iOS 11.0, *)) {
+	CGRect frame = CGRectZero;
+	if (window){
+		UIView* rootView = window.rootViewController.view;
+		frame = rootView.frame;
+
 		UIEdgeInsets safeAreaInsets = rootView.safeAreaInsets;
 		frame = UIEdgeInsetsInsetRect(frame, safeAreaInsets);
+	}
+	else {
+		os_log_error(admob_log, "AdmobPlugin getAdWidth(): key window not found");
 	}
 	
 	return frame.size.width;
@@ -500,7 +517,7 @@ Error AdmobPlugin::load_consent_form() {
 Error AdmobPlugin::show_consent_form() {
 	if (consentForm) {
 		os_log_debug(admob_log, "AdmobPlugin show_consent_form");
-		[consentForm presentFromViewController:AppDelegate.viewController completionHandler:^(NSError* _Nullable error) {
+		[consentForm presentFromViewController:GDTAppDelegateService.viewController completionHandler:^(NSError* _Nullable error) {
 			Dictionary formErrorDictionary;
 			if (error) {
 				os_log_error(admob_log, "AdmobPlugin show_consent_form: Error presenting UMPConsentForm");
@@ -558,25 +575,20 @@ void AdmobPlugin::reset_consent_info() {
 
 void AdmobPlugin::request_tracking_authorization() {
 	os_log_debug(admob_log, "AdmobPlugin request_tracking_authorization");
-	if (@available(iOS 14, *)) {
-		[ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
-			if (status == ATTrackingManagerAuthorizationStatusAuthorized) {
-				os_log_debug(admob_log, "Tracking has been authorized for %@", [[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString]);
-				dispatch_async(dispatch_get_main_queue(), ^{
-					instance->emit_signal(TRACKING_AUTHORIZATION_GRANTED);
-				});
-			} else {
-				os_log_debug(admob_log, "Tracking has been denied for %@ with status '%@'", [[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString],
-					[GAPConverter convertTrackingStatusToString: status]);
-				dispatch_async(dispatch_get_main_queue(), ^{
-					instance->emit_signal(TRACKING_AUTHORIZATION_DENIED);
-				});
-			}
-		}];
-	}
-	else {
-		os_log_error(admob_log, "AdmobPlugin::request_tracking_authorization: ERROR: iOS version 14.0 or greater is required!");
-	}
+	[ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+		if (status == ATTrackingManagerAuthorizationStatusAuthorized) {
+			os_log_debug(admob_log, "Tracking has been authorized for %@", [[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString]);
+			dispatch_async(dispatch_get_main_queue(), ^{
+				instance->emit_signal(TRACKING_AUTHORIZATION_GRANTED);
+			});
+		} else {
+			os_log_debug(admob_log, "Tracking has been denied for %@ with status '%@'", [[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString],
+				[GAPConverter convertTrackingStatusToString: status]);
+			dispatch_async(dispatch_get_main_queue(), ^{
+				instance->emit_signal(TRACKING_AUTHORIZATION_DENIED);
+			});
+		}
+	}];
 }
 
 void AdmobPlugin::open_app_settings() {

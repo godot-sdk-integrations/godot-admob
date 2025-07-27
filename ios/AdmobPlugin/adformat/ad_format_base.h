@@ -7,11 +7,11 @@
 
 #import "gap_converter.h"
 #import "view_controller.h"
-#import "app_delegate.h"
+#import "app_delegate_service.h"
 
 @import GoogleMobileAds;
 
-@interface AdFormatBase : ViewController 
+@interface AdFormatBase : GDTViewController 
 
 @property (nonatomic,strong) NSString* adId;
 

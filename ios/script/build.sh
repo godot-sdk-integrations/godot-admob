@@ -195,7 +195,7 @@ function download_godot()
 
 function generate_godot_headers()
 {
-	if [[ -d "$GODOT_DIR" ]]
+	if [[ ! -d "$GODOT_DIR" ]]
 	then
 		display_error "Error: $GODOT_DIR directory does not exist. Can't generate headers."
 		exit 1

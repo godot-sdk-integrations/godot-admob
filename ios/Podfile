@@ -8,5 +8,5 @@ workspace "./#{plugin_name}.xcodeproj/project.xcworkspace"
 
 target "#{plugin_name}" do
 	platform :ios, '14.3'
-	pod 'Google-Mobile-Ads-SDK', '12.3.0'
+	pod 'Google-Mobile-Ads-SDK', '12.7.0'
 end

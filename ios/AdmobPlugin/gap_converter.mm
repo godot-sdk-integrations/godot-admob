@@ -349,8 +349,8 @@
 + (NSString*) getAdmobDeviceID {
 	NSUUID* adid = [[ASIdentifierManager sharedManager] advertisingIdentifier];
 	const char *cStr = [adid.UUIDString UTF8String];
-	unsigned char digest[16];
-	CC_MD5(cStr, strlen(cStr), digest);
+	unsigned char digest[CC_SHA256_DIGEST_LENGTH];
+	CC_SHA256(cStr, strlen(cStr), digest);
 
 	NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
 

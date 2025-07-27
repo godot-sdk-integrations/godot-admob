@@ -82,12 +82,12 @@ ___
 ## <img src="../addon/icon.png" width="20"> Install Script
 
 - Run `./script/install.sh -t <target directory> -z <path to zip file>` install plugin to a Godot project.
-- Example `./script/install.sh -t demo -z bin/release/AdmobPlugin-v4.0.zip` to install to demo app.
+- Example `./script/install.sh -t ../demo -z bin/release/AdmobPlugin-v4.0.zip` to install to demo app.
 
 <br/>
 
 ___
 
-## <img src="../addon/icon.png" width="20"> Libraries
+## ![](../addon/icon.png?raw=true) Libraries
 
-Library archives will be created in the `bin/release` directory.
+Library archives will be created in the `build/release` directory.

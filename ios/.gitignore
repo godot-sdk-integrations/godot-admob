@@ -40,6 +40,7 @@ bin/*
 godot/
 Pods/
 Podfile.lock
+*.sh-e
 
 # Plugin-specific
 demo/addons/
