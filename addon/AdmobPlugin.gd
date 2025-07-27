@@ -8,6 +8,10 @@ extends EditorPlugin
 const PLUGIN_NODE_TYPE_NAME = "@pluginNodeName@"
 const PLUGIN_PARENT_NODE_TYPE = "Node"
 const PLUGIN_NAME: String = "@pluginName@"
+const PLUGIN_DEPENDENCIES: Array = [ @pluginDependencies@ ]
+const IOS_FRAMEWORKS: Array = [ @iosFrameworks@ ]
+const IOS_EMBEDDED_FRAMEWORKS: Array = [ @iosEmbeddedFrameworks@ ]
+const IOS_LINKER_FLAGS: Array = [ @iosLinkerFlags@ ]
 
 const APP_ID_META_TAG = """
 <meta-data
@@ -76,7 +80,7 @@ class AndroidExportPlugin extends EditorExportPlugin:
 		if _export_config:
 			__contents = APP_ID_META_TAG % (_export_config.real_application_id if _export_config.is_real else _export_config.debug_application_id)
 		else:
-			push_warning("Export config not found for %s!" % _plugin_name)
+			Admob.log_warn("Export config not found for %s!" % _plugin_name)
 			__contents = ""
 
 		return __contents
@@ -314,3 +318,12 @@ class IosExportPlugin extends EditorExportPlugin:
 
 		add_ios_plist_content("\t<key>SKAdNetworkItems</key>")
 		add_ios_plist_content("%s" % SK_AD_NETWORK_ITEMS)
+
+		for __framework in IOS_FRAMEWORKS:
+			add_ios_framework(__framework)
+
+		for __framework in IOS_EMBEDDED_FRAMEWORKS:
+			add_ios_embedded_framework(__framework)
+
+		for __flag in IOS_LINKER_FLAGS:
+			add_ios_linker_flags(__flag)

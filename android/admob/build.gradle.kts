@@ -2,6 +2,7 @@
 // © 2024-present https://github.com/cengiz-pz
 //
 
+import java.util.Properties
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
@@ -11,6 +12,10 @@ plugins {
 }
 
 apply(from = "${rootDir}/config.gradle.kts")
+
+val props = Properties().apply {
+	load(file("../../ios/config/config.properties").inputStream())
+}
 
 android {
 	namespace = project.extra["pluginPackageName"] as String
@@ -88,12 +93,21 @@ tasks {
 		into("${project.extra["demoAddOnsDirectory"]}/${project.extra["pluginName"]}")
 		include("**/*.gd")
 		include("**/*.cfg")
-		filter<ReplaceTokens>("tokens" to  mapOf(
+		filter<ReplaceTokens>("tokens" to mapOf(
 			"pluginName" to (project.extra["pluginName"] as String),
 			"pluginNodeName" to (project.extra["pluginNodeName"] as String),
 			"pluginVersion" to (project.extra["pluginVersion"] as String),
 			"pluginPackage" to (project.extra["pluginPackageName"] as String),
-			"pluginDependencies" to pluginDependencies.joinToString(", ") { "\"$it\"" }
+			"pluginDependencies" to pluginDependencies.joinToString(", ") { "\"$it\"" },
+			"iosFrameworks" to (props.getProperty("frameworks") ?: "")
+					.split(",")
+					.joinToString(", ") { "\"${it.trim()}\"" },
+			"iosEmbeddedFrameworks" to (props.getProperty("embeddedFrameworks") ?: "")
+					.split(",")
+					.joinToString(", ") { "\"${it.trim()}\"" },
+			"iosLinkerFlags" to (props.getProperty("flags") ?: "")
+					.split(",")
+					.joinToString(", ") { "\"${it.trim()}\"" }
 		))
 	}
 
@@ -121,10 +135,9 @@ tasks {
 }
 
 afterEvaluate {
-	tasks.named("assembleDebug") {
-		finalizedBy("copyAddonsToDemo")
-	}
-	tasks.named("assembleRelease") {
-		finalizedBy("copyAddonsToDemo")
+	listOf("assembleDebug", "assembleRelease").forEach { taskName ->
+		tasks.named(taskName).configure {
+			finalizedBy("copyAddonsToDemo")
+		}
 	}
 }

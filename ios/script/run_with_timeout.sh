@@ -1,29 +1,34 @@
 #!/bin/bash
+#
+# © 2024-present https://github.com/cengiz-pz
+#
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 function display_help()
 {
 	echo
-	./script/echocolor.sh -y "The " -Y "$0 script" -y " runs specified command for specified number of seconds,"
-	./script/echocolor.sh -y "then stops the command and exits."
+	$SCRIPT_DIR/../../script/echocolor.sh -y "The " -Y "$0 script" -y " runs specified command for specified number of seconds,"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "then stops the command and exits."
 	echo
-	./script/echocolor.sh -Y "Syntax:"
-	./script/echocolor.sh -y "	$0 [-h] [-d <directory to run command in>] -t <timeout in seconds> -c <command to run>"
+	$SCRIPT_DIR/../../script/echocolor.sh -Y "Syntax:"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "	$0 [-h] [-d <directory to run command in>] -t <timeout in seconds> -c <command to run>"
 	echo
-	./script/echocolor.sh -Y "Options:"
-	./script/echocolor.sh -y "	h	display usage information"
-	./script/echocolor.sh -y "	t	timeout value in seconds"
-	./script/echocolor.sh -y "	c	command to run"
-	./script/echocolor.sh -y "	d	run command in specified directory"
+	$SCRIPT_DIR/../../script/echocolor.sh -Y "Options:"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "	h	display usage information"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "	t	timeout value in seconds"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "	c	command to run"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "	d	run command in specified directory"
 	echo
-	./script/echocolor.sh -Y "Examples:"
-	./script/echocolor.sh -y "	   $> $0 -t 10 -c 'my_command'"
+	$SCRIPT_DIR/../../script/echocolor.sh -Y "Examples:"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "		$> $0 -t 10 -c 'my_command'"
 	echo
 }
 
 
 function display_error()
 {
-	./script/echocolor.sh -r "$1"
+	$SCRIPT_DIR/../../script/echocolor.sh -r "$1"
 }
 
 

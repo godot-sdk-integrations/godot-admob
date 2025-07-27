@@ -1,19 +1,39 @@
 #!/bin/bash
+#
+# © 2024-present https://github.com/cengiz-pz
+#
+
 set -e
 trap "sleep 1; echo" EXIT
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+GODOT_DIR=$(realpath $SCRIPT_DIR/..)/godot
+ANDROID_DIR=$(realpath $SCRIPT_DIR/../../android)
+BUILD_DIR=$(realpath $SCRIPT_DIR/..)/build
+CONFIG_DIR=$(realpath $SCRIPT_DIR/../config)
+DEST_DIR=$BUILD_DIR/release
+FRAMEWORK_DIR=$BUILD_DIR/framework
+LIB_DIR=$BUILD_DIR/lib
 
 PLUGIN_NODE_TYPE="Admob"
 PLUGIN_NAME="${PLUGIN_NODE_TYPE}Plugin"
 PLUGIN_VERSION=''
-PLUGIN_DEPENDENCIES=""
-TARGET_OS="ios"
+PLUGIN_PACKAGE_NAME=$($SCRIPT_DIR/get_gradle_property.sh pluginPackageName $ANDROID_DIR/config.gradle.kts)
+ANDROID_DEPENDENCIES=$($SCRIPT_DIR/get_android_dependencies.sh)
+IOS_FRAMEWORKS=()
+while IFS= read -r line; do
+	IOS_FRAMEWORKS+=("$line")
+done < <($SCRIPT_DIR/get_config_property.sh -qas frameworks)
+IOS_EMBEDDED_FRAMEWORKS=()
+while IFS= read -r line; do
+	IOS_EMBEDDED_FRAMEWORKS+=("$line")
+done < <($SCRIPT_DIR/get_config_property.sh -qas frameworks)
+IOS_LINKER_FLAGS=()
+while IFS= read -r line; do
+	IOS_LINKER_FLAGS+=("$line")
+done < <($SCRIPT_DIR/get_config_property.sh -qas flags)
 SUPPORTED_GODOT_VERSIONS=("4.2" "4.3" "4.4.1" "4.5")
 BUILD_TIMEOUT=40	# increase this value using -t option if device is not able to generate all headers before godot build is killed
-
-DEST_DIRECTORY="./bin/release"
-FRAMEWORKDIR="./bin/framework"
-LIB_DIRECTORY="./bin/lib"
-CONFIG_DIRECTORY="./config"
 
 do_clean=false
 do_remove_pod_trunk=false
@@ -29,90 +49,108 @@ ignore_unsupported_godot_version=false
 function display_help()
 {
 	echo
-	./script/echocolor.sh -y "The " -Y "$0 script" -y " builds the plugin, generates library archives, and"
-	./script/echocolor.sh -y "creates a zip file containing all libraries and configuration."
+	$SCRIPT_DIR/../../script/echocolor.sh -y "The " -Y "$0 script" -y " builds the plugin, generates library archives, and"
+	echo_yellow "creates a zip file containing all libraries and configuration."
 	echo
-	./script/echocolor.sh -y "If plugin version is not set with the -z option, then Godot version will be used."
+	echo_yellow "If plugin version is not set with the -z option, then Godot version will be used."
 	echo
-	./script/echocolor.sh -Y "Syntax:"
-	./script/echocolor.sh -y "	$0 [-a|A <godot version>|c|g|G <godot version>|h|H|i|p|P|t <timeout>|z <version>]"
+	$SCRIPT_DIR/../../script/echocolor.sh -Y "Syntax:"
+	echo_yellow "	$0 [-a|A <godot version>|c|g|G <godot version>|h|H|i|p|P|t <timeout>|z <version>]"
 	echo
-	./script/echocolor.sh -Y "Options:"
-	./script/echocolor.sh -y "	a	generate godot headers and build plugin"
-	./script/echocolor.sh -y "	A	download specified godot version, generate godot headers, and"
-	./script/echocolor.sh -y "	 	build plugin"
-	./script/echocolor.sh -y "	b	build plugin"
-	./script/echocolor.sh -y "	c	remove any existing plugin build"
-	./script/echocolor.sh -y "	g	remove godot directory"
-	./script/echocolor.sh -y "	G	download the godot version specified in the option argument"
-	./script/echocolor.sh -y "	 	into godot directory"
-	./script/echocolor.sh -y "	h	display usage information"
-	./script/echocolor.sh -y "	H	generate godot headers"
-	./script/echocolor.sh -y "	i	ignore if an unsupported godot version selected and continue"
-	./script/echocolor.sh -y "	p	remove pods and pod repo trunk"
-	./script/echocolor.sh -y "	P	install pods"
-	./script/echocolor.sh -y "	t	change timeout value for godot build"
-	./script/echocolor.sh -y "	z	create zip archive with given version added to the file name"
+	$SCRIPT_DIR/../../script/echocolor.sh -Y "Options:"
+	echo_yellow "	a	generate godot headers and build plugin"
+	echo_yellow "	A	download specified godot version, generate godot headers, and"
+	echo_yellow "	 	build plugin"
+	echo_yellow "	b	build plugin"
+	echo_yellow "	c	remove any existing plugin build"
+	echo_yellow "	g	remove godot directory"
+	echo_yellow "	G	download the godot version specified in the option argument"
+	echo_yellow "	 	into godot directory"
+	echo_yellow "	h	display usage information"
+	echo_yellow "	H	generate godot headers"
+	echo_yellow "	i	ignore if an unsupported godot version selected and continue"
+	echo_yellow "	p	remove pods and pod repo trunk"
+	echo_yellow "	P	install pods"
+	echo_yellow "	t	change timeout value for godot build"
+	echo_yellow "	z	create zip archive with given version added to the file name"
 	echo
-	./script/echocolor.sh -Y "Examples:"
-	./script/echocolor.sh -y "	* clean existing build, remove godot, and rebuild all"
-	./script/echocolor.sh -y "	   $> $0 -cgA 4.2"
-	./script/echocolor.sh -y "	   $> $0 -cgpG 4.2 -HPbz 1.0"
+	$SCRIPT_DIR/../../script/echocolor.sh -Y "Examples:"
+	echo_yellow "	* clean existing build, remove godot, and rebuild all"
+	echo_yellow "		$> $0 -cgA 4.2"
+	echo_yellow "		$> $0 -cgpG 4.2 -HPbz 1.0"
 	echo
-	./script/echocolor.sh -y "	* clean existing build, remove pods and pod repo trunk, and rebuild plugin"
-	./script/echocolor.sh -y "	   $> $0 -cpPb"
+	echo_yellow "	* clean existing build, remove pods and pod repo trunk, and rebuild plugin"
+	echo_yellow "		$> $0 -cpPb"
 	echo
-	./script/echocolor.sh -y "	* clean existing build and rebuild plugin"
-	./script/echocolor.sh -y "	   $> $0 -ca"
-	./script/echocolor.sh -y "	   $> $0 -cHbz 1.0"
+	echo_yellow "	* clean existing build and rebuild plugin"
+	echo_yellow "		$> $0 -ca"
+	echo_yellow "		$> $0 -cHbz 1.0"
 	echo
-	./script/echocolor.sh -y "	* clean existing build and rebuild plugin with custom plugin version"
-	./script/echocolor.sh -y "	   $> $0 -cHbz 1.0"
+	echo_yellow "	* clean existing build and rebuild plugin with custom plugin version"
+	echo_yellow "		$> $0 -cHbz 1.0"
 	echo
-	./script/echocolor.sh -y "	* clean existing build and rebuild plugin with custom build timeout"
-	./script/echocolor.sh -y "	   $> $0 -cHbt 15"
+	echo_yellow "	* clean existing build and rebuild plugin with custom build timeout"
+	echo_yellow "		$> $0 -cHbt 15"
 	echo
+}
+
+
+function echo_yellow()
+{
+	$SCRIPT_DIR/../../script/echocolor.sh -y "$1"
+}
+
+
+function echo_blue()
+{
+	$SCRIPT_DIR/../../script/echocolor.sh -b "$1"
 }
 
 
 function display_status()
 {
 	echo
-	./script/echocolor.sh -c "********************************************************************************"
-	./script/echocolor.sh -c "* $1"
-	./script/echocolor.sh -c "********************************************************************************"
+	$SCRIPT_DIR/../../script/echocolor.sh -c "********************************************************************************"
+	$SCRIPT_DIR/../../script/echocolor.sh -c "* $1"
+	$SCRIPT_DIR/../../script/echocolor.sh -c "********************************************************************************"
 	echo
 }
 
 
 function display_warning()
 {
-	./script/echocolor.sh -y "$1"
+	echo_yellow "$1"
 }
 
 
 function display_error()
 {
-	./script/echocolor.sh -r "$1"
+	$SCRIPT_DIR/../../script/echocolor.sh -r "$1"
 }
 
 
 function remove_godot_directory()
 {
-	if [[ -d "godot" ]]
+	if [[ -d "$GODOT_DIR" ]]
 	then
-		display_status "removing 'godot' directory..."
-		rm -rf "godot"
+		display_status "removing '$GODOT_DIR' directory..."
+		rm -rf $GODOT_DIR
 	else
-		display_warning "'godot' directory not found..."
+		display_warning "'$GODOT_DIR' directory not found!"
 	fi
 }
 
 
 function clean_plugin_build()
 {
-	display_status "cleaning existing build directories and generated files..."
-	rm -rf ./bin/*
+	if [[ -d "$BUILD_DIR" ]]
+	then
+		display_status "removing '$BUILD_DIR' directory..."
+		rm -rf $BUILD_DIR
+	else
+		display_warning "'$BUILD_DIR' directory not found!"
+	fi
+	display_status "cleaning generated files..."
 	find . -name "*.d" -type f -delete
 	find . -name "*.o" -type f -delete
 }
@@ -137,33 +175,29 @@ function download_godot()
 		exit 1
 	fi
 
-	if [[ -d "godot" ]]
+	if [[ -d "$GODOT_DIR" ]]
 	then
-		display_error "Error: godot directory already exists. Won't download."
+		display_error "Error: $GODOT_DIR directory already exists. Won't download."
 		exit 1
 	fi
 
 	SELECTED_GODOT_VERSION=$1
 	display_status "downloading godot version $SELECTED_GODOT_VERSION..."
 
-	godot_directory="godot-${SELECTED_GODOT_VERSION}-stable"
-	godot_archive_file_name="${godot_directory}.tar.xz"
+	$SCRIPT_DIR/fetch_git_repo.sh -t ${SELECTED_GODOT_VERSION}-stable https://github.com/godotengine/godot.git $GODOT_DIR
 
-	curl -LO "https://github.com/godotengine/godot/releases/download/${SELECTED_GODOT_VERSION}-stable/${godot_archive_file_name}"
-	tar -xf "$godot_archive_file_name"
-
-	mv "$godot_directory" godot
-	rm $godot_archive_file_name
-
-	echo "$SELECTED_GODOT_VERSION" > godot/GODOT_VERSION
+	if [[ -d "$GODOT_DIR" ]]
+	then
+		echo "$SELECTED_GODOT_VERSION" > $GODOT_DIR/GODOT_VERSION
+	fi
 }
 
 
 function generate_godot_headers()
 {
-	if [[ ! -d "godot" ]]
+	if [[ -d "$GODOT_DIR" ]]
 	then
-		display_error "Error: godot directory does not exist. Can't generate headers."
+		display_error "Error: $GODOT_DIR directory does not exist. Can't generate headers."
 		exit 1
 	fi
 
@@ -177,13 +211,13 @@ function generate_godot_headers()
 
 function generate_static_library()
 {
-	if [[ ! -f "./godot/GODOT_VERSION" ]]
+	if [[ ! -f "$GODOT_DIR/GODOT_VERSION" ]]
 	then
 		display_error "Error: godot wasn't downloaded properly. Can't generate static library."
 		exit 1
 	fi
 
-	GODOT_VERSION=$(cat ./godot/GODOT_VERSION)
+	GODOT_VERSION=$(cat $GODOT_DIR/GODOT_VERSION)
 
 	TARGET_TYPE="$1"
 	lib_directory="$2"
@@ -211,45 +245,63 @@ function install_pods()
 
 function build_plugin()
 {
-	if [[ ! -f "./godot/GODOT_VERSION" ]]
+	if [[ ! -f "$GODOT_DIR/GODOT_VERSION" ]]
 	then
 		display_error "Error: godot wasn't downloaded properly. Can't build plugin."
 		exit 1
 	fi
 
-	GODOT_VERSION=$(cat ./godot/GODOT_VERSION)
+	GODOT_VERSION=$(cat $GODOT_DIR/GODOT_VERSION)
 
 	# Clear target directories
-	rm -rf "$DEST_DIRECTORY"
-	rm -rf "$LIB_DIRECTORY"
+	rm -rf "$DEST_DIR"
+	rm -rf "$LIB_DIR"
 
 	# Create target directories
-	mkdir -p "$DEST_DIRECTORY"
-	mkdir -p "$LIB_DIRECTORY"
+	mkdir -p "$DEST_DIR"
+	mkdir -p "$LIB_DIR"
 
 	display_status "building plugin library with godot version $GODOT_VERSION ..."
 
 	# Compile library
-	generate_static_library release $LIB_DIRECTORY
-	generate_static_library release_debug $LIB_DIRECTORY
-	mv $LIB_DIRECTORY/$PLUGIN_NAME.release_debug.a $LIB_DIRECTORY/$PLUGIN_NAME.debug.a
+	generate_static_library release $LIB_DIR
+	generate_static_library release_debug $LIB_DIR
+	mv $LIB_DIR/$PLUGIN_NAME.release_debug.a $LIB_DIR/$PLUGIN_NAME.debug.a
 
 	# Move library
-	cp $LIB_DIRECTORY/$PLUGIN_NAME.{release,debug}.a "$DEST_DIRECTORY"
+	cp $LIB_DIR/$PLUGIN_NAME.{release,debug}.a "$DEST_DIR"
 
-	cp "$CONFIG_DIRECTORY"/*.gdip "$DEST_DIRECTORY"
+	cp "$CONFIG_DIR"/*.gdip "$DEST_DIR"
+}
+
+
+function merge_string_array() {
+	local arr=("$@")  # Accept array as input
+	local result=""
+	local first=true
+
+	for str in "${arr[@]}"; do
+	if [ "$first" = true ]; then
+		result="$str"
+		first=false
+	else
+		result="$result, $str"
+	fi
+	done
+
+	echo "$result"
 }
 
 
 function create_zip_archive()
 {
-	if [[ ! -f "./godot/GODOT_VERSION" ]]
+	if [[ ! -f "$GODOT_DIR/GODOT_VERSION" ]]
 	then
 		display_error "Error: godot wasn't downloaded properly. Can't create zip archive."
 		exit 1
 	fi
 
-	GODOT_VERSION=$(cat ./godot/GODOT_VERSION)
+	GODOT_VERSION=$(cat $GODOT_DIR/GODOT_VERSION)
 
 	if [[ -z $PLUGIN_VERSION ]]
 	then
@@ -260,14 +312,14 @@ function create_zip_archive()
 
 	file_name="$PLUGIN_NAME-$godot_version_suffix.zip"
 
-	if [[ -e "./bin/release/$file_name" ]]
+	if [[ -e "$BUILD_DIR/release/$file_name" ]]
 	then
 		display_warning "deleting existing $file_name file..."
-		rm ./bin/release/$file_name
+		rm $BUILD_DIR/release/$file_name
 	fi
 
-	tmp_directory="./bin/.tmp_zip_"
-	addon_directory="../addon"
+	tmp_directory=$BUILD_DIR/.tmp_zip
+	addon_directory=$(realpath $SCRIPT_DIR/../../addon)
 
 	if [[ -d "$tmp_directory" ]]
 	then
@@ -275,25 +327,46 @@ function create_zip_archive()
 		rm -r $tmp_directory
 	fi
 
+	display_status "preparing staging directory $tmp_directory"
+
 	if [[ -d "$addon_directory" ]]
 	then
 		mkdir -p $tmp_directory/addons/$PLUGIN_NAME
 		cp -r $addon_directory/* $tmp_directory/addons/$PLUGIN_NAME
-		sed -i '' -e "s/@pluginName@/$PLUGIN_NAME/g" $tmp_directory/addons/$PLUGIN_NAME/*.{gd,cfg}
-		sed -i '' -e "s/@pluginVersion@/$PLUGIN_VERSION/g" $tmp_directory/addons/$PLUGIN_NAME/*.{gd,cfg}
-		sed -i '' -e "s/@pluginNodeName@/$PLUGIN_NODE_TYPE/g" $tmp_directory/addons/$PLUGIN_NAME/*.{gd,cfg}
-		sed -i '' -e "s/@pluginDependencies@/$PLUGIN_DEPENDENCIES/g" $tmp_directory/addons/$PLUGIN_NAME/*.{gd,cfg}
-		sed -i '' -e "s/@targetOs@/$TARGET_OS/g" $tmp_directory/addons/$PLUGIN_NAME/*.{gd,cfg}
+
+		# Detect OS
+		if [[ "$OSTYPE" == "darwin"* ]]; then
+			# macOS: use -i ''
+			SED_INPLACE=(-i '')
+		else
+			# Linux: use -i with no backup suffix
+			SED_INPLACE=(-i)
+		fi
+
+		for file in "$tmp_directory/addons/$PLUGIN_NAME"/*.{gd,cfg}; do
+			[[ -e "$file" ]] || continue
+			echo_blue "Editing: $file"
+			sed "${SED_INPLACE[@]}" -e "
+				s/@pluginName@/$PLUGIN_NAME/g;
+				s/@pluginVersion@/$PLUGIN_VERSION/g;
+				s/@pluginNodeName@/$PLUGIN_NODE_TYPE/g;
+				s/@pluginPackage@/$PLUGIN_PACKAGE_NAME/g;
+				s/@pluginDependencies@/$ANDROID_DEPENDENCIES/g;
+				s/@iosFrameworks@/$(merge_string_array $IOS_FRAMEWORKS)/g;
+				s/@iosEmbeddedFrameworks@/$(merge_string_array $IOS_EMBEDDED_FRAMEWORKS)/g;
+				s/@iosLinkerFlags@/$(merge_string_array $IOS_LINKER_FLAGS)/g
+			" "$file"
+		done
 	fi
 
 	mkdir -p $tmp_directory/ios/framework
-	find ./Pods -iname '*.xcframework' -type d -exec cp -r {} $tmp_directory/ios/framework \;
+	find $(realpath $SCRIPT_DIR/../Pods) -iname '*.xcframework' -type d -exec cp -r {} $tmp_directory/ios/framework \;
 
 	mkdir -p $tmp_directory/ios/plugins
-	cp $CONFIG_DIRECTORY/*.gdip $tmp_directory/ios/plugins
-	cp $LIB_DIRECTORY/$PLUGIN_NAME.{release,debug}.a $tmp_directory/ios/plugins
+	cp $CONFIG_DIR/*.gdip $tmp_directory/ios/plugins
+	cp $LIB_DIR/$PLUGIN_NAME.{release,debug}.a $tmp_directory/ios/plugins
 
-	mkdir -p $DEST_DIRECTORY
+	mkdir -p $DEST_DIR
 
 	display_status "creating $file_name file..."
 	cd $tmp_directory; zip -yr ../release/$file_name ./*; cd -
@@ -371,7 +444,7 @@ while getopts "aA:bcgG:hHipPt:z:" option; do
 	esac
 done
 
-if ! [[ " ${SUPPORTED_GODOT_VERSIONS[*]} " =~ [[:space:]]${GODOT_VERSION}[[:space:]] ]]
+if ! [[ " ${SUPPORTED_GODOT_VERSIONS[*]} " =~ [[:space:]]${GODOT_VERSION}[[:space:]] ]] && [[ "$do_build" == true ]]
 then
 	if [[ "$do_download_godot" == false ]]
 	then

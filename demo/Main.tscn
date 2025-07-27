@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bcqb5hwnjbtob" path="res://Main.gd" id="1_wt50o"]
 [ext_resource type="Script" uid="uid://qptkxeyqg3ic" path="res://addons/AdmobPlugin/Admob.gd" id="2_4x6et"]
-[ext_resource type="Texture2D" uid="uid://bdjwuj5g73wl3" path="res://assets/admob.png" id="2_qti4s"]
+[ext_resource type="Texture2D" uid="uid://bdjwuj5g73wl3" path="res://assets/admob-android.png" id="2_qti4s"]
 [ext_resource type="Texture2D" uid="uid://b2myrgf8pkumi" path="res://assets/admob-ios.png" id="3_cm0pq"]
 
 [node name="Main" type="Node"]
@@ -152,8 +152,9 @@ text = "Show Rewarded Interstitial Ad"
 layout_mode = 2
 
 [node name="Label" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/GeographyHBoxContainer"]
+custom_minimum_size = Vector2(175, 0)
 layout_mode = 2
-text = "Debug Geography:           "
+text = "Debug Geography:"
 
 [node name="OptionButton" type="OptionButton" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/GeographyHBoxContainer"]
 layout_mode = 2
@@ -172,8 +173,9 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="Label" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(165, 0)
 layout_mode = 2
-text = "Consent Info:          "
+text = "Consent Info:"
 
 [node name="UpdateConsentInfoButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2

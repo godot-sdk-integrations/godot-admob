@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# © 2024-present https://github.com/cengiz-pz
+#
+
 set -e
 trap "sleep 1; echo" EXIT
 
@@ -31,10 +35,10 @@ function display_help()
 	echo
 	./script/echocolor.sh -Y "Examples:"
 	./script/echocolor.sh -y "	* clean existing build, do a release build for Android, and create archive"
-	./script/echocolor.sh -y "	   $> $0 -carz"
+	./script/echocolor.sh -y "		$> $0 -carz"
 	echo
 	./script/echocolor.sh -y "	* clean existing build, do a debug build for Android"
-	./script/echocolor.sh -y "	   $> $0 -ca"
+	./script/echocolor.sh -y "		$> $0 -ca"
 	echo
 }
 

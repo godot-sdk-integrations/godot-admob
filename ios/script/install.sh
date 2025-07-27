@@ -1,7 +1,14 @@
 #!/bin/bash
+#
+# © 2024-present https://github.com/cengiz-pz
+#
+
 set -e
 trap "sleep 1; echo" EXIT
 
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+plugin_name="SharePlugin"
 target_directory=""
 zip_file_path=""
 
@@ -9,19 +16,19 @@ zip_file_path=""
 function display_help()
 {
 	echo
-	./script/echocolor.sh -y "The " -Y "$0 script" -y " installs plugin in the specified directory"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "The " -Y "$0 script" -y " installs plugin in the specified directory"
 	echo
-	./script/echocolor.sh -Y "Syntax:"
-	./script/echocolor.sh -y "	$0 [-h|t <target directory path>|z <zip file path>]"
+	$SCRIPT_DIR/../../script/echocolor.sh -Y "Syntax:"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "	$0 [-h|d|t <target directory path>|z <zip file path>]"
 	echo
-	./script/echocolor.sh -Y "Options:"
-	./script/echocolor.sh -y "	h	display usage information"
-	./script/echocolor.sh -y "	t	specify the path for target directory"
-	./script/echocolor.sh -y "	z	specify the path for zip file"
+	$SCRIPT_DIR/../../script/echocolor.sh -Y "Options:"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "	h	display usage information"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "	t	specify the path for target directory"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "	z	specify the path for zip file"
 	echo
-	./script/echocolor.sh -Y "Examples:"
-	./script/echocolor.sh -y "	* install plugin in project"
-	./script/echocolor.sh -y "	   $> $0 -t /mypath/myproject -z ../myzipfile.zip"
+	$SCRIPT_DIR/../../script/echocolor.sh -Y "Examples:"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "	* install plugin in project"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "		$> $0 -t /mypath/myproject -z ../myzipfile.zip"
 	echo
 }
 
@@ -29,26 +36,26 @@ function display_help()
 function display_status()
 {
 	echo
-	./script/echocolor.sh -c "********************************************************************************"
-	./script/echocolor.sh -c "* $1"
-	./script/echocolor.sh -c "********************************************************************************"
+	$SCRIPT_DIR/../../script/echocolor.sh -c "********************************************************************************"
+	$SCRIPT_DIR/../../script/echocolor.sh -c "* $1"
+	$SCRIPT_DIR/../../script/echocolor.sh -c "********************************************************************************"
 	echo
 }
 
 
 function display_warning()
 {
-	./script/echocolor.sh -y "$1"
+	$SCRIPT_DIR/../../script/echocolor.sh -y "$1"
 }
 
 
 function display_error()
 {
-	./script/echocolor.sh -r "$1"
+	$SCRIPT_DIR/../../script/echocolor.sh -r "$1"
 }
 
 
-while getopts "aA:bcgG:hHipPt:z:" option; do
+while getopts "hdt:z:" option; do
 	case $option in
 		h)
 			display_help

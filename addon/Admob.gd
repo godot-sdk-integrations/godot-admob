@@ -148,7 +148,7 @@ func _update_plugin() -> void:
 			_plugin_singleton = Engine.get_singleton(PLUGIN_SINGLETON_NAME)
 			_connect_signals()
 		elif not OS.has_feature("editor_hint"):
-			printerr("%s singleton not found!" % PLUGIN_SINGLETON_NAME)
+			Admob.log_error("%s singleton not found!" % PLUGIN_SINGLETON_NAME)
 
 
 func _connect_signals() -> void:
@@ -197,7 +197,7 @@ func _connect_signals() -> void:
 
 func initialize() -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		_plugin_singleton.initialize()
 
@@ -269,7 +269,7 @@ func configure_ads() -> void:
 					.set_personalization_state(personalization_state)
 					.get_raw_data())
 	else:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 
 func load_banner_ad() -> void:
@@ -281,57 +281,57 @@ func load_banner_ad() -> void:
 					.set_request_agent(request_agent)
 					.get_raw_data())
 	else:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 
 func is_banner_ad_loaded() -> bool:
 	if _plugin_singleton != null:
 		return _active_banner_ads.is_empty() == false
 	else:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 	return false
 
 
 func show_banner_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_banner_ads.is_empty():
-				printerr("Cannot show banner ad. No banner ads loaded.")
+				Admob.log_error("Cannot show banner ad. No banner ads loaded.")
 			else:
 				_plugin_singleton.show_banner_ad(_active_banner_ads[0])	# show last ad to load
 		else:
 			if _active_banner_ads.has(a_ad_id):
 				_plugin_singleton.show_banner_ad(a_ad_id)
 			else:
-				printerr("Cannot show banner. Ad with ID '%s' not found." % a_ad_id)
+				Admob.log_error("Cannot show banner. Ad with ID '%s' not found." % a_ad_id)
 
 
 func hide_banner_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_banner_ads.is_empty():
-				printerr("Cannot hide banner ad. No banner ads loaded.")
+				Admob.log_error("Cannot hide banner ad. No banner ads loaded.")
 			else:
 				_plugin_singleton.hide_banner_ad(_active_banner_ads[0])	# hide last ad to load
 		else:
 			if _active_banner_ads.has(a_ad_id):
 				_plugin_singleton.hide_banner_ad(a_ad_id)
 			else:
-				printerr("Cannot hide banner. Ad with ID '%s' not found." % a_ad_id)
+				Admob.log_error("Cannot hide banner. Ad with ID '%s' not found." % a_ad_id)
 
 
 func remove_banner_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_banner_ads.is_empty():
-				printerr("Cannot remove banner ad. No banner ads loaded.")
+				Admob.log_error("Cannot remove banner ad. No banner ads loaded.")
 			else:
 				_plugin_singleton.remove_banner_ad(_active_banner_ads[0])	# remove last ad to load
 				_active_banner_ads.remove_at(0)
@@ -340,16 +340,16 @@ func remove_banner_ad(a_ad_id: String = "") -> void:
 				_active_banner_ads.erase(a_ad_id)
 				_plugin_singleton.remove_banner_ad(a_ad_id)
 			else:
-				printerr("Cannot remove banner ad. Ad with ID '%s' not found." % a_ad_id)
+				Admob.log_error("Cannot remove banner ad. Ad with ID '%s' not found." % a_ad_id)
 
 
 func get_banner_dimension(a_ad_id: String = "") -> Vector2:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_banner_ads.is_empty():
-				printerr("Cannot get banner ad dimensions. No banner ads loaded.")
+				Admob.log_error("Cannot get banner ad dimensions. No banner ads loaded.")
 			else:
 				var last_loaded_banner_ad_id = _active_banner_ads[0]
 				return Vector2(_plugin_singleton.get_banner_width(last_loaded_banner_ad_id),
@@ -363,11 +363,11 @@ func get_banner_dimension(a_ad_id: String = "") -> Vector2:
 
 func get_banner_dimension_in_pixels(a_ad_id: String = "") -> Vector2:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_banner_ads.is_empty():
-				printerr("Cannot get banner ad dimensions. No banner ads loaded.")
+				Admob.log_error("Cannot get banner ad dimensions. No banner ads loaded.")
 			else:
 				var last_loaded_banner_ad_id = _active_banner_ads[0]
 				return Vector2(_plugin_singleton.get_banner_width_in_pixels(last_loaded_banner_ad_id),
@@ -386,25 +386,25 @@ func load_interstitial_ad() -> void:
 					.set_request_agent(request_agent)
 					.get_raw_data())
 	else:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 
 func is_interstitial_ad_loaded() -> bool:
 	if _plugin_singleton != null:
 		return _active_interstitial_ads.is_empty() == false
 	else:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 	return false
 
 
 func show_interstitial_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_interstitial_ads.is_empty():
-				printerr("Cannot show interstitial ad. No interstitial ads loaded.")
+				Admob.log_error("Cannot show interstitial ad. No interstitial ads loaded.")
 			else:
 				_plugin_singleton.show_interstitial_ad(_active_interstitial_ads[0])	# show last ad to load
 		else:
@@ -413,13 +413,13 @@ func show_interstitial_ad(a_ad_id: String = "") -> void:
 
 func remove_interstitial_ad(a_ad_id: String) -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if _active_interstitial_ads.has(a_ad_id):
 			_active_interstitial_ads.erase(a_ad_id)
 			_plugin_singleton.remove_interstitial_ad(a_ad_id)
 		else:
-			printerr("Cannot remove interstitial ad. Ad with ID '%s' not found." % a_ad_id)
+			Admob.log_error("Cannot remove interstitial ad. Ad with ID '%s' not found." % a_ad_id)
 
 
 func load_rewarded_ad() -> void:
@@ -429,25 +429,25 @@ func load_rewarded_ad() -> void:
 					.set_request_agent(request_agent)
 					.get_raw_data())
 	else:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 
 func is_rewarded_ad_loaded() -> bool:
 	if _plugin_singleton != null:
 		return _active_rewarded_ads.is_empty() == false
 	else:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 	return false
 
 
 func show_rewarded_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_rewarded_ads.is_empty():
-				printerr("Cannot show rewarded ad. No rewarded ads loaded.")
+				Admob.log_error("Cannot show rewarded ad. No rewarded ads loaded.")
 			else:
 				_plugin_singleton.show_rewarded_ad(_active_rewarded_ads[0])	# show last ad to load
 		else:
@@ -456,13 +456,13 @@ func show_rewarded_ad(a_ad_id: String = "") -> void:
 
 func remove_rewarded_ad(a_ad_id: String) -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if _active_rewarded_ads.has(a_ad_id):
 			_active_rewarded_ads.erase(a_ad_id)
 			_plugin_singleton.remove_rewarded_ad(a_ad_id)
 		else:
-			printerr("Cannot remove rewarded ad. Ad with ID '%s' not found." % a_ad_id)
+			Admob.log_error("Cannot remove rewarded ad. Ad with ID '%s' not found." % a_ad_id)
 
 
 func load_rewarded_interstitial_ad() -> void:
@@ -472,25 +472,25 @@ func load_rewarded_interstitial_ad() -> void:
 					.set_request_agent(request_agent)
 					.get_raw_data())
 	else:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 
 func is_rewarded_interstitial_ad_loaded() -> bool:
 	if _plugin_singleton != null:
 		return _active_rewarded_interstitial_ads.is_empty() == false
 	else:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 	return false
 
 
 func show_rewarded_interstitial_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_rewarded_interstitial_ads.is_empty():
-				printerr("Cannot show rewarded interstitial ad. No rewarded interstitial ads loaded.")
+				Admob.log_error("Cannot show rewarded interstitial ad. No rewarded interstitial ads loaded.")
 			else:
 				_plugin_singleton.show_rewarded_interstitial_ad(_active_rewarded_interstitial_ads[0])	# show last ad to load
 		else:
@@ -499,32 +499,32 @@ func show_rewarded_interstitial_ad(a_ad_id: String = "") -> void:
 
 func remove_rewarded_interstitial_ad(a_ad_id: String) -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if _active_rewarded_interstitial_ads.has(a_ad_id):
 			_active_rewarded_interstitial_ads.erase(a_ad_id)
 			_plugin_singleton.remove_rewarded_interstitial_ad(a_ad_id)
 		else:
-			printerr("Cannot remove rewarded interstitial ad. Ad with ID '%s' not found." % a_ad_id)
+			Admob.log_error("Cannot remove rewarded interstitial ad. Ad with ID '%s' not found." % a_ad_id)
 
 
 func load_consent_form() -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		_plugin_singleton.load_consent_form()
 
 
 func show_consent_form() -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		_plugin_singleton.show_consent_form()
 
 
 func get_consent_status() -> int:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		return _plugin_singleton.get_consent_status()
 	return 0; #TODO:
@@ -532,7 +532,7 @@ func get_consent_status() -> int:
 
 func is_consent_form_available() -> bool:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		return _plugin_singleton.is_consent_form_available()
 	return false
@@ -540,7 +540,7 @@ func is_consent_form_available() -> bool:
 
 func update_consent_info(consentRequestParameters: ConsentRequestParameters) -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		consentRequestParameters.set_is_real(is_real)
 		_plugin_singleton.update_consent_info(consentRequestParameters.get_raw_data())
@@ -548,29 +548,29 @@ func update_consent_info(consentRequestParameters: ConsentRequestParameters) -> 
 
 func reset_consent_info() -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		_plugin_singleton.reset_consent_info()
 
 
 func request_tracking_authorization() -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if _plugin_singleton.has_method("request_tracking_authorization"):
 			_plugin_singleton.request_tracking_authorization()
 		else:
-			printerr("request_tracking_authorization() method is not supported")
+			Admob.log_error("request_tracking_authorization() method is not supported")
 
 
 func open_app_settings() -> void:
 	if _plugin_singleton == null:
-		printerr("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if _plugin_singleton.has_method("open_app_settings"):
 			_plugin_singleton.open_app_settings()
 		else:
-			printerr("open_app_settings() method is not supported")
+			Admob.log_error("open_app_settings() method is not supported")
 
 
 func _on_initialization_completed(status_data: Dictionary) -> void:
@@ -581,7 +581,7 @@ func _on_initialization_completed(status_data: Dictionary) -> void:
 func _on_banner_ad_loaded(a_ad_id: String) -> void:
 	_active_banner_ads.push_front(a_ad_id)
 	while _active_banner_ads.size() > max_banner_ad_cache:
-		print("%s: banner_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
+		Admob.log_warn("%s: banner_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
 					_active_banner_ads.size(), max_banner_ad_cache])
 		var removed_ad_id: String = _active_banner_ads.pop_back()
 		_plugin_singleton.remove_banner_ad(removed_ad_id)
@@ -615,7 +615,7 @@ func _on_banner_ad_closed(a_ad_id: String) -> void:
 func _on_interstitial_ad_loaded(a_ad_id: String) -> void:
 	_active_interstitial_ads.push_front(a_ad_id)
 	while _active_interstitial_ads.size() > max_interstitial_ad_cache:
-		print("%s: interstitial_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
+		Admob.log_warn("%s: interstitial_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
 					_active_interstitial_ads.size(), max_interstitial_ad_cache])
 		var removed_ad_id: String = _active_interstitial_ads.pop_back()
 		_plugin_singleton.remove_interstitial_ad(removed_ad_id)
@@ -654,7 +654,7 @@ func _on_interstitial_ad_dismissed_full_screen_content(a_ad_id: String) -> void:
 func _on_rewarded_ad_loaded(a_ad_id: String) -> void:
 	_active_rewarded_ads.push_front(a_ad_id)
 	while _active_rewarded_ads.size() > max_rewarded_ad_cache:
-		print("%s: rewarded_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
+		Admob.log_warn("%s: rewarded_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
 					_active_rewarded_ads.size(), max_rewarded_ad_cache])
 		var removed_ad_id: String = _active_rewarded_ads.pop_back()
 		_plugin_singleton.remove_rewarded_ad(removed_ad_id)
@@ -691,10 +691,10 @@ func _on_rewarded_ad_user_earned_reward(a_ad_id: String, reward_data: Dictionary
 
 func _on_rewarded_interstitial_ad_loaded(a_ad_id: String) -> void:
 	_active_rewarded_interstitial_ads.push_front(a_ad_id)
-	print("%s: rewarded_interstitial_ad cache size (%d) maximum size (%d)" % [PLUGIN_SINGLETON_NAME,
+	Admob.log_warn("%s: rewarded_interstitial_ad cache size (%d) maximum size (%d)" % [PLUGIN_SINGLETON_NAME,
 				_active_rewarded_interstitial_ads.size(), max_rewarded_interstitial_ad_cache])
 	while _active_rewarded_interstitial_ads.size() > max_rewarded_interstitial_ad_cache:
-		print("%s: rewarded_interstitial_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
+		Admob.log_warn("%s: rewarded_interstitial_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
 					_active_rewarded_interstitial_ads.size(), max_rewarded_interstitial_ad_cache])
 		var removed_ad_id: String = _active_rewarded_interstitial_ads.pop_back()
 		_plugin_singleton.remove_rewarded_interstitial_ad(removed_ad_id)
@@ -755,3 +755,15 @@ func _on_tracking_authorization_granted() -> void:
 
 func _on_tracking_authorization_denied() -> void:
 	tracking_authorization_denied.emit()
+
+
+static func log_error(a_description: String) -> void:
+	push_error(a_description)
+
+
+static func log_warn(a_description: String) -> void:
+	push_warning(a_description)
+
+
+static func log_info(a_description: String) -> void:
+	print_rich("[color=lime]INFO: %s[/color]" % a_description)
