@@ -310,7 +310,7 @@ function create_zip_archive()
 		godot_version_suffix="v$PLUGIN_VERSION"
 	fi
 
-	file_name="$PLUGIN_NAME-$godot_version_suffix.zip"
+	file_name="$PLUGIN_NAME-iOS-$godot_version_suffix.zip"
 
 	if [[ -e "$BUILD_DIR/release/$file_name" ]]
 	then
