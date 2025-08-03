@@ -102,7 +102,7 @@ tasks {
 			"iosFrameworks" to (props.getProperty("frameworks") ?: "")
 					.split(",")
 					.joinToString(", ") { "\"${it.trim()}\"" },
-			"iosEmbeddedFrameworks" to (props.getProperty("embeddedFrameworks") ?: "")
+			"iosEmbeddedFrameworks" to (props.getProperty("embedded_frameworks") ?: "")
 					.split(",")
 					.joinToString(", ") { "\"${it.trim()}\"" },
 			"iosLinkerFlags" to (props.getProperty("flags") ?: "")
@@ -124,6 +124,8 @@ tasks {
 	register<Zip>("packageDistribution") {
 		archiveFileName.set("${project.extra["pluginArchive"]}")
 		destinationDirectory.set(layout.buildDirectory.dir("dist"))
+		exclude("**/*.uid")
+		exclude("**/*.import")
 		from("${project.extra["demoAddOnsDirectory"]}/${project.extra["pluginName"]}") {
 			into("${project.extra["pluginName"]}-root/addons/${project.extra["pluginName"]}")
 		}

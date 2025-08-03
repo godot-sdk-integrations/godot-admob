@@ -27,12 +27,15 @@ done < <($SCRIPT_DIR/get_config_property.sh -qas frameworks)
 IOS_EMBEDDED_FRAMEWORKS=()
 while IFS= read -r line; do
 	IOS_EMBEDDED_FRAMEWORKS+=("$line")
-done < <($SCRIPT_DIR/get_config_property.sh -qas frameworks)
+done < <($SCRIPT_DIR/get_config_property.sh -qas embedded_frameworks)
 IOS_LINKER_FLAGS=()
 while IFS= read -r line; do
 	IOS_LINKER_FLAGS+=("$line")
 done < <($SCRIPT_DIR/get_config_property.sh -qas flags)
 SUPPORTED_GODOT_VERSIONS=("4.2" "4.3" "4.4.1" "4.5")
+while IFS= read -r line; do
+	SUPPORTED_GODOT_VERSIONS+=("$line")
+done < <($SCRIPT_DIR/get_config_property.sh -qas valid_godot_versions)
 BUILD_TIMEOUT=40	# increase this value using -t option if device is not able to generate all headers before godot build is killed
 
 do_clean=false
@@ -236,8 +239,32 @@ function generate_static_library()
 }
 
 
+function install_gem()
+{
+	GEM_NAME="$1"
+
+	display_status "installing gem $GEM_NAME..."
+
+	# Check if gem is installed
+	if gem list -i "^${GEM_NAME}$" > /dev/null; then
+		echo_yellow "$GEM_NAME is already installed"
+	else
+		echo_blue "$GEM_NAME is not installed. Installing..."
+		gem install "$GEM_NAME"
+		if [ $? -eq 0 ]; then
+			echo_blue "$GEM_NAME installed successfully"
+		else
+			display_error "Failed to install $GEM_NAME"
+			exit 1
+		fi
+	fi
+}
+
+
 function install_pods()
 {
+	install_gem java_properties
+
 	display_status "installing pods..."
 	pod install --repo-update || true
 }

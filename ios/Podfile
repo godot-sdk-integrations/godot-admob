@@ -1,3 +1,9 @@
+#
+# © 2024-present https://github.com/cengiz-pz
+#
+
+require 'java_properties'
+
 source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
@@ -6,7 +12,24 @@ plugin_name = 'AdmobPlugin'
 project "#{plugin_name}.xcodeproj"
 workspace "./#{plugin_name}.xcodeproj/project.xcworkspace"
 
+# Load properties from config.properties
+begin
+  properties = JavaProperties.load('config/config.properties')
+rescue Errno::ENOENT
+  puts "Warning: config.properties not found, using default dependencies"
+  properties = { dependencies: '' }
+end
+
+# Extract dependencies (assuming a comma-separated list of name:version pairs)
+deps = properties[:dependencies]&.split(',')&.map(&:strip) || []
+
 target "#{plugin_name}" do
-	platform :ios, '14.3'
-	pod 'Google-Mobile-Ads-SDK', '12.7.0'
+	platform :ios, properties[:platform_version] || '14.3'
+
+	# Install each dependency with its version
+	deps.each do |dep|
+		next if dep.empty?
+		name, version = dep.split(':').map(&:strip)
+		pod name, version if name && version
+	end
 end

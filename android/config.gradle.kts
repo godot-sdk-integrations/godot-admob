@@ -18,5 +18,7 @@ extra.apply {
 
 	// Demo
 	set("demoAddOnsDirectory", "../../demo/addons")
+
+	// Godot resources
 	set("templateDirectory", "../../addon")
 }

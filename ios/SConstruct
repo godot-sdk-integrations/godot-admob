@@ -5,6 +5,7 @@
 
 import sys
 import subprocess
+from jproperties import Properties
 
 if sys.version_info < (3,):
 	def decode_utf8(x):
@@ -14,15 +15,35 @@ else:
 	def decode_utf8(x):
 		return codecs.utf_8_decode(x)[0]
 
-plugin_name="AdmobPlugin"
-min_ios_version="14.3"
+# Load properties from config.properties
+configs = Properties()
+try:
+	with open('config/config.properties', 'rb') as config_file:
+		configs.load(config_file)
+except FileNotFoundError:
+	print("Error: config/config.properties not found. Build cannot proceed without configuration.")
+	quit()
+
+# Extract configuration values
+min_ios_version = configs.get('platform_version')[0]
+plugin_name = configs.get('plugin_name')[0]
+valid_godot_versions = configs.get('valid_godot_versions')[0].split(',')
+
+# Validate required configuration values
+if not min_ios_version:
+	print("Error: platform_version is missing in config.properties.")
+	quit()
+if not plugin_name:
+	print("Error: plugin_name is missing in config.properties.")
+	quit()
+if not valid_godot_versions or not any(valid_godot_versions):
+	print("Error: valid_godot_versions is missing or empty in config.properties.")
+	quit()
 
 opts = Variables([], ARGUMENTS)
 
 # Gets the standard flags CC, CCX, etc.
 env = DefaultEnvironment()
-
-valid_godot_versions = ['', '4.1', '4.2', '4.3', '4.4.1', '4.5']
 
 # Define our options
 opts.Add(EnumVariable('target', "Compilation target", 'debug', ['debug', 'release', "release_debug"]))
@@ -36,22 +57,22 @@ opts.Add(EnumVariable('version', 'Godot version to target', '', valid_godot_vers
 # Updates the environment with the option variables.
 opts.Update(env)
 
-# Process some arguments
+# Process arguments
 if env['use_llvm']:
 	env['CC'] = 'clang'
 	env['CXX'] = 'clang++'
 
 if env['arch'] == '':
-	print("No valid arch selected.")
-	quit();
+	print("Error: No valid arch selected.")
+	quit()
 
 if env['version'] == '':
-	print("No valid Godot version selected.")
-	quit();
+	print("Error: No valid Godot version selected.")
+	quit()
 
 if env['target_name'] == '':
-	print("No valid target name.")
-	quit();
+	print("Error: No valid target name.")
+	quit()
 
 # For the reference:
 # - CCFLAGS are compilation flags shared between C and C++
@@ -81,10 +102,8 @@ try:
 except (subprocess.CalledProcessError, OSError):
 	raise ValueError("Failed to find SDK path while running xcrun --sdk {} --show-sdk-path.".format(sdk_name))
 
-
 env.Append(FRAMEWORKPATH=[f'#Pods/Google-Mobile-Ads-SDK/Frameworks/GoogleMobileAdsFramework/GoogleMobileAds.xcframework/{architecture_directory}'])
 env.Append(FRAMEWORKPATH=[f'#Pods/GoogleUserMessagingPlatform/Frameworks/Release/UserMessagingPlatform.xcframework/{architecture_directory}'])
-
 
 env.Append(CCFLAGS=[
 	'-fobjc-arc', 
@@ -93,7 +112,6 @@ env.Append(CCFLAGS=[
 	'-fblocks', '-fvisibility=hidden', '-MMD', '-MT', 'dependencies', '-fno-exceptions', 
 	'-Wno-ambiguous-macro', 
 	'-Wall', '-Werror=return-type',
-	# '-Wextra',
 ])
 
 env.Append(CCFLAGS=['-arch', env['arch'], "-isysroot", "$IPHONESDK", "-stdlib=libc++", '-isysroot', sdk_path])
@@ -108,7 +126,6 @@ env.Append(CCFLAGS=["$IOS_SDK_PATH"])
 env.Prepend(CXXFLAGS=['-DIOS_ENABLED'])
 env.Prepend(CXXFLAGS=['-DAPPLE_EMBEDDED_ENABLED'])
 env.Prepend(CXXFLAGS=['-DVERSION_4_0'])
-
 
 if env['version'] in valid_godot_versions:
 	env.Prepend(CFLAGS=['-std=gnu11'])
@@ -125,18 +142,16 @@ if env['version'] in valid_godot_versions:
 			'-O2', '-ftree-vectorize',
 			'-DNDEBUG', '-DNS_BLOCK_ASSERTIONS=1', '-DDEBUG_ENABLED',
 		])
-
 		env.Prepend(CXXFLAGS=['-fomit-frame-pointer'])
 	else:
 		env.Prepend(CXXFLAGS=[
 			'-O2', '-ftree-vectorize',
 			'-DNDEBUG', '-DNS_BLOCK_ASSERTIONS=1',
 		])
-
 		env.Prepend(CXXFLAGS=['-fomit-frame-pointer'])
 else:
-	print("No valid Godot version to set flags for.")
-	quit();
+	print("Error: No valid Godot version to set flags for.")
+	quit()
 
 # Adding header files
 env.Append(CPPPATH=[
@@ -148,7 +163,7 @@ env.Append(CPPPATH=[
 	'godot/drivers/apple_embedded'
 ])
 
-# tweak this if you want to use different folders, or more folders, to store your source code in.
+# Tweak this if you want to use different folders, or more folders, to store your source code in.
 sources = Glob(f'{plugin_name}/*.cpp')
 sources.append(Glob(f'{plugin_name}/*.mm'))
 sources.append(Glob(f'{plugin_name}/*.m'))
@@ -158,7 +173,7 @@ sources.append(Glob(f'{plugin_name}/**/*.m'))
 
 # lib<plugin>.<arch>-<simulator|iphone>.<release|debug|release_debug>.a
 library_platform = env["arch"] + "-" + ("simulator" if env["simulator"] else "ios")
-library_name = env['target_name'] + "." + library_platform + "." + env["target"] + ".a"
+library_name = env['target_name'] + "." + library_platform + "." + env['target'] + ".a"
 library = env.StaticLibrary(target=env['target_path'] + library_name, source=sources)
 
 Default(library)
