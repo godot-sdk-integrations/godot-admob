@@ -193,11 +193,7 @@ scroll_following = true
 
 [node name="Admob" type="Node" parent="."]
 script = ExtResource("2_4x6et")
-debug_application_id = "ca-app-pub-3940256099942544~3347511713"
-debug_banner_id = "ca-app-pub-3940256099942544/6300978111"
-debug_interstitial_id = "ca-app-pub-3940256099942544/1033173712"
-debug_rewarded_id = "ca-app-pub-3940256099942544/5224354917"
-debug_rewarded_interstitial_id = "ca-app-pub-3940256099942544/5354046379"
+application_id = "ca-app-pub-3940256099942544~3347511713"
 
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/SizeButton" to="." method="_on_size_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/PixelSizeButton" to="." method="_on_pixel_size_button_pressed"]
