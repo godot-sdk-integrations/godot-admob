@@ -11,7 +11,7 @@
 
 @import GoogleMobileAds;
 
-@interface AdFormatBase : GDTViewController 
+@interface AdFormatBase : GDTViewController
 
 @property (nonatomic,strong) NSString* adId;
 

@@ -174,7 +174,7 @@ The `is_real` and `app_id` configuration items are mandatory and if not found in
 ### <img src="addon/icon.png" width="18"> Node-based Export Configuration
 If `export.cfg` file is not found or file-based configuration fails, then the plugin will attempt to load node-based configuration.
 
-During export, the plugin searches for an `Admob` node in the scene that is open in the Godot Editor. If not found, then the plugin searches for an `Admob` node in the project's main scene. Therefore; 
+During export, the plugin searches for an `Admob` node in the scene that is open in the Godot Editor. If not found, then the plugin searches for an `Admob` node in the project's main scene. Therefore;
 - Make sure that the scene that contains the `Admob` node is selected in the Godot Editor when building and exporting, or
 - Make sure that your Godot project's main scene contains an `Admob` node
 

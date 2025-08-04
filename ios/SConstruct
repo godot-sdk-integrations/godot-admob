@@ -5,7 +5,6 @@
 
 import sys
 import subprocess
-from jproperties import Properties
 
 if sys.version_info < (3,):
 	def decode_utf8(x):
@@ -15,30 +14,39 @@ else:
 	def decode_utf8(x):
 		return codecs.utf_8_decode(x)[0]
 
-# Load properties from config.properties
-configs = Properties()
+# Manually parse config.properties
+configs = {}
 try:
-	with open('config/config.properties', 'rb') as config_file:
-		configs.load(config_file)
+	with open('config/config.properties', 'r') as config_file:
+		for line in config_file:
+			# Skip comments and empty lines
+			line = line.strip()
+			if not line or line.startswith('#') or line.startswith('!'):
+				continue
+			# Split on the first '=' to handle values containing '='
+			key, value = line.split('=', 1)
+			configs[key.strip()] = value.strip()
 except FileNotFoundError:
 	print("Error: config/config.properties not found. Build cannot proceed without configuration.")
 	quit()
 
 # Extract configuration values
-min_ios_version = configs.get('platform_version')[0]
-plugin_name = configs.get('plugin_name')[0]
-valid_godot_versions = configs.get('valid_godot_versions')[0].split(',')
+min_ios_version = configs.get('platform_version')
+plugin_node_name = configs.get('plugin_node_name')
+valid_godot_versions = configs.get('valid_godot_versions', '').split(',')
 
 # Validate required configuration values
 if not min_ios_version:
 	print("Error: platform_version is missing in config.properties.")
 	quit()
-if not plugin_name:
-	print("Error: plugin_name is missing in config.properties.")
+if not plugin_node_name:
+	print("Error: plugin_node_name is missing in config.properties.")
 	quit()
 if not valid_godot_versions or not any(valid_godot_versions):
 	print("Error: valid_godot_versions is missing or empty in config.properties.")
 	quit()
+
+plugin_name=f"{plugin_node_name}Plugin"
 
 opts = Variables([], ARGUMENTS)
 
@@ -106,18 +114,18 @@ env.Append(FRAMEWORKPATH=[f'#Pods/Google-Mobile-Ads-SDK/Frameworks/GoogleMobileA
 env.Append(FRAMEWORKPATH=[f'#Pods/GoogleUserMessagingPlatform/Frameworks/Release/UserMessagingPlatform.xcframework/{architecture_directory}'])
 
 env.Append(CCFLAGS=[
-	'-fobjc-arc', 
-	'-fmessage-length=0', '-fno-strict-aliasing', '-fdiagnostics-print-source-range-info', 
-	'-fdiagnostics-show-category=id', '-fdiagnostics-parseable-fixits', '-fpascal-strings', 
-	'-fblocks', '-fvisibility=hidden', '-MMD', '-MT', 'dependencies', '-fno-exceptions', 
-	'-Wno-ambiguous-macro', 
+	'-fobjc-arc',
+	'-fmessage-length=0', '-fno-strict-aliasing', '-fdiagnostics-print-source-range-info',
+	'-fdiagnostics-show-category=id', '-fdiagnostics-parseable-fixits', '-fpascal-strings',
+	'-fblocks', '-fvisibility=hidden', '-MMD', '-MT', 'dependencies', '-fno-exceptions',
+	'-Wno-ambiguous-macro',
 	'-Wall', '-Werror=return-type',
 ])
 
 env.Append(CCFLAGS=['-arch', env['arch'], "-isysroot", "$IPHONESDK", "-stdlib=libc++", '-isysroot', sdk_path])
 env.Append(CCFLAGS=['-DPTRCALL_ENABLED'])
 env.Prepend(CXXFLAGS=[
-	'-DNEED_LONG_INT', '-DLIBYUV_DISABLE_NEON', 
+	'-DNEED_LONG_INT', '-DLIBYUV_DISABLE_NEON',
 	'-DIPHONE_ENABLED', '-DUNIX_ENABLED', '-DCOREAUDIO_ENABLED'
 ])
 env.Append(LINKFLAGS=["-arch", env['arch'], '-isysroot', sdk_path, '-F' + sdk_path])
@@ -133,9 +141,9 @@ if env['version'] in valid_godot_versions:
 
 	if env['target'] == 'debug':
 		env.Prepend(CXXFLAGS=[
-			'-gdwarf-2', '-O0', 
-			'-DDEBUG_MEMORY_ALLOC', '-DDISABLE_FORCED_INLINE', 
-			'-D_DEBUG', '-DDEBUG=1', '-DDEBUG_ENABLED', 
+			'-gdwarf-2', '-O0',
+			'-DDEBUG_MEMORY_ALLOC', '-DDISABLE_FORCED_INLINE',
+			'-D_DEBUG', '-DDEBUG=1', '-DDEBUG_ENABLED',
 		])
 	elif env['target'] == 'release_debug':
 		env.Prepend(CXXFLAGS=[

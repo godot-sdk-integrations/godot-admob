@@ -261,7 +261,7 @@
 	
 	dictionary["width"] = adSize.size.width;
 	dictionary["height"] = adSize.size.height;
-	 
+	
 	return dictionary;
 }
 

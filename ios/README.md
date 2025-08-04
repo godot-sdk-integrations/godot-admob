@@ -5,8 +5,7 @@
 ---
 # <img src="../addon/icon.png" width="24"> iOS Admob Plugin
 
-Enables AdMob functionality on Godot apps that are exported to the iOS platform and allows 
-displaying of Admob ads.
+Enables AdMob functionality on Godot apps that are exported to the iOS platform and allows displaying of Admob ads.
 
 _For Android version, visit https://github.com/cengiz-pz/godot-android-admob-plugin ._
 

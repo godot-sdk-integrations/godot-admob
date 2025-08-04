@@ -1,0 +1,9 @@
+#
+# © 2024-present https://github.com/cengiz-pz
+#
+
+demo/.godot
+demo/addons
+demo/android
+demo/ios
+android/.idea

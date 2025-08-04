@@ -7,15 +7,19 @@ set -e
 trap "sleep 1; echo" EXIT
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-GODOT_DIR=$(realpath $SCRIPT_DIR/..)/godot
-ANDROID_DIR=$(realpath $SCRIPT_DIR/../../android)
-BUILD_DIR=$(realpath $SCRIPT_DIR/..)/build
-CONFIG_DIR=$(realpath $SCRIPT_DIR/../config)
+IOS_DIR=$(realpath $SCRIPT_DIR/..)
+ROOT_DIR=$(realpath $IOS_DIR/..)
+ANDROID_DIR=$ROOT_DIR/android
+ADDON_DIR=$ROOT_DIR/addon
+GODOT_DIR=$IOS_DIR/godot
+CONFIG_DIR=$IOS_DIR/config
+PODS_DIR=$IOS_DIR/Pods
+BUILD_DIR=$IOS_DIR/build
 DEST_DIR=$BUILD_DIR/release
 FRAMEWORK_DIR=$BUILD_DIR/framework
 LIB_DIR=$BUILD_DIR/lib
 
-PLUGIN_NODE_TYPE="Admob"
+PLUGIN_NODE_TYPE=$($SCRIPT_DIR/get_config_property.sh plugin_node_name)
 PLUGIN_NAME="${PLUGIN_NODE_TYPE}Plugin"
 PLUGIN_VERSION=''
 PLUGIN_PACKAGE_NAME=$($SCRIPT_DIR/get_gradle_property.sh pluginPackageName $ANDROID_DIR/config.gradle.kts)
@@ -23,19 +27,19 @@ ANDROID_DEPENDENCIES=$($SCRIPT_DIR/get_android_dependencies.sh)
 IOS_FRAMEWORKS=()
 while IFS= read -r line; do
 	IOS_FRAMEWORKS+=("$line")
-done < <($SCRIPT_DIR/get_config_property.sh -qas frameworks)
+done < <($SCRIPT_DIR/get_config_property.sh -qa frameworks)
 IOS_EMBEDDED_FRAMEWORKS=()
 while IFS= read -r line; do
 	IOS_EMBEDDED_FRAMEWORKS+=("$line")
-done < <($SCRIPT_DIR/get_config_property.sh -qas embedded_frameworks)
+done < <($SCRIPT_DIR/get_config_property.sh -qa embedded_frameworks)
 IOS_LINKER_FLAGS=()
 while IFS= read -r line; do
 	IOS_LINKER_FLAGS+=("$line")
-done < <($SCRIPT_DIR/get_config_property.sh -qas flags)
-SUPPORTED_GODOT_VERSIONS=("4.2" "4.3" "4.4.1" "4.5")
+done < <($SCRIPT_DIR/get_config_property.sh -qa flags)
+SUPPORTED_GODOT_VERSIONS=()
 while IFS= read -r line; do
-	SUPPORTED_GODOT_VERSIONS+=("$line")
-done < <($SCRIPT_DIR/get_config_property.sh -qas valid_godot_versions)
+	SUPPORTED_GODOT_VERSIONS+=($line)
+done < <($SCRIPT_DIR/get_config_property.sh -a valid_godot_versions)
 BUILD_TIMEOUT=40	# increase this value using -t option if device is not able to generate all headers before godot build is killed
 
 do_clean=false
@@ -52,15 +56,15 @@ ignore_unsupported_godot_version=false
 function display_help()
 {
 	echo
-	$SCRIPT_DIR/../../script/echocolor.sh -y "The " -Y "$0 script" -y " builds the plugin, generates library archives, and"
+	$ROOT_DIR/script/echocolor.sh -y "The " -Y "$0 script" -y " builds the plugin, generates library archives, and"
 	echo_yellow "creates a zip file containing all libraries and configuration."
 	echo
 	echo_yellow "If plugin version is not set with the -z option, then Godot version will be used."
 	echo
-	$SCRIPT_DIR/../../script/echocolor.sh -Y "Syntax:"
+	$ROOT_DIR/script/echocolor.sh -Y "Syntax:"
 	echo_yellow "	$0 [-a|A <godot version>|c|g|G <godot version>|h|H|i|p|P|t <timeout>|z <version>]"
 	echo
-	$SCRIPT_DIR/../../script/echocolor.sh -Y "Options:"
+	$ROOT_DIR/script/echocolor.sh -Y "Options:"
 	echo_yellow "	a	generate godot headers and build plugin"
 	echo_yellow "	A	download specified godot version, generate godot headers, and"
 	echo_yellow "	 	build plugin"
@@ -77,7 +81,7 @@ function display_help()
 	echo_yellow "	t	change timeout value for godot build"
 	echo_yellow "	z	create zip archive with given version added to the file name"
 	echo
-	$SCRIPT_DIR/../../script/echocolor.sh -Y "Examples:"
+	$ROOT_DIR/script/echocolor.sh -Y "Examples:"
 	echo_yellow "	* clean existing build, remove godot, and rebuild all"
 	echo_yellow "		$> $0 -cgA 4.2"
 	echo_yellow "		$> $0 -cgpG 4.2 -HPbz 1.0"
@@ -87,7 +91,6 @@ function display_help()
 	echo
 	echo_yellow "	* clean existing build and rebuild plugin"
 	echo_yellow "		$> $0 -ca"
-	echo_yellow "		$> $0 -cHbz 1.0"
 	echo
 	echo_yellow "	* clean existing build and rebuild plugin with custom plugin version"
 	echo_yellow "		$> $0 -cHbz 1.0"
@@ -100,22 +103,22 @@ function display_help()
 
 function echo_yellow()
 {
-	$SCRIPT_DIR/../../script/echocolor.sh -y "$1"
+	$ROOT_DIR/script/echocolor.sh -y "$1"
 }
 
 
 function echo_blue()
 {
-	$SCRIPT_DIR/../../script/echocolor.sh -b "$1"
+	$ROOT_DIR/script/echocolor.sh -b "$1"
 }
 
 
 function display_status()
 {
 	echo
-	$SCRIPT_DIR/../../script/echocolor.sh -c "********************************************************************************"
-	$SCRIPT_DIR/../../script/echocolor.sh -c "* $1"
-	$SCRIPT_DIR/../../script/echocolor.sh -c "********************************************************************************"
+	$ROOT_DIR/script/echocolor.sh -c "********************************************************************************"
+	$ROOT_DIR/script/echocolor.sh -c "* $1"
+	$ROOT_DIR/script/echocolor.sh -c "********************************************************************************"
 	echo
 }
 
@@ -128,7 +131,7 @@ function display_warning()
 
 function display_error()
 {
-	$SCRIPT_DIR/../../script/echocolor.sh -r "$1"
+	$ROOT_DIR/script/echocolor.sh -r "$1"
 }
 
 
@@ -161,11 +164,12 @@ function clean_plugin_build()
 
 function remove_pods()
 {
-	if [[ -d ./Pods ]]
+	if [[ -d $PODS_DIR ]]
 	then
-		rm -rf ./Pods/
+		display_status "removing '$PODS_DIR' directory..."
+		rm -rf $PODS_DIR
 	else
-		display_warning "Warning: './Pods' directory does not exist"
+		display_warning "Warning: '$PODS_DIR' directory does not exist"
 	fi
 }
 
@@ -206,7 +210,7 @@ function generate_godot_headers()
 
 	display_status "starting godot build to generate godot headers..."
 
-	./script/run_with_timeout.sh -t $BUILD_TIMEOUT -c "scons platform=ios target=template_release" -d ./godot || true
+	$SCRIPT_DIR/run_with_timeout.sh -t $BUILD_TIMEOUT -c "scons platform=ios target=template_release" -d ./godot || true
 
 	display_status "terminated godot build after $BUILD_TIMEOUT seconds..."
 }
@@ -239,32 +243,8 @@ function generate_static_library()
 }
 
 
-function install_gem()
-{
-	GEM_NAME="$1"
-
-	display_status "installing gem $GEM_NAME..."
-
-	# Check if gem is installed
-	if gem list -i "^${GEM_NAME}$" > /dev/null; then
-		echo_yellow "$GEM_NAME is already installed"
-	else
-		echo_blue "$GEM_NAME is not installed. Installing..."
-		gem install "$GEM_NAME"
-		if [ $? -eq 0 ]; then
-			echo_blue "$GEM_NAME installed successfully"
-		else
-			display_error "Failed to install $GEM_NAME"
-			exit 1
-		fi
-	fi
-}
-
-
 function install_pods()
 {
-	install_gem java_properties
-
 	display_status "installing pods..."
 	pod install --repo-update || true
 }
@@ -303,20 +283,11 @@ function build_plugin()
 
 
 function merge_string_array() {
-	local arr=("$@")  # Accept array as input
-	local result=""
-	local first=true
-
-	for str in "${arr[@]}"; do
-	if [ "$first" = true ]; then
-		result="$str"
-		first=false
-	else
-		result="$result, $str"
-	fi
-	done
-
-	echo "$result"
+    local arr=("$@")  # Accept array as input
+    printf "%s" "${arr[0]}"
+    for ((i=1; i<${#arr[@]}; i++)); do
+        printf ", %s" "${arr[i]}"
+    done
 }
 
 
@@ -346,7 +317,6 @@ function create_zip_archive()
 	fi
 
 	tmp_directory=$BUILD_DIR/.tmp_zip
-	addon_directory=$(realpath $SCRIPT_DIR/../../addon)
 
 	if [[ -d "$tmp_directory" ]]
 	then
@@ -356,10 +326,10 @@ function create_zip_archive()
 
 	display_status "preparing staging directory $tmp_directory"
 
-	if [[ -d "$addon_directory" ]]
+	if [[ -d "$ADDON_DIR" ]]
 	then
 		mkdir -p $tmp_directory/addons/$PLUGIN_NAME
-		cp -r $addon_directory/* $tmp_directory/addons/$PLUGIN_NAME
+		cp -r $ADDON_DIR/* $tmp_directory/addons/$PLUGIN_NAME
 
 		# Detect OS
 		if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -373,21 +343,35 @@ function create_zip_archive()
 		for file in "$tmp_directory/addons/$PLUGIN_NAME"/*.{gd,cfg}; do
 			[[ -e "$file" ]] || continue
 			echo_blue "Editing: $file"
+
+			# Escape variables to handle special characters
+			ESCAPED_PLUGIN_NAME=$(printf '%s' "$PLUGIN_NAME" | sed 's/[\/&]/\\&/g')
+			ESCAPED_PLUGIN_VERSION=$(printf '%s' "$PLUGIN_VERSION" | sed 's/[\/&]/\\&/g')
+			ESCAPED_PLUGIN_NODE_TYPE=$(printf '%s' "$PLUGIN_NODE_TYPE" | sed 's/[\/&]/\\&/g')
+			ESCAPED_PLUGIN_PACKAGE_NAME=$(printf '%s' "$PLUGIN_PACKAGE_NAME" | sed 's/[\/&]/\\&/g')
+			ESCAPED_ANDROID_DEPENDENCIES=$(printf '%s' "$ANDROID_DEPENDENCIES" | sed 's/[\/&]/\\&/g')
+			ESCAPED_IOS_FRAMEWORKS=$(merge_string_array "${IOS_FRAMEWORKS[@]}" | sed 's/[\/&]/\\&/g')
+			ESCAPED_IOS_EMBEDDED_FRAMEWORKS=$(merge_string_array "${IOS_EMBEDDED_FRAMEWORKS[@]}" | sed 's/[\/&]/\\&/g')
+			ESCAPED_IOS_LINKER_FLAGS=$(merge_string_array "${IOS_LINKER_FLAGS[@]}" | sed 's/[\/&]/\\&/g')
+
 			sed "${SED_INPLACE[@]}" -e "
-				s/@pluginName@/$PLUGIN_NAME/g;
-				s/@pluginVersion@/$PLUGIN_VERSION/g;
-				s/@pluginNodeName@/$PLUGIN_NODE_TYPE/g;
-				s/@pluginPackage@/$PLUGIN_PACKAGE_NAME/g;
-				s/@pluginDependencies@/$ANDROID_DEPENDENCIES/g;
-				s/@iosFrameworks@/$(merge_string_array $IOS_FRAMEWORKS)/g;
-				s/@iosEmbeddedFrameworks@/$(merge_string_array $IOS_EMBEDDED_FRAMEWORKS)/g;
-				s/@iosLinkerFlags@/$(merge_string_array $IOS_LINKER_FLAGS)/g
+				s|@pluginName@|$ESCAPED_PLUGIN_NAME|g;
+				s|@pluginVersion@|$ESCAPED_PLUGIN_VERSION|g;
+				s|@pluginNodeName@|$ESCAPED_PLUGIN_NODE_TYPE|g;
+				s|@pluginPackage@|$ESCAPED_PLUGIN_PACKAGE_NAME|g;
+				s|@pluginDependencies@|$ESCAPED_ANDROID_DEPENDENCIES|g;
+				s|@iosFrameworks@|$ESCAPED_IOS_FRAMEWORKS|g;
+				s|@iosEmbeddedFrameworks@|$ESCAPED_IOS_EMBEDDED_FRAMEWORKS|g;
+				s|@iosLinkerFlags@|$ESCAPED_IOS_LINKER_FLAGS|g
 			" "$file"
 		done
+	else
+		display_error "Error: '$ADDON_DIR' not found."
+		exit 1
 	fi
 
 	mkdir -p $tmp_directory/ios/framework
-	find $(realpath $SCRIPT_DIR/../Pods) -iname '*.xcframework' -type d -exec cp -r {} $tmp_directory/ios/framework \;
+	find $PODS_DIR -iname '*.xcframework' -type d -exec cp -r {} $tmp_directory/ios/framework \;
 
 	mkdir -p $tmp_directory/ios/plugins
 	cp $CONFIG_DIR/*.gdip $tmp_directory/ios/plugins
@@ -396,7 +380,7 @@ function create_zip_archive()
 	mkdir -p $DEST_DIR
 
 	display_status "creating $file_name file..."
-	cd $tmp_directory; zip -yr ../release/$file_name ./*; cd -
+	cd $tmp_directory; zip -yr $DEST_DIR/$file_name ./*; cd -
 
 	rm -rf $tmp_directory
 }

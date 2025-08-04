@@ -103,4 +103,4 @@ func get_plugin_node(a_node: Node) -> Admob:
 				__result = __child_result
 				break
 
-	return __result 
+	return __result

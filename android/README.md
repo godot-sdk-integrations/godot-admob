@@ -4,8 +4,7 @@
 
 # <img src="../addon/icon.png" width="24"> Android Admob Plugin
 
-Enables AdMob functionality on Godot apps that are exported to the Android platform and allows 
-displaying of Admob ads.
+Enables AdMob functionality on Godot apps that are exported to the Android platform and allows displaying of Admob ads.
 
 _For iOS version, visit https://github.com/cengiz-pz/godot-ios-admob-plugin ._
 
