@@ -83,20 +83,35 @@ if ! [[ -z $RUN_DIRECTORY ]]; then
 	echo "Target directory: $RUN_DIRECTORY"
 fi
 
-# Run the command in a new session/process group using setsid
-(
-	if ! [[ -z $RUN_DIRECTORY ]]
-	then
-		if ! cd "$RUN_DIRECTORY"; then
-			echo "Error: Failed to change to directory $RUN_DIRECTORY"
-			exit 1
-		fi
-		echo "Current directory: $(pwd)"
-	fi
+# Log file for debugging command errors
+LOG_FILE="/tmp/run_with_timeout_$$.log"
 
-	# Run the command with setsid, suppressing all output
-	setsid bash -c "$RUN_COMMAND >/dev/null 2>&1"
-) 2> /dev/null &
+# Run the command in a background subshell, suppressing shell notifications
+{
+	(
+		if ! [[ -z $RUN_DIRECTORY ]]
+		then
+			if ! cd "$RUN_DIRECTORY"; then
+				display_error "Error: Failed to change to directory $RUN_DIRECTORY" >> "$LOG_FILE"
+				exit 1
+			fi
+			echo "Current directory: $(pwd)"
+		fi
+
+		# Export environment variables for command
+		export PATH=$PATH:/usr/local/bin
+		export SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path 2>>"$LOG_FILE" || echo "")
+
+		# Verify command exists
+		command -v "${RUN_COMMAND%% *}" >/dev/null 2>&1 || {
+			display_error "Error: Command '${RUN_COMMAND%% *}' not found" >> "$LOG_FILE"
+			exit 1
+		}
+
+		# Run the command, suppressing stdout and logging stderr
+		bash -c "$RUN_COMMAND >/dev/null 2>>$LOG_FILE"
+	) &
+} 2>/dev/null
 
 # Store the PID of the background subshell
 pid=$!
@@ -110,37 +125,43 @@ sleep 0.1
 # Display countdown timer on a new line
 echo
 for ((i=$RUN_TIMEOUT; i>=0; i--)); do
-	printf "\rTime remaining: %2d seconds" $i
+	printf "\rTime remaining: %02d seconds" $i
 	sleep 1
 done
 echo -e "\nTerminating build after $RUN_TIMEOUT seconds..."
 
-# Get the process group ID of the subshell
-pgid=$(ps -p $pid -o pgid= 2>/dev/null | tr -d ' ')
-
-# Send SIGTERM to the process group
-if [ -n "$pgid" ] && ps -p $pid >/dev/null 2>&1; then
-	kill -TERM -- -"$pgid" 2>/dev/null || true
-fi
-
-# Wait briefly for clean termination
-sleep 1
-
-# Check for remaining processes in the process group
-remaining_processes=$(pgrep -g "$pgid" 2>/dev/null)
-if [ -n "$pgid" ] && [ -n "$remaining_processes" ]; then
-	echo "Processes still running, sending SIGKILL to process group"
-	kill -KILL -- -"$pgid" 2>/dev/null || true
+# Terminate child processes of the subshell
+remaining_processes=$(pgrep -P $pid 2>/dev/null)
+if [ -n "$remaining_processes" ]; then
+	kill -TERM $remaining_processes 2>/dev/null || true
 	sleep 1
-	# Recheck for remaining processes
-	remaining_processes=$(pgrep -g "$pgid" 2>/dev/null)
+	remaining_processes=$(pgrep -P $pid 2>/dev/null)
+	if [ -n "$remaining_processes" ]; then
+		echo "Processes still running, sending SIGKILL to child processes"
+		kill -KILL $remaining_processes 2>/dev/null || true
+		sleep 1
+		remaining_processes=$(pgrep -P $pid 2>/dev/null)
+	fi
 fi
 
 # Final check for any remaining processes
-if [ -n "$pgid" ] && [ -n "$remaining_processes" ]; then
+remaining_processes=$(pgrep -P $pid 2>/dev/null)
+if [ -n "$remaining_processes" ]; then
 	echo "Warning: Some processes may still be running."
-	echo "Remaining processes in group $pgid:"
-	ps -g "$pgid" 2>/dev/null || echo "No processes found."
+	echo "Remaining processes:"
+	ps -p "$remaining_processes" 2>/dev/null || echo "No processes found."
 else
 	echo "Build successfully terminated."
 fi
+
+# Show any logged errors
+if [ -s "$LOG_FILE" ]; then
+	# Filter out non-error messages
+	if grep -E "error|Error|not found|failed" "$LOG_FILE" >/dev/null 2>&1; then
+		echo "Command errors logged:"
+		grep -E "error|Error|not found|failed" "$LOG_FILE"
+	fi
+fi
+
+# Clean up log file
+rm -f "$LOG_FILE"
