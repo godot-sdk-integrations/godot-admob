@@ -283,11 +283,11 @@ function build_plugin()
 
 
 function merge_string_array() {
-    local arr=("$@")  # Accept array as input
-    printf "%s" "${arr[0]}"
-    for ((i=1; i<${#arr[@]}; i++)); do
-        printf ", %s" "${arr[i]}"
-    done
+	local arr=("$@")	# Accept array as input
+	printf "%s" "${arr[0]}"
+	for ((i=1; i<${#arr[@]}; i++)); do
+		printf ", %s" "${arr[i]}"
+	done
 }
 
 
