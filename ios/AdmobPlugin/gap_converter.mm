@@ -261,7 +261,7 @@
 	
 	dictionary["width"] = adSize.size.width;
 	dictionary["height"] = adSize.size.height;
-	 
+	
 	return dictionary;
 }
 
@@ -347,30 +347,30 @@
 // UTIL
 
 + (NSString*) getAdmobDeviceID {
-    NSUUID* adid = [[ASIdentifierManager sharedManager] advertisingIdentifier];
-    const char *cStr = [adid.UUIDString UTF8String];
-    unsigned char digest[16];
-    CC_MD5(cStr, strlen(cStr), digest);
+	NSUUID* adid = [[ASIdentifierManager sharedManager] advertisingIdentifier];
+	const char *cStr = [adid.UUIDString UTF8String];
+	unsigned char digest[CC_SHA256_DIGEST_LENGTH];
+	CC_SHA256(cStr, strlen(cStr), digest);
 
-    NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+	NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
 
-    for (int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
-        [output appendFormat:@"%02x", digest[i]];
+	for (int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
+		[output appendFormat:@"%02x", digest[i]];
 
-    return  output;
+	return output;
 }
 
 + (NSString *) convertTrackingStatusToString:(ATTrackingManagerAuthorizationStatus) status API_AVAILABLE(ios(14)) {
-    switch (status) {
-        case ATTrackingManagerAuthorizationStatusDenied:
-            return @"denied";
-        case ATTrackingManagerAuthorizationStatusAuthorized:
-            return @"authorized";
-        case ATTrackingManagerAuthorizationStatusRestricted:
-            return @"restricted";
-        case ATTrackingManagerAuthorizationStatusNotDetermined:
-            return @"not-determined";
-    }
+	switch (status) {
+		case ATTrackingManagerAuthorizationStatusDenied:
+			return @"denied";
+		case ATTrackingManagerAuthorizationStatusAuthorized:
+			return @"authorized";
+		case ATTrackingManagerAuthorizationStatusRestricted:
+			return @"restricted";
+		case ATTrackingManagerAuthorizationStatusNotDetermined:
+			return @"not-determined";
+	}
 }
 
 @end

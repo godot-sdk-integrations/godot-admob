@@ -54,7 +54,7 @@
 
 - (void) show {
 	if (self.gadAd) {
-		 [self.gadAd presentFromRootViewController:[AppDelegate viewController] userDidEarnRewardHandler:^{
+		 [self.gadAd presentFromRootViewController:[GDTAppDelegateService viewController] userDidEarnRewardHandler:^{
 			 GADAdReward* reward = self.gadAd.adReward;
 			 AdmobPlugin::get_singleton()->emit_signal(REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
 						[GAPConverter adRewardToGodotDictionary:reward]);

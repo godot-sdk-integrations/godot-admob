@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-import os
+#
+# © 2024-present https://github.com/cengiz-pz
+#
+
 import sys
 import subprocess
 
@@ -11,14 +14,44 @@ else:
 	def decode_utf8(x):
 		return codecs.utf_8_decode(x)[0]
 
-plugin_name="AdmobPlugin"
+# Manually parse config.properties
+configs = {}
+try:
+	with open('config/config.properties', 'r') as config_file:
+		for line in config_file:
+			# Skip comments and empty lines
+			line = line.strip()
+			if not line or line.startswith('#') or line.startswith('!'):
+				continue
+			# Split on the first '=' to handle values containing '='
+			key, value = line.split('=', 1)
+			configs[key.strip()] = value.strip()
+except FileNotFoundError:
+	print("Error: config/config.properties not found. Build cannot proceed without configuration.")
+	quit()
+
+# Extract configuration values
+min_ios_version = configs.get('platform_version')
+plugin_node_name = configs.get('plugin_node_name')
+valid_godot_versions = configs.get('valid_godot_versions', '').split(',')
+
+# Validate required configuration values
+if not min_ios_version:
+	print("Error: platform_version is missing in config.properties.")
+	quit()
+if not plugin_node_name:
+	print("Error: plugin_node_name is missing in config.properties.")
+	quit()
+if not valid_godot_versions or not any(valid_godot_versions):
+	print("Error: valid_godot_versions is missing or empty in config.properties.")
+	quit()
+
+plugin_name=f"{plugin_node_name}Plugin"
 
 opts = Variables([], ARGUMENTS)
 
 # Gets the standard flags CC, CCX, etc.
 env = DefaultEnvironment()
-
-valid_godot_versions = ['', '4.1', '4.2', '4.3', '4.4.1', '4.5']
 
 # Define our options
 opts.Add(EnumVariable('target', "Compilation target", 'debug', ['debug', 'release', "release_debug"]))
@@ -26,28 +59,28 @@ opts.Add(EnumVariable('arch', "Compilation Architecture", '', ['', 'arm64', 'x86
 opts.Add(BoolVariable('simulator', "Compilation platform", 'no'))
 opts.Add(BoolVariable('use_llvm', "Use the LLVM / Clang compiler", 'no'))
 opts.Add('target_name', 'Resulting file name.', '')
-opts.Add(PathVariable('target_path', 'The path where the lib is installed.', 'bin/lib/'))
+opts.Add(PathVariable('target_path', 'The path where the lib is installed.', 'build/lib/'))
 opts.Add(EnumVariable('version', 'Godot version to target', '', valid_godot_versions))
 
 # Updates the environment with the option variables.
 opts.Update(env)
 
-# Process some arguments
+# Process arguments
 if env['use_llvm']:
 	env['CC'] = 'clang'
 	env['CXX'] = 'clang++'
 
 if env['arch'] == '':
-	print("No valid arch selected.")
-	quit();
+	print("Error: No valid arch selected.")
+	quit()
 
 if env['version'] == '':
-	print("No valid Godot version selected.")
-	quit();
+	print("Error: No valid Godot version selected.")
+	quit()
 
 if env['target_name'] == '':
-	print("No valid target name.")
-	quit();
+	print("Error: No valid target name.")
+	quit()
 
 # For the reference:
 # - CCFLAGS are compilation flags shared between C and C++
@@ -64,46 +97,43 @@ architecture_directory = ''
 if env['simulator']:
 	architecture_directory = 'ios-arm64_x86_64-simulator'
 	sdk_name = 'iphonesimulator'
-	env.Append(CCFLAGS=['-mios-simulator-version-min=10.0'])
-	env.Append(LINKFLAGS=["-mios-simulator-version-min=10.0"])
+	env.Append(CCFLAGS=[f'-mios-simulator-version-min={min_ios_version}'])
+	env.Append(LINKFLAGS=[f"-mios-simulator-version-min={min_ios_version}"])
 else:
 	architecture_directory = 'ios-arm64'
 	sdk_name = 'iphoneos'
-	env.Append(CCFLAGS=['-miphoneos-version-min=10.0'])
-	env.Append(LINKFLAGS=["-miphoneos-version-min=10.0"])
+	env.Append(CCFLAGS=[f'-miphoneos-version-min={min_ios_version}'])
+	env.Append(LINKFLAGS=[f"-miphoneos-version-min={min_ios_version}"])
 
 try:
 	sdk_path = decode_utf8(subprocess.check_output(['xcrun', '--sdk', sdk_name, '--show-sdk-path']).strip())
 except (subprocess.CalledProcessError, OSError):
 	raise ValueError("Failed to find SDK path while running xcrun --sdk {} --show-sdk-path.".format(sdk_name))
 
-
 env.Append(FRAMEWORKPATH=[f'#Pods/Google-Mobile-Ads-SDK/Frameworks/GoogleMobileAdsFramework/GoogleMobileAds.xcframework/{architecture_directory}'])
 env.Append(FRAMEWORKPATH=[f'#Pods/GoogleUserMessagingPlatform/Frameworks/Release/UserMessagingPlatform.xcframework/{architecture_directory}'])
 
-
 env.Append(CCFLAGS=[
-	'-fobjc-arc', 
-	'-fmessage-length=0', '-fno-strict-aliasing', '-fdiagnostics-print-source-range-info', 
-	'-fdiagnostics-show-category=id', '-fdiagnostics-parseable-fixits', '-fpascal-strings', 
-	'-fblocks', '-fvisibility=hidden', '-MMD', '-MT', 'dependencies', '-fno-exceptions', 
-	'-Wno-ambiguous-macro', 
+	'-fobjc-arc',
+	'-fmessage-length=0', '-fno-strict-aliasing', '-fdiagnostics-print-source-range-info',
+	'-fdiagnostics-show-category=id', '-fdiagnostics-parseable-fixits', '-fpascal-strings',
+	'-fblocks', '-fvisibility=hidden', '-MMD', '-MT', 'dependencies', '-fno-exceptions',
+	'-Wno-ambiguous-macro',
 	'-Wall', '-Werror=return-type',
-	# '-Wextra',
 ])
 
 env.Append(CCFLAGS=['-arch', env['arch'], "-isysroot", "$IPHONESDK", "-stdlib=libc++", '-isysroot', sdk_path])
 env.Append(CCFLAGS=['-DPTRCALL_ENABLED'])
 env.Prepend(CXXFLAGS=[
-	'-DNEED_LONG_INT', '-DLIBYUV_DISABLE_NEON', 
+	'-DNEED_LONG_INT', '-DLIBYUV_DISABLE_NEON',
 	'-DIPHONE_ENABLED', '-DUNIX_ENABLED', '-DCOREAUDIO_ENABLED'
 ])
 env.Append(LINKFLAGS=["-arch", env['arch'], '-isysroot', sdk_path, '-F' + sdk_path])
 
 env.Append(CCFLAGS=["$IOS_SDK_PATH"])
 env.Prepend(CXXFLAGS=['-DIOS_ENABLED'])
+env.Prepend(CXXFLAGS=['-DAPPLE_EMBEDDED_ENABLED'])
 env.Prepend(CXXFLAGS=['-DVERSION_4_0'])
-
 
 if env['version'] in valid_godot_versions:
 	env.Prepend(CFLAGS=['-std=gnu11'])
@@ -111,27 +141,25 @@ if env['version'] in valid_godot_versions:
 
 	if env['target'] == 'debug':
 		env.Prepend(CXXFLAGS=[
-			'-gdwarf-2', '-O0', 
-			'-DDEBUG_MEMORY_ALLOC', '-DDISABLE_FORCED_INLINE', 
-			'-D_DEBUG', '-DDEBUG=1', '-DDEBUG_ENABLED', 
+			'-gdwarf-2', '-O0',
+			'-DDEBUG_MEMORY_ALLOC', '-DDISABLE_FORCED_INLINE',
+			'-D_DEBUG', '-DDEBUG=1', '-DDEBUG_ENABLED',
 		])
 	elif env['target'] == 'release_debug':
 		env.Prepend(CXXFLAGS=[
 			'-O2', '-ftree-vectorize',
 			'-DNDEBUG', '-DNS_BLOCK_ASSERTIONS=1', '-DDEBUG_ENABLED',
 		])
-
 		env.Prepend(CXXFLAGS=['-fomit-frame-pointer'])
 	else:
 		env.Prepend(CXXFLAGS=[
 			'-O2', '-ftree-vectorize',
 			'-DNDEBUG', '-DNS_BLOCK_ASSERTIONS=1',
 		])
-
 		env.Prepend(CXXFLAGS=['-fomit-frame-pointer'])
 else:
-	print("No valid Godot version to set flags for.")
-	quit();
+	print("Error: No valid Godot version to set flags for.")
+	quit()
 
 # Adding header files
 env.Append(CPPPATH=[
@@ -139,10 +167,11 @@ env.Append(CPPPATH=[
 	f'{plugin_name}/adformat',
 	f'{plugin_name}/model',
 	'godot',
-	'godot/platform/ios'
+	'godot/platform/ios',
+	'godot/drivers/apple_embedded'
 ])
 
-# tweak this if you want to use different folders, or more folders, to store your source code in.
+# Tweak this if you want to use different folders, or more folders, to store your source code in.
 sources = Glob(f'{plugin_name}/*.cpp')
 sources.append(Glob(f'{plugin_name}/*.mm'))
 sources.append(Glob(f'{plugin_name}/*.m'))
@@ -152,7 +181,7 @@ sources.append(Glob(f'{plugin_name}/**/*.m'))
 
 # lib<plugin>.<arch>-<simulator|iphone>.<release|debug|release_debug>.a
 library_platform = env["arch"] + "-" + ("simulator" if env["simulator"] else "ios")
-library_name = env['target_name'] + "." + library_platform + "." + env["target"] + ".a"
+library_name = env['target_name'] + "." + library_platform + "." + env['target'] + ".a"
 library = env.StaticLibrary(target=env['target_path'] + library_name, source=sources)
 
 Default(library)

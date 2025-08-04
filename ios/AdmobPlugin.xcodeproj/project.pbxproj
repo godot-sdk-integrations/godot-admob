@@ -312,6 +312,7 @@
 					"$(SRCROOT)/godot/modules",
 					"$(SRCROOT)/godot/scene",
 					"$(SRCROOT)/godot/drivers",
+					"$(SRCROOT)/godot/drivers/apple_embedded",
 					"$(SRCROOT)/godot/trirdparty",
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -357,6 +358,7 @@
 					"$(SRCROOT)/godot/modules",
 					"$(SRCROOT)/godot/scene",
 					"$(SRCROOT)/godot/drivers",
+					"$(SRCROOT)/godot/drivers/apple_embedded",
 					"$(SRCROOT)/godot/trirdparty",
 				);
 				LIBRARY_SEARCH_PATHS = (

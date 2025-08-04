@@ -1,0 +1,19 @@
+#
+# © 2024-present https://github.com/cengiz-pz
+#
+
+[versions]
+compileSdk = "35"
+minSdk = "24"
+buildTools = "35.0.0"
+appcompat = "1.7.1"
+playads = "24.5.0"
+
+[libraries]
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playads" }
+
+[plugins]
+android-library = { id = "com.android.library", version = "8.6.1" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version = "2.2.0" }
+undercouch-download = { id = "de.undercouch.download", version = "5.6.0" }

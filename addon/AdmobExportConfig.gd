@@ -31,7 +31,7 @@ func export_config_file_exists() -> bool:
 
 
 func load_export_config_from_file() -> Error:
-	push_warning("Loading export config from file!")
+	Admob.log_info("Loading export config from file!")
 
 	var __result = Error.OK
 
@@ -47,10 +47,10 @@ func load_export_config_from_file() -> Error:
 
 		if is_real == null or debug_application_id == null or real_application_id == null:
 			__result == Error.ERR_INVALID_DATA
-			push_error("Invalid export config file %s!" % CONFIG_FILE_PATH)
+			Admob.log_error("Invalid export config file %s!" % CONFIG_FILE_PATH)
 	else:
 		__result = Error.ERR_CANT_OPEN
-		push_error("Failed to open export config file %s!" % CONFIG_FILE_PATH)
+		Admob.log_error("Failed to open export config file %s!" % CONFIG_FILE_PATH)
 
 	if __result == OK:
 		print_loaded_config()
@@ -59,7 +59,7 @@ func load_export_config_from_file() -> Error:
 
 
 func load_export_config_from_node() -> Error:
-	push_warning("Loading export config from node!")
+	Admob.log_info("Loading export config from node!")
 
 	var __result = OK
 
@@ -77,18 +77,18 @@ func load_export_config_from_node() -> Error:
 
 		print_loaded_config()
 	else:
-		push_error("%s failed to find %s node!" % [PLUGIN_NAME, PLUGIN_NODE_TYPE_NAME])
+		Admob.log_error("%s failed to find %s node!" % [PLUGIN_NAME, PLUGIN_NODE_TYPE_NAME])
 
 	return __result
 
 
 func print_loaded_config() -> void:
-	push_warning("Loaded export configuration settings:")
-	push_warning("... is_real: %s" % ("true" if is_real else "false"))
-	push_warning("... debug_application_id: %s" % debug_application_id)
-	push_warning("... real_application_id: %s" % real_application_id)
-	push_warning("... att_enabled: %s" % ("true" if att_enabled else "false"))
-	push_warning("... att_text: %s" % att_text)
+	Admob.log_info("Loaded export configuration settings:")
+	Admob.log_info("... is_real: %s" % ("true" if is_real else "false"))
+	Admob.log_info("... debug_application_id: %s" % debug_application_id)
+	Admob.log_info("... real_application_id: %s" % real_application_id)
+	Admob.log_info("... att_enabled: %s" % ("true" if att_enabled else "false"))
+	Admob.log_info("... att_text: %s" % att_text)
 
 
 func get_plugin_node(a_node: Node) -> Admob:
@@ -103,4 +103,4 @@ func get_plugin_node(a_node: Node) -> Admob:
 				__result = __child_result
 				break
 
-	return __result 
+	return __result

@@ -13,7 +13,7 @@ config_version=5
 config/name="Admob Demo"
 run/main_scene="res://Main.tscn"
 config/features=PackedStringArray("4.5", "GL Compatibility")
-config/icon="res://assets/admob.png"
+config/icon="res://assets/admob-android.png"
 
 [debug]
 

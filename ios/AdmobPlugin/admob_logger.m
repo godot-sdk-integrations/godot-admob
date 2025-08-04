@@ -6,5 +6,5 @@ os_log_t admob_log;
 
 __attribute__((constructor)) // Automatically runs at program startup
 static void initialize_admob_log() {
-    admob_log = os_log_create("org.godotengine.plugin.ios.admob", "AdmobPlugin");
+	admob_log = os_log_create("org.godotengine.plugin.ios.admob", "AdmobPlugin");
 }

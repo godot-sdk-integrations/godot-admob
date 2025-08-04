@@ -1,3 +1,7 @@
+#
+# © 2024-present https://github.com/cengiz-pz
+#
+
 # Built application files
 *.apk
 *.aar
@@ -19,7 +23,7 @@ out/
 
 # Gradle files
 .gradle/
-gradle/
+gradle/**/*.jar
 build/
 
 # Local configuration file (sdk path, etc)

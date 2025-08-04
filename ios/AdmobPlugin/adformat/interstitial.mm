@@ -4,7 +4,7 @@
 
 #import "interstitial.h"
 
-#import "os_ios.h"
+#import "os_apple_embedded.h"
 #import "admob_plugin_implementation.h"
 #import "admob_logger.h"
 
@@ -49,7 +49,7 @@
 
 - (void) show {
 	if (self.interstitial) {
-		[self.interstitial presentFromRootViewController:[AppDelegate viewController]];
+		[self.interstitial presentFromRootViewController:[GDTAppDelegateService viewController]];
 	}
 	else {
 		os_log_debug(admob_log, "InterstitialAd show: ad not set");
@@ -78,7 +78,7 @@
 	
 	if (AdFormatBase.pauseOnBackground) {
 		os_log_debug(admob_log, "InterstitialAd pauseOnBackground is true");
-		OS_IOS::get_singleton()->on_focus_out();
+		OS_AppleEmbedded::get_singleton()->on_focus_out();
 	}
 	else {
 		os_log_debug(admob_log, "InterstitialAd pauseOnBackground is false");
@@ -88,7 +88,7 @@
 - (void) adDidDismissFullScreenContent:(nonnull id<GADFullScreenPresentingAd>) ad {
 	os_log_debug(admob_log, "InterstitialAd adDidDismissFullScreenContent");
 	AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, [GAPConverter nsStringToGodotString:self.adId]);
-	OS_IOS::get_singleton()->on_focus_in();
+	OS_AppleEmbedded::get_singleton()->on_focus_in();
 }
 
 @end

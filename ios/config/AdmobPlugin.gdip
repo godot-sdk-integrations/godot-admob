@@ -14,15 +14,15 @@ use_swift_runtime=true
 
 [dependencies]
 
-linked=["res://ios/framework/GoogleMobileAds.xcframework","res://ios/framework/UserMessagingPlatform.xcframework"]
+linked=[]
 embedded=[]
-system=["Foundation.framework","AppTrackingTransparency.framework"]
+system=[]
 
 capabilities=[]
 
 files=[]
 
-linker_flags=["-ObjC","-Wl,-weak-lswiftCore,-weak-lswiftObjectiveC,-weak-lswift_Concurrency"]
+linker_flags=[]
 
 
 [plist]
