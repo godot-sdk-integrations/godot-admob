@@ -13,20 +13,22 @@
 #import "core/config/engine.h"
 
 
-AdmobPlugin *plugin;
+AdmobPlugin *admob_plugin;
 
 void admob_plugin_init() {
-	os_log_debug(admob_log, "init plugin");
+	os_log_debug(admob_log, "AdmobPlugin: Initializing plugin at timestamp: %f", [[NSDate date] timeIntervalSince1970]);
 
-	plugin = memnew(AdmobPlugin);
-	Engine::get_singleton()->add_singleton(Engine::Singleton("AdmobPlugin", plugin));
+	admob_plugin = memnew(AdmobPlugin);
+	Engine::get_singleton()->add_singleton(Engine::Singleton("AdmobPlugin", admob_plugin));
+	os_log_debug(admob_log, "AdmobPlugin: Singleton registered");
 }
 
 void admob_plugin_deinit() {
-	os_log_debug(admob_log, "deinit plugin");
+	os_log_debug(admob_log, "AdmobPlugin: Deinitializing plugin");
 	admob_log = NULL; // Prevent accidental reuse
 
-	if (plugin) {
-		memdelete(plugin);
+	if (admob_plugin) {
+		memdelete(admob_plugin);
+		admob_plugin = nullptr;
 	}
 }
