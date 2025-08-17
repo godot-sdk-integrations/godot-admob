@@ -15,6 +15,10 @@ extends Node
 @onready var rewarded_interstitial_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialButton
 @onready var _label: RichTextLabel = $CanvasLayer/CenterContainer/VBoxContainer/RichTextLabel as RichTextLabel
 @onready var _geography_option_button: OptionButton = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/GeographyHBoxContainer/OptionButton
+@onready var _android_texture_rect: TextureRect = $CanvasLayer/CenterContainer/VBoxContainer/TextureHBoxContainer/AndroidTextureRect as TextureRect
+@onready var _ios_texture_rect: TextureRect = $CanvasLayer/CenterContainer/VBoxContainer/TextureHBoxContainer/iOSTextureRect as TextureRect
+
+var _active_texture_rect: TextureRect
 
 var _is_banner_loaded: bool = false
 var _is_interstitial_loaded: bool = false
@@ -23,6 +27,13 @@ var _is_rewarded_interstitial_loaded: bool = false
 
 
 func _ready() -> void:
+	if OS.has_feature("ios"):
+		_android_texture_rect.hide()
+		_active_texture_rect = _ios_texture_rect
+	else:
+		_ios_texture_rect.hide()
+		_active_texture_rect = _android_texture_rect
+
 	_process_consent_status(admob.get_consent_status())
 
 	var __index: int = 0
