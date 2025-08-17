@@ -5,31 +5,48 @@
 source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
-# Manually parse config.properties
+# Get the directory of the Podfile
+podfile_dir = File.dirname(__FILE__)
+
+# Construct paths to both config files relative to the Podfile
+ios_config_path = File.join(podfile_dir, 'config', 'config.properties')
+common_config_path = File.join(podfile_dir, '..', 'common', 'config.properties')
+
+# Initialize properties map
 properties = {}
-begin
-	File.foreach('config/config.properties') do |line|
-	# Skip comments and empty lines
-	line = line.strip
-	next if line.empty? || line.start_with?('#', '!')
-	# Split on the first '=' to handle values containing '='
-	key, value = line.split('=', 2).map(&:strip)
-	properties[key] = value if key && value
-end
-rescue Errno::ENOENT
-	puts "Error: config/config.properties not found. Podfile cannot proceed without configuration."
-	exit 1
+
+# Helper function to read properties from a file
+def read_properties(file_path, properties)
+	begin
+		File.foreach(file_path) do |line|
+			# Skip comments and empty lines
+			line = line.strip
+			next if line.empty? || line.start_with?('#', '!')
+			# Split on the first '=' to handle values containing '='
+			key, value = line.split('=', 2).map(&:strip)
+			properties[key] = value if key && value
+		end
+	rescue Errno::ENOENT
+		puts "Error: #{file_path} not found. Podfile cannot proceed without configuration."
+		exit 1
+	end
 end
 
-plugin_name = "#{properties['plugin_node_name']}Plugin"
+# Read common config first
+read_properties(common_config_path, properties)
 
-project "#{plugin_name}.xcodeproj"
-workspace "./#{plugin_name}.xcodeproj/project.xcworkspace"
+# Read project-specific config second (overrides common config)
+read_properties(ios_config_path, properties)
+
+plugin_project_name = "#{properties['ios_project_name']}"
+
+project "#{plugin_project_name}.xcodeproj"
+workspace "./#{plugin_project_name}.xcodeproj/project.xcworkspace"
 
 # Extract dependencies (assuming a comma-separated list of name:version pairs)
 deps = properties['dependencies']&.split(',')&.map(&:strip) || []
 
-target "#{plugin_name}" do
+target "#{plugin_project_name}" do
 	platform :ios, properties[:platform_version] || '14.3'
 
 	# Install each dependency with its version

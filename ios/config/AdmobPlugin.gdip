@@ -3,17 +3,15 @@
 ;
 
 [config]
+name="@pluginName@"
+binary="@pluginName@.a"
 
-name="AdmobPlugin"
-binary="AdmobPlugin.a"
+initialization="@iosInitializationMethod@"
+deinitialization="@iosDeinitializationMethod@"
 
-initialization="admob_plugin_init"
-deinitialization="admob_plugin_deinit"
 use_swift_runtime=true
 
-
 [dependencies]
-
 linked=[]
 embedded=[]
 system=[]
@@ -23,6 +21,5 @@ capabilities=[]
 files=[]
 
 linker_flags=[]
-
 
 [plist]

@@ -6,10 +6,8 @@
 set -e
 trap "sleep 1; echo" EXIT
 
-DEST_DIRECTORY="./bin/release"
-FRAMEWORKDIR="./bin/framework"
-LIB_DIRECTORY="./bin/lib"
-CONFIG_DIRECTORY="./config"
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+ROOT_DIR=$(realpath $SCRIPT_DIR/..)
 
 do_clean=false
 do_build_android=false
@@ -20,25 +18,25 @@ do_create_archive=false
 function display_help()
 {
 	echo
-	./script/echocolor.sh -y "The " -Y "$0 script" -y " builds the plugin and creates a zip file containing all"
-	./script/echocolor.sh -y "libraries and configuration."
+	$SCRIPT_DIR/echocolor.sh -y "The " -Y "$0 script" -y " builds the plugin and creates a zip file containing all"
+	$SCRIPT_DIR/echocolor.sh -y "libraries and configuration."
 	echo
-	./script/echocolor.sh -Y "Syntax:"
-	./script/echocolor.sh -y "	$0 [-a|c|h|i|r|z]"
+	$SCRIPT_DIR/echocolor.sh -Y "Syntax:"
+	$SCRIPT_DIR/echocolor.sh -y "	$0 [-a|c|h|i|r|z]"
 	echo
-	./script/echocolor.sh -Y "Options:"
-	./script/echocolor.sh -y "	a	build plugin for the Android platform"
-	./script/echocolor.sh -y "	c	remove any existing plugin build"
-	./script/echocolor.sh -y "	h	display usage information"
-	./script/echocolor.sh -y "	r	build release variant"
-	./script/echocolor.sh -y "	z	create zip archive"
+	$SCRIPT_DIR/echocolor.sh -Y "Options:"
+	$SCRIPT_DIR/echocolor.sh -y "	a	build plugin for the Android platform"
+	$SCRIPT_DIR/echocolor.sh -y "	c	remove any existing plugin build"
+	$SCRIPT_DIR/echocolor.sh -y "	h	display usage information"
+	$SCRIPT_DIR/echocolor.sh -y "	r	build release variant"
+	$SCRIPT_DIR/echocolor.sh -y "	z	create zip archive"
 	echo
-	./script/echocolor.sh -Y "Examples:"
-	./script/echocolor.sh -y "	* clean existing build, do a release build for Android, and create archive"
-	./script/echocolor.sh -y "		$> $0 -carz"
+	$SCRIPT_DIR/echocolor.sh -Y "Examples:"
+	$SCRIPT_DIR/echocolor.sh -y "	* clean existing build, do a release build for Android, and create archive"
+	$SCRIPT_DIR/echocolor.sh -y "		$> $0 -carz"
 	echo
-	./script/echocolor.sh -y "	* clean existing build, do a debug build for Android"
-	./script/echocolor.sh -y "		$> $0 -ca"
+	$SCRIPT_DIR/echocolor.sh -y "	* clean existing build, do a debug build for Android"
+	$SCRIPT_DIR/echocolor.sh -y "		$> $0 -ca"
 	echo
 }
 
@@ -46,16 +44,16 @@ function display_help()
 function display_status()
 {
 	echo
-	./script/echocolor.sh -c "********************************************************************************"
-	./script/echocolor.sh -c "* $1"
-	./script/echocolor.sh -c "********************************************************************************"
+	$SCRIPT_DIR/echocolor.sh -c "********************************************************************************"
+	$SCRIPT_DIR/echocolor.sh -c "* $1"
+	$SCRIPT_DIR/echocolor.sh -c "********************************************************************************"
 	echo
 }
 
 
 function display_error()
 {
-	./script/echocolor.sh -r "$1"
+	$SCRIPT_DIR/echocolor.sh -r "$1"
 }
 
 
@@ -92,7 +90,7 @@ if [[ "$do_clean" == true ]]
 then
 	display_status "Cleaning build"
 	pushd android
-	./gradlew clean
+	$ROOT_DIR/android/gradlew clean
 	popd
 fi
 
@@ -100,7 +98,7 @@ if [[ "$do_build_android" == true ]]
 then
 	display_status "Building android"
 	pushd android
-	./gradlew $gradle_build_task
+	$ROOT_DIR/android/gradlew $gradle_build_task
 	popd
 fi
 
@@ -108,6 +106,6 @@ if [[ "$do_create_archive" == true ]]
 then
 	display_status "Creating archive"
 	pushd android
-	./gradlew packageDistribution
+	$ROOT_DIR/android/gradlew packageDistribution
 	popd
 fi

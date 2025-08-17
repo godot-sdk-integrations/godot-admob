@@ -2,8 +2,35 @@
 # © 2024-present https://github.com/cengiz-pz
 #
 
-demo/.godot
 demo/addons
 demo/android
 demo/ios
-android/.idea
+build/
+export.cfg
+
+# General
+*.lock
+*.log
+
+# Android
+.gradle/
+*.jar
+*.aar
+local.properties
+
+# Android Studio/IntelliJ
+.idea/
+
+# iOS
+*.d
+*.o
+*.dblite
+Pods/
+ios/godot/
+
+# Godot 4+ specific ignores
+demo/.godot/*
+!demo/.godot/uid_cache.bin
+
+# Godot-specific ignores
+.import/

@@ -9,7 +9,6 @@ trap "sleep 1; echo" EXIT
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 ROOT_DIR=$(realpath $SCRIPT_DIR/../..)
 
-plugin_name="SharePlugin"
 target_directory=""
 zip_file_path=""
 
