@@ -47,6 +47,12 @@ signal tracking_authorization_denied
 
 const PLUGIN_SINGLETON_NAME: String = "@pluginName@"
 
+# See https://developers.google.com/admob/android/test-ads#demo_ad_units
+const DEBUG_BANNER_ID = "ca-app-pub-3940256099942544/6300978111"
+const DEBUG_INTERSTITIAL_ID = "ca-app-pub-3940256099942544/1033173712"
+const DEBUG_REWARDED_ID = "ca-app-pub-3940256099942544/5224354917"
+const DEBUG_REWARDED_INTERSTITIAL_ID = "ca-app-pub-3940256099942544/5354046379"
+
 @export_category("General")
 @export var is_real: bool: set = set_is_real
 @export var max_ad_content_rating: AdmobConfig.ContentRating = AdmobConfig.ContentRating.G: set = set_max_ad_content_rating
@@ -69,19 +75,11 @@ const PLUGIN_SINGLETON_NAME: String = "@pluginName@"
 @export var banner_size: LoadAdRequest.AdSize = LoadAdRequest.AdSize.BANNER: set = set_banner_size
 
 @export_category("Ad Unit IDs")
-@export_group("Debug IDs", "debug_")
-@export var debug_application_id: String
-@export var debug_banner_id: String
-@export var debug_interstitial_id: String
-@export var debug_rewarded_id: String
-@export var debug_rewarded_interstitial_id: String
-
-@export_group("Real IDs", "real_")
-@export var real_application_id: String
-@export var real_banner_id: String
-@export var real_interstitial_id: String
-@export var real_rewarded_id: String
-@export var real_rewarded_interstitial_id: String
+@export var application_id: String
+@export var banner_id: String
+@export var interstitial_id: String
+@export var rewarded_id: String
+@export var rewarded_interstitial_id: String
 
 @export_group("Cache")
 @export_range(1,100) var max_banner_ad_cache: int = 1: set = set_max_banner_ad_cache
@@ -95,10 +93,10 @@ const PLUGIN_SINGLETON_NAME: String = "@pluginName@"
 @export var remove_rewarded_ads_after_scene: bool = true
 @export var remove_rewarded_interstitial_ads_after_scene: bool = true
 
-@onready var _banner_id: String = real_banner_id if is_real else debug_banner_id
-@onready var _interstitial_id: String = real_interstitial_id if is_real else debug_interstitial_id
-@onready var _rewarded_id: String = real_rewarded_id if is_real else debug_rewarded_id
-@onready var _rewarded_interstitial_id: String = real_rewarded_interstitial_id if is_real else debug_rewarded_interstitial_id
+@onready var _banner_id: String = banner_id if is_real else DEBUG_BANNER_ID
+@onready var _interstitial_id: String = interstitial_id if is_real else DEBUG_INTERSTITIAL_ID
+@onready var _rewarded_id: String = rewarded_id if is_real else DEBUG_REWARDED_ID
+@onready var _rewarded_interstitial_id: String = rewarded_interstitial_id if is_real else DEBUG_REWARDED_INTERSTITIAL_ID
 
 var _plugin_singleton: Object
 
