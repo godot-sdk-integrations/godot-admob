@@ -34,8 +34,6 @@ func _ready() -> void:
 		_ios_texture_rect.hide()
 		_active_texture_rect = _android_texture_rect
 
-	_process_consent_status(admob.get_consent_status())
-
 	var __index: int = 0
 	for __item: String in LoadAdRequest.AdPosition.keys():
 		banner_position_option_button.add_item(__item)
@@ -50,8 +48,14 @@ func _ready() -> void:
 			banner_size_option_button.select(__index)
 		__index += 1
 
+	admob.initialize()
+
 
 func _on_admob_initialization_completed(_status_data: InitializationStatus) -> void:
+	_process_consent_status(admob.get_consent_status())
+
+
+func _load_ads() -> void:
 	admob.load_banner_ad()
 	admob.load_interstitial_ad()
 	admob.load_rewarded_ad()
@@ -208,8 +212,8 @@ func _on_admob_consent_info_update_failed(a_error_data: FormError) -> void:
 	_print_to_screen("consent info failed to update: %s" % a_error_data.get_message())
 
 
-func _process_consent_status(a_consent_status: int) -> void:
-	_print_to_screen("_process_consent_status(): consent status = %d" % a_consent_status)
+func _process_consent_status(a_consent_status: String) -> void:
+	_print_to_screen("_process_consent_status(): consent status = %s" % a_consent_status)
 	match a_consent_status:
 		ConsentInformation.ConsentStatus.UNKNOWN:
 			_print_to_screen("consent status is unknown")
@@ -218,13 +222,13 @@ func _process_consent_status(a_consent_status: int) -> void:
 				.add_test_device_hashed_id(OS.get_unique_id()))
 		ConsentInformation.ConsentStatus.NOT_REQUIRED:
 			_print_to_screen("consent is not required")
-			admob.initialize()
+			_load_ads()
 		ConsentInformation.ConsentStatus.REQUIRED:
 			_print_to_screen("consent is required")
 			admob.load_consent_form()
 		ConsentInformation.ConsentStatus.OBTAINED:
 			_print_to_screen("consent has been obtained")
-			admob.initialize()
+			_load_ads()
 
 
 func _on_admob_consent_form_loaded() -> void:
@@ -238,6 +242,7 @@ func _on_admob_consent_form_failed_to_load(a_error_data: FormError) -> void:
 
 func _on_admob_consent_form_dismissed(a_error_data: FormError) -> void:
 	_print_to_screen("consent form has been dismissed %s" % a_error_data.get_message())
+	_process_consent_status(admob.get_consent_status())
 
 
 func _on_update_consent_info_button_pressed() -> void:

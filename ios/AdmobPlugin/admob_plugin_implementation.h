@@ -114,7 +114,7 @@ public:
 
 	Error load_consent_form();
 	Error show_consent_form();
-	int get_consent_status();
+	String get_consent_status();
 	bool is_consent_form_available();
 	void update_consent_info(Dictionary consentRequestParameters);
 	void reset_consent_info();

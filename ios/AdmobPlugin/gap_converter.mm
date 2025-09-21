@@ -164,24 +164,53 @@
 	return parameters;
 }
 
-+ (UMPDebugSettings*) godotDictionaryToUMPDebugSettings:(Dictionary) godotDictionary {
++ (UMPDebugSettings *)godotDictionaryToUMPDebugSettings:(Dictionary)godotDictionary {
 	UMPDebugSettings *debugSettings = [[UMPDebugSettings alloc] init];
-	
-	int debugGeographyValue = godotDictionary["debug_geography"];
-	debugSettings.geography = (UMPDebugGeography) debugGeographyValue;
 
-	Dictionary testDeviceHashedIds = godotDictionary["test_device_hashed_ids"];
-	Array testDeviceIds = testDeviceHashedIds.values();
-
-	NSMutableArray<NSString *> *convertedArray = [NSMutableArray array];
-	for (int i = 0; i < testDeviceIds.size(); i++) {
-		String item = testDeviceIds[i];
-		[convertedArray addObject:[NSString stringWithUTF8String:item.utf8().get_data()]];
+	// Handle debug geography
+	if (godotDictionary.has("debug_geography")) {
+		int debugGeographyValue = (int)godotDictionary["debug_geography"];
+		NSLog(@"Debug geography value from dictionary: %d", debugGeographyValue);
+		switch (debugGeographyValue) {
+			case 0: // DEBUG_GEOGRAPHY_DISABLED
+				debugSettings.geography = UMPDebugGeographyDisabled;
+				break;
+			case 1: // DEBUG_GEOGRAPHY_EEA
+				debugSettings.geography = UMPDebugGeographyEEA;
+				break;
+			case 2: // DEBUG_GEOGRAPHY_NOT_EEA
+				debugSettings.geography = UMPDebugGeographyNotEEA;
+				break;
+			case 3: // DEBUG_GEOGRAPHY_REGULATED_US_STATE
+			case 4: // DEBUG_GEOGRAPHY_OTHER
+			default:
+				NSLog(@"Unsupported debug geography value: %d, defaulting to Disabled", debugGeographyValue);
+				debugSettings.geography = UMPDebugGeographyDisabled;
+				break;
+		}
+	} else {
+		NSLog(@"No debug_geography key found in dictionary, defaulting to Disabled");
+		debugSettings.geography = UMPDebugGeographyDisabled;
 	}
 
-	[convertedArray addObject:[GAPConverter getAdmobDeviceID]];
-	
-	debugSettings.testDeviceIdentifiers = convertedArray;
+	// Handle test device hashed IDs
+	if (godotDictionary.has("test_device_hashed_ids")) {
+		Array testDeviceIds = godotDictionary["test_device_hashed_ids"];
+		NSMutableArray<NSString *> *convertedArray = [NSMutableArray array];
+		for (int i = 0; i < testDeviceIds.size(); i++) {
+			String item = testDeviceIds[i];
+			NSString *deviceId = [NSString stringWithUTF8String:item.utf8().get_data()];
+			[convertedArray addObject:deviceId];
+			NSLog(@"Added test device ID: %@", deviceId);
+		}
+		[convertedArray addObject:[GAPConverter getAdmobDeviceID]];
+		debugSettings.testDeviceIdentifiers = convertedArray;
+	} else {
+		NSLog(@"No test_device_hashed_ids key found in dictionary");
+		NSMutableArray<NSString *> *convertedArray = [NSMutableArray array];
+		[convertedArray addObject:[GAPConverter getAdmobDeviceID]];
+		debugSettings.testDeviceIdentifiers = convertedArray;
+	}
 
 	return debugSettings;
 }

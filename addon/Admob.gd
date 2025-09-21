@@ -522,12 +522,15 @@ func show_consent_form() -> void:
 		_plugin_singleton.show_consent_form()
 
 
-func get_consent_status() -> int:
+func get_consent_status() -> String:
+	var __result: String
+
 	if _plugin_singleton == null:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
-		return _plugin_singleton.get_consent_status()
-	return 0; #TODO:
+		__result = _plugin_singleton.get_consent_status()
+
+	return __result
 
 
 func is_consent_form_available() -> bool:
