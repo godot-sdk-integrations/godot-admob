@@ -289,6 +289,16 @@ class IosExportPlugin extends EditorExportPlugin:
 	</array>
 """
 
+	const NS_APP_TRANSPORT_SECURITY: String = """
+<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSAllowsArbitraryLoads</key>
+    <true/>
+    <key>NSAllowsArbitraryLoadsInWebContent</key>
+    <true/>
+</dict>
+"""
+
 	var _plugin_name = PLUGIN_NAME
 
 
@@ -316,6 +326,8 @@ class IosExportPlugin extends EditorExportPlugin:
 
 		add_ios_plist_content("\t<key>SKAdNetworkItems</key>")
 		add_ios_plist_content("%s" % SK_AD_NETWORK_ITEMS)
+
+		add_ios_plist_content(NS_APP_TRANSPORT_SECURITY)
 
 		for __framework in IOS_FRAMEWORKS:
 			add_ios_framework(__framework)

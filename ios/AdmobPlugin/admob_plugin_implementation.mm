@@ -501,9 +501,9 @@ Error AdmobPlugin::load_consent_form() {
 
 	[UMPConsentForm loadWithCompletionHandler:^(UMPConsentForm * _Nullable umpConsentForm, NSError* _Nullable error) {
 		if (error) {
+			os_log_error(admob_log, "AdmobPlugin load_consent_form: Error loading UMPConsentForm. Error code: %ld", error.code);
 			Dictionary errorDictionary = [GAPConverter nsFormErrorToGodotDictionary:error];
 			emit_signal(CONSENT_FORM_FAILED_TO_LOAD_SIGNAL, errorDictionary);
-			return;
 		}
 		else {
 			consentForm = umpConsentForm;
@@ -517,7 +517,11 @@ Error AdmobPlugin::load_consent_form() {
 Error AdmobPlugin::show_consent_form() {
 	if (consentForm) {
 		os_log_debug(admob_log, "AdmobPlugin show_consent_form");
-		[consentForm presentFromViewController:GDTAppDelegateService.viewController completionHandler:^(NSError* _Nullable error) {
+
+		UMPOrientationWrapper *wrapper = [UMPOrientationWrapper new];
+		wrapper.modalPresentationStyle = UIModalPresentationFullScreen;
+		wrapper.wrappedForm = consentForm;
+		wrapper.presentationCompletion = ^(NSError * _Nullable error) {
 			Dictionary formErrorDictionary;
 			if (error) {
 				os_log_error(admob_log, "AdmobPlugin show_consent_form: Error presenting UMPConsentForm");
@@ -526,7 +530,12 @@ Error AdmobPlugin::show_consent_form() {
 			os_log_debug(admob_log, "AdmobPlugin show_consent_form: completion handler");
 
 			AdmobPlugin::get_singleton()->emit_signal(CONSENT_FORM_DISMISSED_SIGNAL, formErrorDictionary);
-		}];
+		};
+
+		dispatch_async(dispatch_get_main_queue(), ^{
+			UIViewController *rootVC = GDTAppDelegateService.viewController;
+			[rootVC presentViewController:wrapper animated:YES completion:nil];
+		});
 	}
 	else {
 		os_log_error(admob_log, "AdmobPlugin show_consent_form: ERROR: consent form not found!");
