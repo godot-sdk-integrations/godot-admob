@@ -16,6 +16,7 @@ export.cfg
 # Android
 .gradle/
 *.jar
+!android/gradle/wrapper/gradle-wrapper.jar
 *.aar
 local.properties
 
