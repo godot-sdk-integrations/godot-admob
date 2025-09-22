@@ -4,15 +4,11 @@
 
 package org.godotengine.plugin.android.admob;
 
-import static com.google.android.gms.ads.RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -21,13 +17,11 @@ import androidx.annotation.NonNull;
 import androidx.collection.ArraySet;
 
 import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
-import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.initialization.AdapterStatus;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
@@ -51,7 +45,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -726,9 +719,15 @@ public class AdmobPlugin extends GodotPlugin {
 	}
 
 	@UsedByGodot
-	public int get_consent_status() {
-		Log.d(LOG_TAG, "get_consent_status()");
-		return UserMessagingPlatform.getConsentInformation(activity).getConsentStatus();
+	public String get_consent_status() {
+		int consentStatus = UserMessagingPlatform.getConsentInformation(activity).getConsentStatus();
+		Log.d(LOG_TAG, String.format("get_consent_status(): %s", consentStatus));
+		return switch (consentStatus) {
+			case ConsentInformation.ConsentStatus.NOT_REQUIRED -> "NOT_REQUIRED";
+			case ConsentInformation.ConsentStatus.REQUIRED -> "REQUIRED";
+			case ConsentInformation.ConsentStatus.OBTAINED -> "OBTAINED";
+			default -> "UNKNOWN";
+		};
 	}
 
 	@UsedByGodot
