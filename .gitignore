@@ -6,6 +6,7 @@ demo/addons
 demo/android
 demo/ios
 build/
+release/
 export.cfg
 
 # General

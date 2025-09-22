@@ -373,10 +373,10 @@ function create_zip_archive()
 {
 	local zip_file_name="$PLUGIN_NAME-iOS-v$PLUGIN_VERSION.zip"
 
-	if [[ -e "$BUILD_DIR/release/$zip_file_name" ]]
+	if [[ -e "$DEST_DIR/$zip_file_name" ]]
 	then
 		display_warning "deleting existing $zip_file_name file..."
-		rm $BUILD_DIR/release/$zip_file_name
+		rm $DEST_DIR/$zip_file_name
 	fi
 
 	local tmp_directory=$(mktemp -d)
