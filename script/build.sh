@@ -68,12 +68,25 @@ function echo_yellow()
 }
 
 
+function echo_green()
+{
+	$ROOT_DIR/script/echocolor.sh -g "$1"
+}
+
+
 function display_status()
 {
 	echo
 	$SCRIPT_DIR/echocolor.sh -c "********************************************************************************"
 	$SCRIPT_DIR/echocolor.sh -c "* $1"
 	$SCRIPT_DIR/echocolor.sh -c "********************************************************************************"
+	echo
+}
+
+
+function display_step()
+{
+	echo_green "* $1"
 	echo
 }
 
@@ -86,7 +99,8 @@ function display_error()
 
 function display_warning()
 {
-	echo_yellow "$1"
+	echo_yellow "* $1"
+	echo
 }
 
 
@@ -175,7 +189,7 @@ then
 			mkdir -p $DEST_DIR
 		fi
 
-		local zip_file_name="$PLUGIN_NAME-Multi-v$PLUGIN_VERSION.zip"
+		zip_file_name="$PLUGIN_NAME-Multi-v$PLUGIN_VERSION.zip"
 
 		if [[ -e "$DEST_DIR/$zip_file_name" ]]
 		then
@@ -183,22 +197,25 @@ then
 			rm $DEST_DIR/$zip_file_name
 		fi
 
-		local tmp_directory=$(mktemp -d)
+		tmp_directory=$(mktemp -d)
 
-		display_status "preparing staging directory $tmp_directory"
+		display_step "preparing staging directory $tmp_directory..."
 
 		mkdir -p $tmp_directory/addons/$PLUGIN_NAME
 		cp -r $DEMO_DIR/addons/* $tmp_directory/addons/$PLUGIN_NAME
 
 		mkdir -p $tmp_directory/ios/plugins
-		cp $DEMO_DIR/ios/plugins/* $tmp_directory/ios/plugins
+		cp -r $DEMO_DIR/ios/plugins/* $tmp_directory/ios/plugins
 
 		mkdir -p $tmp_directory/ios/framework
-		cp $DEMO_DIR/ios/framework/* $tmp_directory/ios/framework
+		cp -r $DEMO_DIR/ios/framework/* $tmp_directory/ios/framework
 
-		display_status "creating $zip_file_name file..."
-		cd $tmp_directory; zip -yr $DEST_DIR/$zip_file_name ./*; cd -
+		display_step "creating $zip_file_name file in $DEST_DIR..."
+		pushd $tmp_directory > /dev/null
+		zip -yr $DEST_DIR/$zip_file_name ./*
+		popd > /dev/null
 
+		echo ; display_warning "removing staging directory $tmp_directory..."
 		rm -rf $tmp_directory
 	else
 		display_error "Error: '$DEMO_DIR' not found."
