@@ -236,6 +236,8 @@ function generate_static_library()
 
 	display_status "generating static libraries for $PLUGIN_NAME with target type $TARGET_TYPE..."
 
+	pushd $IOS_DIR
+
 	# ARM64 Device
 	scons target=$TARGET_TYPE arch=arm64 target_name=$PLUGIN_NAME version=$GODOT_VERSION
 	# x86_64 Simulator
@@ -245,6 +247,8 @@ function generate_static_library()
 	lipo -create "$lib_directory/lib$PLUGIN_NAME.x86_64-simulator.$TARGET_TYPE.a" \
 		"$lib_directory/lib$PLUGIN_NAME.arm64-ios.$TARGET_TYPE.a" \
 		-output "$lib_directory/$PLUGIN_NAME.$TARGET_TYPE.a"
+
+	popd
 }
 
 
