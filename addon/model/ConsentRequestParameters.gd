@@ -15,14 +15,14 @@ enum DebugGeography {
 const IS_REAL_PROPERTY: String = "is_real"
 const TAG_FOR_UNDER_AGE_OF_CONSENT_PROPERTY: String = "tag_for_under_age_of_consent"
 const DEBUG_GEOGRAPHY_PROPERTY: String = "debug_geography"
+const TEST_DEVICE_HASHED_IDS_PROPERTY: String = "test_device_hashed_ids"
 
 var _data: Dictionary
-var _device_ids: Array
 
 
 func _init():
 	_data = {}
-	_device_ids = []
+	_data[TEST_DEVICE_HASHED_IDS_PROPERTY] = []
 
 
 func set_is_real(a_value: bool) -> ConsentRequestParameters:
@@ -44,14 +44,14 @@ func set_debug_geography(a_value: DebugGeography) -> ConsentRequestParameters:
 
 
 func add_test_device_hashed_id(a_value: String) -> ConsentRequestParameters:
-	_device_ids.append(a_value)
+	_data[TEST_DEVICE_HASHED_IDS_PROPERTY].append(a_value)
 
 	return self
 
 
+func get_device_ids() -> Array:
+	return _data[TEST_DEVICE_HASHED_IDS_PROPERTY]
+
+
 func get_raw_data() -> Dictionary:
 	return _data
-
-
-func get_device_ids() -> Array:
-	return _device_ids

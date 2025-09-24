@@ -10,6 +10,7 @@
 #import "gap_converter.h"
 #import "admob_config.h"
 #import "admob_logger.h"
+#import "ump_orientation_wrapper.h"
 
 
 const String INITIALIZATION_COMPLETED_SIGNAL = "initialization_completed";
@@ -162,15 +163,13 @@ Error AdmobPlugin::initialize() {
 	rewardedInterstitialAdSequence = 0;
 	rewardedAds = [NSMutableDictionary dictionaryWithCapacity:10];
 	rewardedAdSequence = 0;
-	
-	// GADSimulatorID was removed in version 12 as 'Simulators are already in test mode by default.'
-	// GADMobileAds.sharedInstance.requestConfiguration.testDeviceIdentifiers = @[ GADSimulatorID ];
 
-	[[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *_Nonnull status)
-	{
+	os_log_debug(admob_log, "Starting GADMobileAds initialization");
+
+	[[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *_Nonnull status) {
 		Dictionary dictionary = [GAPConverter initializationStatusToGodotDictionary:status];
 		initialized = true;
-		os_log_debug(admob_log, "AdmobPlugin initialization completed");
+		os_log_debug(admob_log, "AdmobPlugin initialization completed with status: %@", status.description);
 		emit_signal(INITIALIZATION_COMPLETED_SIGNAL, dictionary);
 	}];
 
@@ -545,21 +544,21 @@ Error AdmobPlugin::show_consent_form() {
 	return OK;
 }
 
-int AdmobPlugin::get_consent_status() {
-	UMPConsentStatus status = [UMPConsentInformation.sharedInstance consentStatus];
-	os_log_debug(admob_log, "AdmobPlugin get_consent_status: %ld", (long) status);
-	switch (status) {
-		// Reversing UMPConsentStatusRequired and UMPConsentStatusNotRequired values for consistency with the Android version.
-		case UMPConsentStatusRequired:
-			return UMPConsentStatusNotRequired;
-		case UMPConsentStatusNotRequired:
-			return UMPConsentStatusRequired;
-		case UMPConsentStatusUnknown:
-		case UMPConsentStatusObtained:
-			return status;
-		default:
-			return UMPConsentStatusUnknown;
-	}
+String AdmobPlugin::get_consent_status() {
+    UMPConsentStatus status = [UMPConsentInformation.sharedInstance consentStatus];
+    os_log_debug(admob_log, "AdmobPlugin get_consent_status: %ld", (long) status);
+    switch (status) {
+        case UMPConsentStatusUnknown:
+            return [@"UNKNOWN" UTF8String];
+        case UMPConsentStatusNotRequired:
+            return [@"NOT_REQUIRED" UTF8String];
+        case UMPConsentStatusRequired:
+            return [@"REQUIRED" UTF8String];
+        case UMPConsentStatusObtained:
+            return [@"OBTAINED" UTF8String];
+        default:
+            return [@"UNKNOWN" UTF8String];
+    }
 }
 
 bool AdmobPlugin::is_consent_form_available() {

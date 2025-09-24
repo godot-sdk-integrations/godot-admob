@@ -5,10 +5,10 @@
 class_name ConsentInformation extends RefCounted
 
 
-# https://developers.google.com/admob/android/reference/privacy/com/google/android/ump/ConsentInformation.ConsentStatus
-enum ConsentStatus {
-	UNKNOWN = 0,
-	NOT_REQUIRED = 1,
-	REQUIRED = 2,
-	OBTAINED = 3
+# Consent status values as strings
+const ConsentStatus = {
+    UNKNOWN = "UNKNOWN",
+    NOT_REQUIRED = "NOT_REQUIRED",
+    REQUIRED = "REQUIRED",
+    OBTAINED = "OBTAINED"
 }
