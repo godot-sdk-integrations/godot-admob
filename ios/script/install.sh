@@ -19,7 +19,7 @@ function display_help()
 	$ROOT_DIR/script/echocolor.sh -y "The " -Y "$0 script" -y " installs plugin in the specified directory"
 	echo
 	$ROOT_DIR/script/echocolor.sh -Y "Syntax:"
-	$ROOT_DIR/script/echocolor.sh -y "	$0 [-h|d|t <target directory path>|z <zip file path>]"
+	$ROOT_DIR/script/echocolor.sh -y "	$0 [-h|t <target directory path>|z <zip file path>]"
 	echo
 	$ROOT_DIR/script/echocolor.sh -Y "Options:"
 	$ROOT_DIR/script/echocolor.sh -y "	h	display usage information"
