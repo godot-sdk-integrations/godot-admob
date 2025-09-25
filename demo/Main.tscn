@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://daro5x6n3pd26"]
 
 [ext_resource type="Script" uid="uid://bcqb5hwnjbtob" path="res://Main.gd" id="1_wt50o"]
-[ext_resource type="Script" uid="uid://bl2nvtpq08h2s" path="res://addons/AdmobPlugin/Admob.gd" id="2_4x6et"]
+[ext_resource type="Script" uid="uid://bye18ixseusdl" path="res://addons/AdmobPlugin/Admob.gd" id="2_4x6et"]
 [ext_resource type="Texture2D" uid="uid://cy0mnncxevupr" path="res://assets/admob-android.png" id="2_qti4s"]
 [ext_resource type="Texture2D" uid="uid://cpxlqpr0qmm71" path="res://assets/admob-ios.png" id="3_cm0pq"]
 
@@ -60,9 +60,10 @@ theme_override_constants/separation = 11
 [node name="TabContainer" type="TabContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 165)
 layout_mode = 2
-current_tab = 0
+current_tab = 1
 
 [node name="Banner" type="VBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
 theme_override_constants/separation = 6
 metadata/_tab_index = 0
@@ -128,25 +129,54 @@ disabled = true
 text = "Reload"
 
 [node name="Other" type="VBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 15
 metadata/_tab_index = 1
 
-[node name="InterstitialButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other"]
+[node name="InterstitialHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other"]
 layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="InterstitialButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 disabled = true
 text = "Show Interstitial Ad"
 
-[node name="RewardedButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other"]
+[node name="ReloadInterstitialButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer"]
 layout_mode = 2
+disabled = true
+text = "Reload"
+
+[node name="RewardedHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="RewardedButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 disabled = true
 text = "Show Rewarded Ad"
 
-[node name="RewardedInterstitialButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other"]
+[node name="ReloadRewardedButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer"]
 layout_mode = 2
 disabled = true
+text = "Reload"
+
+[node name="RewardedInterstitialHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="RewardedInterstitialButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
 text = "Show Rewarded Interstitial Ad"
+
+[node name="ReloadRewardedInterstitialButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer"]
+layout_mode = 2
+disabled = true
+text = "Reload"
 
 [node name="GeographyHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -206,9 +236,12 @@ debug_rewarded_interstitial_id = "ca-app-pub-3940256099942544/5354046379"
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ShowBannerButton" to="." method="_on_show_banner_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/HideBannerButton" to="." method="_on_hide_banner_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ReloadBannerButton" to="." method="_on_reload_banner_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialButton" to="." method="_on_interstitial_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedButton" to="." method="_on_rewarded_video_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialButton" to="." method="_on_rewarded_interstitial_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/InterstitialButton" to="." method="_on_interstitial_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/ReloadInterstitialButton" to="." method="_on_reload_interstitial_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/RewardedButton" to="." method="_on_rewarded_video_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/ReloadRewardedButton" to="." method="_on_reload_rewarded_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/RewardedInterstitialButton" to="." method="_on_rewarded_interstitial_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/ReloadRewardedInterstitialButton" to="." method="_on_reload_rewarded_interstitial_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer/UpdateConsentInfoButton" to="." method="_on_update_consent_info_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer/ResetConsentButton" to="." method="_on_reset_consent_button_pressed"]
 [connection signal="banner_ad_failed_to_load" from="Admob" to="." method="_on_admob_banner_ad_failed_to_load"]

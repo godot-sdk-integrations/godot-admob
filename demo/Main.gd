@@ -10,9 +10,12 @@ extends Node
 @onready var reload_banner_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ReloadBannerButton
 @onready var banner_position_option_button: OptionButton = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/PositionHBoxContainer/OptionButton
 @onready var banner_size_option_button: OptionButton = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeHBoxContainer/OptionButton
-@onready var interstitial_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialButton
-@onready var rewarded_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedButton
-@onready var rewarded_interstitial_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialButton
+@onready var interstitial_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/InterstitialButton
+@onready var rewarded_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/RewardedButton
+@onready var rewarded_interstitial_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/RewardedInterstitialButton
+@onready var reload_interstitial_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/ReloadInterstitialButton
+@onready var reload_rewarded_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/ReloadRewardedButton
+@onready var reload_rewarded_interstitial_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/ReloadRewardedInterstitialButton
 @onready var _label: RichTextLabel = $CanvasLayer/CenterContainer/VBoxContainer/RichTextLabel as RichTextLabel
 @onready var _geography_option_button: OptionButton = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/GeographyHBoxContainer/OptionButton
 @onready var _android_texture_rect: TextureRect = $CanvasLayer/CenterContainer/VBoxContainer/TextureHBoxContainer/AndroidTextureRect as TextureRect
@@ -94,12 +97,13 @@ func _on_reload_banner_button_pressed() -> void:
 	print(" ------- Reload banner button PRESSED")
 	if _is_banner_loaded:
 		_is_banner_loaded = false
-		show_banner_button.disabled = true
-		reload_banner_button.disabled = true
 		admob.remove_banner_ad(admob._active_banner_ads[0])
-		admob.banner_position = LoadAdRequest.AdPosition[banner_position_option_button.get_item_text(banner_position_option_button.selected)]
-		admob.banner_size = LoadAdRequest.AdSize[banner_size_option_button.get_item_text(banner_size_option_button.selected)]
-		admob.load_banner_ad()
+
+	show_banner_button.disabled = true
+	reload_banner_button.disabled = true
+	admob.banner_position = LoadAdRequest.AdPosition[banner_position_option_button.get_item_text(banner_position_option_button.selected)]
+	admob.banner_size = LoadAdRequest.AdSize[banner_size_option_button.get_item_text(banner_size_option_button.selected)]
+	admob.load_banner_ad()
 
 
 func _on_interstitial_button_pressed() -> void:
@@ -108,6 +112,7 @@ func _on_interstitial_button_pressed() -> void:
 		_is_interstitial_loaded = false
 		interstitial_button.disabled = true
 		admob.show_interstitial_ad()
+		reload_interstitial_button.disabled = false
 	else:
 		admob.load_interstitial_ad()
 
@@ -118,6 +123,7 @@ func _on_rewarded_video_button_pressed() -> void:
 		_is_rewarded_video_loaded = false
 		rewarded_button.disabled = true
 		admob.show_rewarded_ad()
+		reload_rewarded_button.disabled = false
 	else:
 		admob.load_rewarded_ad()
 
@@ -128,6 +134,7 @@ func _on_rewarded_interstitial_button_pressed() -> void:
 		_is_rewarded_interstitial_loaded = false
 		rewarded_interstitial_button.disabled = true
 		admob.show_rewarded_interstitial_ad()
+		reload_rewarded_interstitial_button.disabled = false
 	else:
 		admob.load_rewarded_interstitial_ad()
 
@@ -150,6 +157,7 @@ func _on_admob_banner_ad_refreshed(ad_id: String) -> void:
 func _on_admob_banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError) -> void:
 	_print_to_screen("banner %s failed to load. error: %d, message: %s" %
 				[ad_id, error_data.get_code(), error_data.get_message()], true)
+	reload_banner_button.disabled = false
 
 
 func _on_admob_interstitial_ad_loaded(ad_id: String) -> void:
@@ -161,6 +169,7 @@ func _on_admob_interstitial_ad_loaded(ad_id: String) -> void:
 func _on_admob_interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError) -> void:
 	_print_to_screen("interstitial %s failed to load. error: %d, message: %s" %
 				[ad_id, error_data.get_code(), error_data.get_message()], true)
+	reload_interstitial_button.disabled = false
 
 
 func _on_admob_interstitial_ad_refreshed(ad_id: String) -> void:
@@ -180,6 +189,7 @@ func _on_admob_rewarded_ad_loaded(ad_id: String) -> void:
 func _on_admob_rewarded_ad_failed_to_load(ad_id: String, error_data: LoadAdError) -> void:
 	_print_to_screen("rewarded video %s failed to load. error: %d, message: %s" %
 				[ad_id, error_data.get_code(), error_data.get_message()], true)
+	reload_rewarded_button.disabled = true
 
 
 func _on_admob_rewarded_ad_user_earned_reward(ad_id: String, reward_data: RewardItem) -> void:
@@ -196,6 +206,7 @@ func _on_admob_rewarded_interstitial_ad_loaded(ad_id: String) -> void:
 func _on_admob_rewarded_interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError) -> void:
 	_print_to_screen("rewarded interstitial %s failed to load. error: %d, message: %s" %
 				[ad_id, error_data.get_code(), error_data.get_message()], true)
+	reload_rewarded_interstitial_button.disabled = false
 
 
 func _on_admob_rewarded_interstitial_ad_user_earned_reward(ad_id: String, reward_data: RewardItem) -> void:
@@ -250,6 +261,39 @@ func _on_update_consent_info_button_pressed() -> void:
 	admob.update_consent_info(ConsentRequestParameters.new()
 		.set_debug_geography(ConsentRequestParameters.DebugGeography.values()[_geography_option_button.selected])
 		.add_test_device_hashed_id(OS.get_unique_id()))
+
+
+func _on_reload_interstitial_button_pressed() -> void:
+	print(" ------- Reload interstitial button PRESSED")
+	if _is_interstitial_loaded:
+		_is_interstitial_loaded = false
+		admob.remove_interstitial_ad(admob._active_interstitial_ads[0])
+
+	interstitial_button.disabled = true
+	reload_interstitial_button.disabled = true
+	admob.load_interstitial_ad()
+
+
+func _on_reload_rewarded_button_pressed() -> void:
+	print(" ------- Reload rewarded button PRESSED")
+	if _is_rewarded_video_loaded:
+		_is_rewarded_video_loaded = false
+		admob.remove_rewarded_ad(admob._active_rewarded_ads[0])
+
+	rewarded_button.disabled = true
+	reload_rewarded_button.disabled = true
+	admob.load_rewarded_ad()
+
+
+func _on_reload_rewarded_interstitial_button_pressed() -> void:
+	print(" ------- Reload rewarded interstitial button PRESSED")
+	if _is_rewarded_interstitial_loaded:
+		_is_rewarded_interstitial_loaded = false
+		admob.remove_rewarded_interstitial_ad(admob._active_rewarded_interstitial_ads[0])
+
+	rewarded_interstitial_button.disabled = true
+	reload_rewarded_interstitial_button.disabled = true
+	admob.load_rewarded_interstitial_ad()
 
 
 func _print_to_screen(a_message: String, a_is_error: bool = false) -> void:
