@@ -158,7 +158,9 @@ function create_multi_platform_archive()
 		display_step "preparing staging directory $tmp_directory..."
 
 		mkdir -p $tmp_directory/addons/$PLUGIN_NAME
-		cp -r $DEMO_DIR/addons/$PLUGIN_NAME/* $tmp_directory/addons/$PLUGIN_NAME
+		pushd $DEMO_DIR/addons/$PLUGIN_NAME > /dev/null
+		find . -type f ! -name "*.uid" -exec rsync --relative {} $tmp_directory/addons/$PLUGIN_NAME \;
+		popd > /dev/null
 
 		mkdir -p $tmp_directory/ios/plugins
 		cp -r $DEMO_DIR/ios/plugins/* $tmp_directory/ios/plugins
