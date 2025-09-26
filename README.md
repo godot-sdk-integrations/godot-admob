@@ -122,10 +122,10 @@ Steps:
 ### <img src="addon/icon.png" width="18"> User Consent
 - Methods:
 	- `get_consent_status()` - Returns a consent status value defined in `ConsentInformation.gd`
-	- `update_consent_info(params: ConsentRequestParameters)` - To be called if `get_consent_status()` returns status UNKNOWN (0).
+	- `update_consent_info(params: ConsentRequestParameters)` - To be called if `get_consent_status()` returns status UNKNOWN.
 	- `reset_consent_info()` - To be used only when testing and debugging your application.
 	- `is_consent_form_available()`
-	- `load_consent_form()` - To be called if `get_consent_status()` returns status REQUIRED (2) and `is_consent_form_available()` returns `false`.
+	- `load_consent_form()` - To be called if `get_consent_status()` returns status REQUIRED and `is_consent_form_available()` returns `false`.
 	- `show_consent_form()` - To be called after `consent_form_loaded` signal has been emitted or `is_consent_form_available()` returns `true`.
 
 ### <img src="addon/icon.png" width="18"> Multi-scene projects
