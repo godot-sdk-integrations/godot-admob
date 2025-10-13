@@ -921,6 +921,28 @@ public class AdmobPlugin extends GodotPlugin {
 				debugSettingsBuilder.setDebugGeography((int) data.get("debug_geography"));
 			}
 
+			if (data.containsKey("test_device_hashed_ids")) {
+				Object deviceIdsObj = data.get("test_device_hashed_ids");
+				if (deviceIdsObj != null) {
+					if (deviceIdsObj instanceof Object[]) {
+						Object[] deviceIds = (Object[]) deviceIdsObj;
+						Log.d(LOG_TAG, "Found " + deviceIds.length + " device IDs in Object array.");
+						for (Object deviceId : deviceIds) {
+							if (deviceId instanceof String && !((String) deviceId).isEmpty()) {
+								Log.d(LOG_TAG, "Adding test device id: " + deviceId);
+								debugSettingsBuilder.addTestDeviceHashedId((String) deviceId);
+							} else {
+								Log.w(LOG_TAG, "Skipping invalid device ID: " + deviceId);
+							}
+						}
+					} else {
+						Log.w(LOG_TAG, "test_device_hashed_ids is not an array: " + deviceIdsObj.getClass().getName());
+					}
+				} else {
+					Log.w(LOG_TAG, "test_device_hashed_ids is null.");
+				}
+			}
+
 			debugSettingsBuilder.addTestDeviceHashedId(getAdMobDeviceId());
 
 			builder.setConsentDebugSettings(debugSettingsBuilder.build());
