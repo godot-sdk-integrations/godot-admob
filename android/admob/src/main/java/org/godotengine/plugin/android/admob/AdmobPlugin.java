@@ -918,29 +918,40 @@ public class AdmobPlugin extends GodotPlugin {
 			ConsentDebugSettings.Builder debugSettingsBuilder = new ConsentDebugSettings.Builder(activity);
 
 			if (data.containsKey("debug_geography")) {
-				debugSettingsBuilder.setDebugGeography((int) data.get("debug_geography"));
+				Object debugGeographyObj = data.get("debug_geography");
+				if (debugGeographyObj instanceof Integer) {
+					int debugGeography = (int) debugGeographyObj;
+					Log.d(LOG_TAG, "Setting debug geography to: " + debugGeography);
+					debugSettingsBuilder.setDebugGeography(debugGeography);
+				} else {
+					Log.e(LOG_TAG, "Invalid debug_geography type: " + 
+						(debugGeographyObj != null ? debugGeographyObj.getClass().getSimpleName() : "null") +
+						", value: " + debugGeographyObj);
+				}
+			} else {
+				Log.w(LOG_TAG, "debug_geography key not found in dictionary");
 			}
 
 			if (data.containsKey("test_device_hashed_ids")) {
 				Object deviceIdsObj = data.get("test_device_hashed_ids");
-				if (deviceIdsObj != null) {
-					if (deviceIdsObj instanceof Object[]) {
-						Object[] deviceIds = (Object[]) deviceIdsObj;
-						Log.d(LOG_TAG, "Found " + deviceIds.length + " device IDs in Object array.");
-						for (Object deviceId : deviceIds) {
-							if (deviceId instanceof String && !((String) deviceId).isEmpty()) {
-								Log.d(LOG_TAG, "Adding test device id: " + deviceId);
-								debugSettingsBuilder.addTestDeviceHashedId((String) deviceId);
-							} else {
-								Log.w(LOG_TAG, "Skipping invalid device ID: " + deviceId);
-							}
+				if (deviceIdsObj instanceof Object[]) {
+					Object[] deviceIds = (Object[]) deviceIdsObj;
+					Log.d(LOG_TAG, "Found " + deviceIds.length + " device IDs in Object array.");
+					for (Object deviceId : deviceIds) {
+						if (deviceId instanceof String && !((String) deviceId).isEmpty()) {
+							Log.d(LOG_TAG, "Adding test device id: " + deviceId);
+							debugSettingsBuilder.addTestDeviceHashedId((String) deviceId);
+						} else {
+							Log.w(LOG_TAG, "Skipping invalid device ID: " + deviceId);
 						}
-					} else {
-						Log.w(LOG_TAG, "test_device_hashed_ids is not an array: " + deviceIdsObj.getClass().getName());
 					}
 				} else {
-					Log.w(LOG_TAG, "test_device_hashed_ids is null.");
+					Log.e(LOG_TAG, "Invalid test_device_hashed_ids type: " + 
+						(deviceIdsObj != null ? deviceIdsObj.getClass().getName() : "null") +
+						", value: " + deviceIdsObj);
 				}
+			} else {
+				Log.w(LOG_TAG, "test_device_hashed_ids key not found in dictionary");
 			}
 
 			debugSettingsBuilder.addTestDeviceHashedId(getAdMobDeviceId());
