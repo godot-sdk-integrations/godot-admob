@@ -4,7 +4,7 @@
 #
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ANDROID_DIR=$(realpath $SCRIPT_DIR/../../android)
+ANDROID_DIR=$(realpath "$SCRIPT_DIR/../../android")
 TOML_FILE="$ANDROID_DIR/gradle/libs.versions.toml"
 
 # Arrays to store versions
@@ -51,12 +51,12 @@ while IFS= read -r line; do
 		in_libraries=0
 	fi
 
-	if [[ $in_libraries -eq 1 && $line =~ ^([a-zA-Z0-9_-]+)[[:space:]]*=.*version\.ref[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
-		lib="${BASH_REMATCH[1]}"
-		version_key="${BASH_REMATCH[2]}"
+	if [[ $in_libraries -eq 1 && $line =~ ^([a-zA-Z0-9_-]+)[[:space:]]*=.*module[[:space:]]*=[[:space:]]*\"([^\"]+)\".*version\.ref[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
+		module="${BASH_REMATCH[2]}"
+		version_key="${BASH_REMATCH[3]}"
 		version="$(get_version "$version_key")"
 		if [[ -n $version ]]; then
-			library_versions+=("\"$lib:$version\"")
+			library_versions+=("\"$module:$version\"")
 		fi
 	fi
 done < "$TOML_FILE"
