@@ -95,6 +95,10 @@ const PLUGIN_SINGLETON_NAME: String = "@pluginName@"
 @export var remove_rewarded_ads_after_scene: bool = true
 @export var remove_rewarded_interstitial_ads_after_scene: bool = true
 
+@export_category("Debug Settings")
+@export var debug_geography: ConsentRequestParameters.DebugGeography = ConsentRequestParameters.DebugGeography.NOT_SET : set = set_debug_geography
+@export var add_test_device_id: bool = false : set = set_add_test_device_id
+
 @onready var _banner_id: String = real_banner_id if is_real else debug_banner_id
 @onready var _interstitial_id: String = real_interstitial_id if is_real else debug_interstitial_id
 @onready var _rewarded_id: String = real_rewarded_id if is_real else debug_rewarded_id
@@ -256,6 +260,14 @@ func set_max_rewarded_ad_cache(a_value: int) -> void:
 
 func set_max_rewarded_interstitial_ad_cache(a_value: int) -> void:
 	max_rewarded_interstitial_ad_cache = a_value
+
+
+func set_debug_geography(a_value: ConsentRequestParameters.DebugGeography) -> void:
+	debug_geography = a_value
+
+
+func set_add_test_device_id(a_value: bool) -> void:
+	add_test_device_id = a_value
 
 
 func configure_ads() -> void:
@@ -546,6 +558,14 @@ func update_consent_info(consentRequestParameters: ConsentRequestParameters) -> 
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		consentRequestParameters.set_is_real(is_real)
+
+		if not is_real:
+			if debug_geography != ConsentRequestParameters.DebugGeography.NOT_SET:
+				consentRequestParameters.set_debug_geography(debug_geography)
+
+			if add_test_device_id:
+				consentRequestParameters.add_test_device_hashed_id(OS.get_unique_id())
+
 		_plugin_singleton.update_consent_info(consentRequestParameters.get_raw_data())
 
 

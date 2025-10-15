@@ -178,14 +178,14 @@
 			case 1: // DEBUG_GEOGRAPHY_EEA
 				debugSettings.geography = UMPDebugGeographyEEA;
 				break;
-			case 2: // DEBUG_GEOGRAPHY_NOT_EEA
-				debugSettings.geography = UMPDebugGeographyNotEEA;
-				break;
 			case 3: // DEBUG_GEOGRAPHY_REGULATED_US_STATE
-			case 4: // DEBUG_GEOGRAPHY_OTHER
+				debugSettings.geography = UMPDebugGeographyRegulatedUSState;
+				break;
 			default:
-				NSLog(@"Unsupported debug geography value: %d, defaulting to Disabled", debugGeographyValue);
-				debugSettings.geography = UMPDebugGeographyDisabled;
+				NSLog(@"Unsupported debug geography value: %d, defaulting to UMPDebugGeographyOther", debugGeographyValue);
+			case 2: // DEBUG_GEOGRAPHY_NOT_EEA deprecated
+			case 4: // DEBUG_GEOGRAPHY_OTHER
+				debugSettings.geography = UMPDebugGeographyOther;
 				break;
 		}
 	} else {

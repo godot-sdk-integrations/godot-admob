@@ -257,9 +257,9 @@ func _on_admob_consent_form_dismissed(a_error_data: FormError) -> void:
 
 
 func _on_update_consent_info_button_pressed() -> void:
-	print("selected consent geography: %d" % _geography_option_button.selected)
+	print("selected debug geography: %d" % _geography_option_button.selected)
 	admob.update_consent_info(ConsentRequestParameters.new()
-		.set_debug_geography(ConsentRequestParameters.DebugGeography.values()[_geography_option_button.selected])
+		.set_debug_geography(_geography_option_button.selected)
 		.add_test_device_hashed_id(OS.get_unique_id()))
 
 
