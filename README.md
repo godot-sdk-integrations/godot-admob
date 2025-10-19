@@ -150,7 +150,7 @@ AdManager.admob_node.show_banner()
 Both `Android` and `iOS` exports require several configuration settings.
 
 ### <img src="addon/icon.png" width="18"> File-based Export Configuration
-In order to enable file-based export configuration, an `export.cfg` file should be placed in the `addons/AdmobPlugin` directory with the file contents formatted as in the example below:
+In order to enable file-based export configuration, an `android_export.cfg` or an `ios_export.cfg` file should be placed in the `addons/AdmobPlugin` directory with the file contents formatted as in the example below:
 
 ```
 [General]
@@ -161,18 +161,20 @@ app_id = "ca-app-pub-3940256099942544~3347511713"
 
 [Release]
 app_id = "ca-app-pub-3940256099942544~3347511713"
+```
 
+The `ios_export.cfg` file supports the following additional properties, which are not relevant for Android.
+
+```
 [ATT]
 att_enabled = true
 att_text = "My ATT text."
 ```
 
-* _note that ATT-related configuration is only relevant on iOS_
-
 The `is_real` and `app_id` configuration items are mandatory and if not found in the `export.cfg` file, then the plugin will fall back to node-based configuration.
 
 ### <img src="addon/icon.png" width="18"> Node-based Export Configuration
-If `export.cfg` file is not found or file-based configuration fails, then the plugin will attempt to load node-based configuration.
+If `<platform>_export.cfg` file is not found for the target platform or file-based configuration fails, then the plugin will attempt to load node-based configuration.
 
 During export, the plugin searches for an `Admob` node in the scene that is open in the Godot Editor. If not found, then the plugin searches for an `Admob` node in the project's main scene. Therefore;
 - Make sure that the scene that contains the `Admob` node is selected in the Godot Editor when building and exporting, or

@@ -47,6 +47,16 @@ signal tracking_authorization_denied
 
 const PLUGIN_SINGLETON_NAME: String = "@pluginName@"
 
+const ANDROID_BANNER_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/6300978111"
+const ANDROID_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/1033173712"
+const ANDROID_REWARDED_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/5224354917"
+const ANDROID_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/5354046379"
+
+const IOS_BANNER_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/2934735716"
+const IOS_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/4411468910"
+const IOS_REWARDED_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/1712485313"
+const IOS_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/6978759866"
+
 @export_category("General")
 @export var is_real: bool: set = set_is_real
 @export var max_ad_content_rating: AdmobConfig.ContentRating = AdmobConfig.ContentRating.G: set = set_max_ad_content_rating
@@ -56,6 +66,44 @@ const PLUGIN_SINGLETON_NAME: String = "@pluginName@"
 @export var personalization_state: AdmobConfig.PersonalizationState = AdmobConfig.PersonalizationState.DEFAULT: set = set_personalization_state
 @export var request_agent: String = PLUGIN_SINGLETON_NAME: set = set_request_agent
 
+@export_category("Banner")
+@export var banner_position: LoadAdRequest.AdPosition = LoadAdRequest.AdPosition.TOP: set = set_banner_position
+@export var banner_size: LoadAdRequest.AdSize = LoadAdRequest.AdSize.BANNER: set = set_banner_size
+
+@export_category("Android-specific")
+@export_group("Android Application IDs","android_")
+@export var android_debug_application_id: String = ""
+@export var android_real_application_id: String = ""
+
+@export_group("Android Debug Ad Unit IDs", "android_debug_")
+@export var android_debug_banner_id: String = ANDROID_BANNER_DEMO_AD_UNIT_ID
+@export var android_debug_interstitial_id: String = ANDROID_INTERSTITIAL_DEMO_AD_UNIT_ID
+@export var android_debug_rewarded_id: String = ANDROID_REWARDED_DEMO_AD_UNIT_ID
+@export var android_debug_rewarded_interstitial_id: String = ANDROID_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID
+
+@export_group("Android Real Ad Unit IDs", "android_real_")
+@export var android_real_banner_id: String = ""
+@export var android_real_interstitial_id: String = ""
+@export var android_real_rewarded_id: String = ""
+@export var android_real_rewarded_interstitial_id: String = ""
+
+@export_category("iOS-specific")
+@export_group("iOS Application IDs","ios_")
+@export var ios_debug_application_id: String = ""
+@export var ios_real_application_id: String = ""
+
+@export_group("iOS Debug Ad Unit IDs", "ios_debug_")
+@export var ios_debug_banner_id: String = IOS_BANNER_DEMO_AD_UNIT_ID
+@export var ios_debug_interstitial_id: String = IOS_INTERSTITIAL_DEMO_AD_UNIT_ID
+@export var ios_debug_rewarded_id: String = IOS_REWARDED_DEMO_AD_UNIT_ID
+@export var ios_debug_rewarded_interstitial_id: String = IOS_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID
+
+@export_group("iOS Real Ad Unit IDs", "ios_real_")
+@export var ios_real_banner_id: String = ""
+@export var ios_real_interstitial_id: String = ""
+@export var ios_real_rewarded_id: String = ""
+@export var ios_real_rewarded_interstitial_id: String = ""
+
 @export_group("App Tracking Transparency")
 @export var att_enabled: bool = false:
 	get:
@@ -64,45 +112,34 @@ const PLUGIN_SINGLETON_NAME: String = "@pluginName@"
 		att_enabled = value
 @export_multiline var att_text: String = "": set = set_att_text
 
-@export_category("Banner")
-@export var banner_position: LoadAdRequest.AdPosition = LoadAdRequest.AdPosition.TOP: set = set_banner_position
-@export var banner_size: LoadAdRequest.AdSize = LoadAdRequest.AdSize.BANNER: set = set_banner_size
+@export_category("Cache")
+@export_group("Limits")
+@export_range(1,100) var max_banner_ad_cache: int = 3: set = set_max_banner_ad_cache
+@export_range(1,100) var max_interstitial_ad_cache: int = 3: set = set_max_interstitial_ad_cache
+@export_range(1,100) var max_rewarded_ad_cache: int = 3: set = set_max_rewarded_ad_cache
+@export_range(1,100) var max_rewarded_interstitial_ad_cache: int = 3: set = set_max_rewarded_interstitial_ad_cache
 
-@export_category("Ad Unit IDs")
-@export_group("Debug IDs", "debug_")
-@export var debug_application_id: String
-@export var debug_banner_id: String
-@export var debug_interstitial_id: String
-@export var debug_rewarded_id: String
-@export var debug_rewarded_interstitial_id: String
+@export_group("Cleanup After Ad Displayed")
+@export var remove_banner_ads_after_displayed: bool = true
+@export var remove_interstitial_ads_after_displayed: bool = true
+@export var remove_rewarded_ads_after_displayed: bool = true
+@export var remove_rewarded_interstitial_ads_after_displayed: bool = true
 
-@export_group("Real IDs", "real_")
-@export var real_application_id: String
-@export var real_banner_id: String
-@export var real_interstitial_id: String
-@export var real_rewarded_id: String
-@export var real_rewarded_interstitial_id: String
-
-@export_group("Cache")
-@export_range(1,100) var max_banner_ad_cache: int = 1: set = set_max_banner_ad_cache
-@export_range(1,100) var max_interstitial_ad_cache: int = 1: set = set_max_interstitial_ad_cache
-@export_range(1,100) var max_rewarded_ad_cache: int = 1: set = set_max_rewarded_ad_cache
-@export_range(1,100) var max_rewarded_interstitial_ad_cache: int = 1: set = set_max_rewarded_interstitial_ad_cache
-
-@export_group("Cleanup")
+@export_group("Cleanup After Scene Exit")
 @export var remove_banner_ads_after_scene: bool = true
 @export var remove_interstitial_ads_after_scene: bool = true
 @export var remove_rewarded_ads_after_scene: bool = true
 @export var remove_rewarded_interstitial_ads_after_scene: bool = true
 
-@export_category("Debug Settings")
+@export_category("Debug")
+@export_category("Settings")
 @export var debug_geography: ConsentRequestParameters.DebugGeography = ConsentRequestParameters.DebugGeography.NOT_SET : set = set_debug_geography
 @export var add_test_device_id: bool = false : set = set_add_test_device_id
 
-@onready var _banner_id: String = real_banner_id if is_real else debug_banner_id
-@onready var _interstitial_id: String = real_interstitial_id if is_real else debug_interstitial_id
-@onready var _rewarded_id: String = real_rewarded_id if is_real else debug_rewarded_id
-@onready var _rewarded_interstitial_id: String = real_rewarded_interstitial_id if is_real else debug_rewarded_interstitial_id
+var _banner_id: String
+var _interstitial_id: String
+var _rewarded_id: String
+var _rewarded_interstitial_id: String
 
 var _plugin_singleton: Object
 
@@ -120,6 +157,30 @@ func _init() -> void:
 
 
 func _ready() -> void:
+	if OS.has_feature("ios"):
+		if is_real:
+			_banner_id = ios_real_banner_id
+			_interstitial_id = ios_real_interstitial_id
+			_rewarded_id = ios_real_rewarded_id
+			_rewarded_interstitial_id = ios_real_rewarded_interstitial_id
+		else:
+			_banner_id = ios_debug_banner_id
+			_interstitial_id = ios_debug_interstitial_id
+			_rewarded_id = ios_debug_rewarded_id
+			_rewarded_interstitial_id = ios_debug_rewarded_interstitial_id
+	else:
+		if is_real:
+			_banner_id = android_real_banner_id
+			_interstitial_id = android_real_interstitial_id
+			_rewarded_id = android_real_rewarded_id
+			_rewarded_interstitial_id = android_real_rewarded_interstitial_id
+		else:
+			_banner_id = android_debug_banner_id
+			_interstitial_id = android_debug_interstitial_id
+			_rewarded_id = android_debug_rewarded_id
+			_rewarded_interstitial_id = android_debug_rewarded_interstitial_id
+
+
 	_update_plugin()
 
 
@@ -620,6 +681,9 @@ func _on_banner_ad_refreshed(a_ad_id: String) -> void:
 
 
 func _on_banner_ad_impression(a_ad_id: String) -> void:
+	if remove_banner_ads_after_displayed:
+		_active_banner_ads.erase(a_ad_id)
+		remove_banner_ad(a_ad_id)
 	banner_ad_impression.emit(a_ad_id)
 
 
@@ -663,6 +727,9 @@ func _on_interstitial_ad_clicked(a_ad_id: String) -> void:
 
 
 func _on_interstitial_ad_showed_full_screen_content(a_ad_id: String) -> void:
+	if remove_interstitial_ads_after_displayed:
+		_active_interstitial_ads.erase(a_ad_id)
+		remove_interstitial_ad(a_ad_id)
 	interstitial_ad_showed_full_screen_content.emit(a_ad_id)
 
 
@@ -697,6 +764,9 @@ func _on_rewarded_ad_clicked(a_ad_id: String) -> void:
 
 
 func _on_rewarded_ad_showed_full_screen_content(a_ad_id: String) -> void:
+	if remove_rewarded_ads_after_displayed:
+		_active_rewarded_ads.erase(a_ad_id)
+		remove_rewarded_ad(a_ad_id)
 	rewarded_ad_showed_full_screen_content.emit(a_ad_id)
 
 
@@ -737,6 +807,9 @@ func _on_rewarded_interstitial_ad_clicked(a_ad_id: String) -> void:
 
 
 func _on_rewarded_interstitial_ad_showed_full_screen_content(a_ad_id: String) -> void:
+	if remove_rewarded_interstitial_ads_after_displayed:
+		_active_rewarded_interstitial_ads.erase(a_ad_id)
+		remove_rewarded_interstitial_ad(a_ad_id)
 	rewarded_interstitial_ad_showed_full_screen_content.emit(a_ad_id)
 
 

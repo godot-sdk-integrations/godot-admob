@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://daro5x6n3pd26"]
 
 [ext_resource type="Script" uid="uid://bcqb5hwnjbtob" path="res://Main.gd" id="1_wt50o"]
-[ext_resource type="Script" uid="uid://bumm8cdmmutco" path="res://addons/AdmobPlugin/Admob.gd" id="2_4x6et"]
+[ext_resource type="Script" uid="uid://dihr733s8ng5s" path="res://addons/AdmobPlugin/Admob.gd" id="2_4x6et"]
 [ext_resource type="Texture2D" uid="uid://cy0mnncxevupr" path="res://assets/admob-android.png" id="2_qti4s"]
 [ext_resource type="Texture2D" uid="uid://b2myrgf8pkumi" path="res://assets/admob-ios.png" id="3_cm0pq"]
 
@@ -230,11 +230,8 @@ scroll_following = true
 
 [node name="Admob" type="Node" parent="."]
 script = ExtResource("2_4x6et")
-debug_application_id = "ca-app-pub-3940256099942544~3347511713"
-debug_banner_id = "ca-app-pub-3940256099942544/6300978111"
-debug_interstitial_id = "ca-app-pub-3940256099942544/1033173712"
-debug_rewarded_id = "ca-app-pub-3940256099942544/5224354917"
-debug_rewarded_interstitial_id = "ca-app-pub-3940256099942544/5354046379"
+android_debug_application_id = "ca-app-pub-3940256099942544~3347511713"
+ios_debug_application_id = "ca-app-pub-3940256099942544~3347511713"
 
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/SizeButton" to="." method="_on_size_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/PixelSizeButton" to="." method="_on_pixel_size_button_pressed"]

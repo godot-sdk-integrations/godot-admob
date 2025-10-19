@@ -2,26 +2,15 @@
 # © 2024-present https://github.com/cengiz-pz
 #
 
-class_name AdmobExportConfig extends RefCounted
+class_name IosExportConfig extends AdmobExportConfig
 
-const PLUGIN_NODE_TYPE_NAME = "@pluginNodeName@"
-const PLUGIN_NAME: String = "@pluginName@"
+const CONFIG_FILE_PATH: String = "res://addons/" + PLUGIN_NAME + "/ios_export.cfg"
 
-const CONFIG_FILE_PATH: String = "res://addons/" + PLUGIN_NAME + "/export.cfg"
-
-const CONFIG_FILE_SECTION_GENERAL: String = "General"
-const CONFIG_FILE_SECTION_DEBUG: String = "Debug"
-const CONFIG_FILE_SECTION_RELEASE: String = "Release"
 const CONFIG_FILE_SECTION_ATT: String = "ATT"
 
-const CONFIG_FILE_KEY_IS_REAL: String = "is_real"
-const CONFIG_FILE_KEY_APP_ID: String = "app_id"
 const CONFIG_FILE_KEY_ATT_ENABLED: String = "att_enabled"
 const CONFIG_FILE_KEY_ATT_TEXT: String = "att_text"
 
-var is_real: bool
-var debug_application_id: String
-var real_application_id: String
 var att_enabled: bool
 var att_text: String
 
@@ -70,8 +59,8 @@ func load_export_config_from_node() -> Error:
 
 	if __admob_node:
 		is_real = __admob_node.is_real
-		debug_application_id = __admob_node.debug_application_id
-		real_application_id = __admob_node.real_application_id
+		debug_application_id = __admob_node.ios_debug_application_id
+		real_application_id = __admob_node.ios_real_application_id
 		att_enabled = __admob_node.att_enabled
 		att_text = __admob_node.att_text
 
@@ -83,24 +72,6 @@ func load_export_config_from_node() -> Error:
 
 
 func print_loaded_config() -> void:
-	Admob.log_info("Loaded export configuration settings:")
-	Admob.log_info("... is_real: %s" % ("true" if is_real else "false"))
-	Admob.log_info("... debug_application_id: %s" % debug_application_id)
-	Admob.log_info("... real_application_id: %s" % real_application_id)
+	super.print_loaded_config()
 	Admob.log_info("... att_enabled: %s" % ("true" if att_enabled else "false"))
 	Admob.log_info("... att_text: %s" % att_text)
-
-
-func get_plugin_node(a_node: Node) -> Admob:
-	var __result: Admob
-
-	if a_node is Admob:
-		__result = a_node
-	elif a_node.get_child_count() > 0:
-		for __child in a_node.get_children():
-			var __child_result = get_plugin_node(__child)
-			if __child_result is Admob:
-				__result = __child_result
-				break
-
-	return __result
