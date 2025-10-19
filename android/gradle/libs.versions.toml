@@ -7,7 +7,7 @@ compileSdk = "35"
 minSdk = "24"
 buildTools = "35.0.0"
 appcompat = "1.7.1"
-playads = "24.6.0"
+playads = "24.7.0"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
