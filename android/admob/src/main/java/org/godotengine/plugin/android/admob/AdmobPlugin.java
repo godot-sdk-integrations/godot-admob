@@ -210,13 +210,19 @@ public class AdmobPlugin extends GodotPlugin {
 
 		isInitialized = false;
 
-		MobileAds.initialize(activity, new OnInitializationCompleteListener() {
+		// Initialize Mobile Ads SDK on a background thread
+		new Thread(new Runnable() {
 			@Override
-			public void onInitializationComplete(InitializationStatus initializationStatus) {
-				isInitialized = true;
-				emitSignal(SIGNAL_INITIALIZATION_COMPLETED, convert(initializationStatus));
+			public void run() {
+				MobileAds.initialize(activity, new OnInitializationCompleteListener() {
+					@Override
+					public void onInitializationComplete(InitializationStatus initializationStatus) {
+						isInitialized = true;
+						emitSignal(SIGNAL_INITIALIZATION_COMPLETED, convert(initializationStatus));
+					}
+				});
 			}
-		});
+		}).start();
 	}
 
 	@UsedByGodot
