@@ -6,6 +6,7 @@ package org.godotengine.plugin.android.admob;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Application;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -14,14 +15,21 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.collection.ArraySet;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
+import com.google.android.gms.ads.appopen.AppOpenAd;
+import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback;
 import com.google.android.gms.ads.initialization.AdapterStatus;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
@@ -44,6 +52,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -85,6 +94,13 @@ public class AdmobPlugin extends GodotPlugin {
 	private static final String SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT = "rewarded_interstitial_ad_failed_to_show_full_screen_content";
 	private static final String SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT = "rewarded_interstitial_ad_dismissed_full_screen_content";
 	private static final String SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD = "rewarded_interstitial_ad_user_earned_reward";
+	private static final String SIGNAL_APP_OPEN_AD_LOADED = "app_open_ad_loaded";
+	private static final String SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD = "app_open_ad_failed_to_load";
+	private static final String SIGNAL_APP_OPEN_AD_IMPRESSION = "app_open_ad_impression";
+	private static final String SIGNAL_APP_OPEN_AD_CLICKED = "app_open_ad_clicked";
+	private static final String SIGNAL_APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT = "app_open_ad_showed_full_screen_content";
+	private static final String SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT = "app_open_ad_failed_to_show_full_screen_content";
+	private static final String SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT = "app_open_ad_dismissed_full_screen_content";
 	private static final String SIGNAL_CONSENT_FORM_LOADED = "consent_form_loaded";
 	private static final String SIGNAL_CONSENT_FORM_FAILED_TO_LOAD = "consent_form_failed_to_load";
 	private static final String SIGNAL_CONSENT_FORM_DISMISSED = "consent_form_dismissed";
@@ -121,6 +137,9 @@ public class AdmobPlugin extends GodotPlugin {
 	private Map<String, Interstitial> interstitialAds;
 	private Map<String, RewardedVideo> rewardedAds;
 	private Map<String, RewardedInterstitial> rewardedInterstitialAds;
+	
+	private AppOpenAdManager appOpenAdManager;
+	private boolean autoShowAppOpenOnResume = false;
 
 	private ConsentForm consentForm;
 
@@ -134,6 +153,9 @@ public class AdmobPlugin extends GodotPlugin {
 		rewardedInterstitialAds = new HashMap<>();
 
 		isInitialized = false;
+
+		appOpenAdManager = new AppOpenAdManager();
+		ProcessLifecycleOwner.get().getLifecycle().addObserver(appOpenAdManager);
 	}
 
 	@NonNull
@@ -156,7 +178,7 @@ public class AdmobPlugin extends GodotPlugin {
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_CLICKED, String.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_OPENED, String.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_CLOSED, String.class));
-		
+
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_LOADED, String.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_REFRESHED, String.class));
@@ -165,7 +187,7 @@ public class AdmobPlugin extends GodotPlugin {
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, String.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, String.class));
-		
+
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_LOADED, String.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_IMPRESSION, String.class));
@@ -174,7 +196,7 @@ public class AdmobPlugin extends GodotPlugin {
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT, String.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_USER_EARNED_REWARD, String.class, Dictionary.class));
-		
+
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, String.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_IMPRESSION, String.class));
@@ -183,11 +205,19 @@ public class AdmobPlugin extends GodotPlugin {
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, String.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD, String.class, Dictionary.class));
-		
+
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_LOADED, String.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_IMPRESSION, String.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_CLICKED, String.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT, String.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, String.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT, String.class));
+
 		signals.add(new SignalInfo(SIGNAL_CONSENT_FORM_LOADED));
 		signals.add(new SignalInfo(SIGNAL_CONSENT_FORM_FAILED_TO_LOAD, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_CONSENT_FORM_DISMISSED, Dictionary.class));
-		
+
 		signals.add(new SignalInfo(SIGNAL_CONSENT_INFO_UPDATED));
 		signals.add(new SignalInfo(SIGNAL_CONSENT_INFO_UPDATE_FAILED, Dictionary.class));
 
@@ -694,6 +724,24 @@ public class AdmobPlugin extends GodotPlugin {
 	}
 
 	@UsedByGodot
+	public void load_app_open_ad(String adUnitId, boolean autoShowOnResume) {
+		Log.d(LOG_TAG, "load_app_open_ad()");
+		autoShowAppOpenOnResume = autoShowOnResume;
+		appOpenAdManager.loadAd(adUnitId);
+	}
+
+	@UsedByGodot
+	public void show_app_open_ad() {
+		Log.d(LOG_TAG, "show_app_open_ad()");
+		appOpenAdManager.showAd();
+	}
+
+	@UsedByGodot
+	public boolean is_app_open_ad_available() {
+		return appOpenAdManager.isAdAvailable();
+	}
+
+	@UsedByGodot
 	public void load_consent_form() {
 		Log.d(LOG_TAG, "load_consent_form()");
 		activity.runOnUiThread(() -> {
@@ -770,9 +818,49 @@ public class AdmobPlugin extends GodotPlugin {
 	@Override
 	public View onMainCreate(Activity activity) {
 		this.activity = activity;
+		try {
+			this.activity.getApplication().registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+				@Override
+				public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {}
+
+				// Implement as in doc, but since single activity, minimal
+				@Override
+				public void onActivityStarted(@NonNull Activity activity) {
+					if (!appOpenAdManager.isShowingAd) {
+						// Update currentActivity if needed; but use plugin's activity
+					}
+				}
+
+				@Override
+				public void onActivityResumed(@NonNull Activity activity) {}
+
+				@Override
+				public void onActivityPaused(@NonNull Activity activity) {}
+
+				@Override
+				public void onActivityStopped(@NonNull Activity activity) {}
+
+				@Override
+				public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {}
+
+				@Override
+				public void onActivityDestroyed(@NonNull Activity activity) {}
+			});
+		} catch (Exception e) {
+			Log.e(LOG_TAG, "Failed to register lifecycle: " + e);
+		}
 		this.activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 		this.layout = new FrameLayout(activity); // create and add a new layout to Godot
 		return layout;
+	}
+
+
+	@Override
+	public void onMainResume() {
+		super.onMainResume();
+		if (autoShowAppOpenOnResume) {
+			appOpenAdManager.showAd();
+		}
 	}
 
 
@@ -1012,5 +1100,124 @@ public class AdmobPlugin extends GodotPlugin {
 	private String getAdMobDeviceId() {
 		@SuppressLint("HardwareIds") String androidId = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID);
 		return md5(androidId).toUpperCase(Locale.US);
+	}
+
+	private class AppOpenAdManager implements DefaultLifecycleObserver {
+		private static final String LOG_TAG = AdmobPlugin.LOG_TAG + "::" + AppOpenAdManager.class.getSimpleName();
+
+		private String adUnitId;
+		private AppOpenAd appOpenAd = null;
+		private boolean isLoadingAd = false;
+		private boolean isShowingAd = false;
+		private long loadTime = 0;
+
+		private void loadAd(String adUnitId) {
+			this.adUnitId = adUnitId;
+
+			if (isLoadingAd) {
+				Log.e(LOG_TAG, "Cannot load app open ad: loading already in progress");
+			} else if (isAdAvailable()) {
+				Log.e(LOG_TAG, "Cannot load app open ad: already loaded");
+    			isLoadingAd = false;
+			} else if (activity == null) {
+				Log.e(LOG_TAG, "Cannot load app open ad: activity is null");
+    			isLoadingAd = false;
+			} else if (activity.isFinishing()) {
+				Log.e(LOG_TAG, "Cannot load app open ad: activity is finishing");
+    			isLoadingAd = false;
+			} else {
+				isLoadingAd = true;
+				Log.d(LOG_TAG, "Loading app open ad: " + adUnitId);
+				activity.runOnUiThread(() -> {
+					AdRequest request = new AdRequest.Builder().build();
+					AppOpenAd.load(activity, adUnitId, request, new AppOpenAdLoadCallback() {
+						@Override
+						public void onAdLoaded(@NonNull AppOpenAd ad) {
+							Log.d(LOG_TAG, "App open ad loaded.");
+							appOpenAd = ad;
+							isLoadingAd = false;
+							loadTime = (new Date()).getTime();
+							emitSignal(SIGNAL_APP_OPEN_AD_LOADED, ad.getAdUnitId());
+						}
+
+						@Override
+						public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+							Log.e(LOG_TAG, "App open ad failed to load: " + loadAdError.getMessage());
+							isLoadingAd = false;
+							emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, AppOpenAdManager.this.adUnitId, convert(loadAdError));
+						}
+					});
+				});
+			}
+		}
+
+		public void showAd() {
+			if (isShowingAd) {
+				Log.d(LOG_TAG, "Cannot show app open ad: The app open ad is already showing.");
+			} else if (!isAdAvailable()) {
+				Log.d(LOG_TAG, "Cannot show app open ad: The app open ad is not ready yet.");
+			} else {
+				activity.runOnUiThread(() -> {
+					appOpenAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+						@Override
+						public void onAdDismissedFullScreenContent() {
+							Log.d(LOG_TAG, "App open ad dismissed fullscreen content.");
+							emitSignal(SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT, appOpenAd.getAdUnitId());
+							appOpenAd = null;
+							isShowingAd = false;
+						}
+
+						@Override
+						public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+							Log.e(LOG_TAG, "App open ad failed to show fullscreen content: " + adError.getMessage());
+							emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, appOpenAd.getAdUnitId(), convert(adError));
+							appOpenAd = null;
+							isShowingAd = false;
+						}
+
+						@Override
+						public void onAdShowedFullScreenContent() {
+							Log.d(LOG_TAG, "App open ad showed fullscreen content.");
+							emitSignal(SIGNAL_APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT, appOpenAd.getAdUnitId());
+						}
+
+						@Override
+						public void onAdImpression() {
+							Log.d(LOG_TAG, "App open ad recorded an impression.");
+							emitSignal(SIGNAL_APP_OPEN_AD_IMPRESSION, appOpenAd.getAdUnitId());
+						}
+
+						@Override
+						public void onAdClicked() {
+							Log.d(LOG_TAG, "App open ad was clicked.");
+							emitSignal(SIGNAL_APP_OPEN_AD_CLICKED, appOpenAd.getAdUnitId());
+						}
+					});
+
+					if (activity == null || activity.isFinishing()) {
+						Log.w(LOG_TAG, "Cannot show ad: invalid activity");
+					} else {
+						Log.d(LOG_TAG, "Showing app open ad.");
+						isShowingAd = true;
+						appOpenAd.show(activity);
+					}
+				});
+			}
+		}
+
+		private boolean wasLoadTimeLessThanNHoursAgo(long numHours) {
+			long dateDifference = (new Date()).getTime() - loadTime;
+			long numMilliSecondsPerHour = 3600000;
+			return (dateDifference < (numMilliSecondsPerHour * numHours));
+		}
+
+		public boolean isAdAvailable() {
+			return appOpenAd != null && wasLoadTimeLessThanNHoursAgo(4);
+		}
+
+		@Override
+		public void onStart(@NonNull LifecycleOwner owner) {
+			// Optionally show on foreground, but we'll use Godot's onMainResume instead
+		}
 	}
 }

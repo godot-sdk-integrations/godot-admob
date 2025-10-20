@@ -54,6 +54,7 @@ android {
 
 val androidDependencies = arrayOf(
 	libs.androidx.appcompat.get(),
+	libs.androidx.lifecycle.get(),
 	libs.play.services.ads.get()
 )
 
