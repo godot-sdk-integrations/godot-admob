@@ -37,6 +37,13 @@ signal rewarded_interstitial_ad_showed_full_screen_content(ad_id: String)
 signal rewarded_interstitial_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)
 signal rewarded_interstitial_ad_dismissed_full_screen_content(ad_id: String)
 signal rewarded_interstitial_ad_user_earned_reward(ad_id: String, reward_data: RewardItem)
+signal app_open_ad_loaded(ad_id: String)
+signal app_open_ad_failed_to_load(ad_id: String, error_data: LoadAdError)
+signal app_open_ad_impression(ad_id: String)
+signal app_open_ad_clicked(ad_id: String)
+signal app_open_ad_showed_full_screen_content(ad_id: String)
+signal app_open_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)
+signal app_open_ad_dismissed_full_screen_content(ad_id: String)
 signal consent_form_loaded
 signal consent_form_dismissed(error_data: FormError)
 signal consent_form_failed_to_load(error_data: FormError)
@@ -51,11 +58,13 @@ const ANDROID_BANNER_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/6300
 const ANDROID_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/1033173712"
 const ANDROID_REWARDED_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/5224354917"
 const ANDROID_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/5354046379"
+const ANDROID_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/9257395921"
 
 const IOS_BANNER_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/2934735716"
 const IOS_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/4411468910"
 const IOS_REWARDED_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/1712485313"
 const IOS_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/6978759866"
+const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/5575463023"
 
 @export_category("General")
 @export var is_real: bool: set = set_is_real
@@ -70,6 +79,9 @@ const IOS_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099
 @export var banner_position: LoadAdRequest.AdPosition = LoadAdRequest.AdPosition.TOP: set = set_banner_position
 @export var banner_size: LoadAdRequest.AdSize = LoadAdRequest.AdSize.BANNER: set = set_banner_size
 
+@export_category("App Open")
+@export var auto_show_on_resume: bool = false: set = set_auto_show_on_resume
+
 @export_category("Android-specific")
 @export_group("Android Application IDs","android_")
 @export var android_debug_application_id: String = ""
@@ -80,12 +92,14 @@ const IOS_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099
 @export var android_debug_interstitial_id: String = ANDROID_INTERSTITIAL_DEMO_AD_UNIT_ID
 @export var android_debug_rewarded_id: String = ANDROID_REWARDED_DEMO_AD_UNIT_ID
 @export var android_debug_rewarded_interstitial_id: String = ANDROID_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID
+@export var android_debug_app_open_id: String = ANDROID_APP_OPEN_DEMO_AD_UNIT_ID
 
 @export_group("Android Real Ad Unit IDs", "android_real_")
 @export var android_real_banner_id: String = ""
 @export var android_real_interstitial_id: String = ""
 @export var android_real_rewarded_id: String = ""
 @export var android_real_rewarded_interstitial_id: String = ""
+@export var android_real_app_open_id: String = ""
 
 @export_category("iOS-specific")
 @export_group("iOS Application IDs","ios_")
@@ -97,12 +111,14 @@ const IOS_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099
 @export var ios_debug_interstitial_id: String = IOS_INTERSTITIAL_DEMO_AD_UNIT_ID
 @export var ios_debug_rewarded_id: String = IOS_REWARDED_DEMO_AD_UNIT_ID
 @export var ios_debug_rewarded_interstitial_id: String = IOS_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID
+@export var ios_debug_app_open_id: String = IOS_APP_OPEN_DEMO_AD_UNIT_ID
 
 @export_group("iOS Real Ad Unit IDs", "ios_real_")
 @export var ios_real_banner_id: String = ""
 @export var ios_real_interstitial_id: String = ""
 @export var ios_real_rewarded_id: String = ""
 @export var ios_real_rewarded_interstitial_id: String = ""
+@export var ios_real_app_open_id: String = ""
 
 @export_group("App Tracking Transparency")
 @export var att_enabled: bool = false:
@@ -140,6 +156,7 @@ var _banner_id: String
 var _interstitial_id: String
 var _rewarded_id: String
 var _rewarded_interstitial_id: String
+var _app_open_id: String
 
 var _plugin_singleton: Object
 
@@ -163,23 +180,26 @@ func _ready() -> void:
 			_interstitial_id = ios_real_interstitial_id
 			_rewarded_id = ios_real_rewarded_id
 			_rewarded_interstitial_id = ios_real_rewarded_interstitial_id
+			_app_open_id = ios_real_app_open_id
 		else:
 			_banner_id = ios_debug_banner_id
 			_interstitial_id = ios_debug_interstitial_id
 			_rewarded_id = ios_debug_rewarded_id
 			_rewarded_interstitial_id = ios_debug_rewarded_interstitial_id
+			_app_open_id = ios_debug_app_open_id
 	else:
 		if is_real:
 			_banner_id = android_real_banner_id
 			_interstitial_id = android_real_interstitial_id
 			_rewarded_id = android_real_rewarded_id
 			_rewarded_interstitial_id = android_real_rewarded_interstitial_id
+			_app_open_id = android_real_app_open_id
 		else:
 			_banner_id = android_debug_banner_id
 			_interstitial_id = android_debug_interstitial_id
 			_rewarded_id = android_debug_rewarded_id
 			_rewarded_interstitial_id = android_debug_rewarded_interstitial_id
-
+			_app_open_id = android_debug_app_open_id
 
 	_update_plugin()
 
@@ -249,6 +269,13 @@ func _connect_signals() -> void:
 	_plugin_singleton.connect("rewarded_interstitial_ad_failed_to_show_full_screen_content", _on_rewarded_interstitial_ad_failed_to_show_full_screen_content)
 	_plugin_singleton.connect("rewarded_interstitial_ad_dismissed_full_screen_content", _on_rewarded_interstitial_ad_dismissed_full_screen_content)
 	_plugin_singleton.connect("rewarded_interstitial_ad_user_earned_reward", _on_rewarded_interstitial_ad_user_earned_reward)
+	_plugin_singleton.connect("app_open_ad_loaded", _on_app_open_ad_loaded)
+	_plugin_singleton.connect("app_open_ad_failed_to_load", _on_app_open_ad_failed_to_load)
+	_plugin_singleton.connect("app_open_ad_impression", _on_app_open_ad_impression)
+	_plugin_singleton.connect("app_open_ad_clicked", _on_app_open_ad_clicked)
+	_plugin_singleton.connect("app_open_ad_showed_full_screen_content", _on_app_open_ad_showed_full_screen_content)
+	_plugin_singleton.connect("app_open_ad_failed_to_show_full_screen_content", _on_app_open_ad_failed_to_show_full_screen_content)
+	_plugin_singleton.connect("app_open_ad_dismissed_full_screen_content", _on_app_open_ad_dismissed_full_screen_content)
 	_plugin_singleton.connect("consent_form_loaded", _on_consent_form_loaded)
 	_plugin_singleton.connect("consent_form_dismissed", _on_consent_form_dismissed)
 	_plugin_singleton.connect("consent_form_failed_to_load", _on_consent_form_failed_to_load)
@@ -307,6 +334,10 @@ func set_banner_size(a_value: LoadAdRequest.AdSize) -> void:
 	banner_size = a_value
 
 
+func set_auto_show_on_resume(a_value: bool) -> void:
+	auto_show_on_resume = a_value
+
+
 func set_max_banner_ad_cache(a_value: int) -> void:
 	max_banner_ad_cache = a_value
 
@@ -345,14 +376,15 @@ func configure_ads() -> void:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 
-func load_banner_ad() -> void:
+func load_banner_ad(a_request: LoadAdRequest = null) -> void:
 	if _plugin_singleton != null:
-		_plugin_singleton.load_banner_ad(LoadAdRequest.new()
+		if a_request == null:
+			a_request = (LoadAdRequest.new()
 					.set_ad_unit_id(_banner_id)
 					.set_ad_position(banner_position)
 					.set_ad_size(banner_size)
-					.set_request_agent(request_agent)
-					.get_raw_data())
+					.set_request_agent(request_agent))
+		_plugin_singleton.load_banner_ad(a_request.get_raw_data())
 	else:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
@@ -581,6 +613,28 @@ func remove_rewarded_interstitial_ad(a_ad_id: String) -> void:
 			Admob.log_error("Cannot remove rewarded interstitial ad. Ad with ID '%s' not found." % a_ad_id)
 
 
+func load_app_open_ad(a_ad_id: String = _app_open_id) -> void:
+	if _plugin_singleton == null:
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+	else:
+		_plugin_singleton.load_app_open_ad(a_ad_id, auto_show_on_resume)
+
+
+func show_app_open_ad() -> void:
+	if _plugin_singleton == null:
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+	else:
+		_plugin_singleton.show_app_open_ad()
+
+
+func is_app_open_ad_available() -> bool:
+	if _plugin_singleton == null:
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		return false
+	else:
+		return _plugin_singleton.is_app_open_ad_available()
+
+
 func load_consent_form() -> void:
 	if _plugin_singleton == null:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
@@ -784,8 +838,6 @@ func _on_rewarded_ad_user_earned_reward(a_ad_id: String, reward_data: Dictionary
 
 func _on_rewarded_interstitial_ad_loaded(a_ad_id: String) -> void:
 	_active_rewarded_interstitial_ads.push_front(a_ad_id)
-	Admob.log_warn("%s: rewarded_interstitial_ad cache size (%d) maximum size (%d)" % [PLUGIN_SINGLETON_NAME,
-				_active_rewarded_interstitial_ads.size(), max_rewarded_interstitial_ad_cache])
 	while _active_rewarded_interstitial_ads.size() > max_rewarded_interstitial_ad_cache:
 		Admob.log_warn("%s: rewarded_interstitial_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
 					_active_rewarded_interstitial_ads.size(), max_rewarded_interstitial_ad_cache])
@@ -823,6 +875,34 @@ func _on_rewarded_interstitial_ad_dismissed_full_screen_content(a_ad_id: String)
 
 func _on_rewarded_interstitial_ad_user_earned_reward(a_ad_id: String, reward_data: Dictionary) -> void:
 	rewarded_interstitial_ad_user_earned_reward.emit(a_ad_id, RewardItem.new(reward_data))
+
+
+func _on_app_open_ad_loaded(a_ad_id: String) -> void:
+	app_open_ad_loaded.emit(a_ad_id)
+
+
+func _on_app_open_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
+	app_open_ad_failed_to_load.emit(a_ad_id, LoadAdError.new(error_data))
+
+
+func _on_app_open_ad_impression(a_ad_id: String) -> void:
+	app_open_ad_impression.emit(a_ad_id)
+
+
+func _on_app_open_ad_clicked(a_ad_id: String) -> void:
+	app_open_ad_clicked.emit(a_ad_id)
+
+
+func _on_app_open_ad_showed_full_screen_content(a_ad_id: String) -> void:
+	app_open_ad_showed_full_screen_content.emit(a_ad_id)
+
+
+func _on_app_open_ad_failed_to_show_full_screen_content(a_ad_id: String, error_data: Dictionary) -> void:
+	app_open_ad_failed_to_show_full_screen_content.emit(a_ad_id, AdError.new(error_data))
+
+
+func _on_app_open_ad_dismissed_full_screen_content(a_ad_id: String) -> void:
+	app_open_ad_dismissed_full_screen_content.emit(a_ad_id)
 
 
 func _on_consent_form_loaded() -> void:
