@@ -233,7 +233,13 @@ func _on_admob_app_open_ad_failed_to_load(ad_id: String, error_data: LoadAdError
 
 
 func _on_admob_app_open_ad_showed_full_screen_content(ad_id: String) -> void:
-	_print_to_screen("app open displayed: %s" % ad_id)
+	_print_to_screen("app open showed full-screen content: %s" % ad_id)
+	_is_app_open_ad_displayed_at_startup = true
+	admob.load_app_open_ad()
+
+
+func _on_admob_app_open_ad_impression(ad_id: String) -> void:
+	_print_to_screen("app open ad impression: %s" % ad_id)
 	_is_app_open_ad_displayed_at_startup = true
 	admob.load_app_open_ad()
 
@@ -337,6 +343,6 @@ func _print_to_screen(a_message: String, a_is_error: bool = false) -> void:
 	_label.add_text("%s\n\n" % a_message)
 	if a_is_error:
 		_label.pop()
-		printerr(a_message)
+		printerr("Demo app:: " + a_message)
 	else:
-		print(a_message)
+		print("Demo app:: " + a_message)
