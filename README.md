@@ -44,6 +44,17 @@ Steps:
 - enable the plugin via the `Plugins` tab of `Project->Project Settings...` menu, in the Godot Editor
 
 
+## <img src="addon/icon.png" width="20"> Supported Ad Types
+
+The following ad types are supported:
+
+- Banner
+- Interstitial
+- Rewarded
+- Rewarded Interstitial
+- App Open
+
+
 ## <img src="addon/icon.png" width="20"> Usage
 - Add `Admob` node to your main scene and populate the ID fields of the node
 	- Debug IDs will only be used when your Godot app is run in debug mode
@@ -83,6 +94,13 @@ Steps:
 	- `rewarded_interstitial_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)`
 	- `rewarded_interstitial_ad_dismissed_full_screen_content(ad_id: String)`
 	- `rewarded_interstitial_ad_user_earned_reward(ad_id: String, reward_data: RewardItem)`
+	- `app_open_ad_loaded(ad_unit_id: String)`
+	- `app_open_ad_failed_to_load(ad_unit_id: String, error_data: LoadAdError)`
+	- `app_open_ad_impression(ad_unit_id: String)`
+	- `app_open_ad_clicked(ad_unit_id: String)`
+	- `app_open_ad_showed_full_screen_content(ad_unit_id: String)`
+	- `app_open_ad_failed_to_show_full_screen_content(ad_unit_id: String, error_data: AdError)`
+	- `app_open_ad_dismissed_full_screen_content(ad_unit_id: String)`
 	- `consent_form_loaded`
 	- `consent_form_dismissed(error_data: FormError)`
 	- `consent_form_failed_to_load(error_data: FormError)`
@@ -98,6 +116,7 @@ Steps:
 	- `load_interstitia_adl(ad_request: LoadAdRequest)`
 	- `load_rewarded_ad(ad_request: LoadAdRequest)`
 	- `load_rewarded_interstitial_ad(ad_request: LoadAdRequest)`
+	- `load_app_open_ad(ad_unit_id: String, auto_show_on_resume: boolean)`
 - the `Admob` node will emit the following signals once ads have been loaded or failed to load:
 	- `banner_ad_loaded(ad_id: String)`
 	- `banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
@@ -107,17 +126,25 @@ Steps:
 	- `rewarded_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
 	- `rewarded_interstitial_ad_loaded(ad_id: String)`
 	- `rewarded_interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
+	- `app_open_ad_loaded(ad_unit_id: String)`
+	- `app_open_ad_failed_to_load(ad_unit_id: String, error_data: LoadAdError)`
 - once ads have been loaded, call corresponding `show_*()` method from the `Admob` node with the `ad_id` received:
 	- `show_banner_ad(ad_id: String)`
 	- `show_interstitial_ad(ad_id: String)`
 	- `show_rewarded_ad(ad_id: String)`
 	- `show_rewarded_interstitial_ad(ad_id: String)`
+	- `show_app_open_ad()`
 
 ### <img src="addon/icon.png" width="18"> Banner Size
 - The following methods return the size of a Banner ad:
 	- `get_banner_dimension()`
 	- `get_banner_dimension_in_pixels()`
 - These methods are not supported for `FLUID` sized ads. For banner ads of size `FLUID`, the `get_banner_dimension()` method will return `(-3, -4)` and the `get_banner_dimension_in_pixels()` method will return `(-1, -1)`.
+
+### <img src="addon/icon.png" width="18"> App Open Ads
+App open ads are a special ad format intended for publishers wishing to monetize their app load screens. App open ads can be closed at any time, and are designed to be shown at startup or when your users bring your app to the foreground.
+
+Set `auto_show_on_resume` to `true` in order to show app open ads when users resume (bring from background to foreground) your app. The app open ad should be loaded via the `load_app_open_ad()` method before it can be displayed at startup or upon resumption. Ideally, invoke the `load_app_open_ad()` method at startup and, if `auto_show_on_resume` is enabled, upon each `app_open_ad_impression` signal.
 
 ### <img src="addon/icon.png" width="18"> User Consent
 - Methods:
