@@ -45,6 +45,13 @@ const String REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL = "rewar
 const String REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL = "rewarded_interstitial_ad_failed_to_show_full_screen_content";
 const String REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL = "rewarded_interstitial_ad_dismissed_full_screen_content";
 const String REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD_SIGNAL = "rewarded_interstitial_ad_user_earned_reward";
+const String APP_OPEN_AD_LOADED_SIGNAL = "app_open_ad_loaded";
+const String APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL = "app_open_ad_failed_to_load";
+const String APP_OPEN_AD_IMPRESSION_SIGNAL = "app_open_ad_impression";
+const String APP_OPEN_AD_CLICKED_SIGNAL = "app_open_ad_clicked";
+const String APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL = "app_open_ad_showed_full_screen_content";
+const String APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL = "app_open_ad_failed_to_show_full_screen_content";
+const String APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL = "app_open_ad_dismissed_full_screen_content";
 const String CONSENT_FORM_LOADED_SIGNAL = "consent_form_loaded";
 const String CONSENT_FORM_FAILED_TO_LOAD_SIGNAL = "consent_form_failed_to_load";
 const String CONSENT_FORM_DISMISSED_SIGNAL = "consent_form_dismissed";
@@ -69,8 +76,8 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_portrait_adaptive_banner_size"), &AdmobPlugin::get_portrait_adaptive_banner_size);
 	ClassDB::bind_method(D_METHOD("get_landscape_adaptive_banner_size"), &AdmobPlugin::get_landscape_adaptive_banner_size);
 	ClassDB::bind_method(D_METHOD("load_banner_ad"), &AdmobPlugin::load_banner_ad);
-	ClassDB::bind_method(D_METHOD("hide_banner_ad"), &AdmobPlugin::hide_banner_ad);
 	ClassDB::bind_method(D_METHOD("show_banner_ad"), &AdmobPlugin::show_banner_ad);
+	ClassDB::bind_method(D_METHOD("hide_banner_ad"), &AdmobPlugin::hide_banner_ad);
 	ClassDB::bind_method(D_METHOD("remove_banner_ad"), &AdmobPlugin::remove_banner_ad);
 	ClassDB::bind_method(D_METHOD("get_banner_width"), &AdmobPlugin::get_banner_width);
 	ClassDB::bind_method(D_METHOD("get_banner_height"), &AdmobPlugin::get_banner_height);
@@ -123,7 +130,19 @@ void AdmobPlugin::_bind_methods() {
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "reward_data")));
-	
+
+	ClassDB::bind_method(D_METHOD("load_app_open_ad", "ad_unit_id", "auto_show_on_resume"), &AdmobPlugin::load_app_open_ad, DEFVAL(Variant(false)));
+	ClassDB::bind_method(D_METHOD("show_app_open_ad"), &AdmobPlugin::show_app_open_ad);
+	ClassDB::bind_method(D_METHOD("is_app_open_ad_available"), &AdmobPlugin::is_app_open_ad_available);
+
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id"), PropertyInfo(Variant::DICTIONARY, "error")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id"), PropertyInfo(Variant::DICTIONARY, "error")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));
+
 	ClassDB::bind_method(D_METHOD("load_consent_form"), &AdmobPlugin::load_consent_form);
 	ClassDB::bind_method(D_METHOD("show_consent_form"), &AdmobPlugin::show_consent_form);
 
@@ -167,8 +186,8 @@ Error AdmobPlugin::initialize() {
 	os_log_debug(admob_log, "Starting GADMobileAds initialization");
 
 	[[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *_Nonnull status) {
-		Dictionary dictionary = [GAPConverter initializationStatusToGodotDictionary:status];
 		initialized = true;
+		Dictionary dictionary = [GAPConverter initializationStatusToGodotDictionary:status];
 		os_log_debug(admob_log, "AdmobPlugin initialization completed with status: %@", status.description);
 		emit_signal(INITIALIZATION_COMPLETED_SIGNAL, dictionary);
 	}];
@@ -490,6 +509,49 @@ void AdmobPlugin::remove_rewarded_interstitial_ad(String adId) {
 	}
 }
 
+void AdmobPlugin::load_app_open_ad(String adUnitId, bool autoShowOnResume) {
+	NSString* nsAdUnitId = [GAPConverter toNsString:adUnitId];
+	os_log_debug(admob_log, "AdmobPlugin load_app_open_ad: %@", nsAdUnitId);
+	if (this->appOpenAd == nil) {
+		this->appOpenAd = [[AppOpenAd alloc] initWithPlugin:this];
+	}
+	[this->appOpenAd loadWithAdUnitId: [GAPConverter toNsString: adUnitId] autoShowOnResume: autoShowOnResume];
+}
+
+void AdmobPlugin::show_app_open_ad() {
+	os_log_debug(admob_log, "AdmobPlugin show_app_open_ad");
+	if (this->appOpenAd == nil) {
+		os_log_debug(admob_log, "Cannot show app open ad: ad instance is nil");
+	} else {
+		[this->appOpenAd show];
+	}
+}
+
+bool AdmobPlugin::is_app_open_ad_available() {
+	bool isAvailable;
+	os_log_debug(admob_log, "AdmobPlugin is_app_open_ad_available");
+	if (this->appOpenAd == nil) {
+		os_log_debug(admob_log, "Cannot show app open ad: ad instance is nil");
+		isAvailable = false;
+	} else {
+		isAvailable = [this->appOpenAd isAvailable];
+	}
+	return isAvailable;
+}
+
+void AdmobPlugin::applicationDidBecomeActive() {
+	if (this->appOpenAd == nil) {
+		os_log_debug(admob_log, "Cannot check app open ad: ad instance is nil");
+	} else {
+		if (this->appOpenAd.autoShowOnResume) {
+			os_log_debug(admob_log, "Showing app open ad: autoShowOnResume is true");
+			[this->appOpenAd show];
+		} else {
+			os_log_debug(admob_log, "Wont show app open ad: autoShowOnResume is false");
+		} 
+	}
+}
+
 Error AdmobPlugin::load_consent_form() {
 	os_log_debug(admob_log, "AdmobPlugin load_consent_form");
 
@@ -545,20 +607,20 @@ Error AdmobPlugin::show_consent_form() {
 }
 
 String AdmobPlugin::get_consent_status() {
-    UMPConsentStatus status = [UMPConsentInformation.sharedInstance consentStatus];
-    os_log_debug(admob_log, "AdmobPlugin get_consent_status: %ld", (long) status);
-    switch (status) {
-        case UMPConsentStatusUnknown:
-            return [@"UNKNOWN" UTF8String];
-        case UMPConsentStatusNotRequired:
-            return [@"NOT_REQUIRED" UTF8String];
-        case UMPConsentStatusRequired:
-            return [@"REQUIRED" UTF8String];
-        case UMPConsentStatusObtained:
-            return [@"OBTAINED" UTF8String];
-        default:
-            return [@"UNKNOWN" UTF8String];
-    }
+	UMPConsentStatus status = [UMPConsentInformation.sharedInstance consentStatus];
+	os_log_debug(admob_log, "AdmobPlugin get_consent_status: %ld", (long) status);
+	switch (status) {
+		case UMPConsentStatusUnknown:
+			return [@"UNKNOWN" UTF8String];
+		case UMPConsentStatusNotRequired:
+			return [@"NOT_REQUIRED" UTF8String];
+		case UMPConsentStatusRequired:
+			return [@"REQUIRED" UTF8String];
+		case UMPConsentStatusObtained:
+			return [@"OBTAINED" UTF8String];
+		default:
+			return [@"UNKNOWN" UTF8String];
+	}
 }
 
 bool AdmobPlugin::is_consent_form_available() {
@@ -617,13 +679,35 @@ AdmobPlugin::AdmobPlugin() {
 	os_log_debug(admob_log, "constructor AdmobPlugin");
 
 	ERR_FAIL_COND(instance != NULL);
-	
+
 	instance = this;
+
+	initialized = false;
+	bannerAdSequence = 0;
+	interstitialAdSequence = 0;
+	rewardedAdSequence = 0;
+	rewardedInterstitialAdSequence = 0;
+	bannerAds = [[NSMutableDictionary alloc] init];
+	interstitialAds = [[NSMutableDictionary alloc] init];
+	rewardedAds = [[NSMutableDictionary alloc] init];
+	rewardedInterstitialAds = [[NSMutableDictionary alloc] init];
+	appOpenAd = nil;
+	consentForm = nil;
+	foregroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification
+													object:nil
+													queue:[NSOperationQueue mainQueue]
+													usingBlock:^(NSNotification * _Nonnull note) {
+		this->applicationDidBecomeActive();
+	}];
 }
 
 AdmobPlugin::~AdmobPlugin() {
 	os_log_debug(admob_log, "destructor AdmobPlugin");
+
 	if (instance == this) {
-		instance = NULL;
+		instance = nullptr;
+	}
+	if (foregroundObserver) {
+		[[NSNotificationCenter defaultCenter] removeObserver:foregroundObserver];
 	}
 }

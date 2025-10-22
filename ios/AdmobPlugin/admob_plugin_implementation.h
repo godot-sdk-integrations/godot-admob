@@ -14,6 +14,7 @@
 #import "interstitial.h"
 #import "rewarded.h"
 #import "rewarded_interstitial.h"
+#import "app_open.h"
 
 
 extern const String INITIALIZATION_COMPLETED_SIGNAL;
@@ -48,6 +49,13 @@ extern const String REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL;
 extern const String REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL;
 extern const String REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL;
 extern const String REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD_SIGNAL;
+extern const String APP_OPEN_AD_LOADED_SIGNAL;
+extern const String APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL;
+extern const String APP_OPEN_AD_IMPRESSION_SIGNAL;
+extern const String APP_OPEN_AD_CLICKED_SIGNAL;
+extern const String APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL;
+extern const String APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL;
+extern const String APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL;
 extern const String CONSENT_FORM_LOADED_SIGNAL;
 extern const String CONSENT_FORM_FAILED_TO_LOAD_SIGNAL;
 extern const String CONSENT_FORM_DISMISSED_SIGNAL;
@@ -61,27 +69,21 @@ class AdmobPlugin : public Object {
 	GDCLASS(AdmobPlugin, Object);
 
 private:
+	static AdmobPlugin* instance; // Singleton instance
+	bool initialized; // Tracks initialization status
+	int bannerAdSequence; // Sequence for banner ad IDs
+	int interstitialAdSequence; // Sequence for interstitial ad IDs
+	int rewardedAdSequence; // Sequence for rewarded ad IDs
+	int rewardedInterstitialAdSequence; // Sequence for rewarded interstitial ad IDs
 
-	bool initialized;
-	static AdmobPlugin* instance;
-
-	int bannerAdSequence;
-	int interstitialAdSequence;
-	int rewardedInterstitialAdSequence;
-	int rewardedAdSequence;
-
-	NSMutableDictionary<NSString*,BannerAd*>* bannerAds;
-	NSMutableDictionary<NSString*,InterstitialAd*>* interstitialAds;
-	NSMutableDictionary<NSString*,RewardedInterstitialAd*>* rewardedInterstitialAds;
-	NSMutableDictionary<NSString*,RewardedAd*>* rewardedAds;
-
+	NSMutableDictionary<NSString*, BannerAd*>* bannerAds;
+	NSMutableDictionary<NSString*, InterstitialAd*>* interstitialAds;
+	NSMutableDictionary<NSString*, RewardedAd*>* rewardedAds;
+	NSMutableDictionary<NSString*, RewardedInterstitialAd*>* rewardedInterstitialAds;
 	UMPConsentForm* consentForm;
 
-	static void _bind_methods();
-	CGFloat getAdWidth();
-
-
-public:
+	AppOpenAd* appOpenAd; // One app open ad per app (if enabled)
+	id<NSObject> foregroundObserver; // Notification observer token
 
 	Error initialize();
 	Error set_request_configuration(Dictionary configData);
@@ -112,6 +114,10 @@ public:
 	void show_rewarded_interstitial_ad(String uid);
 	void remove_rewarded_interstitial_ad(String uid);
 
+	void load_app_open_ad(String adUnitId, bool autoShowOnResume);
+	void show_app_open_ad();
+	bool is_app_open_ad_available();
+
 	Error load_consent_form();
 	Error show_consent_form();
 	String get_consent_status();
@@ -120,9 +126,18 @@ public:
 	void reset_consent_info();
 
 	void request_tracking_authorization();
-
 	void open_app_settings();
 
+	// Lifecycle handler
+	void applicationDidBecomeActive();
+
+	// Helper method for adaptive banner sizing
+	CGFloat getAdWidth();
+
+	static void _bind_methods();
+
+public:
+ 
 	static AdmobPlugin* get_singleton();
 
 	AdmobPlugin();
