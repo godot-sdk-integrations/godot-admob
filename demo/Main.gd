@@ -270,7 +270,7 @@ func _process_consent_status(a_consent_status: String) -> void:
 		ConsentInformation.ConsentStatus.UNKNOWN:
 			_print_to_screen("consent status is unknown")
 			admob.update_consent_info(ConsentRequestParameters.new()
-				.set_debug_geography(ConsentRequestParameters.DebugGeography.values()[_geography_option_button.selected])
+				.set_debug_geography(_geography_option_button.selected)
 				.add_test_device_hashed_id(OS.get_unique_id()))
 		ConsentInformation.ConsentStatus.NOT_REQUIRED:
 			_print_to_screen("consent is not required")
