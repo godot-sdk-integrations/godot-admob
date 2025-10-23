@@ -23,6 +23,7 @@ extends Node
 
 var _active_texture_rect: TextureRect
 
+var _is_app_open_ad_displayed_at_startup: bool = false
 var _is_banner_loaded: bool = false
 var _is_interstitial_loaded: bool = false
 var _is_rewarded_video_loaded: bool = false
@@ -59,6 +60,12 @@ func _on_admob_initialization_completed(_status_data: InitializationStatus) -> v
 
 
 func _load_ads() -> void:
+	admob.load_app_open_ad()
+
+	# For cold start/loading screen:
+	if admob.is_app_open_ad_available():
+		admob.show_app_open_ad()
+
 	admob.load_banner_ad()
 	admob.load_interstitial_ad()
 	admob.load_rewarded_ad()
@@ -214,6 +221,40 @@ func _on_admob_rewarded_interstitial_ad_user_earned_reward(ad_id: String, reward
 				[ad_id, reward_data.get_amount(), reward_data.get_type()])
 
 
+func _on_admob_app_open_ad_loaded(ad_id: String) -> void:
+	_print_to_screen("app open loaded: %s" % ad_id)
+	if not _is_app_open_ad_displayed_at_startup:
+		admob.show_app_open_ad()
+
+
+func _on_admob_app_open_ad_failed_to_load(ad_id: String, error_data: LoadAdError) -> void:
+	_print_to_screen("app open ad %s failed to load. error: %d, message: %s" %
+				[ad_id, error_data.get_code(), error_data.get_message()], true)
+
+
+func _on_admob_app_open_ad_showed_full_screen_content(ad_id: String) -> void:
+	_print_to_screen("app open showed full-screen content: %s" % ad_id)
+	_is_app_open_ad_displayed_at_startup = true
+	admob.load_app_open_ad()
+
+
+func _on_admob_app_open_ad_impression(ad_id: String) -> void:
+	_print_to_screen("app open ad impression: %s" % ad_id)
+	_is_app_open_ad_displayed_at_startup = true
+	admob.load_app_open_ad()
+
+
+func _on_admob_app_open_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError) -> void:
+	_print_to_screen("app open ad %s failed to show. error: %d, message: %s" %
+				[ad_id, error_data.get_code(), error_data.get_message()], true)
+	_is_app_open_ad_displayed_at_startup = true
+	admob.load_app_open_ad()
+
+
+func _on_admob_app_open_ad_dismissed_full_screen_content(ad_id: String) -> void:
+	_print_to_screen("app open dismissed: %s" % ad_id)
+
+
 func _on_admob_consent_info_updated() -> void:
 	_print_to_screen("consent info updated")
 	_process_consent_status(admob.get_consent_status())
@@ -229,7 +270,7 @@ func _process_consent_status(a_consent_status: String) -> void:
 		ConsentInformation.ConsentStatus.UNKNOWN:
 			_print_to_screen("consent status is unknown")
 			admob.update_consent_info(ConsentRequestParameters.new()
-				.set_debug_geography(ConsentRequestParameters.DebugGeography.values()[_geography_option_button.selected])
+				.set_debug_geography(_geography_option_button.selected)
 				.add_test_device_hashed_id(OS.get_unique_id()))
 		ConsentInformation.ConsentStatus.NOT_REQUIRED:
 			_print_to_screen("consent is not required")
@@ -297,8 +338,11 @@ func _on_reload_rewarded_interstitial_button_pressed() -> void:
 
 
 func _print_to_screen(a_message: String, a_is_error: bool = false) -> void:
+	if a_is_error:
+		_label.push_color(Color.CRIMSON)
 	_label.add_text("%s\n\n" % a_message)
 	if a_is_error:
-		printerr(a_message)
+		_label.pop()
+		printerr("Demo app:: " + a_message)
 	else:
-		print(a_message)
+		print("Demo app:: " + a_message)
