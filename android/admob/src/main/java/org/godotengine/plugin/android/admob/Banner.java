@@ -14,7 +14,6 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 
-import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
