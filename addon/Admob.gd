@@ -142,7 +142,7 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export_range(1,100) var max_rewarded_interstitial_ad_cache: int = 3: set = set_max_rewarded_interstitial_ad_cache
 
 @export_group("Cleanup After Ad Displayed")
-@export var remove_banner_ads_after_displayed: bool = true
+@export var remove_banner_ads_after_displayed: bool = false
 @export var remove_interstitial_ads_after_displayed: bool = true
 @export var remove_rewarded_ads_after_displayed: bool = true
 @export var remove_rewarded_interstitial_ads_after_displayed: bool = true
@@ -769,7 +769,6 @@ func _on_banner_ad_refreshed(a_ad_id: String, a_response_info: Dictionary) -> vo
 
 func _on_banner_ad_impression(a_ad_id: String) -> void:
 	if remove_banner_ads_after_displayed:
-		_active_banner_ads.erase(a_ad_id)
 		remove_banner_ad(a_ad_id)
 	banner_ad_impression.emit(a_ad_id)
 
