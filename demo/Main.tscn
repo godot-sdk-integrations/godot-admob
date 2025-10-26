@@ -1,9 +1,9 @@
 [gd_scene load_steps=9 format=3 uid="uid://daro5x6n3pd26"]
 
 [ext_resource type="Script" uid="uid://bcqb5hwnjbtob" path="res://Main.gd" id="1_wt50o"]
-[ext_resource type="Script" uid="uid://dsglgdhjibxtb" path="res://addons/AdmobPlugin/Admob.gd" id="2_4x6et"]
+[ext_resource type="Script" uid="uid://dxhehyribdil8" path="res://addons/AdmobPlugin/Admob.gd" id="2_4x6et"]
 [ext_resource type="Texture2D" uid="uid://cy0mnncxevupr" path="res://assets/admob-android.png" id="2_qti4s"]
-[ext_resource type="Texture2D" uid="uid://b2myrgf8pkumi" path="res://assets/admob-ios.png" id="3_cm0pq"]
+[ext_resource type="Texture2D" uid="uid://cpxlqpr0qmm71" path="res://assets/admob-ios.png" id="3_cm0pq"]
 [ext_resource type="Script" uid="uid://bvjoch7h1oxtr" path="res://addons/AdmobPlugin/model/NetworkExtras.gd" id="5_fos0i"]
 
 [sub_resource type="Resource" id="Resource_fos0i"]
@@ -86,10 +86,9 @@ theme_override_constants/separation = 11
 [node name="TabContainer" type="TabContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 165)
 layout_mode = 2
-current_tab = 1
+current_tab = 0
 
 [node name="Banner" type="VBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 6
 metadata/_tab_index = 0
@@ -132,6 +131,23 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Get Size In Pixels"
 
+[node name="CollapsibleCheckButton" type="CheckButton" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
+layout_mode = 2
+text = "Collapsible Banner"
+
+[node name="CollapsiblePosHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer"]
+layout_mode = 2
+text = "Collapsible Position:"
+
+[node name="OptionButton" type="OptionButton" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="ButtonsHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
 layout_mode = 2
 theme_override_constants/separation = 45
@@ -155,6 +171,7 @@ disabled = true
 text = "Reload"
 
 [node name="Other" type="VBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
 theme_override_constants/separation = 15
 metadata/_tab_index = 1
@@ -264,6 +281,7 @@ network_extras = Array[ExtResource("5_fos0i")]([SubResource("Resource_fos0i"), S
 
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/SizeButton" to="." method="_on_size_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/PixelSizeButton" to="." method="_on_pixel_size_button_pressed"]
+[connection signal="toggled" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsibleCheckButton" to="." method="_on_collapsible_check_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ShowBannerButton" to="." method="_on_show_banner_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/HideBannerButton" to="." method="_on_hide_banner_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ReloadBannerButton" to="." method="_on_reload_banner_button_pressed"]
