@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
@@ -40,6 +41,10 @@ public class Banner {
 
 	private static final String AD_SIZE_PROPERTY = "ad_size";
 	private static final String AD_POSITION_PROPERTY = "ad_position";
+	static final String REQUEST_AGENT_PROPERTY = "request_agent";
+	static final String KEYWORDS_PROPERTY = "keywords";
+	static final String COLLAPSIBLE_PROPERTY = "collapsible";
+	static final String COLLAPSIBLE_POSITION_PROPERTY = "collapsible_position";
 
 	enum BannerSize {
 		BANNER,
@@ -105,6 +110,7 @@ public class Banner {
 		this.adListener = new AdListener() {
 			@Override
 			public void onAdLoaded() {
+				Log.d(LOG_TAG, "Ad loaded. isCollapsible = " + (adView != null && adView.isCollapsible()));
 				if (Banner.this.firstLoad) {
 					Banner.this.firstLoad = false;
 					listener.onAdLoaded(Banner.this.adId, Banner.this.adView.getResponseInfo());
