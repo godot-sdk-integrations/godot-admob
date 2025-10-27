@@ -6,10 +6,8 @@ package org.godotengine.plugin.android.admob;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -41,6 +39,10 @@ public class Banner {
 
 	private static final String AD_SIZE_PROPERTY = "ad_size";
 	private static final String AD_POSITION_PROPERTY = "ad_position";
+	static final String REQUEST_AGENT_PROPERTY = "request_agent";
+	static final String KEYWORDS_PROPERTY = "keywords";
+	static final String COLLAPSIBLE_PROPERTY = "collapsible";
+	static final String COLLAPSIBLE_POSITION_PROPERTY = "collapsible_position";
 
 	enum BannerSize {
 		BANNER,
@@ -108,6 +110,7 @@ public class Banner {
 		this.adListener = new AdListener() {
 			@Override
 			public void onAdLoaded() {
+				Log.d(LOG_TAG, "Ad loaded. isCollapsible = " + (adView != null && adView.isCollapsible()));
 				if (Banner.this.firstLoad) {
 					Banner.this.firstLoad = false;
 					listener.onAdLoaded(Banner.this.adId);

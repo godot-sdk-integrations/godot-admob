@@ -6,9 +6,11 @@ package org.godotengine.plugin.android.admob;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -140,8 +142,8 @@ public class GodotConverter {
 	public static AdRequest createAdRequest(Dictionary data) {
 		AdRequest.Builder builder = new AdRequest.Builder();
 
-		if (data.containsKey("request_agent")) {
-			String requestAgent = (String) data.get("request_agent");
+		if (data.containsKey(Banner.REQUEST_AGENT_PROPERTY)) {
+			String requestAgent = (String) data.get(Banner.REQUEST_AGENT_PROPERTY);
 			if (requestAgent != null && !requestAgent.isEmpty()) {
 				builder.setRequestAgent(requestAgent);
 			}
@@ -149,9 +151,26 @@ public class GodotConverter {
 
 		// TODO: mediation support
 
-		if (data.containsKey("keywords")) {
-			for (String keyword : (String[]) data.get("keywords")) {
+		if (data.containsKey(Banner.KEYWORDS_PROPERTY)) {
+			for (String keyword : (String[]) data.get(Banner.KEYWORDS_PROPERTY)) {
 				builder.addKeyword(keyword);
+			}
+		}
+
+		if (data.containsKey(Banner.COLLAPSIBLE_PROPERTY)) {
+			Boolean isCollapsible = (Boolean) data.get(Banner.COLLAPSIBLE_PROPERTY);
+			if (Boolean.TRUE.equals(isCollapsible)) {
+				String collapsiblePosition = "top";
+				if (data.containsKey(Banner.COLLAPSIBLE_POSITION_PROPERTY)) {
+					collapsiblePosition = (String) data.get(Banner.COLLAPSIBLE_POSITION_PROPERTY);
+				}
+				else {
+					Log.w(LOG_TAG, "Warning: Collapsible position not specified.");
+				}
+				Log.d(LOG_TAG, "Loading collapsible banner (" + collapsiblePosition + ")");
+				Bundle extras = new Bundle();
+				extras.putString("collapsible", collapsiblePosition);
+				builder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
 			}
 		}
 
