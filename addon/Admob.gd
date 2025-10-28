@@ -120,7 +120,11 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export var ios_real_rewarded_interstitial_id: String = ""
 @export var ios_real_app_open_id: String = ""
 
-@export_group("App Tracking Transparency")
+@export_category("Mediation")
+@export_group("Networks")
+@export_flags(" ") var enabled_networks = 0	# Networks populated in _validate_property()
+
+@export_category("App Tracking Transparency")
 @export var att_enabled: bool = false:
 	get:
 		return att_enabled
@@ -148,7 +152,7 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export var remove_rewarded_interstitial_ads_after_scene: bool = true
 
 @export_category("Debug")
-@export_category("Settings")
+@export_group("Settings")
 @export var debug_geography: ConsentRequestParameters.DebugGeography = ConsentRequestParameters.DebugGeography.NOT_SET : set = set_debug_geography
 @export var add_test_device_id: bool = false : set = set_add_test_device_id
 
@@ -171,6 +175,11 @@ func _init() -> void:
 	_active_interstitial_ads = []
 	_active_rewarded_ads = []
 	_active_rewarded_interstitial_ads = []
+
+
+func _validate_property(property: Dictionary) -> void:
+	if property.name == "enabled_networks":
+		property.hint_string = ",".join(MediationNetwork.MEDIATION_NETWORK_TAGS.keys())
 
 
 func _ready() -> void:

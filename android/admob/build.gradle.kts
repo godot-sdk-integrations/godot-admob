@@ -2,8 +2,13 @@
 // © 2024-present https://github.com/cengiz-pz
 //
 
-import org.apache.tools.ant.filters.ReplaceTokens
 import com.android.build.gradle.internal.api.LibraryVariantOutputImpl
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+import java.util.Properties
+import java.io.FileInputStream
+
 
 plugins {
 	alias(libs.plugins.android.library)
@@ -104,6 +109,7 @@ tasks {
 			"pluginVersion" to (project.extra["pluginVersion"] as String),
 			"pluginPackage" to (project.extra["pluginPackageName"] as String),
 			"androidDependencies" to androidDependencies.joinToString(", ") { "\"$it\"" },
+			"iosPlatformVersion" to (project.extra["iosPlatformVersion"] as String),
 			"iosFrameworks" to (project.extra["iosFrameworks"] as String)
 				.split(",")
 				.map { it.trim() }
@@ -120,6 +126,57 @@ tasks {
 				.filter { it.isNotBlank() }
 				.joinToString(", ") { "\"$it\"" }
 		))
+	}
+
+	register("replaceMediationTokens") {
+		description = "Replaces mediation tokens in MediationNetwork.gd with values from mediation.properties"
+		dependsOn("copyAddonsToDemo")
+
+		doLast {
+			val mediationProps = Properties().apply {
+				load(FileInputStream(file("${rootDir}/../common/mediation.properties")))
+			}
+
+			val gdFile = file("${project.extra["demoAddOnsDirectory"]}/${project.extra["pluginName"]}/model/MediationNetwork.gd")
+			if (!gdFile.exists()) {
+				println("[WARNING] MediationNetwork.gd not found at ${gdFile.absolutePath}, skipping replacement.")
+				return@doLast
+			}
+
+			val content = gdFile.readText()
+			var newContent = content
+
+			val networks = mediationProps.stringPropertyNames()
+				.filter { it.contains(".") }
+				.map { it.substringBefore(".") }
+				.distinct()
+				.sorted() // Optional: sort for consistent replacement order
+
+			for (network in networks) {
+				val dep = mediationProps.getProperty("${network}.dependency") ?: continue
+				val depVer = mediationProps.getProperty("${network}.dependencyVersion") ?: ""
+				val repo = mediationProps.getProperty("${network}.mavenRepo") ?: ""
+				val pod = mediationProps.getProperty("${network}.pod") ?: ""
+				val podVer = mediationProps.getProperty("${network}.podVersion") ?: ""
+				val skIdsStr = mediationProps.getProperty("${network}.skAdNetworkIds") ?: ""
+				val skIds = if (skIdsStr.isNotEmpty()) {
+					skIdsStr.split(",").map { "\"${it.trim()}\"" }.joinToString(",")
+				} else {
+					""
+				}
+
+				newContent = newContent
+					.replace("@${network}Dependency@", dep)
+					.replace("@${network}DependencyVersion@", depVer)
+					.replace("@${network}MavenRepo@", repo)
+					.replace("@${network}Pod@", pod)
+					.replace("@${network}PodVersion@", podVer)
+					.replace("@${network}SkAdNetworkIds@", skIds)
+			}
+
+			gdFile.writeText(newContent)
+			println("[INFO] Mediation tokens replaced in ${gdFile.absolutePath}")
+		}
 	}
 
 	register<de.undercouch.gradle.tasks.download.Download>("downloadGodotAar") {
@@ -171,7 +228,7 @@ tasks {
 afterEvaluate {
 	listOf("assembleDebug", "assembleRelease").forEach { taskName ->
 		tasks.named(taskName).configure {
-			finalizedBy("copyAddonsToDemo")
+			finalizedBy("copyAddonsToDemo", "replaceMediationTokens")
 		}
 	}
 }

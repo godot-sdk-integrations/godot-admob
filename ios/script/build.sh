@@ -13,19 +13,22 @@ ANDROID_DIR=$ROOT_DIR/android
 ADDON_DIR=$ROOT_DIR/addon
 GODOT_DIR=$IOS_DIR/godot
 IOS_CONFIG_DIR=$IOS_DIR/config
+COMMON_DIR=$ROOT_DIR/common
 PODS_DIR=$IOS_DIR/Pods
 BUILD_DIR=$IOS_DIR/build
 DEST_DIR=$BUILD_DIR/release
 FRAMEWORK_DIR=$BUILD_DIR/framework
 LIB_DIR=$BUILD_DIR/lib
 IOS_CONFIG_FILE=$IOS_CONFIG_DIR/config.properties
-COMMON_CONFIG_FILE=$ROOT_DIR/common/config.properties
+COMMON_CONFIG_FILE=$COMMON_DIR/config.properties
+MEDIATION_CONFIG_FILE=$COMMON_DIR/mediation.properties
 
 PLUGIN_NODE_NAME=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE pluginNodeName)
 PLUGIN_NAME="${PLUGIN_NODE_NAME}Plugin"
 PLUGIN_VERSION=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE pluginVersion)
 IOS_INITIALIZATION_METHOD=$($SCRIPT_DIR/get_config_property.sh -f $IOS_CONFIG_FILE initialization_method)
 IOS_DEINITIALIZATION_METHOD=$($SCRIPT_DIR/get_config_property.sh -f $IOS_CONFIG_FILE deinitialization_method)
+IOS_PLATFORM_VERSION=$($SCRIPT_DIR/get_config_property.sh -f $IOS_CONFIG_FILE platform_version)
 PLUGIN_PACKAGE_NAME=$($SCRIPT_DIR/get_gradle_property.sh pluginPackageName $ANDROID_DIR/config.gradle.kts)
 ANDROID_DEPENDENCIES=$($SCRIPT_DIR/get_android_dependencies.sh)
 GODOT_VERSION=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE godotVersion)
@@ -231,24 +234,27 @@ function generate_static_library()
 		exit 1
 	fi
 
-	TARGET_TYPE="$1"
-	lib_directory="$2"
+	local target_type="$1"
+	local lib_directory="$2"
 
-	display_status "generating static libraries for $PLUGIN_NAME with target type $TARGET_TYPE..."
+	display_status "generating static libraries for $PLUGIN_NAME with target type $target_type..."
 
 	pushd $IOS_DIR
 
 	# ARM64 Device
-	scons target=$TARGET_TYPE arch=arm64 target_name=$PLUGIN_NAME version=$GODOT_VERSION
-	# x86_64 Simulator
-	scons target=$TARGET_TYPE arch=x86_64 simulator=yes target_name=$PLUGIN_NAME version=$GODOT_VERSION
+	scons target=$target_type arch=arm64 ios_sdk=iphoneos $lib_directory=device target_name=$PLUGIN_NAME version=$GODOT_VERSION
 
-	# Creating fat library for device and simulator
-	lipo -create "$lib_directory/lib$PLUGIN_NAME.x86_64-simulator.$TARGET_TYPE.a" \
-		"$lib_directory/lib$PLUGIN_NAME.arm64-ios.$TARGET_TYPE.a" \
-		-output "$lib_directory/$PLUGIN_NAME.$TARGET_TYPE.a"
+	# x86_64 Simulator
+	scons target=$target_type arch=x86_64 ios_sdk=iphonesimulator simulator=yes target_name=$PLUGIN_NAME version=$GODOT_VERSION
 
 	popd
+
+	# Create universal binary
+	pushd $lib_directory
+	lipo -create "lib$PLUGIN_NAME.x86_64-simulator.$target_type.a" "lib$PLUGIN_NAME.arm64-ios.$target_type.a" -output "$PLUGIN_NAME.$target_type.a"
+	popd
+
+	echo_green "universal binary created: $lib_directory/$PLUGIN_NAME.a"
 }
 
 
@@ -261,6 +267,18 @@ function install_pods()
 
 function build_plugin()
 {
+	if [[ ! -d "$PODS_DIR" ]]
+	then
+		display_error "Error: Pods directory does not exist. Run 'pod install' first."
+		exit 1
+	fi
+
+	if [[ ! -d "$GODOT_DIR" ]]
+	then
+		display_error "Error: $GODOT_DIR directory does not exist. Can't build plugin."
+		exit 1
+	fi
+
 	if [[ ! -f "$GODOT_DIR/GODOT_VERSION" ]]
 	then
 		display_error "Error: godot wasn't downloaded properly. Can't build plugin."
@@ -289,7 +307,8 @@ function build_plugin()
 }
 
 
-function merge_string_array() {
+function merge_string_array()
+{
 	local arr=("$@")	# Accept array as input
 	printf "%s" "${arr[0]}"
 	for ((i=1; i<${#arr[@]}; i++)); do
@@ -298,19 +317,15 @@ function merge_string_array() {
 }
 
 
-function replace_extra_properties() {
+function replace_extra_properties()
+{
 	local file_path="$1"
-	local -a prop_array=("${@:2}")
+	shift
+	local prop_array=("$@")
 
-	# Check if file exists and is readable
-	if [[ ! -f "$file_path" || ! -r "$file_path" ]]; then
-		display_error "Error: File '$file_path' does not exist or is not readable"
-		exit 1
-	fi
-
-	# Check if file is empty
+	# Check if file exists and is not empty
 	if [[ ! -s "$file_path" ]]; then
-		echo_blue "Debug: File is empty, no replacements possible"
+		display_error "Error: File '$file_path' does not exist or is empty, skipping replacements"
 		return 0
 	fi
 
@@ -373,6 +388,110 @@ function replace_extra_properties() {
 }
 
 
+function replace_mediation_properties()
+{
+	local file_path="$1"
+	local mediation_config_file="$2"
+
+	# Check if mediation config file exists
+	if [[ ! -f "$mediation_config_file" ]]; then
+		display_error "Error: Mediation config file '$mediation_config_file' not found."
+		exit 1
+	fi
+
+	# Check if file exists and is not empty
+	if [[ ! -s "$file_path" ]]; then
+		echo_blue "File '$file_path' does not exist or is empty, skipping mediation replacements"
+		return 0
+	fi
+
+	# Dynamically extract network tags from mediation.properties
+	# Ignore comments and empty lines, match lines with network.property=value
+	local networks=($(grep -v '^#' "$mediation_config_file" | grep -E '^[a-z]+(\.[a-zA-Z]+)*=.*' | sed 's/\..*//' | sort -u))
+
+	local network
+	local dep
+	local dep_ver
+	local repo
+	local pod
+	local pod_ver
+	local skad_ids=()
+	local skad_joined=""
+	local esc_dep
+	local esc_dep_ver
+	local esc_pod
+	local esc_pod_ver
+	local esc_skad
+
+	for network in "${networks[@]}"; do
+		dep=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.dependency")
+		dep_ver=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.dependencyVersion")
+		repo=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.mavenRepo")
+		pod=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.pod")
+		pod_ver=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.podVersion")
+
+		# Check for missing required properties
+		if [[ -z "$dep" ]]; then
+			display_error "Error: Missing required property '${network}.dependency' in '$mediation_config_file'"
+			exit 1
+		fi
+		if [[ -z "$dep_ver" ]]; then
+			display_error "Error: Missing required property '${network}.dependencyVersion' in '$mediation_config_file'"
+			exit 1
+		fi
+		if [[ -z "$pod" ]]; then
+			display_error "Error: Missing required property '${network}.pod' in '$mediation_config_file'"
+			exit 1
+		fi
+		if [[ -z "$pod_ver" ]]; then
+			display_error "Error: Missing required property '${network}.podVersion' in '$mediation_config_file'"
+			exit 1
+		fi
+
+		# Fetch SK Ad Network IDs as comma-separated array and quote each
+		skad_ids=()
+		while IFS= read -r id; do
+			if [[ -n "$id" ]]; then
+				skad_ids+=("$id")
+			fi
+		done < <($SCRIPT_DIR/get_config_property.sh -qa -f "$mediation_config_file" "${network}.skAdNetworkIds")
+
+		# Join quoted IDs with commas
+		if [[ ${#skad_ids[@]} -gt 0 ]]; then
+			IFS=','
+			skad_joined="${skad_ids[*]}"
+			unset IFS
+		else
+			skad_joined=""
+		fi
+
+		# Check for missing or empty SK Ad Network IDs
+		if [[ -z "$skad_joined" ]]; then
+			display_error "Error: Missing required property '${network}.skAdNetworkIds' in '$mediation_config_file' or it is empty. At least one entry is required."
+			exit 1
+		fi
+
+		# Escape values for sed
+		esc_dep=$(printf '%s\n' "$dep" | sed 's/[\/&]/\\&/g')
+		esc_dep_ver=$(printf '%s\n' "$dep_ver" | sed 's/[\/&]/\\&/g')
+		esc_repo=$(printf '%s\n' "$repo" | sed 's/[\/&]/\\&/g')
+		esc_pod=$(printf '%s\n' "$pod" | sed 's/[\/&]/\\&/g')
+		esc_pod_ver=$(printf '%s\n' "$pod_ver" | sed 's/[\/&]/\\&/g')
+		esc_skad=$(printf '%s\n' "$skad_joined" | sed 's/[\/&]/\\&/g')
+
+		# Perform replacements with sed
+		sed "${SED_INPLACE[@]}" \
+			-e "s|@${network}Dependency@|${esc_dep}|g" \
+			-e "s|@${network}DependencyVersion@|${esc_dep_ver}|g" \
+			-e "s|@${network}MavenRepo@|${esc_repo}|g" \
+			-e "s|@${network}Pod@|${esc_pod}|g" \
+			-e "s|@${network}PodVersion@|${esc_pod_ver}|g" \
+			-e "s|@${network}SkAdNetworkIds@|${esc_skad}|g" \
+			"$file_path"
+	done
+}
+
+
 function create_zip_archive()
 {
 	local zip_file_name="$PLUGIN_NAME-iOS-v$PLUGIN_VERSION.zip"
@@ -415,6 +534,7 @@ function create_zip_archive()
 			ESCAPED_ANDROID_DEPENDENCIES=$(printf '%s' "$ANDROID_DEPENDENCIES" | sed 's/[\/&]/\\&/g')
 			ESCAPED_IOS_INITIALIZATION_METHOD=$(printf '%s' "$IOS_INITIALIZATION_METHOD" | sed 's/[\/&]/\\&/g')
 			ESCAPED_IOS_DEINITIALIZATION_METHOD=$(printf '%s' "$IOS_DEINITIALIZATION_METHOD" | sed 's/[\/&]/\\&/g')
+			ESCAPED_IOS_PLATFORM_VERSION=$(printf '%s' "$IOS_PLATFORM_VERSION" | sed 's/[\/&]/\\&/g')
 			ESCAPED_IOS_FRAMEWORKS=$(merge_string_array "${IOS_FRAMEWORKS[@]}" | sed 's/[\/&]/\\&/g')
 			ESCAPED_IOS_EMBEDDED_FRAMEWORKS=$(merge_string_array "${IOS_EMBEDDED_FRAMEWORKS[@]}" | sed 's/[\/&]/\\&/g')
 			ESCAPED_IOS_LINKER_FLAGS=$(merge_string_array "${IOS_LINKER_FLAGS[@]}" | sed 's/[\/&]/\\&/g')
@@ -427,12 +547,18 @@ function create_zip_archive()
 				s|@androidDependencies@|$ESCAPED_ANDROID_DEPENDENCIES|g;
 				s|@iosInitializationMethod@|$ESCAPED_IOS_INITIALIZATION_METHOD|g;
 				s|@iosDeinitializationMethod@|$ESCAPED_IOS_DEINITIALIZATION_METHOD|g;
+				s|@iosPlatformVersion@|$ESCAPED_IOS_PLATFORM_VERSION|g;
 				s|@iosFrameworks@|$ESCAPED_IOS_FRAMEWORKS|g;
 				s|@iosEmbeddedFrameworks@|$ESCAPED_IOS_EMBEDDED_FRAMEWORKS|g;
 				s|@iosLinkerFlags@|$ESCAPED_IOS_LINKER_FLAGS|g
 			" "$file"
 
-			replace_extra_properties $file ${EXTRA_PROPERTIES[@]}
+			# Mediation replacements for MediationNetwork.gd
+			if echo "$file" | grep -q "MediationNetwork.gd$"; then
+				replace_mediation_properties "$file" "$MEDIATION_CONFIG_FILE"
+			fi
+
+			replace_extra_properties "$file" "${EXTRA_PROPERTIES[@]}"
 		done
 	else
 		display_error "Error: '$ADDON_DIR' not found."

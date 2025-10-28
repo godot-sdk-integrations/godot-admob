@@ -34,6 +34,7 @@ extra.apply {
 	set("templateDirectory", "../../addon")
 
 	// iOS
+	set("iosPlatformVersion", iosProperties.getProperty("platform_version"))
 	set("iosFrameworks", iosProperties.getProperty("frameworks"))
 	set("iosEmbeddedFrameworks", iosProperties.getProperty("embedded_frameworks"))
 	set("iosLinkerFlags", iosProperties.getProperty("flags"))

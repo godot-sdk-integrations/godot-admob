@@ -147,7 +147,8 @@ public class GodotConverter {
 			}
 		}
 
-		// TODO: mediation support
+		// Mediation support: AdRequest extras can be added for specific networks if needed (e.g., for waterfall parameters).
+		// For basic bidding/waterfall, no additional code is required as it's handled by AdMob SDK.
 
 		if (data.containsKey("keywords")) {
 			for (String keyword : (String[]) data.get("keywords")) {
