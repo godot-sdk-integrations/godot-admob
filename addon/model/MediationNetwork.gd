@@ -27,6 +27,8 @@ const TAG_PROPERTY: String = "tag"
 const DEPENDENCY_PROPERTY: String = "dependency"
 const DEPENDENCY_VERSION_PROPERTY: String = "dependency_version"
 const MAVEN_REPO_PROPERTY: String = "maven_repo"
+const ANDROID_ADAPTER_CLASS_PROPERTY: String = "android_adapter_class"
+const IOS_ADAPTER_CLASS_PROPERTY: String = "ios_adapter_class"
 const POD_PROPERTY: String = "pod"
 const POD_VERSION_PROPERTY: String = "pod_version"
 const SK_AD_NETWORK_IDS_PROPERTY: String = "sk_ad_network_ids"
@@ -52,6 +54,8 @@ const MEDIATION_NETWORKS: Dictionary = {
 			DEPENDENCY_PROPERTY: "@applovinDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@applovinDependencyVersion@",
 			MAVEN_REPO_PROPERTY: "@applovinMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@applovinAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@applovinIosAdapterClass@",
 			POD_PROPERTY: "@applovinPod@",
 			POD_VERSION_PROPERTY: "@applovinPodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @applovinSkAdNetworkIds@ ]
@@ -62,6 +66,8 @@ const MEDIATION_NETWORKS: Dictionary = {
 			DEPENDENCY_PROPERTY: "@chartboostDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@chartboostDependencyVersion@",
 			MAVEN_REPO_PROPERTY: "@chartboostMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@chartboostAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@chartboostIosAdapterClass@",
 			POD_PROPERTY: "@chartboostPod@",
 			POD_VERSION_PROPERTY: "@chartboostPodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @chartboostSkAdNetworkIds@ ]
@@ -72,6 +78,8 @@ const MEDIATION_NETWORKS: Dictionary = {
 			DEPENDENCY_PROPERTY: "@dtexchangeDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@dtexchangeDependencyVersion@",
 			MAVEN_REPO_PROPERTY: "@dtexchangeMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@dtexchangeAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@dtexchangeIosAdapterClass@",
 			POD_PROPERTY: "@dtexchangePod@",
 			POD_VERSION_PROPERTY: "@dtexchangePodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @dtexchangeSkAdNetworkIds@ ]
@@ -82,6 +90,8 @@ const MEDIATION_NETWORKS: Dictionary = {
 			DEPENDENCY_PROPERTY: "@imobileDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@imobileDependencyVersion@",
 			MAVEN_REPO_PROPERTY: "@imobileMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@imobileAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@imobileIosAdapterClass@",
 			POD_PROPERTY: "@imobilePod@",
 			POD_VERSION_PROPERTY: "@imobilePodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @imobileSkAdNetworkIds@ ]
@@ -91,7 +101,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "inmobi",
 			DEPENDENCY_PROPERTY: "@inmobiDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@inmobiDependencyVersion@",
-			MAVEN_REPO_PROPERTY: "inmobi@MavenRepo@",
+			MAVEN_REPO_PROPERTY: "@inmobiMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@inmobiAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@inmobiIosAdapterClass@",
 			POD_PROPERTY: "@inmobiPod@",
 			POD_VERSION_PROPERTY: "@inmobiPodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @inmobiSkAdNetworkIds@ ]
@@ -102,6 +114,8 @@ const MEDIATION_NETWORKS: Dictionary = {
 			DEPENDENCY_PROPERTY: "@ironsourceDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@ironsourceDependencyVersion@",
 			MAVEN_REPO_PROPERTY: "@ironsourceMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@ironsourceAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@ironsourceIosAdapterClass@",
 			POD_PROPERTY: "@ironsourcePod@",
 			POD_VERSION_PROPERTY: "@ironsourcePodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @ironsourceSkAdNetworkIds@ ]
@@ -112,6 +126,8 @@ const MEDIATION_NETWORKS: Dictionary = {
 			DEPENDENCY_PROPERTY: "@liftoffDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@liftoffDependencyVersion@",
 			MAVEN_REPO_PROPERTY: "@liftoffMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@liftoffAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@liftoffIosAdapterClass@",
 			POD_PROPERTY: "@liftoffPod@",
 			POD_VERSION_PROPERTY: "@liftoffPodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @liftoffSkAdNetworkIds@ ]
@@ -122,6 +138,8 @@ const MEDIATION_NETWORKS: Dictionary = {
 			DEPENDENCY_PROPERTY: "@lineDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@lineDependencyVersion@",
 			MAVEN_REPO_PROPERTY: "@lineMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@lineAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@lineIosAdapterClass@",
 			POD_PROPERTY: "@linePod@",
 			POD_VERSION_PROPERTY: "@linePodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @lineSkAdNetworkIds@ ]
@@ -132,6 +150,8 @@ const MEDIATION_NETWORKS: Dictionary = {
 			DEPENDENCY_PROPERTY: "@maioDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@maioDependencyVersion@",
 			MAVEN_REPO_PROPERTY: "@maioMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@maioAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@maioIosAdapterClass@",
 			POD_PROPERTY: "@maioPod@",
 			POD_VERSION_PROPERTY: "@maioPodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @maioSkAdNetworkIds@ ]
@@ -142,6 +162,8 @@ const MEDIATION_NETWORKS: Dictionary = {
 			DEPENDENCY_PROPERTY: "@metaDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@metaDependencyVersion@",
 			MAVEN_REPO_PROPERTY: "@metaMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@metaAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@metaIosAdapterClass@",
 			POD_PROPERTY: "@metaPod@",
 			POD_VERSION_PROPERTY: "@metaPodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @metaSkAdNetworkIds@ ]
@@ -152,6 +174,8 @@ const MEDIATION_NETWORKS: Dictionary = {
 			DEPENDENCY_PROPERTY: "@mintegralDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@mintegralDependencyVersion@",
 			MAVEN_REPO_PROPERTY: "@mintegralMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@mintegralAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@mintegralIosAdapterClass@",
 			POD_PROPERTY: "@mintegralPod@",
 			POD_VERSION_PROPERTY: "@mintegralPodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @mintegralSkAdNetworkIds@ ]
@@ -162,6 +186,8 @@ const MEDIATION_NETWORKS: Dictionary = {
 			DEPENDENCY_PROPERTY: "@molocoDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@molocoDependencyVersion@",
 			MAVEN_REPO_PROPERTY: "@molocoMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@molocoAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@molocoIosAdapterClass@",
 			POD_PROPERTY: "@molocoPod@",
 			POD_VERSION_PROPERTY: "@molocoPodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @molocoSkAdNetworkIds@ ]
@@ -172,6 +198,8 @@ const MEDIATION_NETWORKS: Dictionary = {
 			DEPENDENCY_PROPERTY: "@mytargetDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@mytargetDependencyVersion@",
 			MAVEN_REPO_PROPERTY: "@mytargetMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@mytargetAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@mytargetIosAdapterClass@",
 			POD_PROPERTY: "@mytargetPod@",
 			POD_VERSION_PROPERTY: "@mytargetPodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @mytargetSkAdNetworkIds@ ]
@@ -182,6 +210,8 @@ const MEDIATION_NETWORKS: Dictionary = {
 			DEPENDENCY_PROPERTY: "@pangleDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@pangleDependencyVersion@",
 			MAVEN_REPO_PROPERTY: "@pangleMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@pangleAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@pangleIosAdapterClass@",
 			POD_PROPERTY: "@panglePod@",
 			POD_VERSION_PROPERTY: "@panglePodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @pangleSkAdNetworkIds@ ]
@@ -192,6 +222,8 @@ const MEDIATION_NETWORKS: Dictionary = {
 			DEPENDENCY_PROPERTY: "@unityDependency@",
 			DEPENDENCY_VERSION_PROPERTY: "@unityDependencyVersion@",
 			MAVEN_REPO_PROPERTY: "@unityMavenRepo@",
+			ANDROID_ADAPTER_CLASS_PROPERTY: "@unityAndroidAdapterClass@",
+			IOS_ADAPTER_CLASS_PROPERTY: "@unityIosAdapterClass@",
 			POD_PROPERTY: "@unityPod@",
 			POD_VERSION_PROPERTY: "@unityPodVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @unitySkAdNetworkIds@ ]
@@ -221,6 +253,8 @@ var tag: String
 var android_dependency: String
 var android_dependency_version: String
 var android_custom_maven_repo: String
+var android_adapter_class: String
+var ios_adapter_class: String
 var ios_pod: String
 var ios_pod_version: String
 var sk_ad_network_ids: PackedStringArray
@@ -232,6 +266,8 @@ func _init(a_data: Dictionary) -> void:
 	android_dependency = a_data[DEPENDENCY_PROPERTY]
 	android_dependency_version = a_data[DEPENDENCY_VERSION_PROPERTY]
 	android_custom_maven_repo = a_data[MAVEN_REPO_PROPERTY]
+	android_adapter_class = a_data[ANDROID_ADAPTER_CLASS_PROPERTY]
+	ios_adapter_class = a_data[IOS_ADAPTER_CLASS_PROPERTY]
 	ios_pod = a_data[POD_PROPERTY]
 	ios_pod_version = a_data[POD_VERSION_PROPERTY]
 	sk_ad_network_ids = a_data[SK_AD_NETWORK_IDS_PROPERTY]

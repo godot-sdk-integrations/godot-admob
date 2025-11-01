@@ -202,19 +202,10 @@ Error AdmobPlugin::set_request_configuration(Dictionary configData) {
 		os_log_error(admob_log, "AdmobPlugin has not been initialized");
 		return FAILED;
 	}
-	
+
 	AdmobConfig* admobConfig = [[AdmobConfig alloc] initWithDictionary: configData];
-	GADRequestConfiguration* requestConfiguration = [GADMobileAds sharedInstance].requestConfiguration;
 
-	requestConfiguration.maxAdContentRating = admobConfig.maxContentRating;
-	requestConfiguration.tagForChildDirectedTreatment = admobConfig.childDirectedTreatment;
-	requestConfiguration.tagForUnderAgeOfConsent = admobConfig.underAgeOfConsent;
-	[requestConfiguration setPublisherFirstPartyIDEnabled:admobConfig.firstPartyIdEnabled];
-	[requestConfiguration setPublisherPrivacyPersonalizationState:[GAPConverter intToPublisherPrivacyPersonalizationState:admobConfig.personalizationState]];
-
-	if (!admobConfig.isReal) {
-		requestConfiguration.testDeviceIdentifiers = admobConfig.testDeviceIds;
-	}
+	[admobConfig applyToGADRequestConfiguration:GADMobileAds.sharedInstance.requestConfiguration];
 
 	return OK;
 }
@@ -282,7 +273,7 @@ CGFloat AdmobPlugin::getAdWidth() {
 	else {
 		os_log_error(admob_log, "AdmobPlugin getAdWidth(): key window not found");
 	}
-	
+
 	return frame.size.width;
 }
 

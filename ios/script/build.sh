@@ -413,12 +413,17 @@ function replace_mediation_properties()
 	local dep
 	local dep_ver
 	local repo
+	local adapter
+	local extras
 	local pod
 	local pod_ver
 	local skad_ids=()
 	local skad_joined=""
 	local esc_dep
 	local esc_dep_ver
+	local esc_repo
+	local esc_adapter
+	local esc_extras
 	local esc_pod
 	local esc_pod_ver
 	local esc_skad
@@ -427,6 +432,8 @@ function replace_mediation_properties()
 		dep=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.dependency")
 		dep_ver=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.dependencyVersion")
 		repo=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.mavenRepo")
+		android_adapter=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.androidAdapterClass")
+		ios_adapter=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.iosAdapterClass")
 		pod=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.pod")
 		pod_ver=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.podVersion")
 
@@ -475,6 +482,8 @@ function replace_mediation_properties()
 		esc_dep=$(printf '%s\n' "$dep" | sed 's/[\/&]/\\&/g')
 		esc_dep_ver=$(printf '%s\n' "$dep_ver" | sed 's/[\/&]/\\&/g')
 		esc_repo=$(printf '%s\n' "$repo" | sed 's/[\/&]/\\&/g')
+		esc_android_adapter=$(printf '%s\n' "$android_adapter" | sed 's/[\/&]/\\&/g')
+		esc_ios_adapter=$(printf '%s\n' "$ios_adapter" | sed 's/[\/&]/\\&/g')
 		esc_pod=$(printf '%s\n' "$pod" | sed 's/[\/&]/\\&/g')
 		esc_pod_ver=$(printf '%s\n' "$pod_ver" | sed 's/[\/&]/\\&/g')
 		esc_skad=$(printf '%s\n' "$skad_joined" | sed 's/[\/&]/\\&/g')
@@ -484,6 +493,8 @@ function replace_mediation_properties()
 			-e "s|@${network}Dependency@|${esc_dep}|g" \
 			-e "s|@${network}DependencyVersion@|${esc_dep_ver}|g" \
 			-e "s|@${network}MavenRepo@|${esc_repo}|g" \
+			-e "s|@${network}AndroidAdapterClass@|${esc_android_adapter}|g" \
+			-e "s|@${network}IosAdapterClass@|${esc_ios_adapter}|g" \
 			-e "s|@${network}Pod@|${esc_pod}|g" \
 			-e "s|@${network}PodVersion@|${esc_pod_ver}|g" \
 			-e "s|@${network}SkAdNetworkIds@|${esc_skad}|g" \

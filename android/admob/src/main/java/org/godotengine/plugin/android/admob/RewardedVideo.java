@@ -10,13 +10,15 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
+
+import org.godotengine.plugin.android.admob.model.LoadAdRequest;
+
 
 interface RewardedVideoListener {
 	void onRewardedVideoLoaded(String adId);
@@ -29,24 +31,23 @@ interface RewardedVideoListener {
 	void onRewarded(String adId, RewardItem reward);
 }
 
+
 public class RewardedVideo {
 	private static final String CLASS_NAME = RewardedVideo.class.getSimpleName();
 	private static final String LOG_TAG = "godot::" + AdmobPlugin.CLASS_NAME + "::" + CLASS_NAME;
 
 	private final String adId;
-	private final String adUnitId;
-	private final AdRequest adRequest;
+	private final LoadAdRequest loadRequest;
 	private final Activity activity;
 	private final RewardedVideoListener listener;
 
 	private RewardedAd rewardedAd;
 	private ServerSideVerificationOptions serverSideVerificationOptions;
 
-	RewardedVideo(final String adId, final String adUnitId, final AdRequest adRequest, Activity activity,
+	RewardedVideo(final String adId, final LoadAdRequest loadRequest, Activity activity,
 				final RewardedVideoListener listener) {
 		this.adId = adId;
-		this.adUnitId = adUnitId;
-		this.adRequest = adRequest;
+		this.loadRequest = loadRequest;
 		this.activity = activity;
 		this.listener = listener;
 		this.rewardedAd = null;
@@ -54,31 +55,35 @@ public class RewardedVideo {
 	}
 
 	void load() {
-		RewardedAd.load(activity, adUnitId, adRequest, new RewardedAdLoadCallback() {
-			@Override
-			public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
-				super.onAdLoaded(rewardedAd);
-				setAd(rewardedAd);
-				Log.i(LOG_TAG, "rewarded video ad loaded");
-				listener.onRewardedVideoLoaded(RewardedVideo.this.adId);
-			}
+		activity.runOnUiThread(() -> {
+			RewardedAd.load(activity, loadRequest.getAdUnitId(), loadRequest.createAdRequest(), new RewardedAdLoadCallback() {
+				@Override
+				public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
+					super.onAdLoaded(rewardedAd);
+					setAd(rewardedAd);
+					Log.i(LOG_TAG, "rewarded video ad loaded");
+					listener.onRewardedVideoLoaded(RewardedVideo.this.adId);
+				}
 
-			@Override
-			public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-				super.onAdFailedToLoad(loadAdError);
-				// safety
-				setAd(null);
-				Log.e(LOG_TAG, "rewarded video ad failed to load. errorCode: " + loadAdError.getCode());
-				listener.onRewardedVideoFailedToLoad(RewardedVideo.this.adId, loadAdError);
-			}
+				@Override
+				public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+					super.onAdFailedToLoad(loadAdError);
+					// safety
+					setAd(null);
+					Log.e(LOG_TAG, "rewarded video ad failed to load. errorCode: " + loadAdError.getCode());
+					listener.onRewardedVideoFailedToLoad(RewardedVideo.this.adId, loadAdError);
+				}
+			});
 		});
 	}
 
 	void show() {
 		if (rewardedAd != null) {
-			rewardedAd.show(activity, rewardItem -> {
-				Log.i(LOG_TAG, String.format("rewarded video ad reward received! currency: %s amount: %d", rewardItem.getType(), rewardItem.getAmount()));
-				listener.onRewarded(RewardedVideo.this.adId, rewardItem);
+			activity.runOnUiThread(() -> {
+				rewardedAd.show(activity, rewardItem -> {
+					Log.i(LOG_TAG, String.format("rewarded video ad reward received! currency: %s amount: %d", rewardItem.getType(), rewardItem.getAmount()));
+					listener.onRewarded(RewardedVideo.this.adId, rewardItem);
+				});
 			});
 		}
 	}

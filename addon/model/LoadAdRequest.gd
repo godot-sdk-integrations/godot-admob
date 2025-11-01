@@ -33,6 +33,7 @@ const DATA_KEY_AD_POSITION = "ad_position"
 const DATA_KEY_KEYWORDS = "keywords"
 const DATA_KEY_USER_ID = "user_id"
 const DATA_KEY_CUSTOM_DATA = "custom_data"
+const DATA_KEY_NETWORK_EXTRAS = "network_extras"
 
 var _data: Dictionary
 
@@ -81,6 +82,11 @@ func set_user_id(a_value: String) -> LoadAdRequest:
 
 func set_custom_data(a_value: String) -> LoadAdRequest:
 	_data[DATA_KEY_CUSTOM_DATA] = a_value
+	return self
+
+
+func set_network_extras(a_value: Array) -> LoadAdRequest:
+	_data[DATA_KEY_NETWORK_EXTRAS] = a_value
 	return self
 
 

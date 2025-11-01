@@ -123,6 +123,8 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export_category("Mediation")
 @export_group("Networks")
 @export_flags(" ") var enabled_networks = 0	# Networks populated in _validate_property()
+@export_group("Network Extras")
+@export var network_extras: Array[NetworkExtras] = []
 
 @export_category("App Tracking Transparency")
 @export var att_enabled: bool = false:
@@ -371,6 +373,10 @@ func set_add_test_device_id(a_value: bool) -> void:
 	add_test_device_id = a_value
 
 
+func is_mediation_enabled() -> bool:
+	return enabled_networks > 0
+
+
 func configure_ads() -> void:
 	if _plugin_singleton != null:
 		_plugin_singleton.set_request_configuration(AdmobConfig.new()
@@ -393,6 +399,8 @@ func load_banner_ad(a_request: LoadAdRequest = null) -> void:
 					.set_ad_position(banner_position)
 					.set_ad_size(banner_size)
 					.set_request_agent(request_agent))
+			if is_mediation_enabled():
+				a_request.set_network_extras(NetworkExtras.build_raw_data_array(network_extras))
 		_plugin_singleton.load_banner_ad(a_request.get_raw_data())
 	else:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
@@ -493,12 +501,13 @@ func get_banner_dimension_in_pixels(a_ad_id: String = "") -> Vector2:
 	return Vector2.ZERO
 
 
-func load_interstitial_ad() -> void:
+func load_interstitial_ad(a_request: LoadAdRequest = null) -> void:
 	if _plugin_singleton != null:
-		_plugin_singleton.load_interstitial_ad(LoadAdRequest.new()
-					.set_ad_unit_id(_interstitial_id)
-					.set_request_agent(request_agent)
-					.get_raw_data())
+		if a_request == null:
+			a_request = LoadAdRequest.new().set_ad_unit_id(_interstitial_id).set_request_agent(request_agent)
+			if is_mediation_enabled():
+				a_request.set_network_extras(NetworkExtras.build_raw_data_array(network_extras))
+		_plugin_singleton.load_interstitial_ad(a_request.get_raw_data())
 	else:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
@@ -536,12 +545,13 @@ func remove_interstitial_ad(a_ad_id: String) -> void:
 			Admob.log_error("Cannot remove interstitial ad. Ad with ID '%s' not found." % a_ad_id)
 
 
-func load_rewarded_ad() -> void:
+func load_rewarded_ad(a_request: LoadAdRequest = null) -> void:
 	if _plugin_singleton != null:
-		_plugin_singleton.load_rewarded_ad(LoadAdRequest.new()
-					.set_ad_unit_id(_rewarded_id)
-					.set_request_agent(request_agent)
-					.get_raw_data())
+		if a_request == null:
+			a_request = LoadAdRequest.new().set_ad_unit_id(_rewarded_id).set_request_agent(request_agent)
+			if is_mediation_enabled():
+				a_request.set_network_extras(NetworkExtras.build_raw_data_array(network_extras))
+		_plugin_singleton.load_rewarded_ad(a_request.get_raw_data())
 	else:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
@@ -579,12 +589,13 @@ func remove_rewarded_ad(a_ad_id: String) -> void:
 			Admob.log_error("Cannot remove rewarded ad. Ad with ID '%s' not found." % a_ad_id)
 
 
-func load_rewarded_interstitial_ad() -> void:
+func load_rewarded_interstitial_ad(a_request: LoadAdRequest = null) -> void:
 	if _plugin_singleton != null:
-		_plugin_singleton.load_rewarded_interstitial_ad(LoadAdRequest.new()
-					.set_ad_unit_id(_rewarded_interstitial_id)
-					.set_request_agent(request_agent)
-					.get_raw_data())
+		if a_request == null:
+			a_request = LoadAdRequest.new().set_ad_unit_id(_rewarded_interstitial_id).set_request_agent(request_agent)
+			if is_mediation_enabled():
+				a_request.set_network_extras(NetworkExtras.build_raw_data_array(network_extras))
+		_plugin_singleton.load_rewarded_interstitial_ad(a_request.get_raw_data())
 	else:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 

@@ -6,30 +6,27 @@
 #define load_ad_request_h
 
 #import <Foundation/Foundation.h>
+#import <GoogleMobileAds/GoogleMobileAds.h>
 
 #include "core/object/class_db.h"
 
 
-extern const String AD_UNIT_ID_PROPERTY;
-extern const String REQUEST_AGENT_PROPERTY;
-extern const String AD_SIZE_PROPERTY;
-extern const String AD_POSITION_PROPERTY;
-extern const String KEYWORDS_PROPERTY;
-extern const String USER_ID_PROPERTY;
-extern const String CUSTOM_DATA_PROPERTY;
-
-
 @interface LoadAdRequest : NSObject
 
-@property (nonatomic, strong) NSString* adUnitId;
-@property (nonatomic, strong) NSString* requestAgent;
-@property (nonatomic, strong) NSString* adSize;
-@property (nonatomic, strong) NSString* adPosition;
-@property (nonatomic, strong) NSArray* keywords;
-@property (nonatomic, strong) NSString* userId;
-@property (nonatomic, strong) NSString* customData;
+@property (nonatomic, assign) Dictionary rawData;
 
 - (instancetype) initWithDictionary:(Dictionary) adData;
+
+- (NSString*) adUnitId;
+- (NSString*) requestAgent;
+- (NSString*) adSize;
+- (NSString*) adPosition;
+- (NSArray*) keywords;
+- (NSString*) userId;
+- (NSString*) customData;
+- (Array) networkExtras;
+
+- (GADRequest*) createGADRequest;
 
 @end
 

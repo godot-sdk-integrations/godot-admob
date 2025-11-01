@@ -156,6 +156,8 @@ tasks {
 				val dep = mediationProps.getProperty("${network}.dependency") ?: continue
 				val depVer = mediationProps.getProperty("${network}.dependencyVersion") ?: ""
 				val repo = mediationProps.getProperty("${network}.mavenRepo") ?: ""
+				val andAdapter = mediationProps.getProperty("${network}.androidAdapterClass") ?: ""
+				val iosAdapter = mediationProps.getProperty("${network}.iosAdapterClass") ?: ""
 				val pod = mediationProps.getProperty("${network}.pod") ?: ""
 				val podVer = mediationProps.getProperty("${network}.podVersion") ?: ""
 				val skIdsStr = mediationProps.getProperty("${network}.skAdNetworkIds") ?: ""
@@ -169,6 +171,8 @@ tasks {
 					.replace("@${network}Dependency@", dep)
 					.replace("@${network}DependencyVersion@", depVer)
 					.replace("@${network}MavenRepo@", repo)
+					.replace("@${network}AndroidAdapterClass@", andAdapter)
+					.replace("@${network}IosAdapterClass@", iosAdapter)
 					.replace("@${network}Pod@", pod)
 					.replace("@${network}PodVersion@", podVer)
 					.replace("@${network}SkAdNetworkIds@", skIds)

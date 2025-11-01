@@ -10,13 +10,14 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback;
+
+import org.godotengine.plugin.android.admob.model.LoadAdRequest;
 
 interface RewardedInterstitialListener {
 	void onRewardedInterstitialLoaded(String adId);
@@ -34,19 +35,17 @@ public class RewardedInterstitial {
 	private static final String LOG_TAG = "godot::" + AdmobPlugin.CLASS_NAME + "::" + CLASS_NAME;
 
 	private final String adId;
-	private final String adUnitId;
-	private final AdRequest adRequest;
+	private final LoadAdRequest loadRequest;
 	private final Activity activity;
 	private final RewardedInterstitialListener listener;
 
 	private RewardedInterstitialAd rewardedAd;
 	private ServerSideVerificationOptions serverSideVerificationOptions;
 
-	RewardedInterstitial(final String adId, final String adUnitId, final AdRequest adRequest, Activity activity,
+	RewardedInterstitial(final String adId, final LoadAdRequest loadRequest, Activity activity,
 				final RewardedInterstitialListener listener) {
 		this.adId = adId;
-		this.adUnitId = adUnitId;
-		this.adRequest = adRequest;
+		this.loadRequest = loadRequest;
 		this.activity = activity;
 		this.listener = listener;
 		this.rewardedAd = null;
@@ -54,31 +53,35 @@ public class RewardedInterstitial {
 	}
 
 	void load() {
-		RewardedInterstitialAd.load(activity, adUnitId, adRequest, new RewardedInterstitialAdLoadCallback() {
-			@Override
-			public void onAdLoaded(@NonNull RewardedInterstitialAd rewardedAd) {
-				super.onAdLoaded(rewardedAd);
-				setAd(rewardedAd);
-				Log.i(LOG_TAG, "rewarded interstitial ad loaded");
-				listener.onRewardedInterstitialLoaded(RewardedInterstitial.this.adId);
-			}
+		activity.runOnUiThread(() -> {
+			RewardedInterstitialAd.load(activity, loadRequest.getAdUnitId(), loadRequest.createAdRequest(), new RewardedInterstitialAdLoadCallback() {
+				@Override
+				public void onAdLoaded(@NonNull RewardedInterstitialAd rewardedAd) {
+					super.onAdLoaded(rewardedAd);
+					setAd(rewardedAd);
+					Log.i(LOG_TAG, "rewarded interstitial ad loaded");
+					listener.onRewardedInterstitialLoaded(RewardedInterstitial.this.adId);
+				}
 
-			@Override
-			public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-				super.onAdFailedToLoad(loadAdError);
-				
-				setAd(null); // safety
-				Log.e(LOG_TAG, "rewarded interstitial ad failed to load. errorCode: " + loadAdError.getCode());
-				listener.onRewardedInterstitialFailedToLoad(RewardedInterstitial.this.adId, loadAdError);
-			}
+				@Override
+				public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+					super.onAdFailedToLoad(loadAdError);
+					
+					setAd(null); // safety
+					Log.e(LOG_TAG, "rewarded interstitial ad failed to load. errorCode: " + loadAdError.getCode());
+					listener.onRewardedInterstitialFailedToLoad(RewardedInterstitial.this.adId, loadAdError);
+				}
+			});
 		});
 	}
 
 	void show() {
 		if (rewardedAd != null) {
-			rewardedAd.show(activity, rewardItem -> {
-				Log.i(LOG_TAG, String.format("rewarded interstitial ad rewarded! currency: %s amount: %d", rewardItem.getType(), rewardItem.getAmount()));
-				listener.onRewarded(RewardedInterstitial.this.adId, rewardItem);
+			activity.runOnUiThread(() -> {
+				rewardedAd.show(activity, rewardItem -> {
+					Log.i(LOG_TAG, String.format("rewarded interstitial ad rewarded! currency: %s amount: %d", rewardItem.getType(), rewardItem.getAmount()));
+					listener.onRewarded(RewardedInterstitial.this.adId, rewardItem);
+				});
 			});
 		}
 	}

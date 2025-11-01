@@ -6,10 +6,8 @@ package org.godotengine.plugin.android.admob;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -17,12 +15,12 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.LoadAdError;
 
-import org.godotengine.godot.Dictionary;
+import org.godotengine.plugin.android.admob.model.LoadAdRequest;
+
 
 interface BannerListener {
 	void onAdLoaded(String adId);
@@ -65,8 +63,7 @@ public class Banner {
 	}
 
 	private final String adId;
-	private final String adUnitId;
-	private final AdRequest adRequest;
+	private final LoadAdRequest loadRequest;
 	private final Activity activity;
 	private final FrameLayout layout;
 	private final BannerSize bannerSize;
@@ -78,28 +75,27 @@ public class Banner {
 	private boolean firstLoad;
 
 
-	Banner(final String adId, final String adUnitId, final Dictionary adData, final AdRequest adRequest,
-				final Activity activity, final FrameLayout layout, BannerListener listener) {
+	Banner(final String adId, final LoadAdRequest loadRequest, final Activity activity,
+			final FrameLayout layout, BannerListener listener) {
 		this.adId = adId;
-		this.adUnitId = adUnitId;
+		this.loadRequest = loadRequest;
 
-		if (adData.containsKey(AD_SIZE_PROPERTY)) {
-			this.bannerSize = BannerSize.valueOf((String) adData.get(AD_SIZE_PROPERTY));
+		if (loadRequest.hasAdSize()) {
+			this.bannerSize = BannerSize.valueOf(loadRequest.getAdSize());
 		}
 		else {
 			this.bannerSize = BannerSize.BANNER;
-			Log.e(LOG_TAG, "Error: Banner size is required!");
+			Log.e(LOG_TAG, "Error: Banner size is required! Defaulting to BANNER.");
 		}
 
-		if (adData.containsKey(AD_POSITION_PROPERTY)) {
-			this.adPosition = AdPosition.valueOf((String) adData.get(AD_POSITION_PROPERTY));
+		if (loadRequest.hasAdPosition()) {
+			this.adPosition = AdPosition.valueOf(loadRequest.getAdPosition());
 		}
 		else {
 			this.adPosition = AdPosition.TOP;
-			Log.w(LOG_TAG, "Warning: Ad position not specified.");
+			Log.w(LOG_TAG, "Warning: Banner position not specified. Defaulting to TOP.");
 		}
 
-		this.adRequest = adRequest;
 		this.activity = activity;
 		this.layout = layout;
 
@@ -144,7 +140,9 @@ public class Banner {
 	}
 
 	void load() {
-		addBanner(getGravity(adPosition), getAdSize(bannerSize));
+		activity.runOnUiThread(() -> {
+			addBanner(getGravity(adPosition), getAdSize(bannerSize));
+		});
 	}
 
 	void show() {
@@ -156,11 +154,13 @@ public class Banner {
 		}
 		else {
 			Log.d(LOG_TAG, String.format("show(): %s", this.adId));
-			adView.setVisibility(View.VISIBLE);
-			adView.resume();
+			activity.runOnUiThread(() -> {
+				adView.setVisibility(View.VISIBLE);
+				adView.resume();
 
-			// Add to layout and load ad
-			layout.addView(adView, adParams);
+				// Add to layout and load ad
+				layout.addView(adView, adParams);
+			});
 		}
 	}
 
@@ -171,13 +171,15 @@ public class Banner {
 		else {
 			Log.d(LOG_TAG, "banner ad moved");
 
-			layout.removeView(adView); // Remove the old view
+			activity.runOnUiThread(() -> {
+				layout.removeView(adView); // Remove the old view
 
-			adPosition = AdPosition.valueOf(position);
-			addBanner(getGravity(adPosition), adView.getAdSize());
+				adPosition = AdPosition.valueOf(position);
+				addBanner(getGravity(adPosition), adView.getAdSize());
 
-			// Add to layout and load ad
-			layout.addView(adView, adParams);
+				// Add to layout and load ad
+				layout.addView(adView, adParams);
+			});
 		}
 	}
 
@@ -188,12 +190,14 @@ public class Banner {
 		else {
 			Log.d(LOG_TAG, String.format("resize(): %s", this.adId));
 
-			layout.removeView(adView); // Remove the old view
+			activity.runOnUiThread(() -> {
+				layout.removeView(adView); // Remove the old view
 
-			addBanner(adParams.gravity, getAdSize(bannerSize));
+				addBanner(adParams.gravity, getAdSize(bannerSize));
 
-			// Add to layout and load ad
-			layout.addView(adView, adParams);
+				// Add to layout and load ad
+				layout.addView(adView, adParams);
+			});
 		}
 	}
 
@@ -206,7 +210,7 @@ public class Banner {
 
 		// Create new view & set old params
 		adView = new AdView(activity);
-		adView.setAdUnitId(adUnitId);
+		adView.setAdUnitId(loadRequest.getAdUnitId());
 		adView.setBackgroundColor(Color.TRANSPARENT);
 		adView.setAdSize(size);
 		adView.setAdListener(adListener);
@@ -214,7 +218,7 @@ public class Banner {
 		adView.pause();
 
 		// Request
-		adView.loadAd(adRequest);
+		adView.loadAd(loadRequest.createAdRequest());
 	}
 
 	public void remove() {
@@ -222,15 +226,19 @@ public class Banner {
 			Log.w(LOG_TAG, "remove(): Warning: adView is null.");
 		}
 		else {
-			layout.removeView(adView);
+			activity.runOnUiThread(() -> {
+				layout.removeView(adView);
+			});
 		}
 	}
 
 	public void hide() {
 		if (adView.getVisibility() != View.GONE) {
-			adView.setVisibility(View.GONE);
-			adView.pause();
-			layout.removeView(adView);
+			activity.runOnUiThread(() -> {
+				adView.setVisibility(View.GONE);
+				adView.pause();
+				layout.removeView(adView);
+			});
 		}
 		else {
 			Log.e(LOG_TAG, "Error: can't hide banner ad. Ad is not visible.");

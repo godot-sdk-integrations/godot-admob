@@ -10,27 +10,21 @@ import android.provider.Settings;
 import android.util.Log;
 
 import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.initialization.AdapterStatus;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
-import com.google.android.ump.ConsentDebugSettings;
-import com.google.android.ump.ConsentRequestParameters;
 import com.google.android.ump.FormError;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 
 import org.godotengine.godot.Dictionary;
+
 
 public class GodotConverter {
 	private static final String LOG_TAG = AdmobPlugin.LOG_TAG + "::" + GodotConverter.class.getSimpleName();
@@ -105,60 +99,6 @@ public class GodotConverter {
 		return dict;
 	}
 
-	public static RequestConfiguration createRequestConfiguration(Dictionary data, Activity activity) {
-		RequestConfiguration.Builder builder = MobileAds.getRequestConfiguration().toBuilder();
-
-		if (data.containsKey("max_ad_content_rating"))
-			builder.setMaxAdContentRating((String) data.get("max_ad_content_rating"));
-
-		if (data.containsKey("tag_for_child_directed_treatment"))
-			builder.setTagForChildDirectedTreatment((int) data.get("tag_for_child_directed_treatment"));
-
-		if (data.containsKey("tag_for_under_age_of_consent"))
-			builder.setTagForUnderAgeOfConsent((int) data.get("tag_for_under_age_of_consent"));
-
-		if (data.containsKey("personalization_state"))
-			builder.setPublisherPrivacyPersonalizationState(getPublisherPrivacyPersonalizationState((int) data.get("personalization_state")));
-
-		ArrayList<String> testDeviceIds = new ArrayList<>();
-		if (data.containsKey("test_device_ids"))
-			testDeviceIds.addAll(Arrays.asList((String[]) data.get("test_device_ids")));
-
-		if (data.containsKey("is_real")) {
-			if ((boolean) data.get("is_real") == false) {
-				testDeviceIds.add(AdRequest.DEVICE_ID_EMULATOR);
-				testDeviceIds.add(getAdMobDeviceId(activity));
-			}
-		}
-
-		if (testDeviceIds.isEmpty() == false)
-			builder.setTestDeviceIds(testDeviceIds);
-
-		return builder.build();
-	}
-
-	public static AdRequest createAdRequest(Dictionary data) {
-		AdRequest.Builder builder = new AdRequest.Builder();
-
-		if (data.containsKey("request_agent")) {
-			String requestAgent = (String) data.get("request_agent");
-			if (requestAgent != null && !requestAgent.isEmpty()) {
-				builder.setRequestAgent(requestAgent);
-			}
-		}
-
-		// Mediation support: AdRequest extras can be added for specific networks if needed (e.g., for waterfall parameters).
-		// For basic bidding/waterfall, no additional code is required as it's handled by AdMob SDK.
-
-		if (data.containsKey("keywords")) {
-			for (String keyword : (String[]) data.get("keywords")) {
-				builder.addKeyword(keyword);
-			}
-		}
-
-		return builder.build();
-	}
-
 	public static ServerSideVerificationOptions createSSVO(Dictionary data) {
 		ServerSideVerificationOptions.Builder builder = new ServerSideVerificationOptions.Builder();
 
@@ -173,72 +113,8 @@ public class GodotConverter {
 		return builder.build();
 	}
 
-	public static ConsentRequestParameters createConsentRequestParameters(Dictionary data, Activity activity) {
-		ConsentRequestParameters.Builder builder = new ConsentRequestParameters.Builder();
-
-		if (data.containsKey("tag_for_under_age_of_consent")) {
-			builder.setTagForUnderAgeOfConsent((boolean) data.get("tag_for_under_age_of_consent"));
-		}
-
-		if (data.containsKey("is_real") && (boolean) data.get("is_real") == false) {
-			Log.d(LOG_TAG, "Creating debug settings for user consent.");
-			ConsentDebugSettings.Builder debugSettingsBuilder = new ConsentDebugSettings.Builder(activity);
-
-			if (data.containsKey("debug_geography")) {
-				Object debugGeographyObj = data.get("debug_geography");
-				if (debugGeographyObj instanceof Integer) {
-					int debugGeography = (int) debugGeographyObj;
-					Log.d(LOG_TAG, "Setting debug geography to: " + debugGeography);
-					debugSettingsBuilder.setDebugGeography(debugGeography);
-				} else {
-					Log.e(LOG_TAG, "Invalid debug_geography type: " + 
-						(debugGeographyObj != null ? debugGeographyObj.getClass().getSimpleName() : "null") +
-						", value: " + debugGeographyObj);
-				}
-			} else {
-				Log.w(LOG_TAG, "debug_geography key not found in dictionary");
-			}
-
-			if (data.containsKey("test_device_hashed_ids")) {
-				Object deviceIdsObj = data.get("test_device_hashed_ids");
-				if (deviceIdsObj instanceof Object[]) {
-					Object[] deviceIds = (Object[]) deviceIdsObj;
-					Log.d(LOG_TAG, "Found " + deviceIds.length + " device IDs in Object array.");
-					for (Object deviceId : deviceIds) {
-						if (deviceId instanceof String && !((String) deviceId).isEmpty()) {
-							Log.d(LOG_TAG, "Adding test device id: " + deviceId);
-							debugSettingsBuilder.addTestDeviceHashedId((String) deviceId);
-						} else {
-							Log.w(LOG_TAG, "Skipping invalid device ID: " + deviceId);
-						}
-					}
-				} else {
-					Log.e(LOG_TAG, "Invalid test_device_hashed_ids type: " + 
-						(deviceIdsObj != null ? deviceIdsObj.getClass().getName() : "null") +
-						", value: " + deviceIdsObj);
-				}
-			} else {
-				Log.w(LOG_TAG, "test_device_hashed_ids key not found in dictionary");
-			}
-
-			debugSettingsBuilder.addTestDeviceHashedId(getAdMobDeviceId(activity));
-
-			builder.setConsentDebugSettings(debugSettingsBuilder.build());
-		}
-
-		return builder.build();
-	}
-
-	public static RequestConfiguration.PublisherPrivacyPersonalizationState getPublisherPrivacyPersonalizationState(int intValue) {
-		return switch (intValue) {
-			case 1 -> RequestConfiguration.PublisherPrivacyPersonalizationState.ENABLED;
-			case 2 -> RequestConfiguration.PublisherPrivacyPersonalizationState.DISABLED;
-			default -> RequestConfiguration.PublisherPrivacyPersonalizationState.DEFAULT;
-		};
-	}
-
 	/**
-	 * Generate MD5 for the deviceID
+	 * Generate MD5 for the deviceID (mirrors iOS hashed device ID logic).
 	 *
 	 * @param s The string for which to generate the MD5
 	 * @return String The generated MD5
@@ -266,12 +142,14 @@ public class GodotConverter {
 	}
 
 	/**
-	 * Get the Device ID for AdMob
+	 * Get the Device ID for AdMob (hashed ANDROID_ID, equivalent to iOS advertising/device ID fallback).
 	 *
-	 * @return String Device ID
+	 * @param activity The activity context
+	 * @return String Hashed Device ID
 	 */
-	private static String getAdMobDeviceId(Activity activity) {
-		@SuppressLint("HardwareIds") String androidId = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID);
+	@SuppressLint("HardwareIds")
+	public static String getAdMobDeviceId(Activity activity) {
+		String androidId = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID);
 		return md5(androidId).toUpperCase(Locale.US);
 	}
 }

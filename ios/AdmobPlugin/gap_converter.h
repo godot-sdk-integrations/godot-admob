@@ -23,6 +23,7 @@
 // From Godot
 + (NSString*) toNsString:(String) godotString;
 + (NSString*) toAdId:(NSString*)unitId withSequence:(int) value;
++ (id) toNsObject:(Variant) godotValue;
 + (NSDictionary*) toNsDictionary:(Dictionary) godotDictionary;
 + (NSArray*) toNsStringArray:(Array) arr;
 + (GADPublisherPrivacyPersonalizationState) intToPublisherPrivacyPersonalizationState:(Variant) intValue;

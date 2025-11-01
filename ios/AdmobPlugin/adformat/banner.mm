@@ -18,17 +18,13 @@
 }
 
 - (void) load:(LoadAdRequest*) loadAdRequest {
-	self.adPosition = [GAPConverter nsStringToAdPosition: loadAdRequest.adPosition];
-	self.adSize = [GAPConverter nsStringToAdSize: loadAdRequest.adSize];
-	self.adUnitId = loadAdRequest.adUnitId;
+	self.adPosition = [GAPConverter nsStringToAdPosition: [loadAdRequest adPosition]];
+	self.adSize = [GAPConverter nsStringToAdSize: [loadAdRequest adSize]];
+	self.adUnitId = [loadAdRequest adUnitId];
 	
 	[self addBanner];
 
-	GADRequest* gadRequest = [GADRequest request];
-	gadRequest.requestAgent = loadAdRequest.requestAgent;
-	gadRequest.keywords = loadAdRequest.keywords;
-
-	[self.bannerView loadRequest:gadRequest];
+	[self.bannerView loadRequest:[loadAdRequest createGADRequest]];
 }
 
 - (void) destroy {
