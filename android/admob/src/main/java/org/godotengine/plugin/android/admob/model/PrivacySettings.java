@@ -4,7 +4,6 @@
 
 package org.godotengine.plugin.android.admob.model;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -23,28 +22,28 @@ public class PrivacySettings {
 	private static final String LOG_TAG = "godot::" + AdmobPlugin.CLASS_NAME + "::" + CLASS_NAME;
 
 	public interface PrivacySetter {
-		void apply(PrivacySettings instance, Activity activity);
+		void apply(PrivacySettings instance, Context context);
 	}
 
 	private static Map<String, PrivacySetter> PrivacySetters;
 
 	static {
 		PrivacySetters = new HashMap<>();
-		PrivacySetters.put("applovin", (instance, activity) -> instance.applyApplovinSettings(activity));
-		PrivacySetters.put("chartboost", (instance, activity) -> instance.applyChartboostSettings(activity));
-		PrivacySetters.put("dtexchange", (instance, activity) -> instance.applyDtexchangeSettings(activity));
-		PrivacySetters.put("imobile", (instance, activity) -> instance.applyImobileSettings(activity));
-		PrivacySetters.put("inmobi", (instance, activity) -> instance.applyInmobiSettings(activity));
-		PrivacySetters.put("ironsource", (instance, activity) -> instance.applyIronsourceSettings(activity));
-		PrivacySetters.put("liftoff", (instance, activity) -> instance.applyLiftoffSettings(activity));
-		PrivacySetters.put("line", (instance, activity) -> instance.applyLineSettings(activity));
-		PrivacySetters.put("maio", (instance, activity) -> instance.applyMaioSettings(activity));
-		PrivacySetters.put("meta", (instance, activity) -> instance.applyMetaSettings(activity));
-		PrivacySetters.put("mintegral", (instance, activity) -> instance.applyMintegralSettings(activity));
-		PrivacySetters.put("moloco", (instance, activity) -> instance.applyMolocoSettings(activity));
-		PrivacySetters.put("mytarget", (instance, activity) -> instance.applyMytargetSettings(activity));
-		PrivacySetters.put("pangle", (instance, activity) -> instance.applyPangleSettings(activity));
-		PrivacySetters.put("unity", (instance, activity) -> instance.applyUnitySettings(activity));
+		PrivacySetters.put("applovin", (instance, context) -> instance.applyApplovinSettings(context));
+		PrivacySetters.put("chartboost", (instance, context) -> instance.applyChartboostSettings(context));
+		PrivacySetters.put("dtexchange", (instance, context) -> instance.applyDtexchangeSettings(context));
+		PrivacySetters.put("imobile", (instance, context) -> instance.applyImobileSettings(context));
+		PrivacySetters.put("inmobi", (instance, context) -> instance.applyInmobiSettings(context));
+		PrivacySetters.put("ironsource", (instance, context) -> instance.applyIronsourceSettings(context));
+		PrivacySetters.put("liftoff", (instance, context) -> instance.applyLiftoffSettings(context));
+		PrivacySetters.put("line", (instance, context) -> instance.applyLineSettings(context));
+		PrivacySetters.put("maio", (instance, context) -> instance.applyMaioSettings(context));
+		PrivacySetters.put("meta", (instance, context) -> instance.applyMetaSettings(context));
+		PrivacySetters.put("mintegral", (instance, context) -> instance.applyMintegralSettings(context));
+		PrivacySetters.put("moloco", (instance, context) -> instance.applyMolocoSettings(context));
+		PrivacySetters.put("mytarget", (instance, context) -> instance.applyMytargetSettings(context));
+		PrivacySetters.put("pangle", (instance, context) -> instance.applyPangleSettings(context));
+		PrivacySetters.put("unity", (instance, context) -> instance.applyUnitySettings(context));
 	}
 
 	public static final String HAS_GDPR_CONSENT_PROPERTY = "has_gdpr_consent";
@@ -58,7 +57,7 @@ public class PrivacySettings {
 		this.rawData = rawData;
 	}
 
-	public void applyPrivacySettings(Activity activity) {
+	public void applyPrivacySettings(Context context) {
 		Log.d(LOG_TAG, "applyPrivacySettings()");
 		Object[] enabledNetworksArray = getEnabledNetworks();
 		Log.d(LOG_TAG, "Found " + enabledNetworksArray.length + " enabled networks to process");
@@ -66,7 +65,7 @@ public class PrivacySettings {
 		for (Object network : enabledNetworksArray) {
 			PrivacySetter setter = PrivacySetters.get((String) network);
 			if (setter != null) {
-				setter.apply(this, activity);
+				setter.apply(this, context);
 			} else {
 				Log.i(LOG_TAG, "Privacy setter not found for network '" + network + "'");
 			}
@@ -75,7 +74,7 @@ public class PrivacySettings {
 
 	// Network-Specific Setters
 
-	private void applyApplovinSettings(Activity activity) {
+	private void applyApplovinSettings(Context context) {
 		Log.d(LOG_TAG, "Applying privacy settings for AppLovin");
 		try {
 			// Get the required privacy settings class
@@ -86,7 +85,7 @@ public class PrivacySettings {
 				 * AppLovinPrivacySettings.setHasUserConsent(true or false);
 				 */
 				Method setConsentMethod = privacyClass.getMethod("setHasUserConsent", boolean.class, Context.class);
-				setConsentMethod.invoke(null, hasGdprConsent(), activity.getApplicationContext()); // static call
+				setConsentMethod.invoke(null, hasGdprConsent(), context); // static call
 				Log.d(LOG_TAG, "AppLovinPrivacySettings.setHasUserConsent() called successfully.");
 			}
 
@@ -95,7 +94,7 @@ public class PrivacySettings {
 				 * AppLovinPrivacySettings.setDoNotSell(true or false);
 				 */
 				Method setDoNotSellMethod = privacyClass.getMethod("setDoNotSell", boolean.class, Context.class);
-				setDoNotSellMethod.invoke(null, !hasCcpaSaleConsent(), activity.getApplicationContext()); // static call
+				setDoNotSellMethod.invoke(null, !hasCcpaSaleConsent(), context); // static call
 				Log.d(LOG_TAG, "AppLovinPrivacySettings.setDoNotSell() called successfully.");
 			}
 		} catch (Exception e) {
@@ -103,7 +102,7 @@ public class PrivacySettings {
 		}
 	}
 
-	private void applyChartboostSettings(Activity activity) {
+	private void applyChartboostSettings(Context context) {
 		Log.d(LOG_TAG, "Applying privacy settings for Chartboost");
 
 		try {
@@ -140,7 +139,7 @@ public class PrivacySettings {
 				Object dataUseConsent = gdprConstructor.newInstance(hasGdprConsent() ? behavioralConstant : nonBehavioralConstant);
 
 				// Invoke the static method. The first argument is 'null' because the method is static.
-				addConsentMethod.invoke(null, activity.getApplicationContext(), dataUseConsent);
+				addConsentMethod.invoke(null, context, dataUseConsent);
 
 				Log.d(LOG_TAG, "Chartboost GDPR consent set successfully.");
 			}
@@ -170,7 +169,7 @@ public class PrivacySettings {
 				Object dataUseConsent = ccpaConstructor.newInstance(hasCcpaSaleConsent() ? optInConstant : optOutConstant);
 
 				// Invoke the static method. The first argument is 'null' because the method is static.
-				addConsentMethod.invoke(null, activity.getApplicationContext(), dataUseConsent);
+				addConsentMethod.invoke(null, context, dataUseConsent);
 
 				Log.d(LOG_TAG, "Chartboost CCPA sale consent set successfully.");
 			}
@@ -179,7 +178,7 @@ public class PrivacySettings {
 		}
 	}
 
-	private void applyDtexchangeSettings(Activity activity) {
+	private void applyDtexchangeSettings(Context context) {
 		Log.d(LOG_TAG, "Applying privacy settings for DT Exchange");
 
 		// DT Exchange SDK automatically retrieves GDPR since version 8.3.0
@@ -210,11 +209,11 @@ public class PrivacySettings {
 		}
 	}
 
-	private void applyImobileSettings(Activity activity) {
+	private void applyImobileSettings(Context context) {
 		Log.i(LOG_TAG, "Privacy settings are not applicable for Imobile");
 	}
 
-	private void applyInmobiSettings(Activity activity) {
+	private void applyInmobiSettings(Context context) {
 		Log.d(LOG_TAG, "Applying privacy settings for InMobi");
 
 		if (rawData.containsKey(HAS_GDPR_CONSENT_PROPERTY)) {
@@ -269,7 +268,7 @@ public class PrivacySettings {
 		// InMobi SDK added support to read CCPA from shared preferences in version 10.5.7.1
 	}
 
-	private void applyIronsourceSettings(Activity activity) {
+	private void applyIronsourceSettings(Context context) {
 		Log.d(LOG_TAG, "Applying privacy settings for ironSource");
 
 		// ironSource SDK automatically reads GDPR consent set by UMP SDK since version 7.7.0
@@ -297,7 +296,7 @@ public class PrivacySettings {
 		}
 	}
 
-	private void applyLiftoffSettings(Activity activity) {
+	private void applyLiftoffSettings(Context context) {
 		Log.d(LOG_TAG, "Applying privacy settings for Liftoff Monetize");
 
 		// Liftoff Monetize automatically reads GDPR consent set by UMP SDK since Vungle SDK version 7.7.0
@@ -323,19 +322,19 @@ public class PrivacySettings {
 		}
 	}
 
-	private void applyLineSettings(Activity activity) {
+	private void applyLineSettings(Context context) {
 		Log.i(LOG_TAG, "Privacy settings are not applicable for Line");
 	}
 
-	private void applyMaioSettings(Activity activity) {
+	private void applyMaioSettings(Context context) {
 		Log.i(LOG_TAG, "Privacy settings are not applicable for Maio");
 	}
 
-	private void applyMetaSettings(Activity activity) {
+	private void applyMetaSettings(Context context) {
 		Log.i(LOG_TAG, "Privacy settings are not applicable for Meta");
 	}
 
-	private void applyMintegralSettings(Activity activity) {
+	private void applyMintegralSettings(Context context) {
 		Log.d(LOG_TAG, "Applying privacy settings for Mintegral");
 
 		try {
@@ -367,7 +366,7 @@ public class PrivacySettings {
 				Method setConsentMethod = sdkClass.getMethod("setConsentStatus", Context.class, int.class);
 
 				// Invoke the instance method with the 'mBridgeSdkInstance' object and the subsequent arguments: 'context' and the constant value.
-				setConsentMethod.invoke(mBridgeSdkInstance, activity.getApplicationContext(), hasGdprConsent() ? switchOnConstant : switchOffConstant);
+				setConsentMethod.invoke(mBridgeSdkInstance, context, hasGdprConsent() ? switchOnConstant : switchOffConstant);
 
 				Log.d(LOG_TAG, "MBridgeSDK GDPR consent status set successfully.");
 			}
@@ -390,7 +389,7 @@ public class PrivacySettings {
 		}
 	}
 
-	private void applyMolocoSettings(Activity activity) {
+	private void applyMolocoSettings(Context context) {
 		Log.d(LOG_TAG, "Applying privacy settings for Moloco");
 
 		try {
@@ -430,7 +429,7 @@ public class PrivacySettings {
 		}
 	}
 
-	private void applyMytargetSettings(Activity activity) {
+	private void applyMytargetSettings(Context context) {
 		Log.d(LOG_TAG, "Applying privacy settings for myTarget");
 
 		try {
@@ -483,7 +482,7 @@ public class PrivacySettings {
 		}
 	}
 
-	private void applyPangleSettings(Activity activity) {
+	private void applyPangleSettings(Context context) {
 		Log.d(LOG_TAG, "Applying privacy settings for Pangle");
 
 		try {
@@ -541,12 +540,12 @@ public class PrivacySettings {
 		}
 	}
 
-	private void applyUnitySettings(Activity activity) {
+	private void applyUnitySettings(Context context) {
 		Log.d(LOG_TAG, "Applying privacy settings for Unity");
 
 		try {
 			/*
-			 * MetaData metaData = MetaData(activity);
+			 * MetaData metaData = MetaData(context);
 			 * metaData.set("gdpr.consent", true or false);
 			 * metaData.set("privacy.consent", true or false);
 			 * metaData.commit();
@@ -555,11 +554,11 @@ public class PrivacySettings {
 			// Get the required Class
 			Class<?> metaDataClass = Class.forName("com.unity3d.ads.metadata.MetaData");
 
-			// Instantiate MetaData: new MetaData(activity); get the constructor that takes an Activity object.
-			Constructor<?> metaDataConstructor = metaDataClass.getConstructor(Activity.class);
+			// Instantiate MetaData: new MetaData(context); get the constructor that takes a Context object.
+			Constructor<?> metaDataConstructor = metaDataClass.getConstructor(Context.class);
 
-			// Create the new object instance, passing the 'activity' instance.
-			Object metaDataInstance = metaDataConstructor.newInstance(activity);
+			// Create the new object instance, passing the 'context' instance.
+			Object metaDataInstance = metaDataConstructor.newInstance(context);
 
 			// Get the Method object for set(String, Object), which is used twice for the 'gdpr.consent' and 'privacy.consent' keys.
 			Method setMethod = metaDataClass.getMethod("set", String.class, Object.class);
@@ -585,7 +584,7 @@ public class PrivacySettings {
 				// metaData.commit();
 				commitMethod.invoke(metaDataInstance);
 
-				Log.e(LOG_TAG, "UnityAds MetaData set and committed successfully.");
+				Log.d(LOG_TAG, "UnityAds MetaData set and committed successfully.");
 			}
 		} catch (Exception e) {
 			Log.e(LOG_TAG, e.getClass().getSimpleName() + ":: " + e.getMessage() + ":: Failed to set Unity privacy settings: ");

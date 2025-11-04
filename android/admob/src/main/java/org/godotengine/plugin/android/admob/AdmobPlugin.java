@@ -785,7 +785,7 @@ public class AdmobPlugin extends GodotPlugin {
 		Log.d(LOG_TAG, "set_mediation_privacy_settings()");
 
 		PrivacySettings privacySettings = new PrivacySettings(settings);
-		privacySettings.applyPrivacySettings(activity);
+		privacySettings.applyPrivacySettings(activity.getApplicationContext());
 	}
 
 	@Override

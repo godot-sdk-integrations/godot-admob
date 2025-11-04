@@ -24,8 +24,7 @@ enum Flag {
 
 const FLAG_PROPERTY: String = "flag"
 const TAG_PROPERTY: String = "tag"
-const DEPENDENCY_PROPERTY: String = "dependency"
-const DEPENDENCY_VERSION_PROPERTY: String = "dependency_version"
+const DEPENDENCIES_PROPERTY: String = "dependencies"
 const MAVEN_REPO_PROPERTY: String = "maven_repo"
 const ANDROID_ADAPTER_CLASS_PROPERTY: String = "android_adapter_class"
 const IOS_ADAPTER_CLASS_PROPERTY: String = "ios_adapter_class"
@@ -51,8 +50,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.APPLOVIN: {
 			FLAG_PROPERTY: Flag.APPLOVIN,
 			TAG_PROPERTY: "applovin",
-			DEPENDENCY_PROPERTY: "@applovinDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@applovinDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @applovinDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@applovinMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@applovinAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@applovinIosAdapterClass@",
@@ -63,8 +61,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.CHARTBOOST: {
 			FLAG_PROPERTY: Flag.CHARTBOOST,
 			TAG_PROPERTY: "chartboost",
-			DEPENDENCY_PROPERTY: "@chartboostDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@chartboostDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @chartboostDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@chartboostMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@chartboostAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@chartboostIosAdapterClass@",
@@ -75,8 +72,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.DTEXCHANGE: {
 			FLAG_PROPERTY: Flag.DTEXCHANGE,
 			TAG_PROPERTY: "dtexchange",
-			DEPENDENCY_PROPERTY: "@dtexchangeDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@dtexchangeDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @dtexchangeDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@dtexchangeMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@dtexchangeAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@dtexchangeIosAdapterClass@",
@@ -87,8 +83,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.IMOBILE: {
 			FLAG_PROPERTY: Flag.IMOBILE,
 			TAG_PROPERTY: "imobile",
-			DEPENDENCY_PROPERTY: "@imobileDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@imobileDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @imobileDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@imobileMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@imobileAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@imobileIosAdapterClass@",
@@ -99,8 +94,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.INMOBI: {
 			FLAG_PROPERTY: Flag.INMOBI,
 			TAG_PROPERTY: "inmobi",
-			DEPENDENCY_PROPERTY: "@inmobiDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@inmobiDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @inmobiDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@inmobiMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@inmobiAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@inmobiIosAdapterClass@",
@@ -111,8 +105,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.IRONSOURCE: {
 			FLAG_PROPERTY: Flag.IRONSOURCE,
 			TAG_PROPERTY: "ironsource",
-			DEPENDENCY_PROPERTY: "@ironsourceDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@ironsourceDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @ironsourceDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@ironsourceMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@ironsourceAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@ironsourceIosAdapterClass@",
@@ -123,8 +116,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.LIFTOFF: {
 			FLAG_PROPERTY: Flag.LIFTOFF,
 			TAG_PROPERTY: "liftoff",
-			DEPENDENCY_PROPERTY: "@liftoffDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@liftoffDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @liftoffDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@liftoffMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@liftoffAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@liftoffIosAdapterClass@",
@@ -135,8 +127,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.LINE: {
 			FLAG_PROPERTY: Flag.LINE,
 			TAG_PROPERTY: "line",
-			DEPENDENCY_PROPERTY: "@lineDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@lineDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @lineDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@lineMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@lineAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@lineIosAdapterClass@",
@@ -147,8 +138,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.MAIO: {
 			FLAG_PROPERTY: Flag.MAIO,
 			TAG_PROPERTY: "maio",
-			DEPENDENCY_PROPERTY: "@maioDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@maioDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @maioDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@maioMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@maioAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@maioIosAdapterClass@",
@@ -159,8 +149,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.META: {
 			FLAG_PROPERTY: Flag.META,
 			TAG_PROPERTY: "meta",
-			DEPENDENCY_PROPERTY: "@metaDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@metaDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @metaDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@metaMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@metaAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@metaIosAdapterClass@",
@@ -171,8 +160,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.MINTEGRAL: {
 			FLAG_PROPERTY: Flag.MINTEGRAL,
 			TAG_PROPERTY: "mintegral",
-			DEPENDENCY_PROPERTY: "@mintegralDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@mintegralDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @mintegralDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@mintegralMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@mintegralAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@mintegralIosAdapterClass@",
@@ -183,8 +171,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.MOLOCO: {
 			FLAG_PROPERTY: Flag.MOLOCO,
 			TAG_PROPERTY: "moloco",
-			DEPENDENCY_PROPERTY: "@molocoDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@molocoDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @molocoDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@molocoMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@molocoAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@molocoIosAdapterClass@",
@@ -195,8 +182,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.MYTARGET: {
 			FLAG_PROPERTY: Flag.MYTARGET,
 			TAG_PROPERTY: "mytarget",
-			DEPENDENCY_PROPERTY: "@mytargetDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@mytargetDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @mytargetDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@mytargetMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@mytargetAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@mytargetIosAdapterClass@",
@@ -207,8 +193,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.PANGLE: {
 			FLAG_PROPERTY: Flag.PANGLE,
 			TAG_PROPERTY: "pangle",
-			DEPENDENCY_PROPERTY: "@pangleDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@pangleDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @pangleDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@pangleMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@pangleAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@pangleIosAdapterClass@",
@@ -219,8 +204,7 @@ const MEDIATION_NETWORKS: Dictionary = {
 	Flag.UNITY: {
 			FLAG_PROPERTY: Flag.UNITY,
 			TAG_PROPERTY: "unity",
-			DEPENDENCY_PROPERTY: "@unityDependency@",
-			DEPENDENCY_VERSION_PROPERTY: "@unityDependencyVersion@",
+			DEPENDENCIES_PROPERTY: [ @unityDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@unityMavenRepo@",
 			ANDROID_ADAPTER_CLASS_PROPERTY: "@unityAndroidAdapterClass@",
 			IOS_ADAPTER_CLASS_PROPERTY: "@unityIosAdapterClass@",
@@ -250,8 +234,7 @@ const MEDIATION_NETWORK_TAGS: Dictionary = {
 
 var flag: Flag
 var tag: String
-var android_dependency: String
-var android_dependency_version: String
+var android_dependencies: Array
 var android_custom_maven_repo: String
 var android_adapter_class: String
 var ios_adapter_class: String
@@ -263,18 +246,13 @@ var sk_ad_network_ids: PackedStringArray
 func _init(a_data: Dictionary) -> void:
 	flag = a_data[FLAG_PROPERTY]
 	tag = a_data[TAG_PROPERTY]
-	android_dependency = a_data[DEPENDENCY_PROPERTY]
-	android_dependency_version = a_data[DEPENDENCY_VERSION_PROPERTY]
+	android_dependencies = a_data[DEPENDENCIES_PROPERTY]
 	android_custom_maven_repo = a_data[MAVEN_REPO_PROPERTY]
 	android_adapter_class = a_data[ANDROID_ADAPTER_CLASS_PROPERTY]
 	ios_adapter_class = a_data[IOS_ADAPTER_CLASS_PROPERTY]
 	ios_pod = a_data[POD_PROPERTY]
 	ios_pod_version = a_data[POD_VERSION_PROPERTY]
 	sk_ad_network_ids = a_data[SK_AD_NETWORK_IDS_PROPERTY]
-
-
-func get_dependency_string() -> String:
-	return "%s:%s" % [android_dependency, android_dependency_version]
 
 
 func get_pod_string() -> String:

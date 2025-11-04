@@ -133,16 +133,19 @@ tasks {
 		dependsOn("copyAddonsToDemo")
 
 		doLast {
+			// Load properties file
 			val mediationProps = Properties().apply {
 				load(FileInputStream(file("${rootDir}/../common/mediation.properties")))
 			}
 
+			// Setup files and content
 			val gdFile = file("${project.extra["demoAddOnsDirectory"]}/${project.extra["pluginName"]}/model/MediationNetwork.gd")
 			if (!gdFile.exists()) {
 				println("[WARNING] MediationNetwork.gd not found at ${gdFile.absolutePath}, skipping replacement.")
 				return@doLast
 			}
 
+			// Read raw file content with tokens
 			val content = gdFile.readText()
 			var newContent = content
 
@@ -150,11 +153,16 @@ tasks {
 				.filter { it.contains(".") }
 				.map { it.substringBefore(".") }
 				.distinct()
-				.sorted() // Optional: sort for consistent replacement order
+				.sorted()
 
 			for (network in networks) {
-				val dep = mediationProps.getProperty("${network}.dependency") ?: continue
-				val depVer = mediationProps.getProperty("${network}.dependencyVersion") ?: ""
+				// Prepare replacements
+				val depsStr = mediationProps.getProperty("${network}.dependencies") ?: ""
+				val deps = if (depsStr.isNotEmpty()) {
+					depsStr.split(",").map { "\"${it.trim()}\"" }.joinToString(", ")
+				} else {
+					""
+				}
 				val repo = mediationProps.getProperty("${network}.mavenRepo") ?: ""
 				val andAdapter = mediationProps.getProperty("${network}.androidAdapterClass") ?: ""
 				val iosAdapter = mediationProps.getProperty("${network}.iosAdapterClass") ?: ""
@@ -162,14 +170,14 @@ tasks {
 				val podVer = mediationProps.getProperty("${network}.podVersion") ?: ""
 				val skIdsStr = mediationProps.getProperty("${network}.skAdNetworkIds") ?: ""
 				val skIds = if (skIdsStr.isNotEmpty()) {
-					skIdsStr.split(",").map { "\"${it.trim()}\"" }.joinToString(",")
+					skIdsStr.split(",").map { "\"${it.trim()}\"" }.joinToString(", ")
 				} else {
 					""
 				}
 
+				// Replace tokens
 				newContent = newContent
-					.replace("@${network}Dependency@", dep)
-					.replace("@${network}DependencyVersion@", depVer)
+					.replace("@${network}Dependencies@", deps)
 					.replace("@${network}MavenRepo@", repo)
 					.replace("@${network}AndroidAdapterClass@", andAdapter)
 					.replace("@${network}IosAdapterClass@", iosAdapter)
@@ -178,6 +186,7 @@ tasks {
 					.replace("@${network}SkAdNetworkIds@", skIds)
 			}
 
+			// Write updated content with tokens replaced
 			gdFile.writeText(newContent)
 			println("[INFO] Mediation tokens replaced in ${gdFile.absolutePath}")
 		}

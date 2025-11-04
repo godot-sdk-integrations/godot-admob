@@ -410,8 +410,8 @@ function replace_mediation_properties()
 	local networks=($(grep -v '^#' "$mediation_config_file" | grep -E '^[a-z]+(\.[a-zA-Z]+)*=.*' | sed 's/\..*//' | sort -u))
 
 	local network
-	local dep
-	local dep_ver
+	local deps=()
+	local deps_joined=""
 	local repo
 	local adapter
 	local extras
@@ -419,18 +419,14 @@ function replace_mediation_properties()
 	local pod_ver
 	local skad_ids=()
 	local skad_joined=""
-	local esc_dep
-	local esc_dep_ver
+	local esc_deps
 	local esc_repo
 	local esc_adapter
-	local esc_extras
 	local esc_pod
 	local esc_pod_ver
-	local esc_skad
+	local esc_skad_ids
 
 	for network in "${networks[@]}"; do
-		dep=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.dependency")
-		dep_ver=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.dependencyVersion")
 		repo=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.mavenRepo")
 		android_adapter=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.androidAdapterClass")
 		ios_adapter=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.iosAdapterClass")
@@ -438,14 +434,6 @@ function replace_mediation_properties()
 		pod_ver=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.podVersion")
 
 		# Check for missing required properties
-		if [[ -z "$dep" ]]; then
-			display_error "Error: Missing required property '${network}.dependency' in '$mediation_config_file'"
-			exit 1
-		fi
-		if [[ -z "$dep_ver" ]]; then
-			display_error "Error: Missing required property '${network}.dependencyVersion' in '$mediation_config_file'"
-			exit 1
-		fi
 		if [[ -z "$pod" ]]; then
 			display_error "Error: Missing required property '${network}.pod' in '$mediation_config_file'"
 			exit 1
@@ -454,7 +442,30 @@ function replace_mediation_properties()
 			display_error "Error: Missing required property '${network}.podVersion' in '$mediation_config_file'"
 			exit 1
 		fi
+		
+		# Fetch Android dependencies as comma-separated array and quote each
+		deps=()
+		while IFS= read -r id; do
+			if [[ -n "$id" ]]; then
+				deps+=("$id")
+			fi
+		done < <($SCRIPT_DIR/get_config_property.sh -qa -f "$mediation_config_file" "${network}.dependencies")
 
+		# Join quoted deps with commas
+		if [[ ${#deps[@]} -gt 0 ]]; then
+			IFS=', '
+			deps_joined="${deps[*]}"
+			unset IFS
+		else
+			deps_joined=""
+		fi
+
+		# Check for missing or empty dependencies property
+		if [[ -z "$deps_joined" ]]; then
+			display_error "Error: Missing required property '${network}.dependencies' in '$mediation_config_file' or it is empty. At least one entry is required."
+			exit 1
+		fi
+		
 		# Fetch SK Ad Network IDs as comma-separated array and quote each
 		skad_ids=()
 		while IFS= read -r id; do
@@ -465,7 +476,7 @@ function replace_mediation_properties()
 
 		# Join quoted IDs with commas
 		if [[ ${#skad_ids[@]} -gt 0 ]]; then
-			IFS=','
+			IFS=', '
 			skad_joined="${skad_ids[*]}"
 			unset IFS
 		else
@@ -479,25 +490,23 @@ function replace_mediation_properties()
 		fi
 
 		# Escape values for sed
-		esc_dep=$(printf '%s\n' "$dep" | sed 's/[\/&]/\\&/g')
-		esc_dep_ver=$(printf '%s\n' "$dep_ver" | sed 's/[\/&]/\\&/g')
+		esc_deps=$(printf '%s\n' "$deps_joined" | sed 's/[\/&]/\\&/g')
 		esc_repo=$(printf '%s\n' "$repo" | sed 's/[\/&]/\\&/g')
 		esc_android_adapter=$(printf '%s\n' "$android_adapter" | sed 's/[\/&]/\\&/g')
 		esc_ios_adapter=$(printf '%s\n' "$ios_adapter" | sed 's/[\/&]/\\&/g')
 		esc_pod=$(printf '%s\n' "$pod" | sed 's/[\/&]/\\&/g')
 		esc_pod_ver=$(printf '%s\n' "$pod_ver" | sed 's/[\/&]/\\&/g')
-		esc_skad=$(printf '%s\n' "$skad_joined" | sed 's/[\/&]/\\&/g')
+		esc_skad_ids=$(printf '%s\n' "$skad_joined" | sed 's/[\/&]/\\&/g')
 
 		# Perform replacements with sed
 		sed "${SED_INPLACE[@]}" \
-			-e "s|@${network}Dependency@|${esc_dep}|g" \
-			-e "s|@${network}DependencyVersion@|${esc_dep_ver}|g" \
+			-e "s|@${network}Dependencies@|${esc_deps}|g" \
 			-e "s|@${network}MavenRepo@|${esc_repo}|g" \
 			-e "s|@${network}AndroidAdapterClass@|${esc_android_adapter}|g" \
 			-e "s|@${network}IosAdapterClass@|${esc_ios_adapter}|g" \
 			-e "s|@${network}Pod@|${esc_pod}|g" \
 			-e "s|@${network}PodVersion@|${esc_pod_ver}|g" \
-			-e "s|@${network}SkAdNetworkIds@|${esc_skad}|g" \
+			-e "s|@${network}SkAdNetworkIds@|${esc_skad_ids}|g" \
 			"$file_path"
 	done
 }

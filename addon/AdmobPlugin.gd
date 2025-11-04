@@ -72,7 +72,8 @@ class AndroidExportPlugin extends EditorExportPlugin:
 		var deps: PackedStringArray = PackedStringArray(ANDROID_DEPENDENCIES)
 		if _export_config and _export_config.enabled_mediation_networks.size() > 0:
 			for __network in _export_config.enabled_mediation_networks:
-				deps.append(__network.get_dependency_string())
+				for __dependency in __network.android_dependencies:
+					deps.append(__dependency)
 
 		Admob.log_info("Android dependencies: %s" % str(deps))
 
