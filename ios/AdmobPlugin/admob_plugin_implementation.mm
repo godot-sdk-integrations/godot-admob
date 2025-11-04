@@ -11,6 +11,7 @@
 #import "admob_config.h"
 #import "admob_logger.h"
 #import "ump_orientation_wrapper.h"
+#import "privacy_settings.h"
 
 
 const String INITIALIZATION_COMPLETED_SIGNAL = "initialization_completed";
@@ -154,6 +155,8 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_consent_form_available"), &AdmobPlugin::is_consent_form_available);
 	ClassDB::bind_method(D_METHOD("update_consent_info"), &AdmobPlugin::update_consent_info);
 	ClassDB::bind_method(D_METHOD("reset_consent_info"), &AdmobPlugin::reset_consent_info);
+
+	ClassDB::bind_method(D_METHOD("set_mediation_privacy_settings", "settings"), &AdmobPlugin::set_mediation_privacy_settings);
 
 	ADD_SIGNAL(MethodInfo(CONSENT_INFO_UPDATED_SIGNAL));
 	ADD_SIGNAL(MethodInfo(CONSENT_INFO_UPDATE_FAILED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "form_error_data")));
@@ -635,6 +638,13 @@ void AdmobPlugin::update_consent_info(Dictionary consentRequestParameters) {
 void AdmobPlugin::reset_consent_info() {
 	os_log_debug(admob_log, "AdmobPlugin reset_consent_info");
 	[UMPConsentInformation.sharedInstance reset];
+}
+
+void AdmobPlugin::set_mediation_privacy_settings(Dictionary settings) {
+	os_log_debug(admob_log, "AdmobPlugin set_mediation_privacy_settings");
+
+	PrivacySettings* privacySettings = [[PrivacySettings alloc] initWithDictionary: settings];
+	[privacySettings applyPrivacySettings];
 }
 
 void AdmobPlugin::request_tracking_authorization() {

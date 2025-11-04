@@ -4,7 +4,6 @@
 
 #import "admob_config.h"
 
-#import <GoogleMobileAds/GoogleMobileAds.h>
 #import <AdSupport/AdSupport.h>
 
 #import "gap_converter.h"

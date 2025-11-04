@@ -298,13 +298,24 @@ static func get_by_tag(a_tag: String) -> MediationNetwork:
 
 
 static func get_all_enabled(a_value: int) -> Array[MediationNetwork]:
-	var __enabled_networks: Array[MediationNetwork]
+	var __enabled_networks: Array[MediationNetwork] = []
 
 	for __flag in Flag.values():
 		if is_flag_enabled(a_value, __flag):
 			__enabled_networks.append(get_by_flag(__flag))
 
 	return __enabled_networks
+
+
+static func get_all_enabled_tags(a_value: int) -> Array[String]:
+	var __enabled_network_tags: Array[String] = []
+
+	for __flag in Flag.values():
+		if is_flag_enabled(a_value, __flag):
+			var __network: MediationNetwork = get_by_flag(__flag)
+			__enabled_network_tags.append(__network.tag)
+
+	return __enabled_network_tags
 
 
 static func generate_sk_ad_network_plist(a_networks: Array[MediationNetwork]) -> String:

@@ -39,6 +39,7 @@ import org.godotengine.godot.plugin.UsedByGodot;
 import org.godotengine.plugin.android.admob.model.AdmobConfiguration;
 import org.godotengine.plugin.android.admob.model.ConsentConfiguration;
 import org.godotengine.plugin.android.admob.model.LoadAdRequest;
+import org.godotengine.plugin.android.admob.model.PrivacySettings;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -779,6 +780,13 @@ public class AdmobPlugin extends GodotPlugin {
 		UserMessagingPlatform.getConsentInformation(activity).reset();
 	}
 
+	@UsedByGodot
+	public void set_mediation_privacy_settings(Dictionary settings) {
+		Log.d(LOG_TAG, "set_mediation_privacy_settings()");
+
+		PrivacySettings privacySettings = new PrivacySettings(settings);
+		privacySettings.applyPrivacySettings(activity);
+	}
 
 	@Override
 	public View onMainCreate(Activity activity) {

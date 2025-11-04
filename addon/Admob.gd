@@ -711,6 +711,15 @@ func reset_consent_info() -> void:
 		_plugin_singleton.reset_consent_info()
 
 
+func set_mediation_privacy_settings(privacySettings: NetworkPrivacySettings) -> void:
+	if _plugin_singleton == null:
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+	else:
+		_plugin_singleton.set_mediation_privacy_settings(privacySettings
+				.set_enabled_networks(MediationNetwork.get_all_enabled_tags(enabled_networks))
+				.get_raw_data())
+
+
 func request_tracking_authorization() -> void:
 	if _plugin_singleton == null:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)

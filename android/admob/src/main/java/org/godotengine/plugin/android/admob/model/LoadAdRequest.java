@@ -149,8 +149,8 @@ public class LoadAdRequest {
 		}
 
 		if (_data.containsKey(KEYWORDS_PROPERTY)) {
-			for (String keyword : (String[]) _data.get(KEYWORDS_PROPERTY)) {
-				builder.addKeyword(keyword);
+			for (Object keyword : (Object[]) _data.get(KEYWORDS_PROPERTY)) {
+				builder.addKeyword((String) keyword);
 			}
 		}
 

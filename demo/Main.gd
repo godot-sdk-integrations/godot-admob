@@ -280,6 +280,9 @@ func _process_consent_status(a_consent_status: String) -> void:
 			admob.load_consent_form()
 		ConsentInformation.ConsentStatus.OBTAINED:
 			_print_to_screen("consent has been obtained")
+			admob.set_mediation_privacy_settings(NetworkPrivacySettings.new()
+					.set_has_gdpr_consent(true)
+					.set_is_age_restricted_user(false))
 			_load_ads()
 
 

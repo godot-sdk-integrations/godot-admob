@@ -244,14 +244,7 @@ set -e  # Exit on error
 
 cd "$(dirname "$0")"  # Change to project dir
 echo "Setting up CocoaPods for mediation..."
-
-if [ ! -d "Pods" ]; then
-  echo "Installing pods (including mediation adapters)..."
-  pod install --repo-update
-  echo "Pods installed successfully!"
-else
-  echo "Pods already exist; skipping install."
-fi
+pod install --repo-update
 
 echo "Setup complete! Open '%s.xcworkspace' in Xcode (not .xcodeproj)."
 """ % a_project_name

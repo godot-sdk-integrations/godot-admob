@@ -125,6 +125,8 @@ private:
 	void update_consent_info(Dictionary consentRequestParameters);
 	void reset_consent_info();
 
+	void set_mediation_privacy_settings(Dictionary settings);
+
 	void request_tracking_authorization();
 	void open_app_settings();
 

@@ -22,8 +22,9 @@ var _data: Dictionary
 
 
 func _init():
-	_data = {}
-	_data[TEST_DEVICE_HASHED_IDS_PROPERTY] = []
+	_data = {
+		TEST_DEVICE_HASHED_IDS_PROPERTY: []
+	}
 
 
 func set_is_real(a_value: bool) -> ConsentRequestParameters:

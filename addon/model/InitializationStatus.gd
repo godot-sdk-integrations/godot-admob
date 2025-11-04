@@ -8,7 +8,10 @@ var _data: Dictionary
 
 
 func _init(a_data: Dictionary):
-	_data = a_data
+	if a_data == null:
+		_data = {}
+	else:
+		_data = a_data
 
 
 func get_adapter_classes() -> Array:
