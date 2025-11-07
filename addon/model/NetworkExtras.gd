@@ -5,7 +5,7 @@
 class_name NetworkExtras extends Resource
 
 
-const ADAPTER_CLASS_PROPERTY: String = "adapter_class"
+const NETWORK_TAG_PROPERTY: String = "network_tag"
 const EXTRAS_PROPERTY: String = "extras"
 
 
@@ -17,10 +17,7 @@ func get_raw_data() -> Dictionary:
 	var __network: MediationNetwork = MediationNetwork.get_by_flag(network_flag)
 	var __raw_data: Dictionary
 
-	if OS.has_feature("ios"):
-		__raw_data = {ADAPTER_CLASS_PROPERTY: __network.ios_adapter_class, EXTRAS_PROPERTY: extras}
-	else:
-		__raw_data = {ADAPTER_CLASS_PROPERTY: __network.android_adapter_class, EXTRAS_PROPERTY: extras}
+	__raw_data = {NETWORK_TAG_PROPERTY: __network.tag, EXTRAS_PROPERTY: extras}
 
 	return __raw_data
 

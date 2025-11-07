@@ -6,6 +6,8 @@
 
 #import <objc/message.h>
 
+#import "mediation_network.h"
+#import "mediation_network_factory.h"
 #import "gap_converter.h"
 #import "admob_logger.h"
 
@@ -17,8 +19,10 @@ const String KEYWORDS_PROPERTY = "keywords";
 const String USER_ID_PROPERTY = "user_id";
 const String CUSTOM_DATA_PROPERTY = "custom_data";
 const String NETWORK_EXTRAS_PROPERTY = "network_extras";
-const String ADAPTER_CLASS_SUBPROPERTY = "adapter_class";
+const String NETWORK_TAG_SUBPROPERTY = "network_tag";
 const String EXTRAS_SUBPROPERTY = "extras";
+
+static NSString *const METHOD_CALL_PREFIX = @"::";
 
 
 @implementation LoadAdRequest
@@ -76,64 +80,80 @@ const String EXTRAS_SUBPROPERTY = "extras";
 	os_log_debug(admob_log, "Found %d extras to process", networkExtrasArray.size());
 	for (int i = 0; i < networkExtrasArray.size(); ++i) {
 		Dictionary entry = networkExtrasArray[i];
-		if (entry.has(ADAPTER_CLASS_SUBPROPERTY) && entry.has(EXTRAS_SUBPROPERTY)) {
-			String adapterClassStr = entry[ADAPTER_CLASS_SUBPROPERTY];
-			NSString *adapterClassName = [GAPConverter toNsString:adapterClassStr];
-			Dictionary extrasDict = entry[EXTRAS_SUBPROPERTY];
-			NSDictionary *extrasParams = [GAPConverter toNsDictionary:extrasDict];
+		if (entry.has(NETWORK_TAG_SUBPROPERTY) && entry.has(EXTRAS_SUBPROPERTY)) {
+			NSString *networkTag = [GAPConverter toNsString:entry[NETWORK_TAG_SUBPROPERTY]];
+			MediationNetwork *network = [MediationNetworkFactory createNetwork:networkTag];
+			if (network) {
+				Dictionary extrasDict = entry[EXTRAS_SUBPROPERTY];
+				NSDictionary *extrasParams = [GAPConverter toNsDictionary:extrasDict];
+				if (extrasParams && [extrasParams count] > 0) {
+					NSString *adapterClassName = [network getAdapterClassName];
+					Class adapterClass = NSClassFromString(adapterClassName);
+					if (adapterClass) {
+						if ([adapterClass respondsToSelector:@selector(networkExtrasClass)]) {
 
-			if (adapterClassName && ![adapterClassName isEqualToString:@""] && extrasParams) {
-				Class adapterClass = NSClassFromString(adapterClassName);
-				if (adapterClass) {
-					if ([adapterClass respondsToSelector:@selector(networkExtrasClass)]) {
+							// Declare the objc_msgSend signature for this selector:
+							using NetworkExtrasClassFn = Class<GADAdNetworkExtras> (*)(Class, SEL);
+							NetworkExtrasClassFn msgSendFunc = reinterpret_cast<NetworkExtrasClassFn>(objc_msgSend);
 
-						// Declare the objc_msgSend signature for this selector:
-						using NetworkExtrasClassFn = Class<GADAdNetworkExtras> (*)(Class, SEL);
-						NetworkExtrasClassFn msgSendFunc = reinterpret_cast<NetworkExtrasClassFn>(objc_msgSend);
+							// Safely call the +networkExtrasClass method
+							Class<GADAdNetworkExtras> extrasClass = msgSendFunc(adapterClass, @selector(networkExtrasClass));
 
-						// Safely call the +networkExtrasClass method
-						Class<GADAdNetworkExtras> extrasClass = msgSendFunc(adapterClass, @selector(networkExtrasClass));
-
-						if (extrasClass) {
-							if ([extrasClass conformsToProtocol:@protocol(GADAdNetworkExtras)]) {
-								id extras = [[(Class)extrasClass alloc] init];
-								if (extras) {
-									for (NSObject *key in extrasParams) {
-										if ([key isKindOfClass:[NSString class]]) {
-											id value = extrasParams[key];
-											@try {
-												[extras setValue:value forKey:(NSString*) key];
+							if (extrasClass) {
+								if ([extrasClass conformsToProtocol:@protocol(GADAdNetworkExtras)]) {
+									id extras = [[(Class)extrasClass alloc] init];
+									if (extras) {
+										int numAdded = 0;
+										for (NSObject *keyObj in extrasParams) {
+											if ([keyObj isKindOfClass:[NSString class]]) {
+												id value = extrasParams[keyObj];
+												NSString *key = (NSString *) keyObj;
+												@try {
+													if ([key hasPrefix:METHOD_CALL_PREFIX]) {
+														os_log_debug(admob_log, "Processing method call '%@' for %@", key, adapterClassName);
+														SEL methodSel = NSSelectorFromString([key substringFromIndex:[METHOD_CALL_PREFIX length]]);
+														((void (*)(id, SEL, id))objc_msgSend)(extras, methodSel, value);
+													} else {
+														os_log_debug(admob_log, "Processing key-value coding '%@' for %@", key, adapterClassName);
+														[extras setValue:value forKey:(NSString*) key];
+													}
+													numAdded++;
+												}
+												@catch (NSException *exception) {
+													os_log_error(admob_log, "Unable to set key %@ due to %@ (%@)", key, [exception name], [exception reason]);
+												}
+											} else {
+												os_log_error(admob_log, "Invalid extras key. Skipping.");
 											}
-											@catch (NSException *exception) {
-												os_log_error(admob_log, "Unable to set key %@ due to %@ (%@)", key, [exception name], [exception reason]);
-											}
-										} else {
-											os_log_error(admob_log, "Invalid extras key. Skipping.");
 										}
+										if (numAdded > 0) {
+											[request registerAdNetworkExtras:extras];
+											os_log_debug(admob_log, "Added %d extras for adapter: %@", numAdded, adapterClassName);
+										}
+									} else {
+										os_log_error(admob_log, "Failed to init extras class: %@", NSStringFromClass(extrasClass));
 									}
-									[request registerAdNetworkExtras:extras];
-									os_log_debug(admob_log, "Added extras for adapter: %@", adapterClassName);
 								} else {
-									os_log_error(admob_log, "Failed to init extras class: %@", NSStringFromClass(extrasClass));
+									os_log_error(admob_log, "Class %@ does not conform to GADAdNetworkExtras. Skipping.", NSStringFromClass(extrasClass));
 								}
 							} else {
-								os_log_error(admob_log, "Class %@ does not conform to GADAdNetworkExtras. Skipping.", NSStringFromClass(extrasClass));
+								os_log_error(admob_log, "Class %@ has no extras class defined. Skipping.", adapterClassName);
 							}
 						} else {
-							os_log_error(admob_log, "Class %@ has no extras class defined. Skipping.", adapterClassName);
+							os_log_error(admob_log, "Class %@ has no networkExtrasClass method. Skipping.", adapterClassName);
 						}
 					} else {
-						os_log_error(admob_log, "Class %@ has no networkExtrasClass method. Skipping.", adapterClassName);
+						os_log_error(admob_log, "Class %@ not found. Skipping.", adapterClassName);
 					}
 				} else {
-					os_log_error(admob_log, "Class %@ not found. Skipping.", adapterClassName);
+					os_log_error(admob_log, "No extras found for %@. Skipping.", networkTag);
 				}
 			} else {
-				os_log_error(admob_log, "Class name or extras entry not found. Skipping.");
+				os_log_error(admob_log, "No network found for tag '%@'. Skipping.", networkTag);
 			}
 		} else {
 			os_log_error(admob_log, "Invalid '%s' entry: Missing '%s' or '%s'. Skipping.", NETWORK_EXTRAS_PROPERTY.utf8().get_data(),
-					ADAPTER_CLASS_SUBPROPERTY.utf8().get_data(), EXTRAS_SUBPROPERTY.utf8().get_data());
+					NETWORK_TAG_SUBPROPERTY.utf8().get_data(), EXTRAS_SUBPROPERTY.utf8().get_data());
 		}
 	}
 

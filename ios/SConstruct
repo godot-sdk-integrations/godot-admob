@@ -178,6 +178,7 @@ else:
 env.Append(CPPPATH=[
 	f'{plugin_name}',
 	f'{plugin_name}/adformat',
+	f'{plugin_name}/mediation',
 	f'{plugin_name}/model',
 	'godot',
 	'godot/platform/ios',

@@ -36,10 +36,10 @@ import org.godotengine.godot.plugin.GodotPlugin;
 import org.godotengine.godot.plugin.SignalInfo;
 import org.godotengine.godot.plugin.UsedByGodot;
 
+import org.godotengine.plugin.android.admob.mediation.PrivacySettings;
 import org.godotengine.plugin.android.admob.model.AdmobConfiguration;
 import org.godotengine.plugin.android.admob.model.ConsentConfiguration;
 import org.godotengine.plugin.android.admob.model.LoadAdRequest;
-import org.godotengine.plugin.android.admob.model.PrivacySettings;
 
 import java.util.HashMap;
 import java.util.Map;

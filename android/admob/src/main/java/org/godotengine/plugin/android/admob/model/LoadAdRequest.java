@@ -13,6 +13,9 @@ import com.google.android.gms.ads.mediation.Adapter;
 import org.godotengine.godot.Dictionary;
 
 import org.godotengine.plugin.android.admob.AdmobPlugin;
+import org.godotengine.plugin.android.admob.mediation.network.MediationNetwork;
+import org.godotengine.plugin.android.admob.mediation.network.MediationNetworkFactory;
+
 
 public class LoadAdRequest {
 	private static final String CLASS_NAME = LoadAdRequest.class.getSimpleName();
@@ -26,7 +29,7 @@ public class LoadAdRequest {
 	private static String USER_ID_PROPERTY = "user_id";
 	private static String CUSTOM_DATA_PROPERTY = "custom_data";
 	private static String NETWORK_EXTRAS_PROPERTY = "network_extras";
-	private static String ADAPTER_CLASS_SUBPROPERTY = "adapter_class";
+	private static String NETWORK_TAG_SUBPROPERTY = "network_tag";
 	private static String EXTRAS_SUBPROPERTY = "extras";
 
 	private static final String AD_ID_FORMAT = "%s-%d";
@@ -97,49 +100,54 @@ public class LoadAdRequest {
 					if (entryObj instanceof Dictionary) {
 						@SuppressWarnings("unchecked")
 						Dictionary entry = (Dictionary) entryObj;
-						String adapterClassName = (String) entry.get(ADAPTER_CLASS_SUBPROPERTY);
-						Object extrasParamsObj = entry.get(EXTRAS_SUBPROPERTY);
-						if (adapterClassName != null && !adapterClassName.isEmpty() && extrasParamsObj instanceof Dictionary) {
-							try {
-								@SuppressWarnings("unchecked")
-								Dictionary params = (Dictionary) extrasParamsObj;
-								Log.d(LOG_TAG, String.format("Processing %d extra parameters for adapter %s", params.size(), adapterClassName));
-								Bundle bundle = new Bundle();
-								for (String key : params.keySet()) {
-									Object val = params.get(key);
-									if (val instanceof String) {
-										bundle.putString(key, (String) val);
-										Log.d(LOG_TAG, String.format("Added ['%s',%s] extra for adapter: %s", key, val, adapterClassName));
-									} else if (val instanceof Integer || val instanceof Double) {
-										bundle.putDouble(key, ((Number) val).doubleValue());
-										Log.d(LOG_TAG, String.format("Added ['%s',%.2f] extra for adapter: %s", key, val, adapterClassName));
-									} else if (val instanceof Boolean) {
-										bundle.putBoolean(key, (Boolean) val);
-										Log.d(LOG_TAG, String.format("Added ['%s',%b] extra for adapter: %s", key, val, adapterClassName));
-									} else if (val instanceof Long) {
-										bundle.putLong(key, (Long) val);
-										Log.d(LOG_TAG, String.format("Added ['%s',%d] extra for adapter: %s", key, val, adapterClassName));
-									}
-								}
-								if (bundle.size() > 0) {
-									Log.d(LOG_TAG, String.format("%d extras were added to bundle", bundle.size()));
+						String networkTag = (String) entry.get(NETWORK_TAG_SUBPROPERTY);
+						MediationNetwork network = MediationNetworkFactory.createNetwork(networkTag);
+						if (network != null) {
+							Object extrasParamsObj = entry.get(EXTRAS_SUBPROPERTY);
+							if (extrasParamsObj instanceof Dictionary) {
+								try {
 									@SuppressWarnings("unchecked")
-									Class<? extends Adapter> adapterClass = (Class<? extends Adapter>) Class.forName(adapterClassName);
-									if (adapterClass != null) {
-										builder.addNetworkExtrasBundle(adapterClass, bundle);
-										Log.d(LOG_TAG, "Added extras for adapter: " + adapterClassName);
+									Dictionary params = (Dictionary) extrasParamsObj;
+									Log.d(LOG_TAG, String.format("Processing %d extra parameters for %s", params.size(), networkTag));
+									Bundle bundle = new Bundle();
+									for (String key : params.keySet()) {
+										Object val = params.get(key);
+										if (val instanceof String) {
+											bundle.putString(key, (String) val);
+											Log.d(LOG_TAG, String.format("Added ['%s',%s] extra for %s", key, val, networkTag));
+										} else if (val instanceof Integer || val instanceof Double) {
+											bundle.putDouble(key, ((Number) val).doubleValue());
+											Log.d(LOG_TAG, String.format("Added ['%s',%.2f] extra for %s", key, val, networkTag));
+										} else if (val instanceof Boolean) {
+											bundle.putBoolean(key, (Boolean) val);
+											Log.d(LOG_TAG, String.format("Added ['%s',%b] extra for %s", key, val, networkTag));
+										} else if (val instanceof Long) {
+											bundle.putLong(key, (Long) val);
+											Log.d(LOG_TAG, String.format("Added ['%s',%d] extra for %s", key, val, networkTag));
+										}
 									}
+									if (bundle.size() > 0) {
+										Log.d(LOG_TAG, String.format("%d extras were added to bundle", bundle.size()));
+										@SuppressWarnings("unchecked")
+										Class<? extends Adapter> adapterClass = (Class<? extends Adapter>) Class.forName(network.getAdapterClassName());
+										if (adapterClass != null) {
+											builder.addNetworkExtrasBundle(adapterClass, bundle);
+											Log.d(LOG_TAG, "Added extras for " + networkTag);
+										}
+									}
+								} catch (ClassNotFoundException e) {
+									Log.w(LOG_TAG, "Class not found for adapter: " + network.getAdapterClassName() + ". Skipping. Ensure the mediation dependency is included.");
+								} catch (ClassCastException e) {
+									Log.w(LOG_TAG, "Adapter class " + network.getAdapterClassName() + " does not extend Adapter. Skipping.");
+								} catch (Exception e) {
+									Log.e(LOG_TAG, "Error adding extras for " + network.getAdapterClassName() + ": " + e.getMessage());
 								}
-							} catch (ClassNotFoundException e) {
-								Log.w(LOG_TAG, "Class not found for adapter: " + adapterClassName + ". Skipping. Ensure the mediation dependency is included.");
-							} catch (ClassCastException e) {
-								Log.w(LOG_TAG, "Adapter class " + adapterClassName + " does not extend Adapter. Skipping.");
-							} catch (Exception e) {
-								Log.e(LOG_TAG, "Error adding extras for " + adapterClassName + ": " + e.getMessage());
+							} else {
+								Log.w(LOG_TAG, String.format("Invalid %s entry: Missing '%s' or '%s'. Skipping.", NETWORK_EXTRAS_PROPERTY,
+										NETWORK_TAG_SUBPROPERTY, EXTRAS_SUBPROPERTY));
 							}
 						} else {
-							Log.w(LOG_TAG, String.format("Invalid %s entry: Missing '%s' or '%s'. Skipping.", NETWORK_EXTRAS_PROPERTY,
-									ADAPTER_CLASS_SUBPROPERTY, EXTRAS_SUBPROPERTY));
+							Log.e(LOG_TAG, "Cannot set extras for network '" + networkTag + "': Network not supported.");
 						}
 					}
 				}
