@@ -88,9 +88,8 @@ public class LoadAdRequest {
 
 		// Mediation support: AdRequest extras for specific networks (e.g., waterfall parameters).
 		// Expects data to contain "network_extras" as an Array of Dictionaries, where each entry is:
-		// {"adapter_class": "full.classpath.to.Adapter", "extras": {"param_key": "value"}}
-		// adapter_class is the full Java classpath (e.g., "com.google.ads.mediation.applovin.AppLovinMediationAdapter").
-		// Supports String, Number (int/double/long), Boolean in extras.
+		// {"network_tag": "tagfornetwork", "extras": {"param_key": "value"}}
+		// Supports only String as param_key and String, Number (int/double/long), Boolean as value.
 		// Basic bidding/waterfall handled by AdMob SDK; extras only for custom network params.
 		if (_data.containsKey(NETWORK_EXTRAS_PROPERTY)) {
 			Object extrasObj = _data.get(NETWORK_EXTRAS_PROPERTY);

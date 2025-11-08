@@ -133,7 +133,7 @@ void AdmobPlugin::_bind_methods() {
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "reward_data")));
 
-	ClassDB::bind_method(D_METHOD("load_app_open_ad", "ad_unit_id", "auto_show_on_resume"), &AdmobPlugin::load_app_open_ad, DEFVAL(Variant(false)));
+	ClassDB::bind_method(D_METHOD("load_app_open_ad", "load_ad_request", "auto_show_on_resume"), &AdmobPlugin::load_app_open_ad, DEFVAL(Variant(false)));
 	ClassDB::bind_method(D_METHOD("show_app_open_ad"), &AdmobPlugin::show_app_open_ad);
 	ClassDB::bind_method(D_METHOD("is_app_open_ad_available"), &AdmobPlugin::is_app_open_ad_available);
 
@@ -505,13 +505,14 @@ void AdmobPlugin::remove_rewarded_interstitial_ad(String adId) {
 	}
 }
 
-void AdmobPlugin::load_app_open_ad(String adUnitId, bool autoShowOnResume) {
-	NSString* nsAdUnitId = [GAPConverter toNsString:adUnitId];
+void AdmobPlugin::load_app_open_ad(Dictionary requestDict, bool autoShowOnResume) {
+	LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: requestDict];
+	NSString* nsAdUnitId = [loadAdRequest adUnitId];
 	os_log_debug(admob_log, "AdmobPlugin load_app_open_ad: %@", nsAdUnitId);
 	if (this->appOpenAd == nil) {
 		this->appOpenAd = [[AppOpenAd alloc] initWithPlugin:this];
 	}
-	[this->appOpenAd loadWithAdUnitId: [GAPConverter toNsString: adUnitId] autoShowOnResume: autoShowOnResume];
+	[this->appOpenAd loadWithRequest:loadAdRequest autoShowOnResume:autoShowOnResume];
 }
 
 void AdmobPlugin::show_app_open_ad() {

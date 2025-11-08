@@ -114,7 +114,7 @@ private:
 	void show_rewarded_interstitial_ad(String uid);
 	void remove_rewarded_interstitial_ad(String uid);
 
-	void load_app_open_ad(String adUnitId, bool autoShowOnResume);
+	void load_app_open_ad(Dictionary requestDict, bool autoShowOnResume);
 	void show_app_open_ad();
 	bool is_app_open_ad_available();
 

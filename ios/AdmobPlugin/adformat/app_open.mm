@@ -20,18 +20,18 @@
 	return self;
 }
 
-- (void) loadWithAdUnitId:(NSString*) unitId autoShowOnResume:(BOOL) autoShow {
+- (void) loadWithRequest:(LoadAdRequest*) loadRequest autoShowOnResume:(BOOL) autoShow {
 	if (self.isLoading) {
 		os_log_debug(admob_log, "Cannot load app open ad: App open ad is already loading");
 	} else if ([self isAvailable]) {
 		os_log_debug(admob_log, "Cannot load app open ad: App open ad is not available");
 	} else {
 		self.isLoading = true;
-		self.adUnitId = unitId;
+		self.adUnitId = [loadRequest adUnitId];
 		self.autoShowOnResume = autoShow;
-		GADRequest *request = [GADRequest request];
+		GADRequest* gadRequest = [loadRequest createGADRequest];
 		[GADAppOpenAd loadWithAdUnitID:self.adUnitId
-					request: request
+					request: gadRequest
 					completionHandler:^(GADAppOpenAd * _Nullable ad, NSError * _Nullable error) {
 			self.isLoading = false;
 			if (error) {

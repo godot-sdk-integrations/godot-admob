@@ -20,6 +20,8 @@ import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback;
 
 import java.util.Date;
 
+import org.godotengine.plugin.android.admob.model.LoadAdRequest;
+
 
 public class AppOpenAdManager implements DefaultLifecycleObserver {
 	private static final String LOG_TAG = AdmobPlugin.LOG_TAG + "::" + AppOpenAdManager.class.getSimpleName();
@@ -48,8 +50,8 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 		this.loadTime = 0L;
 	}
 
-	public void loadAd(String adUnitId) {
-		this.adUnitId = adUnitId;
+	public void loadAd(LoadAdRequest loadAdRequest) {
+		this.adUnitId = loadAdRequest.getAdUnitId();
 
 		if (isLoadingAd) {
 			Log.e(LOG_TAG, "Cannot load app open ad: loading already in progress");
@@ -66,7 +68,7 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 			isLoadingAd = true;
 			Log.d(LOG_TAG, "Loading app open ad: " + adUnitId);
 			this.plugin.activity.runOnUiThread(() -> {
-				AdRequest request = new AdRequest.Builder().build();
+				AdRequest request = loadAdRequest.createAdRequest();
 				AppOpenAd.load(AppOpenAdManager.this.plugin.activity, adUnitId, request, new AppOpenAdLoadCallback() {
 					@Override
 					public void onAdLoaded(@NonNull AppOpenAd ad) {

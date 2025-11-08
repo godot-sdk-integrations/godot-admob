@@ -633,11 +633,15 @@ func remove_rewarded_interstitial_ad(a_ad_id: String) -> void:
 			Admob.log_error("Cannot remove rewarded interstitial ad. Ad with ID '%s' not found." % a_ad_id)
 
 
-func load_app_open_ad(a_ad_id: String = _app_open_id) -> void:
+func load_app_open_ad(a_request: LoadAdRequest = null) -> void:
 	if _plugin_singleton == null:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
-		_plugin_singleton.load_app_open_ad(a_ad_id, auto_show_on_resume)
+		if a_request == null:
+			a_request = LoadAdRequest.new().set_ad_unit_id(_app_open_id).set_request_agent(request_agent)
+			if is_mediation_enabled():
+				a_request.set_network_extras(NetworkExtras.build_raw_data_array(network_extras))
+		_plugin_singleton.load_app_open_ad(a_request.get_raw_data(), auto_show_on_resume)
 
 
 func show_app_open_ad() -> void:

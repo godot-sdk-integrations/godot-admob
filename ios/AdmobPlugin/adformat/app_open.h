@@ -6,6 +6,7 @@
 #define app_open_h
 
 #import "ad_format_base.h"
+#import "load_ad_request.h"
 
 
 @interface AppOpenAd : AdFormatBase <GADFullScreenContentDelegate>
@@ -19,7 +20,7 @@
 @property (nonatomic, strong) GADAppOpenAd* loadedAd;
 
 - (instancetype)initWithPlugin:(class AdmobPlugin*)plugin;
-- (void) loadWithAdUnitId:(NSString*) unitId autoShowOnResume:(BOOL) autoShow;
+- (void) loadWithRequest:(LoadAdRequest*) loadRequest autoShowOnResume:(BOOL) autoShow;
 - (void) show;
 - (BOOL) isAvailable;
 

@@ -691,10 +691,11 @@ public class AdmobPlugin extends GodotPlugin {
 	}
 
 	@UsedByGodot
-	public void load_app_open_ad(String adUnitId, boolean autoShowOnResume) {
-		Log.d(LOG_TAG, String.format("load_app_open_ad('%s', %b)", adUnitId, autoShowOnResume));
+	public void load_app_open_ad(Dictionary adRequest, boolean autoShowOnResume) {
+		LoadAdRequest loadAdRequest = new LoadAdRequest(adRequest);
+		Log.d(LOG_TAG, String.format("load_app_open_ad('%s', %b)", loadAdRequest.getAdUnitId(), autoShowOnResume));
 		appOpenAdManager.autoShowOnResume = autoShowOnResume;
-		appOpenAdManager.loadAd(adUnitId);
+		appOpenAdManager.loadAd(loadAdRequest);
 	}
 
 	@UsedByGodot
