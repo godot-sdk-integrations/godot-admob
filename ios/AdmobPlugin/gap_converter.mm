@@ -321,27 +321,6 @@
 	return dictionary;
 }
 
-+ (Dictionary) adapterStatusToGodotDictionary:(GADAdapterStatus*) adapterStatus {
-	Dictionary dictionary;
-
-	dictionary["latency"] = adapterStatus.latency;
-	dictionary["initialization_state"] = (int)adapterStatus.state;
-	dictionary["description"] = [adapterStatus.description UTF8String];
-
-	return dictionary;
-}
-
-+ (Dictionary) initializationStatusToGodotDictionary:(GADInitializationStatus*) status {
-	Dictionary dictionary;
-	NSDictionary<NSString *, GADAdapterStatus *> *statusMap = status.adapterStatusesByClassName;
-	for (NSString *adapterClass in statusMap) {
-		Dictionary adapterStatusDictionary = [GAPConverter adapterStatusToGodotDictionary:status.adapterStatusesByClassName[adapterClass]];
-		dictionary[[adapterClass UTF8String]] = adapterStatusDictionary;
-	}
-
-	return dictionary;
-}
-
 + (Dictionary) adSizeToGodotDictionary:(GADAdSize) adSize {
 	Dictionary dictionary;
 	

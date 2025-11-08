@@ -2,12 +2,12 @@
 // © 2024-present https://github.com/cengiz-pz
 //
 
-#import "line_mediation_network.h"
+#import "google_mediation_network.h"
 
-@implementation LineMediationNetwork
+@implementation GoogleMediationNetwork
 
-static NSString *const _TAG = @"line";
-static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterLine";
+static NSString *const _TAG = @"google";
+static NSString *const _ADAPTER_CLASS = @"GADMobileAds";
 
 + (NSString *)TAG {
 	return _TAG;

@@ -16,7 +16,7 @@ import org.godotengine.plugin.android.admob.mediation.network.MediationNetwork;
 public class InmobiMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "inmobi";
-	private static final String ADAPTER_CLASS = "com.google.ads.mediation.inmobi.InMobiMediationAdapter";
+	static final String ADAPTER_CLASS = "com.google.ads.mediation.inmobi.InMobiMediationAdapter";
 
 	public InmobiMediationNetwork() {
 		super(TAG);

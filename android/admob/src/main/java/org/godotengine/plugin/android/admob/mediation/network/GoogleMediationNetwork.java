@@ -9,12 +9,12 @@ import android.content.Context;
 import org.godotengine.plugin.android.admob.mediation.network.MediationNetwork;
 
 
-public class MaioMediationNetwork extends MediationNetwork {
+public class GoogleMediationNetwork extends MediationNetwork {
 
-	public static final String TAG = "maio";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.maio.MaioMediationAdapter";
+	public static final String TAG = "google";
+	static final String ADAPTER_CLASS = "com.google.android.gms.ads.MobileAds";
 
-	public MaioMediationNetwork() {
+	public GoogleMediationNetwork() {
 		super(TAG);
 	}
 

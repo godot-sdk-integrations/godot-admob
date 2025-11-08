@@ -12,7 +12,7 @@ import org.godotengine.plugin.android.admob.mediation.network.MediationNetwork;
 public class LineMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "line";
-	private static final String ADAPTER_CLASS = "com.google.ads.mediation.line.LineMediationAdapter";
+	static final String ADAPTER_CLASS = "com.google.ads.mediation.line.LineMediationAdapter";
 
 	public LineMediationNetwork() {
 		super(TAG);

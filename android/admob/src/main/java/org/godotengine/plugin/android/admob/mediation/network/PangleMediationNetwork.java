@@ -15,7 +15,7 @@ import org.godotengine.plugin.android.admob.mediation.network.MediationNetwork;
 public class PangleMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "pangle";
-	private static final String ADAPTER_CLASS = "com.google.ads.mediation.pangle.PangleMediationAdapter";
+	static final String ADAPTER_CLASS = "com.google.ads.mediation.pangle.PangleMediationAdapter";
 
 	public PangleMediationNetwork() {
 		super(TAG);

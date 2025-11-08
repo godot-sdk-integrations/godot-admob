@@ -9,6 +9,7 @@
 
 #import "gap_converter.h"
 #import "admob_config.h"
+#import "admob_status.h"
 #import "admob_logger.h"
 #import "ump_orientation_wrapper.h"
 #import "privacy_settings.h"
@@ -190,8 +191,8 @@ Error AdmobPlugin::initialize() {
 
 	[[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *_Nonnull status) {
 		initialized = true;
-		Dictionary dictionary = [GAPConverter initializationStatusToGodotDictionary:status];
-		os_log_debug(admob_log, "AdmobPlugin initialization completed with status: %@", status.description);
+		os_log_debug(admob_log, "AdmobPlugin initialization completed for %tu adapters.", [status.adapterStatusesByClassName count]);
+		Dictionary dictionary = [[[AdmobStatus alloc] initWithStatus:status] buildRawData];
 		emit_signal(INITIALIZATION_COMPLETED_SIGNAL, dictionary);
 	}];
 
@@ -214,7 +215,8 @@ Error AdmobPlugin::set_request_configuration(Dictionary configData) {
 }
 
 Dictionary AdmobPlugin::get_initialization_status() {
-	return [GAPConverter initializationStatusToGodotDictionary: [GADMobileAds sharedInstance].initializationStatus];
+	GADInitializationStatus *status = [GADMobileAds sharedInstance].initializationStatus;
+	return [[[AdmobStatus alloc] initWithStatus:status] buildRawData];
 }
 
 void AdmobPlugin::set_ios_app_pause_on_background(bool pause) {

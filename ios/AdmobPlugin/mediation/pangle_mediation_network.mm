@@ -6,11 +6,15 @@
 
 @implementation PangleMediationNetwork
 
-static NSString *_TAG = @"pangle";
-static NSString *const ADAPTER_CLASS = @"GADMediationAdapterPangle";
+static NSString *const _TAG = @"pangle";
+static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterPangle";
 
 + (NSString *)TAG {
 	return _TAG;
+}
+
++ (NSString *)ADAPTER_CLASS {
+	return _ADAPTER_CLASS;
 }
 
 - (instancetype)init {
@@ -18,14 +22,14 @@ static NSString *const ADAPTER_CLASS = @"GADMediationAdapterPangle";
 }
 
 - (NSString *)getAdapterClassName {
-	return ADAPTER_CLASS;
+	return _ADAPTER_CLASS;
 }
 
 - (void)applyGDPRSettings:(BOOL)hasGdprConsent {
 	/*
 	 * [GADMediationAdapterPangle setGDPRConsent:PAGGDPRConsentTypeConsent];
 	 */
-	Class adapterClass = ClassOrThrow(ADAPTER_CLASS);
+	Class adapterClass = ClassOrThrow(_ADAPTER_CLASS);
 
 	int consentValue = hasGdprConsent ? 1 : 0;
 
@@ -41,7 +45,7 @@ static NSString *const ADAPTER_CLASS = @"GADMediationAdapterPangle";
 	/*
 	 * [GADMediationAdapterPangle setPAConsent:PAGPAConsentTypeConsent];
 	 */
-	Class adapterClass = ClassOrThrow(ADAPTER_CLASS);
+	Class adapterClass = ClassOrThrow(_ADAPTER_CLASS);
 
 	int consentValue = hasCcpaConsent ? 1 : 0;
 

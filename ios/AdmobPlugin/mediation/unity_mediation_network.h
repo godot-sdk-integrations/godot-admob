@@ -13,6 +13,8 @@
 
 + (NSString *)TAG;
 
++ (NSString *)ADAPTER_CLASS;
+
 @end
 
 #endif /* unity_mediation_network_h */

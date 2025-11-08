@@ -55,7 +55,15 @@ func _ready() -> void:
 	admob.initialize()
 
 
-func _on_admob_initialization_completed(_status_data: InitializationStatus) -> void:
+func _on_admob_initialization_completed(status_data: InitializationStatus) -> void:
+	for __network_tag in status_data.get_network_tags():
+		var __adapter_status: AdapterStatus = status_data.get_adapter_status(__network_tag)
+		_print_to_screen("Network '%s' (%s) status: %s [Latency: %d, Description: %s]" %
+				[__network_tag,
+				__adapter_status.get_adapter_class(),
+				__adapter_status.get_initialization_state(),
+				__adapter_status.get_latency(),
+				__adapter_status.get_description()])
 	_process_consent_status(admob.get_consent_status())
 
 

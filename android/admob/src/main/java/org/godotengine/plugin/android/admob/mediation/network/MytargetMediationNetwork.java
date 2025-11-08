@@ -14,7 +14,7 @@ import org.godotengine.plugin.android.admob.mediation.network.MediationNetwork;
 public class MytargetMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "mytarget";
-	private static final String ADAPTER_CLASS = "com.google.ads.mediation.mytarget.MyTargetMediationAdapter";
+	static final String ADAPTER_CLASS = "com.google.ads.mediation.mytarget.MyTargetMediationAdapter";
 
 	public MytargetMediationNetwork() {
 		super(TAG);

@@ -20,7 +20,7 @@ public class MolocoMediationNetwork extends MediationNetwork {
 	private static final String LOG_TAG = "godot::" + AdmobPlugin.CLASS_NAME + "::" + CLASS_NAME;
 
 	public static final String TAG = "moloco";
-	private static final String ADAPTER_CLASS = "com.google.ads.mediation.moloco.MolocoMediationAdapter";
+	static final String ADAPTER_CLASS = "com.google.ads.mediation.moloco.MolocoMediationAdapter";
 
 	public MolocoMediationNetwork() {
 		super(TAG);

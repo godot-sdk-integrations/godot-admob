@@ -6,11 +6,15 @@
 
 @implementation IronsourceMediationNetwork
 
-static NSString *_TAG = @"ironsource";
-static NSString *const ADAPTER_CLASS = @"GADMediationAdapterIronSource";
+static NSString *const _TAG = @"ironsource";
+static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterIronSource";
 
 + (NSString *)TAG {
 	return _TAG;
+}
+
++ (NSString *)ADAPTER_CLASS {
+	return _ADAPTER_CLASS;
 }
 
 - (instancetype)init {
@@ -18,7 +22,7 @@ static NSString *const ADAPTER_CLASS = @"GADMediationAdapterIronSource";
 }
 
 - (NSString *)getAdapterClassName {
-	return ADAPTER_CLASS;
+	return _ADAPTER_CLASS;
 }
 
 - (void)applyGDPRSettings:(BOOL)hasGdprConsent {

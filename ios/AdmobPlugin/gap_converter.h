@@ -37,8 +37,6 @@
 // To Godot
 + (String) nsStringToGodotString:(NSString*) nsString;
 + (Dictionary) nsDictionaryToGodotDictionary:(NSDictionary*) nsDictionary;
-+ (Dictionary) initializationStatusToGodotDictionary:(GADInitializationStatus*) status;
-+ (Dictionary) adapterStatusToGodotDictionary:(GADAdapterStatus*) adapterStatus;
 + (Dictionary) adSizeToGodotDictionary:(GADAdSize) adSize;
 + (Dictionary) responseInfoToGodotDictionary:(GADResponseInfo*) responseInfo;
 + (Dictionary) adNetworkResponseInfoToGodotDictionary:(GADAdNetworkResponseInfo*) adNetworkResponseInfo;

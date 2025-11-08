@@ -13,6 +13,8 @@
 
 + (NSString *)TAG;
 
++ (NSString *)ADAPTER_CLASS;
+
 @end
 
 #endif /* mytarget_mediation_network_h */

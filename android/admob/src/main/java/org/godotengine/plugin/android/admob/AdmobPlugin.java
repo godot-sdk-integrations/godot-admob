@@ -38,6 +38,7 @@ import org.godotengine.godot.plugin.UsedByGodot;
 
 import org.godotengine.plugin.android.admob.mediation.PrivacySettings;
 import org.godotengine.plugin.android.admob.model.AdmobConfiguration;
+import org.godotengine.plugin.android.admob.model.AdmobStatus;
 import org.godotengine.plugin.android.admob.model.ConsentConfiguration;
 import org.godotengine.plugin.android.admob.model.LoadAdRequest;
 
@@ -234,7 +235,7 @@ public class AdmobPlugin extends GodotPlugin {
 					@Override
 					public void onInitializationComplete(InitializationStatus initializationStatus) {
 						isInitialized = true;
-						emitSignal(SIGNAL_INITIALIZATION_COMPLETED, GodotConverter.convert(initializationStatus));
+						emitSignal(SIGNAL_INITIALIZATION_COMPLETED, new AdmobStatus(initializationStatus).buildRawData());
 					}
 				});
 			}
@@ -251,7 +252,7 @@ public class AdmobPlugin extends GodotPlugin {
 	@UsedByGodot
 	public Dictionary get_initialization_status() {
 		Log.d(LOG_TAG, "get_initialization_status()");
-		return GodotConverter.convert(MobileAds.getInitializationStatus());
+		return new AdmobStatus(MobileAds.getInitializationStatus()).buildRawData();
 	}
 
 	@UsedByGodot

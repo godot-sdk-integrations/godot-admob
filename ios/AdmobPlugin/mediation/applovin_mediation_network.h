@@ -13,6 +13,8 @@
 
 + (NSString *)TAG;
 
++ (NSString *)ADAPTER_CLASS;
+
 @end
 
 #endif /* applovin_mediation_network_h */

@@ -4,6 +4,7 @@
 
 #import "mediation_network_factory.h"
 
+#import "google_mediation_network.h"
 #import "applovin_mediation_network.h"
 #import "chartboost_mediation_network.h"
 #import "dtexchange_mediation_network.h"
@@ -32,6 +33,7 @@ static NSString *const LOG_TAG = @"godot::AdmobPlugin::MediationNetworkFactory";
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		networkFactoryMap = @{
+			GoogleMediationNetwork.TAG: ^{ return [[GoogleMediationNetwork alloc] init]; },
 			ApplovinMediationNetwork.TAG: ^{ return [[ApplovinMediationNetwork alloc] init]; },
 			ChartboostMediationNetwork.TAG: ^{ return [[ChartboostMediationNetwork alloc] init]; },
 			DtexchangeMediationNetwork.TAG: ^{ return [[DtexchangeMediationNetwork alloc] init]; },
@@ -57,6 +59,35 @@ static NSString *const LOG_TAG = @"godot::AdmobPlugin::MediationNetworkFactory";
 	}
 	
 	return supplier();
+}
+
++ (NSString *)getTagForAdapterClass:(NSString *)adapterClass {
+	NSString *className = [adapterClass stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+	
+	static NSDictionary<NSString *, NSString *> *adapterMap = nil;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		adapterMap = @{
+			GoogleMediationNetwork.ADAPTER_CLASS: GoogleMediationNetwork.TAG,
+			ApplovinMediationNetwork.ADAPTER_CLASS: ApplovinMediationNetwork.TAG,
+			ChartboostMediationNetwork.ADAPTER_CLASS: ChartboostMediationNetwork.TAG,
+			DtexchangeMediationNetwork.ADAPTER_CLASS: DtexchangeMediationNetwork.TAG,
+			ImobileMediationNetwork.ADAPTER_CLASS: ImobileMediationNetwork.TAG,
+			InmobiMediationNetwork.ADAPTER_CLASS: InmobiMediationNetwork.TAG,
+			IronsourceMediationNetwork.ADAPTER_CLASS: IronsourceMediationNetwork.TAG,
+			LiftoffMediationNetwork.ADAPTER_CLASS: LiftoffMediationNetwork.TAG,
+			LineMediationNetwork.ADAPTER_CLASS: LineMediationNetwork.TAG,
+			MaioMediationNetwork.ADAPTER_CLASS: MaioMediationNetwork.TAG,
+			MetaMediationNetwork.ADAPTER_CLASS: MetaMediationNetwork.TAG,
+			MintegralMediationNetwork.ADAPTER_CLASS: MintegralMediationNetwork.TAG,
+			MolocoMediationNetwork.ADAPTER_CLASS: MolocoMediationNetwork.TAG,
+			MytargetMediationNetwork.ADAPTER_CLASS: MytargetMediationNetwork.TAG,
+			PangleMediationNetwork.ADAPTER_CLASS: PangleMediationNetwork.TAG,
+			UnityMediationNetwork.ADAPTER_CLASS: UnityMediationNetwork.TAG
+		};
+	});
+	
+	return adapterMap[className];
 }
 
 @end

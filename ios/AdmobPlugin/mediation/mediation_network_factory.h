@@ -14,6 +14,8 @@
 
 + (MediationNetwork *)createNetwork:(NSString *)networkTag;
 
++ (NSString *)getTagForAdapterClass:(NSString *)adapterClass;
+
 @end
 
 #endif /* mediation_network_factory_h */

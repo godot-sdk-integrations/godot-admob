@@ -16,7 +16,7 @@ import org.godotengine.plugin.android.admob.mediation.network.MediationNetwork;
 public class ChartboostMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "chartboost";
-	private static final String ADAPTER_CLASS = "com.google.ads.mediation.chartboost.ChartboostMediationAdapter";
+	static final String ADAPTER_CLASS = "com.google.ads.mediation.chartboost.ChartboostMediationAdapter";
 
 
 	public ChartboostMediationNetwork() {

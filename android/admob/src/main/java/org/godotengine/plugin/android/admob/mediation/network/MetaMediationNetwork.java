@@ -12,7 +12,7 @@ import org.godotengine.plugin.android.admob.mediation.network.MediationNetwork;
 public class MetaMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "meta";
-	private static final String ADAPTER_CLASS = "com.google.ads.mediation.facebook.FacebookMediationAdapter";
+	static final String ADAPTER_CLASS = "com.google.ads.mediation.facebook.FacebookMediationAdapter";
 
 	public MetaMediationNetwork() {
 		super(TAG);

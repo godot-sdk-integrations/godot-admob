@@ -6,11 +6,15 @@
 
 @implementation MaioMediationNetwork
 
-static NSString *_TAG = @"maio";
-static NSString *const ADAPTER_CLASS = @"GADMediationAdapterMaio";
+static NSString *const _TAG = @"maio";
+static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterMaio";
 
 + (NSString *)TAG {
 	return _TAG;
+}
+
++ (NSString *)ADAPTER_CLASS {
+	return _ADAPTER_CLASS;
 }
 
 - (instancetype)init {
@@ -18,7 +22,7 @@ static NSString *const ADAPTER_CLASS = @"GADMediationAdapterMaio";
 }
 
 - (NSString *)getAdapterClassName {
-	return ADAPTER_CLASS;
+	return _ADAPTER_CLASS;
 }
 
 - (void)applyGDPRSettings:(BOOL)hasGdprConsent {

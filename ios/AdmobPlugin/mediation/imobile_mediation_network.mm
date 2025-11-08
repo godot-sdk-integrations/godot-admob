@@ -6,11 +6,15 @@
 
 @implementation ImobileMediationNetwork
 
-static NSString *_TAG = @"imobile";
-static NSString *const ADAPTER_CLASS = @"GADMediationAdapterIMobile";
+static NSString *const _TAG = @"imobile";
+static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterIMobile";
 
 + (NSString *)TAG {
 	return _TAG;
+}
+
++ (NSString *)ADAPTER_CLASS {
+	return _ADAPTER_CLASS;
 }
 
 - (instancetype)init {
@@ -18,7 +22,7 @@ static NSString *const ADAPTER_CLASS = @"GADMediationAdapterIMobile";
 }
 
 - (NSString *)getAdapterClassName {
-	return ADAPTER_CLASS;
+	return _ADAPTER_CLASS;
 }
 
 - (void)applyGDPRSettings:(BOOL)hasGdprConsent {

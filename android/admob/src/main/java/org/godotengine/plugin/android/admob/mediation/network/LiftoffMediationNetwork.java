@@ -14,7 +14,7 @@ import org.godotengine.plugin.android.admob.mediation.network.MediationNetwork;
 public class LiftoffMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "liftoff";
-	private static final String ADAPTER_CLASS = "com.google.ads.mediation.vungle.VungleMediationAdapter";
+	static final String ADAPTER_CLASS = "com.google.ads.mediation.vungle.VungleMediationAdapter";
 
 	public LiftoffMediationNetwork() {
 		super(TAG);

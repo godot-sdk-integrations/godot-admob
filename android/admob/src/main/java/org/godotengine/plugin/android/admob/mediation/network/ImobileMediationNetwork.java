@@ -12,7 +12,7 @@ import org.godotengine.plugin.android.admob.mediation.network.MediationNetwork;
 public class ImobileMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "imobile";
-	private static final String ADAPTER_CLASS = "com.google.ads.mediation.imobile.IMobileMediationAdapter";
+	static final String ADAPTER_CLASS = "com.google.ads.mediation.imobile.IMobileMediationAdapter";
 
 	public ImobileMediationNetwork() {
 		super(TAG);

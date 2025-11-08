@@ -29,25 +29,6 @@ import org.godotengine.godot.Dictionary;
 public class GodotConverter {
 	private static final String LOG_TAG = AdmobPlugin.LOG_TAG + "::" + GodotConverter.class.getSimpleName();
 
-
-	public static Dictionary convert(InitializationStatus initializationStatus) {
-		Dictionary dict = new Dictionary();
-
-		Map<String, AdapterStatus> adapterMap = initializationStatus.getAdapterStatusMap();
-		for (String adapterClass : adapterMap.keySet()) {
-			AdapterStatus adapterStatus = adapterMap.get(adapterClass);
-
-			Dictionary statusDict = new Dictionary();
-			statusDict.put("latency", adapterStatus.getLatency());
-			statusDict.put("initializationState", adapterStatus.getInitializationState());
-			statusDict.put("description", adapterStatus.getDescription());
-
-			dict.put(adapterClass, statusDict);
-		}
-
-		return dict;
-	}
-
 	public static Dictionary convert(AdSize size) {
 		Dictionary dict = new Dictionary();
 

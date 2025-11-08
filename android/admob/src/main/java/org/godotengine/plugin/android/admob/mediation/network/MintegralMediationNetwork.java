@@ -15,7 +15,7 @@ import org.godotengine.plugin.android.admob.mediation.network.MediationNetwork;
 public class MintegralMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "mintegral";
-	private static final String ADAPTER_CLASS = "com.google.ads.mediation.mintegral.MintegralMediationAdapter";
+	static final String ADAPTER_CLASS = "com.google.ads.mediation.mintegral.MintegralMediationAdapter";
 
 	public MintegralMediationNetwork() {
 		super(TAG);
@@ -82,7 +82,7 @@ public class MintegralMediationNetwork extends MediationNetwork {
 		 */
 
 		// Get sdk.setDoNotTrackStatus(value)
-		Method setDoNotTrackStatusMethod = sdkClass.getMethod("setDoNotTrackStatus", int.class);
+		Method setDoNotTrackStatusMethod = sdkClass.getMethod("setDoNotTrackStatus", boolean.class);
 
 		// Invoke the instance method with the 'mBridgeSdkInstance' object and the subsequent boolean argument value.
 		setDoNotTrackStatusMethod.invoke(mBridgeSdkInstance, !hasCcpaConsent);

@@ -14,7 +14,7 @@ import org.godotengine.plugin.android.admob.mediation.network.MediationNetwork;
 public class IronsourceMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "ironsource";
-	private static final String ADAPTER_CLASS = "com.google.ads.mediation.ironsource.IronSourceMediationAdapter";
+	static final String ADAPTER_CLASS = "com.google.ads.mediation.ironsource.IronSourceMediationAdapter";
 
 	public IronsourceMediationNetwork() {
 		super(TAG);

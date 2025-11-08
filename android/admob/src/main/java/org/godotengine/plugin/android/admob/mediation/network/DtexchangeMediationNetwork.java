@@ -14,7 +14,7 @@ import org.godotengine.plugin.android.admob.mediation.network.MediationNetwork;
 public class DtexchangeMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "dtexchange";
-	private static final String ADAPTER_CLASS = "com.google.ads.mediation.fyber.FyberMediationAdapter";
+	static final String ADAPTER_CLASS = "com.google.ads.mediation.fyber.FyberMediationAdapter";
 
 	public DtexchangeMediationNetwork() {
 		super(TAG);

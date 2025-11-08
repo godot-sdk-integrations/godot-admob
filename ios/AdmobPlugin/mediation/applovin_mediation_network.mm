@@ -6,11 +6,15 @@
 
 @implementation ApplovinMediationNetwork
 
-static NSString *_TAG = @"applovin";
-static NSString *const ADAPTER_CLASS = @"GADMediationAdapterAppLovin";
+static NSString *const _TAG = @"applovin";
+static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterAppLovin";
 
 + (NSString *)TAG {
 	return _TAG;
+}
+
++ (NSString *)ADAPTER_CLASS {
+	return _ADAPTER_CLASS;
 }
 
 - (instancetype)init {
@@ -18,7 +22,7 @@ static NSString *const ADAPTER_CLASS = @"GADMediationAdapterAppLovin";
 }
 
 - (NSString *)getAdapterClassName {
-	return ADAPTER_CLASS;
+	return _ADAPTER_CLASS;
 }
 
 - (void)applyGDPRSettings:(BOOL)hasGdprConsent {
