@@ -10,15 +10,17 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 
+import org.godotengine.plugin.android.admob.model.LoadAdRequest;
+
 interface InterstitialListener {
-	void onInterstitialLoaded(String adId);
-	void onInterstitialReloaded(String adId);
+	void onInterstitialLoaded(String adId, ResponseInfo responseInfo);
+	void onInterstitialReloaded(String adId, ResponseInfo responseInfo);
 	void onInterstitialFailedToLoad(String adId, LoadAdError loadAdError);
 	void onInterstitialFailedToShow(String adId, AdError adError);
 	void onInterstitialOpened(String adId);
@@ -32,8 +34,7 @@ public class Interstitial {
 	private static final String LOG_TAG = "godot::" + AdmobPlugin.CLASS_NAME + "::" + CLASS_NAME;
 
 	private final String adId;
-	private final String adUnitId;
-	private final AdRequest adRequest;
+	private final LoadAdRequest loadRequest;
 	private final Activity activity;
 	private final InterstitialListener listener;
 
@@ -41,19 +42,50 @@ public class Interstitial {
 
 	boolean firstLoad;
 
-	Interstitial(final String adId, final String adUnitId, final AdRequest adRequest, final Activity activity,
+	Interstitial(final String adId, final LoadAdRequest loadRequest, final Activity activity,
 				final InterstitialListener listener) {
 		this.adId = adId;
-		this.adUnitId = adUnitId;
-		this.adRequest = adRequest;
+		this.loadRequest = loadRequest;
 		this.activity = activity;
 		this.listener = listener;
 		this.firstLoad = true;
 	}
 
+	void load() {
+		activity.runOnUiThread(() -> {
+			InterstitialAd.load(activity, loadRequest.getAdUnitId(), loadRequest.createAdRequest(),
+					new InterstitialAdLoadCallback() {
+				@Override
+				public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+					super.onAdLoaded(interstitialAd);
+					setAd(interstitialAd);
+					if (firstLoad) {
+						Log.i(LOG_TAG, "interstitial ad loaded");
+						firstLoad = false;
+						listener.onInterstitialLoaded(Interstitial.this.adId, interstitialAd.getResponseInfo());
+					}
+					else {
+						Log.i(LOG_TAG, "interstitial ad refreshed");
+						listener.onInterstitialReloaded(Interstitial.this.adId, interstitialAd.getResponseInfo());
+					}
+				}
+
+				@Override
+				public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+					super.onAdFailedToLoad(loadAdError);
+					setAd(null);	// safety
+					Log.e(LOG_TAG, "interstitial ad failed to load - error code: " + loadAdError.getCode());
+					listener.onInterstitialFailedToLoad(Interstitial.this.adId, loadAdError);
+				}
+			});
+		});
+	}
+
 	void show() {
 		if (interstitialAd != null) {
-			interstitialAd.show(activity);
+			activity.runOnUiThread(() -> {
+				interstitialAd.show(activity);
+			});
 		}
 		else {
 			Log.w(LOG_TAG, "show(): interstitial not loaded");
@@ -114,32 +146,5 @@ public class Interstitial {
 
 			this.interstitialAd = interstitialAd;
 		}
-	}
-
-	void load() {
-		InterstitialAd.load(activity, adUnitId, adRequest, new InterstitialAdLoadCallback() {
-			@Override
-			public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-				super.onAdLoaded(interstitialAd);
-				setAd(interstitialAd);
-				if (firstLoad) {
-					Log.i(LOG_TAG, "interstitial ad loaded");
-					firstLoad = false;
-					listener.onInterstitialLoaded(Interstitial.this.adId);
-				}
-				else {
-					Log.i(LOG_TAG, "interstitial ad refreshed");
-					listener.onInterstitialReloaded(Interstitial.this.adId);
-				}
-			}
-
-			@Override
-			public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-				super.onAdFailedToLoad(loadAdError);
-				setAd(null);	// safety
-				Log.e(LOG_TAG, "interstitial ad failed to load - error code: " + loadAdError.getCode());
-				listener.onInterstitialFailedToLoad(Interstitial.this.adId, loadAdError);
-			}
-		});
 	}
 }

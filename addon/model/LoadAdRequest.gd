@@ -33,12 +33,16 @@ const DATA_KEY_AD_POSITION = "ad_position"
 const DATA_KEY_KEYWORDS = "keywords"
 const DATA_KEY_USER_ID = "user_id"
 const DATA_KEY_CUSTOM_DATA = "custom_data"
+const DATA_KEY_NETWORK_EXTRAS = "network_extras"
 
 var _data: Dictionary
 
 
 func _init() -> void:
-	_data = {}
+	_data = {
+		DATA_KEY_KEYWORDS: [],
+		DATA_KEY_NETWORK_EXTRAS: []
+	}
 
 
 func set_ad_unit_id(a_value: String) -> LoadAdRequest:
@@ -62,15 +66,15 @@ func set_ad_position(a_value: AdPosition) -> LoadAdRequest:
 
 
 func set_keywords(a_value: Array) -> LoadAdRequest:
-	_data[DATA_KEY_KEYWORDS] = a_value
+	if a_value == null:
+		_data[DATA_KEY_KEYWORDS] = []
+	else:
+		_data[DATA_KEY_KEYWORDS] = a_value
 	return self
 
 
 func add_keyword(a_value: String) -> LoadAdRequest:
-	if not _data.has(DATA_KEY_KEYWORDS) or _data[DATA_KEY_KEYWORDS] == null:
-		_data[DATA_KEY_KEYWORDS] = [ a_value ]
-	else:
-		_data[DATA_KEY_KEYWORDS].append(a_value)
+	_data[DATA_KEY_KEYWORDS].append(a_value)
 	return self
 
 
@@ -81,6 +85,14 @@ func set_user_id(a_value: String) -> LoadAdRequest:
 
 func set_custom_data(a_value: String) -> LoadAdRequest:
 	_data[DATA_KEY_CUSTOM_DATA] = a_value
+	return self
+
+
+func set_network_extras(a_value: Array) -> LoadAdRequest:
+	if a_value == null:
+		_data[DATA_KEY_NETWORK_EXTRAS] = []
+	else:
+		_data[DATA_KEY_NETWORK_EXTRAS] = a_value
 	return self
 
 

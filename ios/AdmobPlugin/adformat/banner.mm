@@ -5,6 +5,7 @@
 #import "banner.h"
 
 #import "admob_plugin_implementation.h"
+#import "admob_response.h"
 #import "admob_logger.h"
 
 @implementation BannerAd
@@ -18,17 +19,13 @@
 }
 
 - (void) load:(LoadAdRequest*) loadAdRequest {
-	self.adPosition = [GAPConverter nsStringToAdPosition: loadAdRequest.adPosition];
-	self.adSize = [GAPConverter nsStringToAdSize: loadAdRequest.adSize];
-	self.adUnitId = loadAdRequest.adUnitId;
+	self.adPosition = [GAPConverter nsStringToAdPosition: [loadAdRequest adPosition]];
+	self.adSize = [GAPConverter nsStringToAdSize: [loadAdRequest adSize]];
+	self.adUnitId = [loadAdRequest adUnitId];
 	
 	[self addBanner];
 
-	GADRequest* gadRequest = [GADRequest request];
-	gadRequest.requestAgent = loadAdRequest.requestAgent;
-	gadRequest.keywords = loadAdRequest.keywords;
-
-	[self.bannerView loadRequest:gadRequest];
+	[self.bannerView loadRequest:[loadAdRequest createGADRequest]];
 }
 
 - (void) destroy {
@@ -148,11 +145,13 @@
 - (void) bannerViewDidReceiveAd:(GADBannerView*) bannerView {
 	os_log_debug(admob_log, "BannerAd bannerViewDidReceiveAd %@", self.adId);
 	if (self.isLoaded) {
-		AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_REFRESHED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId]);
+		AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_REFRESHED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
+				[[[AdmobResponse alloc] initWithResponseInfo:bannerView.responseInfo] buildRawData]);
 	}
 	else {
 		self.isLoaded = YES;
-		AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId]);
+		AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
+				[[[AdmobResponse alloc] initWithResponseInfo:bannerView.responseInfo] buildRawData]);
 	}
 }
 

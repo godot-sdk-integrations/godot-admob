@@ -20,6 +20,9 @@ import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback;
 
 import java.util.Date;
 
+import org.godotengine.plugin.android.admob.model.AdmobResponse;
+import org.godotengine.plugin.android.admob.model.LoadAdRequest;
+
 
 public class AppOpenAdManager implements DefaultLifecycleObserver {
 	private static final String LOG_TAG = AdmobPlugin.LOG_TAG + "::" + AppOpenAdManager.class.getSimpleName();
@@ -48,8 +51,8 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 		this.loadTime = 0L;
 	}
 
-	public void loadAd(String adUnitId) {
-		this.adUnitId = adUnitId;
+	public void loadAd(LoadAdRequest loadAdRequest) {
+		this.adUnitId = loadAdRequest.getAdUnitId();
 
 		if (isLoadingAd) {
 			Log.e(LOG_TAG, "Cannot load app open ad: loading already in progress");
@@ -66,7 +69,7 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 			isLoadingAd = true;
 			Log.d(LOG_TAG, "Loading app open ad: " + adUnitId);
 			this.plugin.activity.runOnUiThread(() -> {
-				AdRequest request = new AdRequest.Builder().build();
+				AdRequest request = loadAdRequest.createAdRequest();
 				AppOpenAd.load(AppOpenAdManager.this.plugin.activity, adUnitId, request, new AppOpenAdLoadCallback() {
 					@Override
 					public void onAdLoaded(@NonNull AppOpenAd ad) {
@@ -74,7 +77,8 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 						appOpenAd = ad;
 						isLoadingAd = false;
 						loadTime = (new Date()).getTime();
-						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_LOADED, ad.getAdUnitId());
+						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_LOADED, ad.getAdUnitId(),
+								new AdmobResponse(ad.getResponseInfo()).buildRawData());
 					}
 
 					@Override
@@ -99,14 +103,14 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 					@Override
 					public void onAdDismissedFullScreenContent() {
 						Log.d(LOG_TAG, "App open ad dismissed fullscreen content.");
-						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT, appOpenAd.getAdUnitId());
+						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT, adUnitId);
 						isShowingAd = false;
 					}
 
 					@Override
 					public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
 						Log.e(LOG_TAG, "App open ad failed to show fullscreen content: " + adError.getMessage());
-						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, appOpenAd.getAdUnitId(), GodotConverter.convert(adError));
+						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adUnitId, GodotConverter.convert(adError));
 						appOpenAd = null;
 						isShowingAd = false;
 					}
@@ -114,7 +118,7 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 					@Override
 					public void onAdShowedFullScreenContent() {
 						Log.d(LOG_TAG, "App open ad showed fullscreen content.");
-						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT, appOpenAd.getAdUnitId());
+						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT, adUnitId);
 						appOpenAd = null;
 						appHasResumedAfterShowing = false;
 					}
@@ -122,7 +126,7 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 					@Override
 					public void onAdImpression() {
 						Log.d(LOG_TAG, "App open ad recorded an impression.");
-						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_IMPRESSION, appOpenAd.getAdUnitId());
+						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_IMPRESSION, adUnitId);
 						appOpenAd = null;
 						appHasResumedAfterShowing = false;
 					}
@@ -130,7 +134,7 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 					@Override
 					public void onAdClicked() {
 						Log.d(LOG_TAG, "App open ad was clicked.");
-						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_CLICKED, appOpenAd.getAdUnitId());
+						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_CLICKED, adUnitId);
 					}
 				});
 

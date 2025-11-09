@@ -1,9 +1,35 @@
-[gd_scene load_steps=5 format=3 uid="uid://daro5x6n3pd26"]
+[gd_scene load_steps=9 format=3 uid="uid://daro5x6n3pd26"]
 
 [ext_resource type="Script" uid="uid://bcqb5hwnjbtob" path="res://Main.gd" id="1_wt50o"]
 [ext_resource type="Script" uid="uid://dsglgdhjibxtb" path="res://addons/AdmobPlugin/Admob.gd" id="2_4x6et"]
 [ext_resource type="Texture2D" uid="uid://cy0mnncxevupr" path="res://assets/admob-android.png" id="2_qti4s"]
 [ext_resource type="Texture2D" uid="uid://b2myrgf8pkumi" path="res://assets/admob-ios.png" id="3_cm0pq"]
+[ext_resource type="Script" uid="uid://bvjoch7h1oxtr" path="res://addons/AdmobPlugin/model/NetworkExtras.gd" id="5_fos0i"]
+
+[sub_resource type="Resource" id="Resource_fos0i"]
+script = ExtResource("5_fos0i")
+network_flag = 16
+extras = {
+"country": "TRNC",
+"state": "Girne"
+}
+metadata/_custom_type_script = "uid://bvjoch7h1oxtr"
+
+[sub_resource type="Resource" id="Resource_3dxm6"]
+script = ExtResource("5_fos0i")
+network_flag = 8192
+extras = {
+"userDataString": "testUserDataString"
+}
+metadata/_custom_type_script = "uid://bvjoch7h1oxtr"
+
+[sub_resource type="Resource" id="Resource_lgr22"]
+script = ExtResource("5_fos0i")
+network_flag = 64
+extras = {
+"userId": "testUserId"
+}
+metadata/_custom_type_script = "uid://bvjoch7h1oxtr"
 
 [node name="Main" type="Node"]
 script = ExtResource("1_wt50o")
@@ -233,6 +259,8 @@ script = ExtResource("2_4x6et")
 auto_show_on_resume = true
 android_debug_application_id = "ca-app-pub-3940256099942544~3347511713"
 ios_debug_application_id = "ca-app-pub-3940256099942544~1458002511"
+enabled_networks = 32767
+network_extras = Array[ExtResource("5_fos0i")]([SubResource("Resource_fos0i"), SubResource("Resource_3dxm6"), SubResource("Resource_lgr22")])
 
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/SizeButton" to="." method="_on_size_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/PixelSizeButton" to="." method="_on_pixel_size_button_pressed"]

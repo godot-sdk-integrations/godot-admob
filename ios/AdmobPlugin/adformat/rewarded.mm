@@ -6,6 +6,7 @@
 
 #import "os_ios.h"
 #import "admob_plugin_implementation.h"
+#import "admob_response.h"
 #import "admob_logger.h"
 
 
@@ -19,11 +20,9 @@
 }
 
 - (void) load:(LoadAdRequest*) loadAdRequest {
-	GADRequest* gadRequest = [GADRequest request];
-	gadRequest.requestAgent = loadAdRequest.requestAgent;
-	gadRequest.keywords = loadAdRequest.keywords;
+	GADRequest* gadRequest = [loadAdRequest createGADRequest];
 
-	[GADRewardedAd loadWithAdUnitID:loadAdRequest.adUnitId request:gadRequest completionHandler:^(GADRewardedAd* ad, NSError* error) {
+	[GADRewardedAd loadWithAdUnitID:[loadAdRequest adUnitId] request:gadRequest completionHandler:^(GADRewardedAd* ad, NSError* error) {
 		if (error) {
 			os_log_error(admob_log, "failed to load RewardedAd with error: %@", [error localizedDescription]);
 			AdmobPlugin::get_singleton()->emit_signal(REWARDED_AD_FAILED_TO_LOAD_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
@@ -33,22 +32,25 @@
 			self.gadAd = ad;
 			self.gadAd.fullScreenContentDelegate = self;
 
-			if (loadAdRequest.userId || loadAdRequest.customData) {
+			NSString* userId = [loadAdRequest userId];
+			NSString* customData = [loadAdRequest customData];
+			if ([userId length] > 0 || [customData length] > 0) {
 				GADServerSideVerificationOptions *gadOptions = [[GADServerSideVerificationOptions alloc] init];
 
-				if (loadAdRequest.customData && [loadAdRequest.userId length] != 0) {
-					gadOptions.customRewardString = loadAdRequest.customData;
+				if ([customData length] > 0) {
+					gadOptions.customRewardString = customData;
 				}
 
-				if (loadAdRequest.userId && [loadAdRequest.userId length] != 0) {
-					gadOptions.userIdentifier = loadAdRequest.userId;
+				if ([userId length] > 0) {
+					gadOptions.userIdentifier = userId;
 				}
 
 				self.gadAd.serverSideVerificationOptions = gadOptions;
 			}
 			
 			os_log_debug(admob_log, "RewardedAd %@ loaded successfully", self.adId);
-			AdmobPlugin::get_singleton()->emit_signal(REWARDED_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId]);
+			AdmobPlugin::get_singleton()->emit_signal(REWARDED_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
+					[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
 		}
 	}];
 }

@@ -23,22 +23,79 @@
 	return [NSString stringWithFormat:@"%s-%d", [unitId UTF8String], value];
 }
 
-+ (NSDictionary*) toNsDictionary:(Dictionary) godotDictionary {
-	NSMutableDictionary *nsDictionary = [NSMutableDictionary dictionary];
++ (id) toNsObject:(Variant) godotValue {
+    switch (godotValue.get_type()) {
+        case Variant::Type::NIL:
+            return [NSNull null];
 
-	Array keys = godotDictionary.keys();
-	int size = keys.size();
-	for (int i = 0; i < size; ++i) {
-		String key = keys[i];
-		String value = godotDictionary[key];
-		NSString *nsKey = [GAPConverter toNsString:key];
-		NSString *nsValue = [GAPConverter toNsString:value];
+        case Variant::Type::BOOL:
+            return [NSNumber numberWithBool:(bool)godotValue];
 
-		[nsDictionary setValue:nsValue forKey:nsKey];
-	}
+        case Variant::Type::INT:
+            return [NSNumber numberWithLongLong:(int64_t)godotValue];
 
-	return nsDictionary;
+        case Variant::Type::FLOAT:
+            return [NSNumber numberWithDouble:(double)godotValue];
+
+        case Variant::Type::STRING:
+            return [GAPConverter toNsString:(String)godotValue];
+
+        case Variant::Type::ARRAY: {
+            Array array = godotValue;
+            NSMutableArray *nsArray = [NSMutableArray arrayWithCapacity:array.size()];
+            for (int i = 0; i < array.size(); ++i) {
+                id nsValue = [GAPConverter toNsObject:array[i]];
+                [nsArray addObject:nsValue ?: [NSNull null]];
+            }
+            return nsArray;
+        }
+
+        case Variant::Type::DICTIONARY:
+            return [GAPConverter toNsDictionary:(Dictionary)godotValue];
+
+        case Variant::Type::VECTOR2:
+        case Variant::Type::VECTOR3:
+        case Variant::Type::VECTOR4:
+        case Variant::Type::COLOR:
+        case Variant::Type::RECT2:
+        case Variant::Type::RECT2I:
+        case Variant::Type::TRANSFORM2D:
+        case Variant::Type::TRANSFORM3D:
+            // For these, use string serialization (you can customize this)
+            return [GAPConverter toNsString:godotValue.operator String()];
+
+        default:
+            // Unsupported or complex type — convert to string fallback
+            return [GAPConverter toNsString:godotValue.operator String()];
+    }
 }
+
++ (NSDictionary*) toNsDictionary:(Dictionary)godotDictionary {
+    NSMutableDictionary *nsDictionary = [NSMutableDictionary dictionary];
+
+    Array keys = godotDictionary.keys();
+    int size = keys.size();
+    for (int i = 0; i < size; ++i) {
+        Variant key = keys[i];
+        Variant value = godotDictionary[key];
+
+        id nsKey = [GAPConverter toNsObject:key];
+        id nsValue = [GAPConverter toNsObject:value];
+
+        if (!nsKey) nsKey = [NSNull null];
+        if (!nsValue) nsValue = [NSNull null];
+
+        // Ensure key is NSString (NSDictionary requires NSString keys)
+        if (![nsKey isKindOfClass:[NSString class]]) {
+            nsKey = [nsKey description];
+        }
+
+        [nsDictionary setObject:nsValue forKey:nsKey];
+    }
+
+    return nsDictionary;
+}
+
 
 + (NSArray*) toNsStringArray: (Array) arr {
 	NSMutableArray* result = [[NSMutableArray alloc] init];
@@ -259,27 +316,6 @@
 				}
 			}
 		}
-	}
-
-	return dictionary;
-}
-
-+ (Dictionary) adapterStatusToGodotDictionary:(GADAdapterStatus*) adapterStatus {
-	Dictionary dictionary;
-
-	dictionary["latency"] = adapterStatus.latency;
-	dictionary["initialization_state"] = (int)adapterStatus.state;
-	dictionary["description"] = [adapterStatus.description UTF8String];
-
-	return dictionary;
-}
-
-+ (Dictionary) initializationStatusToGodotDictionary:(GADInitializationStatus*) status {
-	Dictionary dictionary;
-	NSDictionary<NSString *, GADAdapterStatus *> *statusMap = status.adapterStatusesByClassName;
-	for (NSString *adapterClass in statusMap) {
-		Dictionary adapterStatusDictionary = [GAPConverter adapterStatusToGodotDictionary:status.adapterStatusesByClassName[adapterClass]];
-		dictionary[[adapterClass UTF8String]] = adapterStatusDictionary;
 	}
 
 	return dictionary;

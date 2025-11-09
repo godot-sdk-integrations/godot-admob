@@ -8,11 +8,55 @@
 
 # <img src="addon/icon.png" width="24"> Godot Admob Plugin
 
-Godot Admob Plugin provides Godot SDK integrations for [Google Mobile Ads SDK - Android](https://developers.google.com/admob/android) and [Google Mobile Ads SDK - iOS](https://developers.google.com/admob/ios).
+A Godot plugin that provides a unified GDScript interface for integrating **Google Mobile Ads SDK** on **Android** and **iOS**.
 
-_This plugin has been moved under the umbrella of [Godot SDK Integrations](https://github.com/godot-sdk-integrations) organization in Github. Previously, the plugin was placed under three separate repositories: [Android](https://github.com/cengiz-pz/godot-android-admob-plugin), [iOS](https://github.com/cengiz-pz/godot-ios-admob-plugin), and [addon interface](https://github.com/cengiz-pz/godot-admob-addon)._
+**Key Features:**
+- Load and show...
+  - Banner Ads
+  - Interstitial Ads
+  - Rewarded Video Ads
+  - Rewarded Interstitial Ads
+  - App Open Ads
+- Emits signals when ads are loaded, viewed, clicked, dismissed, rewards received, & more
+- Allows configuration of all settings on a node
+- Works with Google AdMob ad network by default
+- Allows enabling of 15 additional ad networks
+- Provides two export configuration options:
+  - Node-based
+  - File-based
 
-<br/>
+---
+
+## <img src="addon/icon.png" width="20"> Table of Contents
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Signals](#signals)
+- [Mediation](#mediation)
+- [Export](#export)
+- [Platform-Specific Notes](#platform-specific-notes)
+- [Video Tutorial](#video-tutorial)
+- [Links](#links)
+- [All Plugins](#all-plugins)
+- [Credits](#credits)
+- [Contributing](#contributing)
+
+---
+
+<a name="prerequisites"></a>
+
+## <img src="addon/icon.png" width="20"> Prerequisites
+Create an AdMob account at the following link:
+- [Google AdMob](https://admob.google.com/)
+
+Using the AdMob console:
+- create an app and link it to the app's store listing
+- [create ad(s)](https://support.google.com/admob/answer/6173650?hl=en) for your app via the AdMob console
+- if needed, [create consent form(s)](https://support.google.com/admob/answer/10113207?hl=en) for your app via the AdMob console
+
+---
+
+<a name="installation"></a>
 
 ## <img src="addon/icon.png" width="20"> Installation
 _Before installing this plugin, make sure to uninstall any previous versions of the same plugin._
@@ -54,58 +98,15 @@ The following ad types are supported:
 - Rewarded Interstitial
 - App Open
 
+---
+
+<a name="usage"></a>
+
 
 ## <img src="addon/icon.png" width="20"> Usage
 - Add `Admob` node to your main scene and populate the ID fields of the node
 	- Debug IDs will only be used when your Godot app is run in debug mode
 	- Real IDs will only be used when the `is_real` field of the node is set to `true`
-
-### <img src="addon/icon.png" width="18"> Signals
-- register listeners for one or more of the following signals of the `Admob` node:
-	- `initialization_completed(status_data: InitializationStatus)`
-	- `banner_ad_loaded(ad_id: String)`
-	- `banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
-	- `banner_ad_refreshed(ad_id: String)`
-	- `banner_ad_clicked(ad_id: String)`
-	- `banner_ad_impression(ad_id: String)`
-	- `banner_ad_opened(ad_id: String)`
-	- `banner_ad_closed(ad_id: String)`
-	- `interstitial_ad_loaded(ad_id: String)`
-	- `interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
-	- `interstitial_ad_refreshed(ad_id: String)`
-	- `interstitial_ad_impression(ad_id: String)`
-	- `interstitial_ad_clicked(ad_id: String)`
-	- `interstitial_ad_showed_full_screen_content(ad_id: String)`
-	- `interstitial_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)`
-	- `interstitial_ad_dismissed_full_screen_content(ad_id: String)`
-	- `rewarded_ad_loaded(ad_id: String)`
-	- `rewarded_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
-	- `rewarded_ad_impression(ad_id: String)`
-	- `rewarded_ad_clicked(ad_id: String)`
-	- `rewarded_ad_showed_full_screen_content(ad_id: String)`
-	- `rewarded_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)`
-	- `rewarded_ad_dismissed_full_screen_content(ad_id: String)`
-	- `rewarded_ad_user_earned_reward(ad_id: String, reward_data: RewardItem)`
-	- `rewarded_interstitial_ad_loaded(ad_id: String)`
-	- `rewarded_interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
-	- `rewarded_interstitial_ad_impression(ad_id: String)`
-	- `rewarded_interstitial_ad_clicked(ad_id: String)`
-	- `rewarded_interstitial_ad_showed_full_screen_content(ad_id: String)`
-	- `rewarded_interstitial_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)`
-	- `rewarded_interstitial_ad_dismissed_full_screen_content(ad_id: String)`
-	- `rewarded_interstitial_ad_user_earned_reward(ad_id: String, reward_data: RewardItem)`
-	- `app_open_ad_loaded(ad_unit_id: String)`
-	- `app_open_ad_failed_to_load(ad_unit_id: String, error_data: LoadAdError)`
-	- `app_open_ad_impression(ad_unit_id: String)`
-	- `app_open_ad_clicked(ad_unit_id: String)`
-	- `app_open_ad_showed_full_screen_content(ad_unit_id: String)`
-	- `app_open_ad_failed_to_show_full_screen_content(ad_unit_id: String, error_data: AdError)`
-	- `app_open_ad_dismissed_full_screen_content(ad_unit_id: String)`
-	- `consent_form_loaded`
-	- `consent_form_dismissed(error_data: FormError)`
-	- `consent_form_failed_to_load(error_data: FormError)`
-	- `consent_info_updated`
-	- `consent_info_update_failed(error_data: FormError)`
 
 ### <img src="addon/icon.png" width="18"> Loading and displaying ads
 - initialize the plugin
@@ -134,6 +135,57 @@ The following ad types are supported:
 	- `show_rewarded_ad(ad_id: String)`
 	- `show_rewarded_interstitial_ad(ad_id: String)`
 	- `show_app_open_ad()`
+
+---
+
+<a name="signals"></a>
+
+### <img src="addon/icon.png" width="18"> Signals
+- register listeners for one or more of the following signals of the `Admob` node:
+	- `initialization_completed(status_data: InitializationStatus)`
+	- `banner_ad_loaded(ad_id: String, response_info: ResponseInfo)`
+	- `banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
+	- `banner_ad_refreshed(ad_id: String, response_info: ResponseInfo)`
+	- `banner_ad_clicked(ad_id: String)`
+	- `banner_ad_impression(ad_id: String)`
+	- `banner_ad_opened(ad_id: String)`
+	- `banner_ad_closed(ad_id: String)`
+	- `interstitial_ad_loaded(ad_id: String, response_info: ResponseInfo)`
+	- `interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
+	- `interstitial_ad_refreshed(ad_id: String, response_info: ResponseInfo)`
+	- `interstitial_ad_impression(ad_id: String)`
+	- `interstitial_ad_clicked(ad_id: String)`
+	- `interstitial_ad_showed_full_screen_content(ad_id: String)`
+	- `interstitial_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)`
+	- `interstitial_ad_dismissed_full_screen_content(ad_id: String)`
+	- `rewarded_ad_loaded(ad_id: String, response_info: ResponseInfo)`
+	- `rewarded_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
+	- `rewarded_ad_impression(ad_id: String)`
+	- `rewarded_ad_clicked(ad_id: String)`
+	- `rewarded_ad_showed_full_screen_content(ad_id: String)`
+	- `rewarded_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)`
+	- `rewarded_ad_dismissed_full_screen_content(ad_id: String)`
+	- `rewarded_ad_user_earned_reward(ad_id: String, reward_data: RewardItem)`
+	- `rewarded_interstitial_ad_loaded(ad_id: String, response_info: ResponseInfo)`
+	- `rewarded_interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
+	- `rewarded_interstitial_ad_impression(ad_id: String)`
+	- `rewarded_interstitial_ad_clicked(ad_id: String)`
+	- `rewarded_interstitial_ad_showed_full_screen_content(ad_id: String)`
+	- `rewarded_interstitial_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)`
+	- `rewarded_interstitial_ad_dismissed_full_screen_content(ad_id: String)`
+	- `rewarded_interstitial_ad_user_earned_reward(ad_id: String, reward_data: RewardItem)`
+	- `app_open_ad_loaded(ad_unit_id: String, response_info: ResponseInfo)`
+	- `app_open_ad_failed_to_load(ad_unit_id: String, error_data: LoadAdError)`
+	- `app_open_ad_impression(ad_unit_id: String)`
+	- `app_open_ad_clicked(ad_unit_id: String)`
+	- `app_open_ad_showed_full_screen_content(ad_unit_id: String)`
+	- `app_open_ad_failed_to_show_full_screen_content(ad_unit_id: String, error_data: AdError)`
+	- `app_open_ad_dismissed_full_screen_content(ad_unit_id: String)`
+	- `consent_form_loaded`
+	- `consent_form_dismissed(error_data: FormError)`
+	- `consent_form_failed_to_load(error_data: FormError)`
+	- `consent_info_updated`
+	- `consent_info_update_failed(error_data: FormError)`
 
 ### <img src="addon/icon.png" width="18"> Banner Size
 - The following methods return the size of a Banner ad:
@@ -173,6 +225,38 @@ After setting this scene as an `Autoload`, the `Admob Plugin` methods can be inv
 AdManager.admob_node.show_banner()
 ```
 
+---
+
+<a name="mediation"></a>
+
+## <img src="addon/icon.png" width="20"> Mediation
+
+Admob Plugin's mediation feature allows selection of up to 15 additional ad mediation networks to serve your ads.  For efficiency, <u>**the plugin will only add the SDKs of enabled networks**</u> to your app.
+
+Admob Plugin makes the following ad networks available:
+
+- Google AdMob (enabled by default)
+- AppLovin
+- Chartboost
+- DT Exchange
+- i-mobile
+- InMobi
+- Liftoff Monetize
+- LINE Ads Network
+- maio
+- Meta Audience Network
+- Mintegral
+- Moloco
+- myTarget
+- Pangle
+- Unity Ads
+
+The networks that you choose will also need to be enabled via your AdMob Console for them to be available to your app.
+
+---
+
+<a name="export"></a>
+
 ## <img src="addon/icon.png" width="20"> Export
 Both `Android` and `iOS` exports require several configuration settings.
 
@@ -188,6 +272,9 @@ app_id = "ca-app-pub-3940256099942544~3347511713"
 
 [Release]
 app_id = "ca-app-pub-3940256099942544~3347511713"
+
+[Mediation]
+enabled_networks = ["applovin", "unity"]
 ```
 
 The `ios_export.cfg` file supports the following additional properties, which are not relevant for Android.
@@ -207,37 +294,56 @@ During export, the plugin searches for an `Admob` node in the scene that is open
 - Make sure that the scene that contains the `Admob` node is selected in the Godot Editor when building and exporting, or
 - Make sure that your Godot project's main scene contains an `Admob` node
 
-<br/><br/>
+---
+
+<a name="platform-specific-notes"></a>
+
+## <img src="addon/icon.png" width="20"> Platform-Specific Notes
+
+### Android
+- Download Android export template and enable gradle build from export settings
+- **Missing APP ID:**
+  - If your game crashes due to missing APP ID, then make sure that you
+    - enter your Admob APP ID in the Admob node and pay attention to the [Android Export section](#android-export).
+    - or enter it in the `android_export.cfg` file as described in the [File-based Export](#export) section.
+- **Troubleshooting:**
+  - Logs: `adb logcat | grep 'godot'` (Linux), `adb.exe logcat | select-string "godot"` (Windows)
+  - You may find the following resources helpful:
+    - https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_android.html
+    - https://developer.android.com/tools/adb
+    - https://developer.android.com/studio/debug
+    - https://developer.android.com/courses
+
+### iOS
+- Follow instructions on [Exporting for iOS](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html)
+- **Missing APP ID** crashes: make sure that you
+  - enter your Admob APP ID in the Admob node and pay attention to the [iOS Export section](#ios-export).
+  - or enter it in the `android_export.cfg` file as described in the [File-based Export](#export) section.
+- View XCode logs while running the game for troubleshooting.
+- See [Godot iOS Export Troubleshooting](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html#troubleshooting).
+- **App Tracking Transparency**, or ATT for short, is Apple's opt-in privacy framework that requires all iOS apps to ask users for permission to share their data. This is done in the form of a popup where users can either consent or deny tracking.
+  - To enable ATT in your app
+    - Enter a descriptive text that will be displayed on the ATT dialog in your `Admob` node's `att_text`field.
+    - Call `Admob` node's `request_tracking_authorization()` method.
+    - Handle `Admob` node's `tracking_authorization_granted` and `tracking_authorization_denied` signals.
+    - If the user initially rejects the tracking request, then later on you can check if the user changed their mind and allow them to update their settings by opening the system app settings using the `Admob` node's `open_app_settings()` method.
 
 ---
 
-# <img src="addon/icon.png" width="24"> Android Admob Plugin
+<a name="video-tutorial"></a>
 
-<p align="center">
-	<img width="256" height="256" src="demo/assets/admob-android.png">
-</p>
-
-
-## [Android-specific Documentation](android/README.md)
-## [AssetLib Entry](https://godotengine.org/asset-library/asset/2548)
-## Video Tutorial
+# <img src="addon/icon.png" width="24"> Video Tutorial
 
 [![Godot Android Admob Plugin Video Tutorial](https://img.youtube.com/vi/V9_Gpy0R3RE/0.jpg)](https://www.youtube.com/watch?v=V9_Gpy0R3RE)
 
-<br/><br/>
-
 ---
 
-# <img src="addon/icon.png" width="24"> iOS Admob Plugin
+<a name="links"></a>
 
-<p align="center">
-	<img width="256" height="256" src="demo/assets/admob-ios.png">
-</p>
+# <img src="addon/icon.png" width="20"> Links
 
-## [iOS-specific Documentation](ios/README.md)
-## [AssetLib Entry](https://godotengine.org/asset-library/asset/3178)
-
-<br/><br/>
+- [AssetLib Entry Android](https://godotengine.org/asset-library/asset/2548)
+- [AssetLib Entry iOS](https://godotengine.org/asset-library/asset/3178)
 
 ---
 # <img src="addon/icon.png" width="24"> All Plugins
@@ -250,9 +356,10 @@ During export, the plugin searches for an `Admob` node in the scene that is open
 | [Share](https://github.com/godot-sdk-integrations/godot-share) | ✅ | ✅ |
 | [In-App Review](https://github.com/godot-sdk-integrations/godot-inapp-review) | ✅ | ✅ |
 
-<br/><br/>
-
 ---
+
+<a name="credits"></a>
+
 # <img src="addon/icon.png" width="24"> Credits
 
 Developed by [Cengiz](https://github.com/cengiz-pz)
@@ -262,3 +369,43 @@ Android part is based on [Shin-NiL](https://github.com/Shin-NiL)'s [Godot Admob 
 iOS part is based on [Godot iOS Plugin Template](https://github.com/cengiz-pz/godot-ios-plugin-template)
 
 Original repository: [Godot Admob Plugin](https://github.com/godot-sdk-integrations/godot-admob)
+
+---
+
+<a name="contributing"></a>
+
+# <img src="addon/icon.png" width="24"> Contributing
+
+This section provides information on how to build the plugin for contributors.
+
+---
+
+## <img src="addon/icon.png" width="20"> iOS
+
+### Prerequisites
+
+- [Install SCons](https://scons.org/doc/production/HTML/scons-user/ch01s02.html)
+- [Install CocoaPods](https://guides.cocoapods.org/using/getting-started.html)
+
+---
+
+### Build
+
+- Run `./script/build.sh -A <godot version>` initially to run a full build
+- Run `./script/build.sh -cgA <godot version>` to clean, redownload Godot, and rebuild
+- Run `./script/build.sh -ca` to clean and build without redownloading Godot
+- Run `./script/build.sh -h` for more information on the build script
+
+---
+
+## <img src="addon/icon.png" width="20"> Android
+
+### Build
+
+**Options:**
+1. Use [Android Studio](https://developer.android.com/studio) to build via **Build->Assemble Project** menu
+	- Switch **Active Build Variant** to **release** and repeat
+	- Run **packageDistribution** task to create release archive
+2. Use project-root-level **build.sh** script
+	- `./script/build.sh -ca` - clean existing build, do a debug build for Android
+	- `./script/build.sh -carz` - clean existing build, do a release build for Android, and create archive

@@ -41,7 +41,9 @@ var _data: Dictionary
 
 
 func _init():
-	_data = {}
+	_data = {
+		DATA_KEY_TEST_DEVICE_IDS: []
+	}
 
 
 func set_is_real(a_value: bool) -> AdmobConfig:
@@ -75,15 +77,15 @@ func set_personalization_state(a_value: PersonalizationState) -> AdmobConfig:
 
 
 func set_test_device_ids(a_value: Array) -> AdmobConfig:
-	_data[DATA_KEY_TEST_DEVICE_IDS] = a_value
+	if a_value == null:
+		_data[DATA_KEY_TEST_DEVICE_IDS] = []
+	else:
+		_data[DATA_KEY_TEST_DEVICE_IDS] = a_value
 	return self
 
 
 func add_test_device_id(a_value: String) -> AdmobConfig:
-	if not _data.has(DATA_KEY_TEST_DEVICE_IDS) or _data[DATA_KEY_TEST_DEVICE_IDS] == null:
-		_data[DATA_KEY_TEST_DEVICE_IDS] = [ a_value ]
-	else:
-		_data[DATA_KEY_TEST_DEVICE_IDS].append(a_value)
+	_data[DATA_KEY_TEST_DEVICE_IDS].append(a_value)
 	return self
 
 

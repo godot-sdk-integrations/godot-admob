@@ -23,6 +23,7 @@
 // From Godot
 + (NSString*) toNsString:(String) godotString;
 + (NSString*) toAdId:(NSString*)unitId withSequence:(int) value;
++ (id) toNsObject:(Variant) godotValue;
 + (NSDictionary*) toNsDictionary:(Dictionary) godotDictionary;
 + (NSArray*) toNsStringArray:(Array) arr;
 + (GADPublisherPrivacyPersonalizationState) intToPublisherPrivacyPersonalizationState:(Variant) intValue;
@@ -36,8 +37,6 @@
 // To Godot
 + (String) nsStringToGodotString:(NSString*) nsString;
 + (Dictionary) nsDictionaryToGodotDictionary:(NSDictionary*) nsDictionary;
-+ (Dictionary) initializationStatusToGodotDictionary:(GADInitializationStatus*) status;
-+ (Dictionary) adapterStatusToGodotDictionary:(GADAdapterStatus*) adapterStatus;
 + (Dictionary) adSizeToGodotDictionary:(GADAdSize) adSize;
 + (Dictionary) responseInfoToGodotDictionary:(GADResponseInfo*) responseInfo;
 + (Dictionary) adNetworkResponseInfoToGodotDictionary:(GADAdNetworkResponseInfo*) adNetworkResponseInfo;

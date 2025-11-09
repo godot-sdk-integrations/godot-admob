@@ -23,7 +23,7 @@ import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.appopen.AppOpenAd;
+import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.rewarded.RewardItem;
@@ -31,18 +31,25 @@ import com.google.android.ump.ConsentForm;
 import com.google.android.ump.ConsentInformation;
 import com.google.android.ump.UserMessagingPlatform;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.GodotPlugin;
 import org.godotengine.godot.plugin.SignalInfo;
 import org.godotengine.godot.plugin.UsedByGodot;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import org.godotengine.plugin.android.admob.mediation.PrivacySettings;
+import org.godotengine.plugin.android.admob.model.AdmobConfiguration;
+import org.godotengine.plugin.android.admob.model.AdmobResponse;
+import org.godotengine.plugin.android.admob.model.AdmobStatus;
+import org.godotengine.plugin.android.admob.model.ConsentConfiguration;
+import org.godotengine.plugin.android.admob.model.LoadAdRequest;
 
 public class AdmobPlugin extends GodotPlugin {
-	static final String CLASS_NAME = AdmobPlugin.class.getSimpleName();
+	public static final String CLASS_NAME = AdmobPlugin.class.getSimpleName();
 	static final String LOG_TAG = "godot::" + CLASS_NAME;
 
 	static final String SIGNAL_INITIALIZATION_COMPLETED = "initialization_completed";
@@ -153,24 +160,24 @@ public class AdmobPlugin extends GodotPlugin {
 
 		signals.add(new SignalInfo(SIGNAL_INITIALIZATION_COMPLETED, Dictionary.class));
 
-		signals.add(new SignalInfo(SIGNAL_BANNER_AD_LOADED, String.class));
+		signals.add(new SignalInfo(SIGNAL_BANNER_AD_LOADED, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_BANNER_AD_REFRESHED, String.class));
+		signals.add(new SignalInfo(SIGNAL_BANNER_AD_REFRESHED, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_IMPRESSION, String.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_CLICKED, String.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_OPENED, String.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_CLOSED, String.class));
 
-		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_LOADED, String.class));
+		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_LOADED, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_REFRESHED, String.class));
+		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_REFRESHED, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_IMPRESSION, String.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_CLICKED, String.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, String.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, String.class));
 
-		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_LOADED, String.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_LOADED, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_IMPRESSION, String.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_CLICKED, String.class));
@@ -179,7 +186,7 @@ public class AdmobPlugin extends GodotPlugin {
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT, String.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_USER_EARNED_REWARD, String.class, Dictionary.class));
 
-		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, String.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_IMPRESSION, String.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_CLICKED, String.class));
@@ -188,7 +195,7 @@ public class AdmobPlugin extends GodotPlugin {
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, String.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD, String.class, Dictionary.class));
 
-		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_LOADED, String.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_LOADED, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_IMPRESSION, String.class));
 		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_CLICKED, String.class));
@@ -230,7 +237,7 @@ public class AdmobPlugin extends GodotPlugin {
 					@Override
 					public void onInitializationComplete(InitializationStatus initializationStatus) {
 						isInitialized = true;
-						emitSignal(SIGNAL_INITIALIZATION_COMPLETED, GodotConverter.convert(initializationStatus));
+						emitSignal(SIGNAL_INITIALIZATION_COMPLETED, new AdmobStatus(initializationStatus).buildRawData());
 					}
 				});
 			}
@@ -240,13 +247,14 @@ public class AdmobPlugin extends GodotPlugin {
 	@UsedByGodot
 	public void set_request_configuration(Dictionary configData) {
 		Log.d(LOG_TAG, "set_request_configuration()");
-		MobileAds.setRequestConfiguration(GodotConverter.createRequestConfiguration(configData, activity));
+		AdmobConfiguration config = new AdmobConfiguration(configData);
+		MobileAds.setRequestConfiguration(config.createRequestConfiguration(activity));
 	}
 
 	@UsedByGodot
 	public Dictionary get_initialization_status() {
 		Log.d(LOG_TAG, "get_initialization_status()");
-		return GodotConverter.convert(MobileAds.getInitializationStatus());
+		return new AdmobStatus(MobileAds.getInitializationStatus()).buildRawData();
 	}
 
 	@UsedByGodot
@@ -275,20 +283,20 @@ public class AdmobPlugin extends GodotPlugin {
 		if (isInitialized) {
 			Log.d(LOG_TAG, "load_banner_ad()");
 
-			if (adData.containsKey("ad_unit_id")) {
-				String adUnitId = (String) adData.get("ad_unit_id");
-				String adId = String.format("%s-%d", adUnitId, ++bannerAdIdSequence);
-				Banner banner = new Banner(adId, adUnitId, adData, GodotConverter.createAdRequest(adData), activity, layout,
+			LoadAdRequest loadAdRequest = new LoadAdRequest(adData);
+			if (loadAdRequest.isValid()) {
+				String adId = loadAdRequest.generateAdId(++bannerAdIdSequence);
+				Banner banner = new Banner(adId, loadAdRequest, activity, layout,
 						new BannerListener() {
 							@Override
-							public void onAdLoaded(String adId) {
-								emitSignal(SIGNAL_BANNER_AD_LOADED, adId);
+							public void onAdLoaded(String adId, ResponseInfo responseInfo) {
+								emitSignal(SIGNAL_BANNER_AD_LOADED, adId, new AdmobResponse(responseInfo).buildRawData());
 							}
 
 							@Override
-							public void onAdRefreshed(String adId) {
+							public void onAdRefreshed(String adId, ResponseInfo responseInfo) {
 								Log.d(LOG_TAG, String.format("onAdRefreshed(%s) banner", adId));
-								emitSignal(SIGNAL_BANNER_AD_REFRESHED, adId);
+								emitSignal(SIGNAL_BANNER_AD_REFRESHED, adId, new AdmobResponse(responseInfo).buildRawData());
 							}
 
 							@Override
@@ -317,11 +325,9 @@ public class AdmobPlugin extends GodotPlugin {
 							}
 						});
 				bannerAds.put(adId, banner);
-				activity.runOnUiThread(() -> {
-					banner.load();
-				});
+				banner.load();
 			} else {
-				Log.e(LOG_TAG, "load_banner_ad(): Error: Ad unit id is required!");
+				Log.e(LOG_TAG, "load_banner_ad(): Error: Ad request data is invalid.");
 			}
 		}
 		else {
@@ -331,44 +337,38 @@ public class AdmobPlugin extends GodotPlugin {
 
 	@UsedByGodot
 	public void show_banner_ad(String adId) {
-		activity.runOnUiThread(() -> {
-			if (bannerAds.containsKey(adId)) {
-				Log.d(LOG_TAG, String.format("show_banner_ad(): %s", adId));
-				Banner bannerAd = bannerAds.get(adId);
-				bannerAd.show();
-			}
-			else {
-				Log.e(LOG_TAG, String.format("show_banner_ad(): Error: banner ad %s not found", adId));
-			}
-		});
+		if (bannerAds.containsKey(adId)) {
+			Log.d(LOG_TAG, String.format("show_banner_ad(): %s", adId));
+			Banner bannerAd = bannerAds.get(adId);
+			bannerAd.show();
+		}
+		else {
+			Log.e(LOG_TAG, String.format("show_banner_ad(): Error: banner ad %s not found", adId));
+		}
 	}
 
 	@UsedByGodot
 	public void hide_banner_ad(String adId) {
-		activity.runOnUiThread(() -> {
-			if (bannerAds.containsKey(adId)) {
-				Log.d(LOG_TAG, String.format("hide_banner_ad(): %s", adId));
-				Banner bannerAd = bannerAds.get(adId);
-				bannerAd.hide();
-			}
-			else {
-				Log.e(LOG_TAG, String.format("hide_banner_ad(): Error: banner ad %s not found", adId));
-			}
-		});
+		if (bannerAds.containsKey(adId)) {
+			Log.d(LOG_TAG, String.format("hide_banner_ad(): %s", adId));
+			Banner bannerAd = bannerAds.get(adId);
+			bannerAd.hide();
+		}
+		else {
+			Log.e(LOG_TAG, String.format("hide_banner_ad(): Error: banner ad %s not found", adId));
+		}
 	}
 
 	@UsedByGodot
 	public void remove_banner_ad(String adId) {
-		activity.runOnUiThread(() -> {
-			if (bannerAds.containsKey(adId)) {
-				Log.d(LOG_TAG, String.format("remove_banner_ad(): %s", adId));
-				Banner bannerAd = bannerAds.remove(adId);
-				bannerAd.remove();
-			}
-			else {
-				Log.e(LOG_TAG, String.format("remove_banner_ad(): Error: banner ad %s not found", adId));
-			}
-		});
+		if (bannerAds.containsKey(adId)) {
+			Log.d(LOG_TAG, String.format("remove_banner_ad(): %s", adId));
+			Banner bannerAd = bannerAds.remove(adId);
+			bannerAd.remove();
+		}
+		else {
+			Log.e(LOG_TAG, String.format("remove_banner_ad(): Error: banner ad %s not found", adId));
+		}
 	}
 
 	@UsedByGodot
@@ -440,58 +440,56 @@ public class AdmobPlugin extends GodotPlugin {
 		if (isInitialized) {
 			Log.d(LOG_TAG, "load_interstitial_ad()");
 
-			if (adData.containsKey("ad_unit_id")) {
-				String adUnitId = (String) adData.get("ad_unit_id");
-				String adId = String.format("%s-%d", adUnitId, ++interstitialAdIdSequence);
+			LoadAdRequest loadAdRequest = new LoadAdRequest(adData);
+			if (loadAdRequest.isValid()) {
+				String adId = loadAdRequest.generateAdId(++interstitialAdIdSequence);
 
-				activity.runOnUiThread(() -> {
-					Interstitial ad = new Interstitial(adId, adUnitId, GodotConverter.createAdRequest(adData), activity, new InterstitialListener() {
-						@Override
-						public void onInterstitialLoaded(String adId) {
-							emitSignal(SIGNAL_INTERSTITIAL_AD_LOADED, adId);
-						}
+				Interstitial ad = new Interstitial(adId, loadAdRequest, activity, new InterstitialListener() {
+					@Override
+					public void onInterstitialLoaded(String adId, ResponseInfo responseInfo) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_LOADED, adId, new AdmobResponse(responseInfo).buildRawData());
+					}
 
-						@Override
-						public void onInterstitialReloaded(String adId) {
-							emitSignal(SIGNAL_INTERSTITIAL_AD_REFRESHED, adId);
-						}
+					@Override
+					public void onInterstitialReloaded(String adId, ResponseInfo responseInfo) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_REFRESHED, adId, new AdmobResponse(responseInfo).buildRawData());
+					}
 
-						@Override
-						public void onInterstitialFailedToLoad(String adId, LoadAdError loadAdError) {
-							emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_LOAD, adId, GodotConverter.convert(loadAdError));
-						}
+					@Override
+					public void onInterstitialFailedToLoad(String adId, LoadAdError loadAdError) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_LOAD, adId, GodotConverter.convert(loadAdError));
+					}
 
-						@Override
-						public void onInterstitialFailedToShow(String adId, AdError adError) {
-							emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, GodotConverter.convert(adError));
-						}
+					@Override
+					public void onInterstitialFailedToShow(String adId, AdError adError) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, GodotConverter.convert(adError));
+					}
 
-						@Override
-						public void onInterstitialOpened(String adId) {
-							emitSignal(SIGNAL_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, adId);
-						}
+					@Override
+					public void onInterstitialOpened(String adId) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, adId);
+					}
 
-						@Override
-						public void onInterstitialClosed(String adId) {
-							emitSignal(SIGNAL_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, adId);
-						}
+					@Override
+					public void onInterstitialClosed(String adId) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, adId);
+					}
 
-						@Override
-						public void onInterstitialClicked(String adId) {
-							emitSignal(SIGNAL_INTERSTITIAL_AD_CLICKED, adId);
-						}
+					@Override
+					public void onInterstitialClicked(String adId) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_CLICKED, adId);
+					}
 
-						@Override
-						public void onInterstitialImpression(String adId) {
-							emitSignal(SIGNAL_INTERSTITIAL_AD_IMPRESSION, adId);
-						}
-					});
-					interstitialAds.put(adId, ad);
-					Log.d(LOG_TAG, String.format("load_interstitial_ad(): %s", adId));
-					ad.load();
+					@Override
+					public void onInterstitialImpression(String adId) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_IMPRESSION, adId);
+					}
 				});
+				interstitialAds.put(adId, ad);
+				Log.d(LOG_TAG, String.format("load_interstitial_ad(): %s", adId));
+				ad.load();
 			} else {
-				Log.e(LOG_TAG, "load_interstitial_ad(): Error: Ad unit id is required!");
+				Log.e(LOG_TAG, "load_interstitial_ad(): Error: Ad request data is invalid.");
 			}
 		}
 		else {
@@ -501,17 +499,15 @@ public class AdmobPlugin extends GodotPlugin {
 
 	@UsedByGodot
 	public void show_interstitial_ad(String adId) {
-		activity.runOnUiThread(() -> {
-			if (interstitialAds.containsKey(adId)) {
-				Log.d(LOG_TAG, String.format("show_interstitial_ad(): %s", adId));
-				Interstitial ad = interstitialAds.get(adId);
-				assert ad != null;
-				ad.show();
-			}
-			else {
-				Log.e(LOG_TAG, String.format("show_interstitial_ad(): Error: ad %s not found", adId));
-			}
-		});
+		if (interstitialAds.containsKey(adId)) {
+			Log.d(LOG_TAG, String.format("show_interstitial_ad(): %s", adId));
+			Interstitial ad = interstitialAds.get(adId);
+			assert ad != null;
+			ad.show();
+		}
+		else {
+			Log.e(LOG_TAG, String.format("show_interstitial_ad(): Error: ad %s not found", adId));
+		}
 	}
 
 	@UsedByGodot
@@ -530,78 +526,74 @@ public class AdmobPlugin extends GodotPlugin {
 		if (isInitialized) {
 			Log.d(LOG_TAG, "load_rewarded_ad()");
 
-			if (adData.containsKey("ad_unit_id")) {
-				String adUnitId = (String) adData.get("ad_unit_id");
-				String adId = String.format("%s-%d", adUnitId, ++rewardedAdIdSequence);
+			LoadAdRequest loadAdRequest = new LoadAdRequest(adData);
+			if (loadAdRequest.isValid()) {
+				String adId = loadAdRequest.generateAdId(++rewardedAdIdSequence);
 
-				activity.runOnUiThread(() -> {
-					RewardedVideo ad = new RewardedVideo(adId, adUnitId, GodotConverter.createAdRequest(adData), activity, new RewardedVideoListener() {
-						@Override
-						public void onRewardedVideoLoaded(String adId) {
-							emitSignal(SIGNAL_REWARDED_AD_LOADED, adId);
-						}
+				RewardedVideo ad = new RewardedVideo(adId, loadAdRequest, activity, new RewardedVideoListener() {
+					@Override
+					public void onRewardedVideoLoaded(String adId, ResponseInfo responseInfo) {
+						emitSignal(SIGNAL_REWARDED_AD_LOADED, adId, new AdmobResponse(responseInfo).buildRawData());
+					}
 
-						@Override
-						public void onRewardedVideoFailedToLoad(String adId, LoadAdError loadAdError) {
-							emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_LOAD, adId, GodotConverter.convert(loadAdError));
-						}
+					@Override
+					public void onRewardedVideoFailedToLoad(String adId, LoadAdError loadAdError) {
+						emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_LOAD, adId, GodotConverter.convert(loadAdError));
+					}
 
-						@Override
-						public void onRewardedVideoOpened(String adId) {
-							emitSignal(SIGNAL_REWARDED_AD_SHOWED_FULL_SCREEN_CONTENT, adId);
-						}
+					@Override
+					public void onRewardedVideoOpened(String adId) {
+						emitSignal(SIGNAL_REWARDED_AD_SHOWED_FULL_SCREEN_CONTENT, adId);
+					}
 
-						@Override
-						public void onRewardedVideoFailedToShow(String adId, AdError adError) {
-							emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, GodotConverter.convert(adError));
-						}
+					@Override
+					public void onRewardedVideoFailedToShow(String adId, AdError adError) {
+						emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, GodotConverter.convert(adError));
+					}
 
-						@Override
-						public void onRewardedVideoClosed(String adId) {
-							emitSignal(SIGNAL_REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT, adId);
-						}
+					@Override
+					public void onRewardedVideoClosed(String adId) {
+						emitSignal(SIGNAL_REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT, adId);
+					}
 
-						@Override
-						public void onRewardedClicked(String adId) {
-							emitSignal(SIGNAL_REWARDED_AD_CLICKED, adId);
-						}
+					@Override
+					public void onRewardedClicked(String adId) {
+						emitSignal(SIGNAL_REWARDED_AD_CLICKED, adId);
+					}
 
-						@Override
-						public void onRewardedAdImpression(String adId) {
-							emitSignal(SIGNAL_REWARDED_AD_IMPRESSION, adId);
-						}
+					@Override
+					public void onRewardedAdImpression(String adId) {
+						emitSignal(SIGNAL_REWARDED_AD_IMPRESSION, adId);
+					}
 
-						@Override
-						public void onRewarded(String adId, RewardItem reward) {
-							emitSignal(SIGNAL_REWARDED_AD_USER_EARNED_REWARD, adId, GodotConverter.convert(reward));
-						}
-					});
-					ad.setServerSideVerificationOptions(GodotConverter.createSSVO(adData));
-					rewardedAds.put(adId, ad);
-					Log.d(LOG_TAG, String.format("load_rewarded_ad(): %s", adId));
-					ad.load();
+					@Override
+					public void onRewarded(String adId, RewardItem reward) {
+						emitSignal(SIGNAL_REWARDED_AD_USER_EARNED_REWARD, adId, GodotConverter.convert(reward));
+					}
 				});
+				ad.setServerSideVerificationOptions(GodotConverter.createSSVO(adData));
+				rewardedAds.put(adId, ad);
+				Log.d(LOG_TAG, String.format("load_rewarded_ad(): %s", adId));
+				ad.load();
 			} else {
-				Log.e(LOG_TAG, "load_rewarded_ad(): Error: Ad unit id is required!");
+				Log.e(LOG_TAG, "load_rewarded_ad(): Error: Ad request data is invalid.");
 			}
 		}
 		else {
-				Log.e(LOG_TAG, "load_rewarded_ad(): Error: Plugin is not initialized!");
+			Log.e(LOG_TAG, "load_rewarded_ad(): Error: Plugin is not initialized!");
 		}
 	}
 
 	@UsedByGodot
 	public void show_rewarded_ad(String adId) {
-		activity.runOnUiThread(() -> {
-			if (rewardedAds.containsKey(adId)) {
-				Log.d(LOG_TAG, String.format("show_rewarded_ad(): %s", adId));
-				RewardedVideo ad = rewardedAds.get(adId);
-				ad.show();
-			}
-			else {
-				Log.e(LOG_TAG, String.format("show_rewarded_ad(): Error: ad %s not found", adId));
-			}
-		});
+		if (rewardedAds.containsKey(adId)) {
+			Log.d(LOG_TAG, String.format("show_rewarded_ad(): %s", adId));
+			RewardedVideo ad = rewardedAds.get(adId);
+			ad.show();
+		}
+		else {
+			Log.e(LOG_TAG, String.format("show_rewarded_ad(): Error: ad %s not found", adId));
+		}
 	}
 
 	@UsedByGodot
@@ -620,60 +612,57 @@ public class AdmobPlugin extends GodotPlugin {
 		if (isInitialized) {
 			Log.d(LOG_TAG, "load_rewarded_interstitial_ad()");
 
-			if (adData.containsKey("ad_unit_id")) {
-				String adUnitId = (String) adData.get("ad_unit_id");
-				String adId = String.format("%s-%d", adUnitId, ++rewardedInterstitialAdIdSequence);
+			LoadAdRequest loadAdRequest = new LoadAdRequest(adData);
+			if (loadAdRequest.isValid()) {
+				String adId = loadAdRequest.generateAdId(++rewardedInterstitialAdIdSequence);
 
-				activity.runOnUiThread(() -> {
-					RewardedInterstitial ad = new RewardedInterstitial(adId, adUnitId, GodotConverter.createAdRequest(adData), activity,
-							new RewardedInterstitialListener() {
-								@Override
-								public void onRewardedInterstitialLoaded(String adId) {
-									emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, adId);
-								}
+				RewardedInterstitial ad = new RewardedInterstitial(adId, loadAdRequest, activity, new RewardedInterstitialListener() {
+					@Override
+					public void onRewardedInterstitialLoaded(String adId, ResponseInfo responseInfo) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, adId, new AdmobResponse(responseInfo).buildRawData());
+					}
 
-								@Override
-								public void onRewardedInterstitialFailedToLoad(String adId, LoadAdError loadAdError) {
-									emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD, adId, GodotConverter.convert(loadAdError));
-								}
+					@Override
+					public void onRewardedInterstitialFailedToLoad(String adId, LoadAdError loadAdError) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD, adId, GodotConverter.convert(loadAdError));
+					}
 
-								@Override
-								public void onRewardedInterstitialOpened(String adId) {
-									emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, adId);
-								}
+					@Override
+					public void onRewardedInterstitialOpened(String adId) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, adId);
+					}
 
-								@Override
-								public void onRewardedInterstitialFailedToShow(String adId, AdError adError) {
-									emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, GodotConverter.convert(adError));
-								}
+					@Override
+					public void onRewardedInterstitialFailedToShow(String adId, AdError adError) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, GodotConverter.convert(adError));
+					}
 
-								@Override
-								public void onRewardedInterstitialClosed(String adId) {
-									emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, adId);
-								}
+					@Override
+					public void onRewardedInterstitialClosed(String adId) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, adId);
+					}
 
-								@Override
-								public void onRewardedClicked(String adId) {
-									emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_CLICKED, adId);
-								}
+					@Override
+					public void onRewardedClicked(String adId) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_CLICKED, adId);
+					}
 
-								@Override
-								public void onRewardedAdImpression(String adId) {
-									emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_IMPRESSION, adId);
-								}
+					@Override
+					public void onRewardedAdImpression(String adId) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_IMPRESSION, adId);
+					}
 
-								@Override
-								public void onRewarded(String adId, RewardItem reward) {
-									emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD, adId, GodotConverter.convert(reward));
-								}
-							});
-					ad.setServerSideVerificationOptions(GodotConverter.createSSVO(adData));
-					rewardedInterstitialAds.put(adId, ad);
-					Log.d(LOG_TAG, String.format("load_rewarded_interstitial_ad(): %s", adId));
-					ad.load();
+					@Override
+					public void onRewarded(String adId, RewardItem reward) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD, adId, GodotConverter.convert(reward));
+					}
 				});
+				ad.setServerSideVerificationOptions(GodotConverter.createSSVO(adData));
+				rewardedInterstitialAds.put(adId, ad);
+				Log.d(LOG_TAG, String.format("load_rewarded_interstitial_ad(): %s", adId));
+				ad.load();
 			} else {
-				Log.e(LOG_TAG, "load_rewarded_interstitial_ad(): Error: Ad unit id is required!");
+				Log.e(LOG_TAG, "load_rewarded_interstitial_ad(): Error: Ad request data is invalid.");
 			}
 		}
 		else {
@@ -683,15 +672,13 @@ public class AdmobPlugin extends GodotPlugin {
 
 	@UsedByGodot
 	public void show_rewarded_interstitial_ad(String adId) {
-		activity.runOnUiThread(() -> {
-			if (rewardedInterstitialAds.containsKey(adId)) {
-				Log.d(LOG_TAG, String.format("show_rewarded_interstitial_ad(): %s", adId));
-				RewardedInterstitial ad = rewardedInterstitialAds.get(adId);
-				ad.show();
-			} else {
-				Log.e(LOG_TAG, String.format("show_rewarded_interstitial_ad(): Error: ad %s not found", adId));
-			}
-		});
+		if (rewardedInterstitialAds.containsKey(adId)) {
+			Log.d(LOG_TAG, String.format("show_rewarded_interstitial_ad(): %s", adId));
+			RewardedInterstitial ad = rewardedInterstitialAds.get(adId);
+			ad.show();
+		} else {
+			Log.e(LOG_TAG, String.format("show_rewarded_interstitial_ad(): Error: ad %s not found", adId));
+		}
 	}
 
 	@UsedByGodot
@@ -706,10 +693,11 @@ public class AdmobPlugin extends GodotPlugin {
 	}
 
 	@UsedByGodot
-	public void load_app_open_ad(String adUnitId, boolean autoShowOnResume) {
-		Log.d(LOG_TAG, String.format("load_app_open_ad('%s', %b)", adUnitId, autoShowOnResume));
+	public void load_app_open_ad(Dictionary adRequest, boolean autoShowOnResume) {
+		LoadAdRequest loadAdRequest = new LoadAdRequest(adRequest);
+		Log.d(LOG_TAG, String.format("load_app_open_ad('%s', %b)", loadAdRequest.getAdUnitId(), autoShowOnResume));
 		appOpenAdManager.autoShowOnResume = autoShowOnResume;
-		appOpenAdManager.loadAd(adUnitId);
+		appOpenAdManager.loadAd(loadAdRequest);
 	}
 
 	@UsedByGodot
@@ -742,16 +730,16 @@ public class AdmobPlugin extends GodotPlugin {
 
 	@UsedByGodot
 	public void show_consent_form() {
-		activity.runOnUiThread(() -> {
-			if (consentForm == null) {
-				Log.e(LOG_TAG, "show_consent_form(): Error: consent form not found!");
-			} else {
-				Log.d(LOG_TAG, "show_consent_form()");
+		if (consentForm == null) {
+			Log.e(LOG_TAG, "show_consent_form(): Error: consent form not found!");
+		} else {
+			Log.d(LOG_TAG, "show_consent_form()");
+			activity.runOnUiThread(() -> {
 				consentForm.show(activity, (ConsentForm.OnConsentFormDismissedListener) formError -> {
 					emitSignal(SIGNAL_CONSENT_FORM_DISMISSED, GodotConverter.convert(formError));
 				});
-			}
-		});
+			});
+		}
 	}
 
 	@UsedByGodot
@@ -779,7 +767,7 @@ public class AdmobPlugin extends GodotPlugin {
 
 		consentInformation.requestConsentInfoUpdate(
 			activity,
-			GodotConverter.createConsentRequestParameters(consentRequestParameters, activity),
+			new ConsentConfiguration(consentRequestParameters).createConsentRequestParameters(activity),
 			(ConsentInformation.OnConsentInfoUpdateSuccessListener) () -> {
 				emitSignal(SIGNAL_CONSENT_INFO_UPDATED);
 			},
@@ -796,6 +784,13 @@ public class AdmobPlugin extends GodotPlugin {
 		UserMessagingPlatform.getConsentInformation(activity).reset();
 	}
 
+	@UsedByGodot
+	public void set_mediation_privacy_settings(Dictionary settings) {
+		Log.d(LOG_TAG, "set_mediation_privacy_settings()");
+
+		PrivacySettings privacySettings = new PrivacySettings(settings);
+		privacySettings.applyPrivacySettings(activity.getApplicationContext());
+	}
 
 	@Override
 	public View onMainCreate(Activity activity) {

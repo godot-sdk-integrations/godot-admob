@@ -9,8 +9,10 @@
 
 #import "gap_converter.h"
 #import "admob_config.h"
+#import "admob_status.h"
 #import "admob_logger.h"
 #import "ump_orientation_wrapper.h"
+#import "privacy_settings.h"
 
 
 const String INITIALIZATION_COMPLETED_SIGNAL = "initialization_completed";
@@ -84,9 +86,9 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_banner_width_in_pixels"), &AdmobPlugin::get_banner_width_in_pixels);
 	ClassDB::bind_method(D_METHOD("get_banner_height_in_pixels"), &AdmobPlugin::get_banner_height_in_pixels);
 
-	ADD_SIGNAL(MethodInfo(BANNER_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
-	ADD_SIGNAL(MethodInfo(BANNER_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_OPENED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
@@ -96,9 +98,9 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("show_interstitial_ad"), &AdmobPlugin::show_interstitial_ad);
 	ClassDB::bind_method(D_METHOD("remove_interstitial_ad"), &AdmobPlugin::remove_interstitial_ad);
 
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
@@ -109,7 +111,7 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("show_rewarded_ad"), &AdmobPlugin::show_rewarded_ad);
 	ClassDB::bind_method(D_METHOD("remove_rewarded_ad"), &AdmobPlugin::remove_rewarded_ad);
 
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
+	ADD_SIGNAL(MethodInfo(REWARDED_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(REWARDED_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
 	ADD_SIGNAL(MethodInfo(REWARDED_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(REWARDED_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
@@ -122,7 +124,7 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("show_rewarded_interstitial_ad"), &AdmobPlugin::show_rewarded_interstitial_ad);
 	ClassDB::bind_method(D_METHOD("remove_rewarded_interstitial_ad"), &AdmobPlugin::remove_rewarded_interstitial_ad);
 
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
@@ -131,11 +133,11 @@ void AdmobPlugin::_bind_methods() {
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "reward_data")));
 
-	ClassDB::bind_method(D_METHOD("load_app_open_ad", "ad_unit_id", "auto_show_on_resume"), &AdmobPlugin::load_app_open_ad, DEFVAL(Variant(false)));
+	ClassDB::bind_method(D_METHOD("load_app_open_ad", "load_ad_request", "auto_show_on_resume"), &AdmobPlugin::load_app_open_ad, DEFVAL(Variant(false)));
 	ClassDB::bind_method(D_METHOD("show_app_open_ad"), &AdmobPlugin::show_app_open_ad);
 	ClassDB::bind_method(D_METHOD("is_app_open_ad_available"), &AdmobPlugin::is_app_open_ad_available);
 
-	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id"), PropertyInfo(Variant::DICTIONARY, "error")));
 	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));
 	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));
@@ -154,6 +156,8 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_consent_form_available"), &AdmobPlugin::is_consent_form_available);
 	ClassDB::bind_method(D_METHOD("update_consent_info"), &AdmobPlugin::update_consent_info);
 	ClassDB::bind_method(D_METHOD("reset_consent_info"), &AdmobPlugin::reset_consent_info);
+
+	ClassDB::bind_method(D_METHOD("set_mediation_privacy_settings", "settings"), &AdmobPlugin::set_mediation_privacy_settings);
 
 	ADD_SIGNAL(MethodInfo(CONSENT_INFO_UPDATED_SIGNAL));
 	ADD_SIGNAL(MethodInfo(CONSENT_INFO_UPDATE_FAILED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "form_error_data")));
@@ -187,8 +191,8 @@ Error AdmobPlugin::initialize() {
 
 	[[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *_Nonnull status) {
 		initialized = true;
-		Dictionary dictionary = [GAPConverter initializationStatusToGodotDictionary:status];
-		os_log_debug(admob_log, "AdmobPlugin initialization completed with status: %@", status.description);
+		os_log_debug(admob_log, "AdmobPlugin initialization completed for %tu adapters.", [status.adapterStatusesByClassName count]);
+		Dictionary dictionary = [[[AdmobStatus alloc] initWithStatus:status] buildRawData];
 		emit_signal(INITIALIZATION_COMPLETED_SIGNAL, dictionary);
 	}];
 
@@ -202,25 +206,17 @@ Error AdmobPlugin::set_request_configuration(Dictionary configData) {
 		os_log_error(admob_log, "AdmobPlugin has not been initialized");
 		return FAILED;
 	}
-	
+
 	AdmobConfig* admobConfig = [[AdmobConfig alloc] initWithDictionary: configData];
-	GADRequestConfiguration* requestConfiguration = [GADMobileAds sharedInstance].requestConfiguration;
 
-	requestConfiguration.maxAdContentRating = admobConfig.maxContentRating;
-	requestConfiguration.tagForChildDirectedTreatment = admobConfig.childDirectedTreatment;
-	requestConfiguration.tagForUnderAgeOfConsent = admobConfig.underAgeOfConsent;
-	[requestConfiguration setPublisherFirstPartyIDEnabled:admobConfig.firstPartyIdEnabled];
-	[requestConfiguration setPublisherPrivacyPersonalizationState:[GAPConverter intToPublisherPrivacyPersonalizationState:admobConfig.personalizationState]];
-
-	if (!admobConfig.isReal) {
-		requestConfiguration.testDeviceIdentifiers = admobConfig.testDeviceIds;
-	}
+	[admobConfig applyToGADRequestConfiguration:GADMobileAds.sharedInstance.requestConfiguration];
 
 	return OK;
 }
 
 Dictionary AdmobPlugin::get_initialization_status() {
-	return [GAPConverter initializationStatusToGodotDictionary: [GADMobileAds sharedInstance].initializationStatus];
+	GADInitializationStatus *status = [GADMobileAds sharedInstance].initializationStatus;
+	return [[[AdmobStatus alloc] initWithStatus:status] buildRawData];
 }
 
 void AdmobPlugin::set_ios_app_pause_on_background(bool pause) {
@@ -282,7 +278,7 @@ CGFloat AdmobPlugin::getAdWidth() {
 	else {
 		os_log_error(admob_log, "AdmobPlugin getAdWidth(): key window not found");
 	}
-	
+
 	return frame.size.width;
 }
 
@@ -509,13 +505,14 @@ void AdmobPlugin::remove_rewarded_interstitial_ad(String adId) {
 	}
 }
 
-void AdmobPlugin::load_app_open_ad(String adUnitId, bool autoShowOnResume) {
-	NSString* nsAdUnitId = [GAPConverter toNsString:adUnitId];
+void AdmobPlugin::load_app_open_ad(Dictionary requestDict, bool autoShowOnResume) {
+	LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: requestDict];
+	NSString* nsAdUnitId = [loadAdRequest adUnitId];
 	os_log_debug(admob_log, "AdmobPlugin load_app_open_ad: %@", nsAdUnitId);
 	if (this->appOpenAd == nil) {
 		this->appOpenAd = [[AppOpenAd alloc] initWithPlugin:this];
 	}
-	[this->appOpenAd loadWithAdUnitId: [GAPConverter toNsString: adUnitId] autoShowOnResume: autoShowOnResume];
+	[this->appOpenAd loadWithRequest:loadAdRequest autoShowOnResume:autoShowOnResume];
 }
 
 void AdmobPlugin::show_app_open_ad() {
@@ -644,6 +641,13 @@ void AdmobPlugin::update_consent_info(Dictionary consentRequestParameters) {
 void AdmobPlugin::reset_consent_info() {
 	os_log_debug(admob_log, "AdmobPlugin reset_consent_info");
 	[UMPConsentInformation.sharedInstance reset];
+}
+
+void AdmobPlugin::set_mediation_privacy_settings(Dictionary settings) {
+	os_log_debug(admob_log, "AdmobPlugin set_mediation_privacy_settings");
+
+	PrivacySettings* privacySettings = [[PrivacySettings alloc] initWithDictionary: settings];
+	[privacySettings applyPrivacySettings];
 }
 
 void AdmobPlugin::request_tracking_authorization() {

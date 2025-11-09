@@ -10,13 +10,16 @@ const PLUGIN_NAME: String = "@pluginName@"
 const CONFIG_FILE_SECTION_GENERAL: String = "General"
 const CONFIG_FILE_SECTION_DEBUG: String = "Debug"
 const CONFIG_FILE_SECTION_RELEASE: String = "Release"
+const CONFIG_FILE_SECTION_MEDIATION: String = "Mediation"
 
 const CONFIG_FILE_KEY_IS_REAL: String = "is_real"
 const CONFIG_FILE_KEY_APP_ID: String = "app_id"
+const CONFIG_FILE_KEY_ENABLED_NETWORKS: String = "enabled_networks"
 
 var is_real: bool
 var debug_application_id: String
 var real_application_id: String
+var enabled_mediation_networks: Array[MediationNetwork] = []
 
 
 func get_config_file_path() -> String:
@@ -40,6 +43,19 @@ func load_export_config_from_file() -> Error:
 		is_real = __config_file.get_value(CONFIG_FILE_SECTION_GENERAL, CONFIG_FILE_KEY_IS_REAL)
 		debug_application_id = __config_file.get_value(CONFIG_FILE_SECTION_DEBUG, CONFIG_FILE_KEY_APP_ID)
 		real_application_id = __config_file.get_value(CONFIG_FILE_SECTION_RELEASE, CONFIG_FILE_KEY_APP_ID)
+	
+		if __config_file.has_section(CONFIG_FILE_SECTION_MEDIATION):
+			if __config_file.has_section_key(CONFIG_FILE_SECTION_MEDIATION, CONFIG_FILE_KEY_ENABLED_NETWORKS):
+				var __network_array: Array[String] = __config_file.get_value(CONFIG_FILE_SECTION_MEDIATION, CONFIG_FILE_KEY_ENABLED_NETWORKS)
+
+				for __network in __network_array:
+					if MediationNetwork.is_valid_tag(__network):
+						enabled_mediation_networks.append(MediationNetwork.get_by_tag(__network))
+					else:
+						Admob.log_error("Invalid network tag '%s' in file %s!" % [__network, __config_file_path])
+			else:
+				Admob.log_error("Missing key %s in section %s of %s!" % [CONFIG_FILE_KEY_ENABLED_NETWORKS,
+						CONFIG_FILE_SECTION_MEDIATION, __config_file_path])
 
 		if is_real == null or debug_application_id == null or real_application_id == null:
 			__result = Error.ERR_INVALID_DATA
@@ -76,6 +92,7 @@ func load_export_config_from_node() -> Error:
 		is_real = __admob_node.is_real
 		debug_application_id = __admob_node.android_debug_application_id
 		real_application_id = __admob_node.android_real_application_id
+		enabled_mediation_networks = MediationNetwork.get_all_enabled(__admob_node.enabled_networks)
 
 		__result = load_platform_specific_export_config_from_node(__admob_node)
 		if __result == Error.OK:
@@ -98,6 +115,7 @@ func print_loaded_config() -> void:
 	Admob.log_info("... is_real: %s" % ("true" if is_real else "false"))
 	Admob.log_info("... debug_application_id: %s" % debug_application_id)
 	Admob.log_info("... real_application_id: %s" % real_application_id)
+	Admob.log_info("... enabled_mediation_networks: %s" % MediationNetwork.generate_tag_list(enabled_mediation_networks))
 
 
 func get_plugin_node(a_node: Node) -> Admob:

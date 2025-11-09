@@ -6,30 +6,26 @@
 #define admob_config_h
 
 #import <Foundation/Foundation.h>
+#import <GoogleMobileAds/GoogleMobileAds.h>
 
 #include "core/object/class_db.h"
 
 
-extern const String IS_REAL_PROPERTY;
-extern const String MAX_AD_CONTENT_RATING_PROPERTY;
-extern const String CHILD_DIRECTED_TREATMENT_PROPERTY;
-extern const String UNDER_AGE_OF_CONSENT_PROPERTY;
-extern const String FIRST_PARTY_ID_ENABLED_PROPERTY;
-extern const String PERSONALIZATION_STATE_PROPERTY;
-extern const String TEST_DEVICE_IDS_PROPERTY;
-
-
 @interface AdmobConfig : NSObject
 
-@property (nonatomic) BOOL isReal;
-@property (nonatomic, strong) NSString* maxContentRating;
-@property (nonatomic, strong) NSNumber* childDirectedTreatment;
-@property (nonatomic, strong) NSNumber* underAgeOfConsent;
-@property (nonatomic) BOOL firstPartyIdEnabled;
-@property (nonatomic, strong) NSNumber* personalizationState;
-@property (nonatomic, strong) NSArray* testDeviceIds;
+@property (nonatomic, assign) Dictionary rawData;
 
-- (instancetype) initWithDictionary:(Dictionary) configData;
+- (instancetype) initWithDictionary:(Dictionary) rawData;
+
+- (BOOL) isReal;
+- (NSString*) maxContentRating;
+- (NSNumber*) childDirectedTreatment;
+- (NSNumber*) underAgeOfConsent;
+- (BOOL) firstPartyIdEnabled;
+- (NSNumber*) personalizationState;
+- (NSArray*) testDeviceIds;
+
+- (void) applyToGADRequestConfiguration:(GADRequestConfiguration*) requestConfiguration;
 
 @end
 

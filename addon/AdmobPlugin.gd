@@ -9,6 +9,7 @@ const PLUGIN_NODE_TYPE_NAME = "@pluginNodeName@"
 const PLUGIN_PARENT_NODE_TYPE = "Node"
 const PLUGIN_NAME: String = "@pluginName@"
 const ANDROID_DEPENDENCIES: Array = [ @androidDependencies@ ]
+const IOS_PLATFORM_VERSION: String = "@iosPlatformVersion@"
 const IOS_FRAMEWORKS: Array = [ @iosFrameworks@ ]
 const IOS_EMBEDDED_FRAMEWORKS: Array = [ @iosEmbeddedFrameworks@ ]
 const IOS_LINKER_FLAGS: Array = [ @iosLinkerFlags@ ]
@@ -46,9 +47,7 @@ class AndroidExportPlugin extends EditorExportPlugin:
 
 
 	func _supports_platform(platform: EditorExportPlatform) -> bool:
-		if platform is EditorExportPlatformAndroid:
-			return true
-		return false
+		return platform is EditorExportPlatformAndroid
 
 
 	func _get_android_libraries(platform: EditorExportPlatform, debug: bool) -> PackedStringArray:
@@ -63,18 +62,40 @@ class AndroidExportPlugin extends EditorExportPlugin:
 
 
 	func _export_begin(features: PackedStringArray, is_debug: bool, path: String, flags: int) -> void:
-		_export_config = AdmobAndroidExportConfig.new()
-		if not _export_config.export_config_file_exists() or _export_config.load_export_config_from_file() != OK:
-			_export_config.load_export_config_from_node()
+		if _supports_platform(get_export_platform()):
+			_export_config = AdmobAndroidExportConfig.new()
+			if not _export_config.export_config_file_exists() or _export_config.load_export_config_from_file() != OK:
+				_export_config.load_export_config_from_node()
 
 
 	func _get_android_dependencies(platform: EditorExportPlatform, debug: bool) -> PackedStringArray:
-		return PackedStringArray(ANDROID_DEPENDENCIES)
+		var deps: PackedStringArray = PackedStringArray(ANDROID_DEPENDENCIES)
+		if _export_config and _export_config.enabled_mediation_networks.size() > 0:
+			for __network in _export_config.enabled_mediation_networks:
+				for __dependency in __network.android_dependencies:
+					deps.append(__dependency)
+
+		Admob.log_info("Android dependencies: %s" % str(deps))
+
+		return deps
+
+
+	func _get_android_dependencies_maven_repos(platform: EditorExportPlatform, debug: bool) -> PackedStringArray:
+		var __custom_repos: PackedStringArray = []
+
+		if _export_config and _export_config.enabled_mediation_networks.size() > 0:
+			for network in _export_config.enabled_mediation_networks:
+				if network.android_custom_maven_repo and not network.android_custom_maven_repo.is_empty():
+					__custom_repos.append(network.android_custom_maven_repo)
+					Admob.log_info("Added custom Maven repo for %s mediation: %s" %
+							[network.tag, network.android_custom_maven_repo])
+
+		return __custom_repos
 
 
 	func _get_android_manifest_application_element_contents(platform: EditorExportPlatform, debug: bool) -> String:
 		var __contents: String
-	
+
 		if _export_config:
 			__contents = APP_ID_META_TAG % (_export_config.real_application_id if _export_config.is_real else _export_config.debug_application_id)
 		else:
@@ -85,227 +106,23 @@ class AndroidExportPlugin extends EditorExportPlugin:
 
 
 class IosExportPlugin extends EditorExportPlugin:
-
-	const SK_AD_NETWORK_ITEMS: String = """
-	<array>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>cstr6suwn9.skadnetwork</string>
-		</dict>
-<!--
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>4fzdc2evr5.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>4pfyvq9l8r.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>2fnua5tdw4.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>ydx93a7ass.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>5a6flpkh64.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>p78axxw29g.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>v72qych5uu.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>ludvb6z3bs.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>cp8zw746q7.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>3sh42y64q3.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>c6k4g5qg8m.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>s39g8k73mm.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>3qy4746246.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>f38h382jlk.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>hs6bdukanm.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>v4nxqhlyqp.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>wzmmz9fp6w.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>yclnxrl5pm.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>t38b2kh725.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>7ug5zh24hu.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>gta9lk7p23.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>vutu7akeur.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>y5ghdn5j9k.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>n6fk4nfna4.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>v9wttpbfk9.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>n38lu8286q.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>47vhws6wlr.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>kbd757ywx3.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>9t245vhmpl.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>eh6m2bh4zr.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>a2p9lx4jpn.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>22mmun2rn5.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>4468km3ulz.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>2u9pt9hc89.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>8s468mfl3y.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>klf5c3l5u5.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>ppxm28t8ap.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>ecpz2srf59.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>uw77j35x4d.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>pwa73g5rt2.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>mlmmfzh3r3.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>578prtvx9j.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>4dzt52r2t5.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>e5fvkxwrpn.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>8c4e2ghe7u.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>zq492l623r.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>3rd42ekr43.skadnetwork</string>
-		</dict>
-		<dict>
-			<key>SKAdNetworkIdentifier</key>
-			<string>3qcr597p9d.skadnetwork</string>
-		</dict>
--->
-	</array>
-"""
-
 	const NS_APP_TRANSPORT_SECURITY: String = """
 <key>NSAppTransportSecurity</key>
 <dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-    <key>NSAllowsArbitraryLoadsInWebContent</key>
-    <true/>
+	<key>NSAllowsArbitraryLoads</key>
+	<true/>
+	<key>NSAllowsArbitraryLoadsInWebContent</key>
+	<true/>
 </dict>
 """
 
 	var _plugin_name = PLUGIN_NAME
+	var _export_config: AdmobIosExportConfig
+	var _export_path: String
 
 
 	func _supports_platform(platform: EditorExportPlatform) -> bool:
-		if platform is EditorExportPlatformIOS:
-			return true
-		return false
+		return platform is EditorExportPlatformIOS
 
 
 	func _get_name() -> String:
@@ -313,27 +130,134 @@ class IosExportPlugin extends EditorExportPlugin:
 
 
 	func _export_begin(features: PackedStringArray, is_debug: bool, path: String, flags: int) -> void:
-		var __export_config = AdmobIosExportConfig.new()
-		if not __export_config.export_config_file_exists() or __export_config.load_export_config_from_file() != OK:
-			__export_config.load_export_config_from_node()
+		if _supports_platform(get_export_platform()):
+			_export_path = path.simplify_path()
+			_export_config = AdmobIosExportConfig.new()
+			if not _export_config.export_config_file_exists() or _export_config.load_export_config_from_file() != OK:
+				_export_config.load_export_config_from_node()
 
-		add_ios_plist_content("<key>GADApplicationIdentifier</key>")
-		add_ios_plist_content("\t<string>%s</string>" % (__export_config.real_application_id if __export_config.is_real else __export_config.debug_application_id))
+			add_apple_embedded_platform_plist_content("<key>GADApplicationIdentifier</key>")
+			add_apple_embedded_platform_plist_content("\t<string>%s</string>" % (_export_config.real_application_id if _export_config.is_real else _export_config.debug_application_id))
 
-		if __export_config.att_enabled and __export_config.att_text and not __export_config.att_text.is_empty():
-			add_ios_plist_content("<key>NSUserTrackingUsageDescription</key>")
-			add_ios_plist_content("<string>%s</string>" % __export_config.att_text)
+			if _export_config.att_enabled and _export_config.att_text and not _export_config.att_text.is_empty():
+				add_apple_embedded_platform_plist_content("<key>NSUserTrackingUsageDescription</key>")
+				add_apple_embedded_platform_plist_content("<string>%s</string>" % _export_config.att_text)
 
-		add_ios_plist_content("\t<key>SKAdNetworkItems</key>")
-		add_ios_plist_content("%s" % SK_AD_NETWORK_ITEMS)
+			add_apple_embedded_platform_plist_content(MediationNetwork.generate_sk_ad_network_plist(_export_config.enabled_mediation_networks))
 
-		add_ios_plist_content(NS_APP_TRANSPORT_SECURITY)
+			add_apple_embedded_platform_plist_content(NS_APP_TRANSPORT_SECURITY)
 
-		for __framework in IOS_FRAMEWORKS:
-			add_ios_framework(__framework)
+			for __framework in IOS_FRAMEWORKS:
+				add_apple_embedded_platform_framework(__framework)
 
-		for __framework in IOS_EMBEDDED_FRAMEWORKS:
-			add_ios_embedded_framework(__framework)
+			for __framework in IOS_EMBEDDED_FRAMEWORKS:
+				add_apple_embedded_platform_embedded_framework(__framework)
 
-		for __flag in IOS_LINKER_FLAGS:
-			add_ios_linker_flags(__flag)
+			for __flag in IOS_LINKER_FLAGS:
+				add_apple_embedded_platform_linker_flags(__flag)
+
+
+	func _export_end() -> void:
+		if _supports_platform(get_export_platform()):
+			_install_mediation_dependencies(_export_path.get_base_dir(), _export_path.get_file().get_basename())
+
+
+	func _install_mediation_dependencies(a_base_dir: String, a_project_name: String) -> void:
+		if _export_config.enabled_mediation_networks.size() > 0:
+			if _generate_podfile(a_base_dir, a_project_name) == Error.OK:
+				var __script_path = a_base_dir.path_join("setup_pods.sh")
+				if _generate_setup_script(__script_path, a_project_name) == Error.OK:
+					if OS.has_feature("macos"):
+						Admob.log_info("Detected macOS: Auto-running pod install...")
+
+						# Step 1: Make executable
+						var chmod_output: Array = []
+						var chmod_code = OS.execute("chmod", ["+x", __script_path], chmod_output, true, false)
+						if chmod_code != 0:
+							Admob.log_error("Failed to chmod script: %s" % (chmod_output if chmod_output.size() > 0 else "Unknown error"))
+							Admob.log_warn("Run manually: cd %s && ./setup_pods.sh" % a_base_dir)
+							return
+
+						# Step 2: Execute the script (blocking; captures output)
+						var exec_output: Array = []
+						var exec_code = OS.execute(__script_path, [], exec_output, true, false)
+
+						if exec_code == 0:
+							Admob.log_info("Pod install completed successfully!")
+							for line in exec_output:
+								Admob.log_info("Pods: %s" % line)
+						else:
+							Admob.log_error("Pod install failed (exit code %d)" % exec_code)
+							for line in exec_output:
+								Admob.log_error("Pods: %s" % line)
+							Admob.log_warn("Check CocoaPods installation and try manually: cd %s && ./setup_pods.sh" % a_base_dir)
+					else:
+						# Non-macOS: Instructions only
+						Admob.log_warn("Non-macOS detected (OS: %s). Manual setup required:" % OS.get_name())
+						Admob.log_warn("1. Ensure CocoaPods is installed (run 'gem install cocoapods' on macOS/Linux).")
+						Admob.log_warn("2. In terminal: cd '%s'" % a_base_dir)
+						Admob.log_warn("3. Run: ./setup_pods.sh")
+						Admob.log_warn("4. Open '%s.xcworkspace' in Xcode." % a_project_name)
+			else:
+				Admob.log_error("Failed to generate podfile!")
+		else:
+			Admob.log_info("No mediation enabled; skipping Podfile and setup.")
+
+
+	func _generate_podfile(a_project_dir: String, a_project_name: String) -> Error:
+		var __result = Error.OK
+		var __podfile_path = a_project_dir.path_join("Podfile")
+		
+		# Generate Podfile content
+		var __pod_content = """
+source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
+
+project '%s.xcodeproj'
+
+target '%s' do
+  platform :ios, '%s'
+
+%s
+end
+""" % [a_project_name, a_project_name, IOS_PLATFORM_VERSION, MediationNetwork.generate_pod_list(_export_config.enabled_mediation_networks)]
+
+		# Write Podfile
+		var __pod_file = FileAccess.open(__podfile_path, FileAccess.WRITE)
+		if __pod_file:
+			__pod_file.store_string(__pod_content)
+			__pod_file.close()
+			Admob.log_info("Generated %s for target '%s' with mediation: %s" % [__podfile_path, a_project_name,
+					MediationNetwork.generate_tag_list(_export_config.enabled_mediation_networks)])
+			Admob.log_info("Podfile content:\n%s" % __pod_content)
+		else:
+			Admob.log_error("Failed to write Podfile: %s" % __podfile_path)
+			__result = Error.ERR_FILE_CANT_WRITE
+
+		return __result
+
+
+	func _generate_setup_script(a_script_path: String, a_project_name: String) -> Error:
+		var __result: Error = Error.OK
+
+		var __script_content = """#!/bin/bash
+set -e  # Exit on error
+
+cd "$(dirname "$0")"  # Change to project dir
+echo "Setting up CocoaPods for mediation..."
+pod install --repo-update
+
+echo "Setup complete! Open '%s.xcworkspace' in Xcode (not .xcodeproj)."
+""" % a_project_name
+
+		var __script_file = FileAccess.open(a_script_path, FileAccess.WRITE)
+		if __script_file:
+			__script_file.store_string(__script_content)
+			__script_file.close()
+			Admob.log_info("Generated setup script: %s" % a_script_path)
+			Admob.log_info("Setup script content:\n%s" % __script_content)
+		else:
+			Admob.log_error("Failed to write setup script: %s" % a_script_path)
+			__result = Error.ERR_FILE_CANT_WRITE
+
+		return __result
