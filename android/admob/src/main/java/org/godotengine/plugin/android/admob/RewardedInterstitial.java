@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
@@ -20,7 +21,7 @@ import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoa
 import org.godotengine.plugin.android.admob.model.LoadAdRequest;
 
 interface RewardedInterstitialListener {
-	void onRewardedInterstitialLoaded(String adId);
+	void onRewardedInterstitialLoaded(String adId, ResponseInfo responseInfo);
 	void onRewardedInterstitialFailedToLoad(String adId, LoadAdError loadAdError);
 	void onRewardedInterstitialOpened(String adId);
 	void onRewardedInterstitialFailedToShow(String adId, AdError adError);
@@ -60,7 +61,7 @@ public class RewardedInterstitial {
 					super.onAdLoaded(rewardedAd);
 					setAd(rewardedAd);
 					Log.i(LOG_TAG, "rewarded interstitial ad loaded");
-					listener.onRewardedInterstitialLoaded(RewardedInterstitial.this.adId);
+					listener.onRewardedInterstitialLoaded(RewardedInterstitial.this.adId, rewardedAd.getResponseInfo());
 				}
 
 				@Override

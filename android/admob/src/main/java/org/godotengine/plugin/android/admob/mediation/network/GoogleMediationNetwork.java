@@ -12,7 +12,8 @@ import org.godotengine.plugin.android.admob.mediation.network.MediationNetwork;
 public class GoogleMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "google";
-	static final String ADAPTER_CLASS = "com.google.android.gms.ads.MobileAds";
+	static final String INIT_CLASS = "com.google.android.gms.ads.MobileAds";
+	static final String ADAPTER_CLASS = "com.google.ads.mediation.admob.AdMobAdapter";
 
 	public GoogleMediationNetwork() {
 		super(TAG);

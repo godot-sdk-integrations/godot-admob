@@ -23,12 +23,17 @@ import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.ump.ConsentForm;
 import com.google.android.ump.ConsentInformation;
 import com.google.android.ump.UserMessagingPlatform;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.godotengine.godot.Dictionary;
 import org.godotengine.godot.Godot;
@@ -38,13 +43,10 @@ import org.godotengine.godot.plugin.UsedByGodot;
 
 import org.godotengine.plugin.android.admob.mediation.PrivacySettings;
 import org.godotengine.plugin.android.admob.model.AdmobConfiguration;
+import org.godotengine.plugin.android.admob.model.AdmobResponse;
 import org.godotengine.plugin.android.admob.model.AdmobStatus;
 import org.godotengine.plugin.android.admob.model.ConsentConfiguration;
 import org.godotengine.plugin.android.admob.model.LoadAdRequest;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 public class AdmobPlugin extends GodotPlugin {
 	public static final String CLASS_NAME = AdmobPlugin.class.getSimpleName();
@@ -158,24 +160,24 @@ public class AdmobPlugin extends GodotPlugin {
 
 		signals.add(new SignalInfo(SIGNAL_INITIALIZATION_COMPLETED, Dictionary.class));
 
-		signals.add(new SignalInfo(SIGNAL_BANNER_AD_LOADED, String.class));
+		signals.add(new SignalInfo(SIGNAL_BANNER_AD_LOADED, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_BANNER_AD_REFRESHED, String.class));
+		signals.add(new SignalInfo(SIGNAL_BANNER_AD_REFRESHED, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_IMPRESSION, String.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_CLICKED, String.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_OPENED, String.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_CLOSED, String.class));
 
-		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_LOADED, String.class));
+		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_LOADED, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_REFRESHED, String.class));
+		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_REFRESHED, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_IMPRESSION, String.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_CLICKED, String.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, String.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, String.class));
 
-		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_LOADED, String.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_LOADED, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_IMPRESSION, String.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_CLICKED, String.class));
@@ -184,7 +186,7 @@ public class AdmobPlugin extends GodotPlugin {
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT, String.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_USER_EARNED_REWARD, String.class, Dictionary.class));
 
-		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, String.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_IMPRESSION, String.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_CLICKED, String.class));
@@ -193,7 +195,7 @@ public class AdmobPlugin extends GodotPlugin {
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, String.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD, String.class, Dictionary.class));
 
-		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_LOADED, String.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_LOADED, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_IMPRESSION, String.class));
 		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_CLICKED, String.class));
@@ -287,14 +289,14 @@ public class AdmobPlugin extends GodotPlugin {
 				Banner banner = new Banner(adId, loadAdRequest, activity, layout,
 						new BannerListener() {
 							@Override
-							public void onAdLoaded(String adId) {
-								emitSignal(SIGNAL_BANNER_AD_LOADED, adId);
+							public void onAdLoaded(String adId, ResponseInfo responseInfo) {
+								emitSignal(SIGNAL_BANNER_AD_LOADED, adId, new AdmobResponse(responseInfo).buildRawData());
 							}
 
 							@Override
-							public void onAdRefreshed(String adId) {
+							public void onAdRefreshed(String adId, ResponseInfo responseInfo) {
 								Log.d(LOG_TAG, String.format("onAdRefreshed(%s) banner", adId));
-								emitSignal(SIGNAL_BANNER_AD_REFRESHED, adId);
+								emitSignal(SIGNAL_BANNER_AD_REFRESHED, adId, new AdmobResponse(responseInfo).buildRawData());
 							}
 
 							@Override
@@ -444,13 +446,13 @@ public class AdmobPlugin extends GodotPlugin {
 
 				Interstitial ad = new Interstitial(adId, loadAdRequest, activity, new InterstitialListener() {
 					@Override
-					public void onInterstitialLoaded(String adId) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_LOADED, adId);
+					public void onInterstitialLoaded(String adId, ResponseInfo responseInfo) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_LOADED, adId, new AdmobResponse(responseInfo).buildRawData());
 					}
 
 					@Override
-					public void onInterstitialReloaded(String adId) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_REFRESHED, adId);
+					public void onInterstitialReloaded(String adId, ResponseInfo responseInfo) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_REFRESHED, adId, new AdmobResponse(responseInfo).buildRawData());
 					}
 
 					@Override
@@ -530,8 +532,8 @@ public class AdmobPlugin extends GodotPlugin {
 
 				RewardedVideo ad = new RewardedVideo(adId, loadAdRequest, activity, new RewardedVideoListener() {
 					@Override
-					public void onRewardedVideoLoaded(String adId) {
-						emitSignal(SIGNAL_REWARDED_AD_LOADED, adId);
+					public void onRewardedVideoLoaded(String adId, ResponseInfo responseInfo) {
+						emitSignal(SIGNAL_REWARDED_AD_LOADED, adId, new AdmobResponse(responseInfo).buildRawData());
 					}
 
 					@Override
@@ -616,8 +618,8 @@ public class AdmobPlugin extends GodotPlugin {
 
 				RewardedInterstitial ad = new RewardedInterstitial(adId, loadAdRequest, activity, new RewardedInterstitialListener() {
 					@Override
-					public void onRewardedInterstitialLoaded(String adId) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, adId);
+					public void onRewardedInterstitialLoaded(String adId, ResponseInfo responseInfo) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, adId, new AdmobResponse(responseInfo).buildRawData());
 					}
 
 					@Override

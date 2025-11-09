@@ -7,10 +7,15 @@
 @implementation GoogleMediationNetwork
 
 static NSString *const _TAG = @"google";
-static NSString *const _ADAPTER_CLASS = @"GADMobileAds";
+static NSString *const _INIT_CLASS = @"GADMobileAds";
+static NSString *const _ADAPTER_CLASS = @"GADMAdapterGoogleAdMobAds";
 
 + (NSString *)TAG {
 	return _TAG;
+}
+
++ (NSString *)INIT_CLASS {
+	return _INIT_CLASS;
 }
 
 + (NSString *)ADAPTER_CLASS {

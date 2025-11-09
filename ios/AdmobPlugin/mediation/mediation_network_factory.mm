@@ -68,6 +68,7 @@ static NSString *const LOG_TAG = @"godot::AdmobPlugin::MediationNetworkFactory";
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		adapterMap = @{
+			GoogleMediationNetwork.INIT_CLASS: GoogleMediationNetwork.TAG,
 			GoogleMediationNetwork.ADAPTER_CLASS: GoogleMediationNetwork.TAG,
 			ApplovinMediationNetwork.ADAPTER_CLASS: ApplovinMediationNetwork.TAG,
 			ChartboostMediationNetwork.ADAPTER_CLASS: ChartboostMediationNetwork.TAG,

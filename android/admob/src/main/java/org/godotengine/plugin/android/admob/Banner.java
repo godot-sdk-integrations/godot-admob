@@ -17,14 +17,15 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.LoadAdError;
 
 import org.godotengine.plugin.android.admob.model.LoadAdRequest;
 
 
 interface BannerListener {
-	void onAdLoaded(String adId);
-	void onAdRefreshed(String adId);
+	void onAdLoaded(String adId, ResponseInfo responseInfo);
+	void onAdRefreshed(String adId, ResponseInfo responseInfo);
 	void onAdFailedToLoad(String adId, LoadAdError loadAdError);
 	void onAdImpression(String adId);
 	void onAdClicked(String adId);
@@ -106,10 +107,10 @@ public class Banner {
 			public void onAdLoaded() {
 				if (Banner.this.firstLoad) {
 					Banner.this.firstLoad = false;
-					listener.onAdLoaded(Banner.this.adId);
+					listener.onAdLoaded(Banner.this.adId, Banner.this.adView.getResponseInfo());
 				}
 				else {
-					listener.onAdRefreshed(Banner.this.adId);
+					listener.onAdRefreshed(Banner.this.adId, Banner.this.adView.getResponseInfo());
 				}
 			}
 

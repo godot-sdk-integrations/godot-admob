@@ -6,6 +6,7 @@
 
 #import "os_ios.h"
 #import "admob_plugin_implementation.h"
+#import "admob_response.h"
 #import "admob_logger.h"
 
 
@@ -48,7 +49,8 @@
 			}
 			
 			os_log_debug(admob_log, "RewardedAd %@ loaded successfully", self.adId);
-			AdmobPlugin::get_singleton()->emit_signal(REWARDED_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId]);
+			AdmobPlugin::get_singleton()->emit_signal(REWARDED_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
+					[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
 		}
 	}];
 }

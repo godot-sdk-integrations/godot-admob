@@ -41,10 +41,10 @@ public class MediationNetworkFactory {
 
 	static {
 		// Centralized registry of all MediationNetworks
+		NETWORK_FACTORY_MAP.put(GoogleMediationNetwork.TAG, GoogleMediationNetwork::new);
 		NETWORK_FACTORY_MAP.put(ApplovinMediationNetwork.TAG, ApplovinMediationNetwork::new);
 		NETWORK_FACTORY_MAP.put(ChartboostMediationNetwork.TAG, ChartboostMediationNetwork::new);
 		NETWORK_FACTORY_MAP.put(DtexchangeMediationNetwork.TAG, DtexchangeMediationNetwork::new);
-		NETWORK_FACTORY_MAP.put(GoogleMediationNetwork.TAG, GoogleMediationNetwork::new);
 		NETWORK_FACTORY_MAP.put(ImobileMediationNetwork.TAG, ImobileMediationNetwork::new);
 		NETWORK_FACTORY_MAP.put(InmobiMediationNetwork.TAG, InmobiMediationNetwork::new);
 		NETWORK_FACTORY_MAP.put(IronsourceMediationNetwork.TAG, IronsourceMediationNetwork::new);
@@ -63,10 +63,11 @@ public class MediationNetworkFactory {
 	private static final Map<String, String> ADAPTER_TO_TAG_MAP = new HashMap<>();
 
 	static {
+		ADAPTER_TO_TAG_MAP.put(GoogleMediationNetwork.INIT_CLASS, GoogleMediationNetwork.TAG);
+		ADAPTER_TO_TAG_MAP.put(GoogleMediationNetwork.ADAPTER_CLASS, GoogleMediationNetwork.TAG);
 		ADAPTER_TO_TAG_MAP.put(ApplovinMediationNetwork.ADAPTER_CLASS, ApplovinMediationNetwork.TAG);
 		ADAPTER_TO_TAG_MAP.put(ChartboostMediationNetwork.ADAPTER_CLASS, ChartboostMediationNetwork.TAG);
 		ADAPTER_TO_TAG_MAP.put(DtexchangeMediationNetwork.ADAPTER_CLASS, DtexchangeMediationNetwork.TAG);
-		ADAPTER_TO_TAG_MAP.put(GoogleMediationNetwork.ADAPTER_CLASS, GoogleMediationNetwork.TAG);
 		ADAPTER_TO_TAG_MAP.put(ImobileMediationNetwork.ADAPTER_CLASS, ImobileMediationNetwork.TAG);
 		ADAPTER_TO_TAG_MAP.put(InmobiMediationNetwork.ADAPTER_CLASS, InmobiMediationNetwork.TAG);
 		ADAPTER_TO_TAG_MAP.put(IronsourceMediationNetwork.ADAPTER_CLASS, IronsourceMediationNetwork.TAG);

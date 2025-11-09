@@ -20,6 +20,7 @@ import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback;
 
 import java.util.Date;
 
+import org.godotengine.plugin.android.admob.model.AdmobResponse;
 import org.godotengine.plugin.android.admob.model.LoadAdRequest;
 
 
@@ -76,7 +77,8 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 						appOpenAd = ad;
 						isLoadingAd = false;
 						loadTime = (new Date()).getTime();
-						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_LOADED, ad.getAdUnitId());
+						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_LOADED, ad.getAdUnitId(),
+								new AdmobResponse(ad.getResponseInfo()).buildRawData());
 					}
 
 					@Override

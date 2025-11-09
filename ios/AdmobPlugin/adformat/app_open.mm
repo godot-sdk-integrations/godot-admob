@@ -5,6 +5,7 @@
 #import "app_open.h"
 
 #import "admob_plugin_implementation.h"
+#import "admob_response.h"
 #import "admob_logger.h"
 #import "gap_converter.h"
 
@@ -43,7 +44,8 @@
 				self.loadedAd.fullScreenContentDelegate = self;
 				self.loadTime = [[NSDate date] timeIntervalSince1970];
 				os_log_debug(admob_log, "App open ad loaded: %@", self.adUnitId);
-				self.plugin->emit_signal(APP_OPEN_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adUnitId]);
+				self.plugin->emit_signal(APP_OPEN_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adUnitId],
+						[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
 			}
 		}];
 	}

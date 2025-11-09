@@ -6,22 +6,22 @@
 class_name Admob extends Node
 
 signal initialization_completed(status_data: InitializationStatus)
-signal banner_ad_loaded(ad_id: String)
+signal banner_ad_loaded(ad_id: String, response_info: ResponseInfo)
 signal banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError)
-signal banner_ad_refreshed(ad_id: String)
+signal banner_ad_refreshed(ad_id: String, response_info: ResponseInfo)
 signal banner_ad_clicked(ad_id: String)
 signal banner_ad_impression(ad_id: String)
 signal banner_ad_opened(ad_id: String)
 signal banner_ad_closed(ad_id: String)
-signal interstitial_ad_loaded(ad_id: String)
+signal interstitial_ad_loaded(ad_id: String, response_info: ResponseInfo)
 signal interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError)
-signal interstitial_ad_refreshed(ad_id: String)
+signal interstitial_ad_refreshed(ad_id: String, response_info: ResponseInfo)
 signal interstitial_ad_impression(ad_id: String)
 signal interstitial_ad_clicked(ad_id: String)
 signal interstitial_ad_showed_full_screen_content(ad_id: String)
 signal interstitial_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)
 signal interstitial_ad_dismissed_full_screen_content(ad_id: String)
-signal rewarded_ad_loaded(ad_id: String)
+signal rewarded_ad_loaded(ad_id: String, response_info: ResponseInfo)
 signal rewarded_ad_failed_to_load(ad_id: String, error_data: LoadAdError)
 signal rewarded_ad_impression(ad_id: String)
 signal rewarded_ad_clicked(ad_id: String)
@@ -29,7 +29,7 @@ signal rewarded_ad_showed_full_screen_content(ad_id: String)
 signal rewarded_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)
 signal rewarded_ad_dismissed_full_screen_content(ad_id: String)
 signal rewarded_ad_user_earned_reward(ad_id: String, reward_data: RewardItem)
-signal rewarded_interstitial_ad_loaded(ad_id: String)
+signal rewarded_interstitial_ad_loaded(ad_id: String, response_info: ResponseInfo)
 signal rewarded_interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError)
 signal rewarded_interstitial_ad_impression(ad_id: String)
 signal rewarded_interstitial_ad_clicked(ad_id: String)
@@ -37,7 +37,7 @@ signal rewarded_interstitial_ad_showed_full_screen_content(ad_id: String)
 signal rewarded_interstitial_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)
 signal rewarded_interstitial_ad_dismissed_full_screen_content(ad_id: String)
 signal rewarded_interstitial_ad_user_earned_reward(ad_id: String, reward_data: RewardItem)
-signal app_open_ad_loaded(ad_id: String)
+signal app_open_ad_loaded(ad_id: String, response_info: ResponseInfo)
 signal app_open_ad_failed_to_load(ad_id: String, error_data: LoadAdError)
 signal app_open_ad_impression(ad_id: String)
 signal app_open_ad_clicked(ad_id: String)
@@ -749,22 +749,22 @@ func _on_initialization_completed(status_data: Dictionary) -> void:
 	initialization_completed.emit(InitializationStatus.new(status_data))
 
 
-func _on_banner_ad_loaded(a_ad_id: String) -> void:
+func _on_banner_ad_loaded(a_ad_id: String, a_response_info: Dictionary) -> void:
 	_active_banner_ads.push_front(a_ad_id)
 	while _active_banner_ads.size() > max_banner_ad_cache:
 		Admob.log_warn("%s: banner_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
 					_active_banner_ads.size(), max_banner_ad_cache])
 		var removed_ad_id: String = _active_banner_ads.pop_back()
 		_plugin_singleton.remove_banner_ad(removed_ad_id)
-	banner_ad_loaded.emit(a_ad_id)
+	banner_ad_loaded.emit(a_ad_id, ResponseInfo.new(a_response_info))
 
 
 func _on_banner_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
 	banner_ad_failed_to_load.emit(a_ad_id, LoadAdError.new(error_data))
 
 
-func _on_banner_ad_refreshed(a_ad_id: String) -> void:
-	banner_ad_refreshed.emit(a_ad_id)
+func _on_banner_ad_refreshed(a_ad_id: String, a_response_info: Dictionary) -> void:
+	banner_ad_refreshed.emit(a_ad_id, ResponseInfo.new(a_response_info))
 
 
 func _on_banner_ad_impression(a_ad_id: String) -> void:
@@ -786,22 +786,22 @@ func _on_banner_ad_closed(a_ad_id: String) -> void:
 	banner_ad_closed.emit(a_ad_id)
 
 
-func _on_interstitial_ad_loaded(a_ad_id: String) -> void:
+func _on_interstitial_ad_loaded(a_ad_id: String, a_response_info: Dictionary) -> void:
 	_active_interstitial_ads.push_front(a_ad_id)
 	while _active_interstitial_ads.size() > max_interstitial_ad_cache:
 		Admob.log_warn("%s: interstitial_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
 					_active_interstitial_ads.size(), max_interstitial_ad_cache])
 		var removed_ad_id: String = _active_interstitial_ads.pop_back()
 		_plugin_singleton.remove_interstitial_ad(removed_ad_id)
-	interstitial_ad_loaded.emit(a_ad_id)
+	interstitial_ad_loaded.emit(a_ad_id, ResponseInfo.new(a_response_info))
 
 
 func _on_interstitial_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
 	interstitial_ad_failed_to_load.emit(a_ad_id, LoadAdError.new(error_data))
 
 
-func _on_interstitial_ad_refreshed(a_ad_id: String) -> void:
-	interstitial_ad_refreshed.emit(a_ad_id)
+func _on_interstitial_ad_refreshed(a_ad_id: String, a_response_info: Dictionary) -> void:
+	interstitial_ad_refreshed.emit(a_ad_id, ResponseInfo.new(a_response_info))
 
 
 func _on_interstitial_ad_impression(a_ad_id: String) -> void:
@@ -828,14 +828,14 @@ func _on_interstitial_ad_dismissed_full_screen_content(a_ad_id: String) -> void:
 	interstitial_ad_dismissed_full_screen_content.emit(a_ad_id)
 
 
-func _on_rewarded_ad_loaded(a_ad_id: String) -> void:
+func _on_rewarded_ad_loaded(a_ad_id: String, a_response_info: Dictionary) -> void:
 	_active_rewarded_ads.push_front(a_ad_id)
 	while _active_rewarded_ads.size() > max_rewarded_ad_cache:
 		Admob.log_warn("%s: rewarded_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
 					_active_rewarded_ads.size(), max_rewarded_ad_cache])
 		var removed_ad_id: String = _active_rewarded_ads.pop_back()
 		_plugin_singleton.remove_rewarded_ad(removed_ad_id)
-	rewarded_ad_loaded.emit(a_ad_id)
+	rewarded_ad_loaded.emit(a_ad_id, ResponseInfo.new(a_response_info))
 
 
 func _on_rewarded_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
@@ -869,14 +869,14 @@ func _on_rewarded_ad_user_earned_reward(a_ad_id: String, reward_data: Dictionary
 	rewarded_ad_user_earned_reward.emit(a_ad_id, RewardItem.new(reward_data))
 
 
-func _on_rewarded_interstitial_ad_loaded(a_ad_id: String) -> void:
+func _on_rewarded_interstitial_ad_loaded(a_ad_id: String, a_response_info: Dictionary) -> void:
 	_active_rewarded_interstitial_ads.push_front(a_ad_id)
 	while _active_rewarded_interstitial_ads.size() > max_rewarded_interstitial_ad_cache:
 		Admob.log_warn("%s: rewarded_interstitial_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
 					_active_rewarded_interstitial_ads.size(), max_rewarded_interstitial_ad_cache])
 		var removed_ad_id: String = _active_rewarded_interstitial_ads.pop_back()
 		_plugin_singleton.remove_rewarded_interstitial_ad(removed_ad_id)
-	rewarded_interstitial_ad_loaded.emit(a_ad_id)
+	rewarded_interstitial_ad_loaded.emit(a_ad_id, ResponseInfo.new(a_response_info))
 
 
 func _on_rewarded_interstitial_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
@@ -910,8 +910,8 @@ func _on_rewarded_interstitial_ad_user_earned_reward(a_ad_id: String, reward_dat
 	rewarded_interstitial_ad_user_earned_reward.emit(a_ad_id, RewardItem.new(reward_data))
 
 
-func _on_app_open_ad_loaded(a_ad_id: String) -> void:
-	app_open_ad_loaded.emit(a_ad_id)
+func _on_app_open_ad_loaded(a_ad_id: String, a_response_info: Dictionary) -> void:
+	app_open_ad_loaded.emit(a_ad_id, ResponseInfo.new(a_response_info))
 
 
 func _on_app_open_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:

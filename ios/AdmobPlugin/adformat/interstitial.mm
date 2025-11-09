@@ -6,6 +6,7 @@
 
 #import "os_apple_embedded.h"
 #import "admob_plugin_implementation.h"
+#import "admob_response.h"
 #import "admob_logger.h"
 
 
@@ -34,12 +35,14 @@
 
 			if (self.isLoaded) {
 				os_log_debug(admob_log, "InterstitialAd %@ refreshed", self.adId);
-				AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_REFRESHED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId]);
+				AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_REFRESHED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
+						[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
 			}
 			else {
 				self.isLoaded = YES;
 				os_log_debug(admob_log, "InterstitialAd %@ loaded successfully", self.adId);
-				AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId]);
+				AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
+						[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
 			}
 		}
 	}];

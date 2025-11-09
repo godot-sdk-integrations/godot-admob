@@ -86,9 +86,9 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_banner_width_in_pixels"), &AdmobPlugin::get_banner_width_in_pixels);
 	ClassDB::bind_method(D_METHOD("get_banner_height_in_pixels"), &AdmobPlugin::get_banner_height_in_pixels);
 
-	ADD_SIGNAL(MethodInfo(BANNER_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
-	ADD_SIGNAL(MethodInfo(BANNER_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_OPENED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
@@ -98,9 +98,9 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("show_interstitial_ad"), &AdmobPlugin::show_interstitial_ad);
 	ClassDB::bind_method(D_METHOD("remove_interstitial_ad"), &AdmobPlugin::remove_interstitial_ad);
 
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
@@ -111,7 +111,7 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("show_rewarded_ad"), &AdmobPlugin::show_rewarded_ad);
 	ClassDB::bind_method(D_METHOD("remove_rewarded_ad"), &AdmobPlugin::remove_rewarded_ad);
 
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
+	ADD_SIGNAL(MethodInfo(REWARDED_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(REWARDED_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
 	ADD_SIGNAL(MethodInfo(REWARDED_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(REWARDED_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
@@ -124,7 +124,7 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("show_rewarded_interstitial_ad"), &AdmobPlugin::show_rewarded_interstitial_ad);
 	ClassDB::bind_method(D_METHOD("remove_rewarded_interstitial_ad"), &AdmobPlugin::remove_rewarded_interstitial_ad);
 
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
@@ -137,7 +137,7 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("show_app_open_ad"), &AdmobPlugin::show_app_open_ad);
 	ClassDB::bind_method(D_METHOD("is_app_open_ad_available"), &AdmobPlugin::is_app_open_ad_available);
 
-	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id"), PropertyInfo(Variant::DICTIONARY, "error")));
 	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));
 	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));

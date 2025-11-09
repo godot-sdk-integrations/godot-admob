@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
@@ -21,7 +22,7 @@ import org.godotengine.plugin.android.admob.model.LoadAdRequest;
 
 
 interface RewardedVideoListener {
-	void onRewardedVideoLoaded(String adId);
+	void onRewardedVideoLoaded(String adId, ResponseInfo responseInfo);
 	void onRewardedVideoFailedToLoad(String adId, LoadAdError loadAdError);
 	void onRewardedVideoOpened(String adId);
 	void onRewardedVideoFailedToShow(String adId, AdError adError);
@@ -62,7 +63,7 @@ public class RewardedVideo {
 					super.onAdLoaded(rewardedAd);
 					setAd(rewardedAd);
 					Log.i(LOG_TAG, "rewarded video ad loaded");
-					listener.onRewardedVideoLoaded(RewardedVideo.this.adId);
+					listener.onRewardedVideoLoaded(RewardedVideo.this.adId, rewardedAd.getResponseInfo());
 				}
 
 				@Override

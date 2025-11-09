@@ -12,14 +12,15 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 
 import org.godotengine.plugin.android.admob.model.LoadAdRequest;
 
 interface InterstitialListener {
-	void onInterstitialLoaded(String adId);
-	void onInterstitialReloaded(String adId);
+	void onInterstitialLoaded(String adId, ResponseInfo responseInfo);
+	void onInterstitialReloaded(String adId, ResponseInfo responseInfo);
 	void onInterstitialFailedToLoad(String adId, LoadAdError loadAdError);
 	void onInterstitialFailedToShow(String adId, AdError adError);
 	void onInterstitialOpened(String adId);
@@ -61,11 +62,11 @@ public class Interstitial {
 					if (firstLoad) {
 						Log.i(LOG_TAG, "interstitial ad loaded");
 						firstLoad = false;
-						listener.onInterstitialLoaded(Interstitial.this.adId);
+						listener.onInterstitialLoaded(Interstitial.this.adId, interstitialAd.getResponseInfo());
 					}
 					else {
 						Log.i(LOG_TAG, "interstitial ad refreshed");
-						listener.onInterstitialReloaded(Interstitial.this.adId);
+						listener.onInterstitialReloaded(Interstitial.this.adId, interstitialAd.getResponseInfo());
 					}
 				}
 

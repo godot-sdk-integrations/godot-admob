@@ -13,6 +13,8 @@
 
 + (NSString *)TAG;
 
++ (NSString *)INIT_CLASS;
+
 + (NSString *)ADAPTER_CLASS;
 
 @end
