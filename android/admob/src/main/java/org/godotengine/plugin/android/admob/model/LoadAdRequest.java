@@ -26,7 +26,6 @@ public class LoadAdRequest {
 	private static final String REQUEST_AGENT_PROPERTY = "request_agent";
 	private static final String AD_SIZE_PROPERTY = "ad_size";
 	private static final String AD_POSITION_PROPERTY = "ad_position";
-	private static final String COLLAPSIBLE_PROPERTY = "collapsible";
 	private static final String COLLAPSIBLE_POSITION_PROPERTY = "collapsible_position";
 	private static final String KEYWORDS_PROPERTY = "keywords";
 	private static final String USER_ID_PROPERTY = "user_id";
@@ -34,6 +33,8 @@ public class LoadAdRequest {
 	private static final String NETWORK_EXTRAS_PROPERTY = "network_extras";
 	private static final String NETWORK_TAG_SUBPROPERTY = "network_tag";
 	private static final String EXTRAS_SUBPROPERTY = "extras";
+
+	private static final String COLLAPSIBLE_NETWORK_EXTRAS_KEY = "collapsible";
 
 	private static final String AD_ID_FORMAT = "%s-%d";
 
@@ -74,6 +75,16 @@ public class LoadAdRequest {
 	}
 
 
+	public boolean hasCollapsiblePosition() {
+		return _data.containsKey(COLLAPSIBLE_POSITION_PROPERTY);
+	}
+
+
+	public String getCollapsiblePosition() {
+		return (String) _data.get(COLLAPSIBLE_POSITION_PROPERTY);
+	}
+
+
 	public String generateAdId(int sequence) {
 		return String.format(AD_ID_FORMAT, this.getAdUnitId(), sequence);
 	}
@@ -95,21 +106,13 @@ public class LoadAdRequest {
 			}
 		}
 
-		if (_data.containsKey(COLLAPSIBLE_PROPERTY)) {
-			Boolean isCollapsible = (Boolean) _data.get(COLLAPSIBLE_PROPERTY);
-			if (Boolean.TRUE.equals(isCollapsible)) {
-				String collapsiblePosition = "top";
-				if (_data.containsKey(COLLAPSIBLE_POSITION_PROPERTY)) {
-					collapsiblePosition = (String) _data.get(COLLAPSIBLE_POSITION_PROPERTY);
-				}
-				else {
-					Log.w(LOG_TAG, "Warning: Collapsible position not specified.");
-				}
-				Log.d(LOG_TAG, "Loading collapsible banner (" + collapsiblePosition + ")");
-				Bundle extras = new Bundle();
-				extras.putString("collapsible", collapsiblePosition);
-				builder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
-			}
+		if (hasCollapsiblePosition()) {
+			String collapsiblePosition = getCollapsiblePosition();
+			Log.d(LOG_TAG, "Loading collapsible banner (" + collapsiblePosition + ")");
+
+			Bundle extras = new Bundle();
+			extras.putString(COLLAPSIBLE_NETWORK_EXTRAS_KEY, collapsiblePosition);
+			builder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
 		}
 
 		// Mediation support: AdRequest extras for specific networks (e.g., waterfall parameters).

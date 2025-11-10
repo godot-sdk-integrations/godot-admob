@@ -117,6 +117,18 @@ text = "Banner Size:"
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="CollapsiblePosHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer"]
+layout_mode = 2
+text = "Collapsible Position:"
+
+[node name="OptionButton" type="OptionButton" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="SizeButtonHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
 layout_mode = 2
 theme_override_constants/separation = 30
@@ -130,23 +142,6 @@ text = "Get Size"
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Get Size In Pixels"
-
-[node name="CollapsibleCheckButton" type="CheckButton" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
-layout_mode = 2
-text = "Collapsible Banner"
-
-[node name="CollapsiblePosHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
-visible = false
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="Label" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer"]
-layout_mode = 2
-text = "Collapsible Position:"
-
-[node name="OptionButton" type="OptionButton" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
 
 [node name="ButtonsHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
 layout_mode = 2
@@ -281,7 +276,6 @@ network_extras = Array[ExtResource("5_fos0i")]([SubResource("Resource_fos0i"), S
 
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/SizeButton" to="." method="_on_size_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/PixelSizeButton" to="." method="_on_pixel_size_button_pressed"]
-[connection signal="toggled" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsibleCheckButton" to="." method="_on_collapsible_check_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ShowBannerButton" to="." method="_on_show_banner_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/HideBannerButton" to="." method="_on_hide_banner_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ReloadBannerButton" to="." method="_on_reload_banner_button_pressed"]

@@ -78,8 +78,7 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export_category("Banner")
 @export var banner_position: LoadAdRequest.AdPosition = LoadAdRequest.AdPosition.TOP: set = set_banner_position
 @export var banner_size: LoadAdRequest.AdSize = LoadAdRequest.AdSize.BANNER: set = set_banner_size
-@export var banner_collapsible: bool = false: set = set_banner_collapsible
-@export var banner_collapsible_position: LoadAdRequest.CollapsiblePosition = LoadAdRequest.CollapsiblePosition.TOP: set = set_banner_collapsible_position
+@export var banner_collapsible_position: LoadAdRequest.CollapsiblePosition = LoadAdRequest.CollapsiblePosition.DISABLED: set = set_banner_collapsible_position
 
 @export_category("App Open")
 @export var auto_show_on_resume: bool = false: set = set_auto_show_on_resume
@@ -346,11 +345,10 @@ func set_banner_position(a_value: LoadAdRequest.AdPosition) -> void:
 func set_banner_size(a_value: LoadAdRequest.AdSize) -> void:
 	banner_size = a_value
 
-func set_banner_collapsible(a_value: bool) -> void:
-	banner_collapsible = a_value
 
 func set_banner_collapsible_position(a_value: LoadAdRequest.CollapsiblePosition) -> void:
 	banner_collapsible_position = a_value
+
 
 func set_auto_show_on_resume(a_value: bool) -> void:
 	auto_show_on_resume = a_value
@@ -405,7 +403,6 @@ func load_banner_ad(a_request: LoadAdRequest = null) -> void:
 					.set_ad_unit_id(_banner_id)
 					.set_ad_position(banner_position)
 					.set_ad_size(banner_size)
-					.set_collapsible(banner_collapsible)
 					.set_collapsible_position(banner_collapsible_position)
 					.set_request_agent(request_agent))
 			if is_mediation_enabled():
