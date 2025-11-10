@@ -170,17 +170,19 @@ func _on_reset_consent_button_pressed() -> void:
 	admob.reset_consent_info()
 
 
-func _on_admob_banner_ad_loaded(ad_id: String, response_info: ResponseInfo) -> void:
+func _on_admob_banner_ad_loaded(ad_id: String, response_info: ResponseInfo, is_collapsible: bool) -> void:
 	_is_banner_loaded = true
 	show_banner_button.disabled = false
 	reload_banner_button.disabled = false
-	_print_to_screen("banner loaded by %s network (%s) ad id: %s" %
-			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_id])
+	_print_to_screen("%sbanner loaded by %s network (%s) ad id: %s" %
+			["collapsible " if is_collapsible else "", response_info.get_network_tag(),
+			response_info.get_adapter_class_name(), ad_id])
 
 
-func _on_admob_banner_ad_refreshed(ad_id: String, response_info: ResponseInfo) -> void:
-	_print_to_screen("banner refreshed by %s network (%s) ad id: %s" %
-			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_id])
+func _on_admob_banner_ad_refreshed(ad_id: String, response_info: ResponseInfo, is_collapsible: bool) -> void:
+	_print_to_screen("%sbanner refreshed by %s network (%s) ad id: %s" %
+			["collapsible " if is_collapsible else "", response_info.get_network_tag(),
+			response_info.get_adapter_class_name(), ad_id])
 
 
 func _on_admob_banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError) -> void:
@@ -367,9 +369,11 @@ func _on_reload_rewarded_interstitial_button_pressed() -> void:
 	reload_rewarded_interstitial_button.disabled = true
 	admob.load_rewarded_interstitial_ad()
 
+
 func _on_collapsible_check_button_toggled(toggled_on: bool) -> void:
 	print(" ------- Collapsible button TOGGLED")
 	banner_collapsible_pos_hbox.visible = toggled_on
+
 
 func _print_to_screen(a_message: String, a_is_error: bool = false) -> void:
 	if a_is_error:

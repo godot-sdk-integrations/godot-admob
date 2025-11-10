@@ -6,9 +6,9 @@
 class_name Admob extends Node
 
 signal initialization_completed(status_data: InitializationStatus)
-signal banner_ad_loaded(ad_id: String, response_info: ResponseInfo)
+signal banner_ad_loaded(ad_id: String, response_info: ResponseInfo, is_collapsible: bool)
 signal banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError)
-signal banner_ad_refreshed(ad_id: String, response_info: ResponseInfo)
+signal banner_ad_refreshed(ad_id: String, response_info: ResponseInfo, is_collapsible: bool)
 signal banner_ad_clicked(ad_id: String)
 signal banner_ad_impression(ad_id: String)
 signal banner_ad_opened(ad_id: String)
@@ -758,22 +758,22 @@ func _on_initialization_completed(status_data: Dictionary) -> void:
 	initialization_completed.emit(InitializationStatus.new(status_data))
 
 
-func _on_banner_ad_loaded(a_ad_id: String, a_response_info: Dictionary) -> void:
+func _on_banner_ad_loaded(a_ad_id: String, a_response_info: Dictionary, a_is_collapsible: bool) -> void:
 	_active_banner_ads.push_front(a_ad_id)
 	while _active_banner_ads.size() > max_banner_ad_cache:
 		Admob.log_warn("%s: banner_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
 					_active_banner_ads.size(), max_banner_ad_cache])
 		var removed_ad_id: String = _active_banner_ads.pop_back()
 		_plugin_singleton.remove_banner_ad(removed_ad_id)
-	banner_ad_loaded.emit(a_ad_id, ResponseInfo.new(a_response_info))
+	banner_ad_loaded.emit(a_ad_id, ResponseInfo.new(a_response_info), a_is_collapsible)
 
 
 func _on_banner_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
 	banner_ad_failed_to_load.emit(a_ad_id, LoadAdError.new(error_data))
 
 
-func _on_banner_ad_refreshed(a_ad_id: String, a_response_info: Dictionary) -> void:
-	banner_ad_refreshed.emit(a_ad_id, ResponseInfo.new(a_response_info))
+func _on_banner_ad_refreshed(a_ad_id: String, a_response_info: Dictionary, a_is_collapsible: bool) -> void:
+	banner_ad_refreshed.emit(a_ad_id, ResponseInfo.new(a_response_info), a_is_collapsible)
 
 
 func _on_banner_ad_impression(a_ad_id: String) -> void:
@@ -814,7 +814,6 @@ func _on_interstitial_ad_refreshed(a_ad_id: String, a_response_info: Dictionary)
 
 func _on_interstitial_ad_impression(a_ad_id: String) -> void:
 	interstitial_ad_impression.emit(a_ad_id)
-
 
 
 func _on_interstitial_ad_clicked(a_ad_id: String) -> void:
