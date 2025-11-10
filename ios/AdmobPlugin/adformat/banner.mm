@@ -146,12 +146,14 @@
 	os_log_debug(admob_log, "BannerAd bannerViewDidReceiveAd %@", self.adId);
 	if (self.isLoaded) {
 		AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_REFRESHED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
-				[[[AdmobResponse alloc] initWithResponseInfo:bannerView.responseInfo] buildRawData]);
+				[[[AdmobResponse alloc] initWithResponseInfo:bannerView.responseInfo] buildRawData],
+				bannerView.isCollapsible);
 	}
 	else {
 		self.isLoaded = YES;
 		AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
-				[[[AdmobResponse alloc] initWithResponseInfo:bannerView.responseInfo] buildRawData]);
+				[[[AdmobResponse alloc] initWithResponseInfo:bannerView.responseInfo] buildRawData],
+				bannerView.isCollapsible);
 	}
 }
 

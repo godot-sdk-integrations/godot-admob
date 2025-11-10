@@ -15,12 +15,15 @@ const String AD_UNIT_ID_PROPERTY = "ad_unit_id";
 const String REQUEST_AGENT_PROPERTY = "request_agent";
 const String AD_SIZE_PROPERTY = "ad_size";
 const String AD_POSITION_PROPERTY = "ad_position";
+const String COLLAPSIBLE_POSITION_PROPERTY = "collapsible_position";
 const String KEYWORDS_PROPERTY = "keywords";
 const String USER_ID_PROPERTY = "user_id";
 const String CUSTOM_DATA_PROPERTY = "custom_data";
 const String NETWORK_EXTRAS_PROPERTY = "network_extras";
 const String NETWORK_TAG_SUBPROPERTY = "network_tag";
 const String EXTRAS_SUBPROPERTY = "extras";
+
+static NSString *const COLLAPSIBLE_NETWORK_EXTRAS_KEY = @"collapsible";
 
 static NSString *const METHOD_CALL_PREFIX = @"::";
 
@@ -50,6 +53,14 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 	return self.rawData.has(AD_POSITION_PROPERTY) ? [GAPConverter toNsString: (String) self.rawData[AD_POSITION_PROPERTY]] : @"";
 }
 
+- (BOOL) hasCollapsiblePosition {
+	return self.rawData.has(COLLAPSIBLE_POSITION_PROPERTY);
+}
+
+- (NSString*) collapsiblePosition {
+	return self.rawData.has(COLLAPSIBLE_POSITION_PROPERTY) ? [GAPConverter toNsString: (String) self.rawData[COLLAPSIBLE_POSITION_PROPERTY]] : @"";
+}
+
 - (NSArray*) keywords {
 	return self.rawData.has(KEYWORDS_PROPERTY) ? [GAPConverter toNsStringArray: (Array) self.rawData[KEYWORDS_PROPERTY]] : @[];
 }
@@ -72,6 +83,15 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 	if (![[self requestAgent] isEqualToString:@""]) {
 		request.requestAgent = [self requestAgent];
 		os_log_debug(admob_log, "Set request agent to: %@", [self requestAgent]);
+	}
+
+	request.keywords = [self keywords];
+
+	if ([self hasCollapsiblePosition]) {
+		GADExtras *extras = [[GADExtras alloc] init];
+		extras.additionalParameters = @{COLLAPSIBLE_NETWORK_EXTRAS_KEY : [self collapsiblePosition]};
+		os_log_debug(admob_log, "Set collapsible position to: %@", [self collapsiblePosition]);
+		[request registerAdNetworkExtras:extras];
 	}
 
 	// Mediation support: AdRequest extras for specific networks
@@ -156,8 +176,6 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 					NETWORK_TAG_SUBPROPERTY.utf8().get_data(), EXTRAS_SUBPROPERTY.utf8().get_data());
 		}
 	}
-
-	request.keywords = [self keywords];
 
 	return request;
 }
