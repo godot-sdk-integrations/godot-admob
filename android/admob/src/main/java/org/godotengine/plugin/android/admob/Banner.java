@@ -38,13 +38,6 @@ public class Banner {
 	private static final String CLASS_NAME = Banner.class.getSimpleName();
 	private static final String LOG_TAG = "godot::" + AdmobPlugin.CLASS_NAME + "::" + CLASS_NAME;
 
-	private static final String AD_SIZE_PROPERTY = "ad_size";
-	private static final String AD_POSITION_PROPERTY = "ad_position";
-	static final String REQUEST_AGENT_PROPERTY = "request_agent";
-	static final String KEYWORDS_PROPERTY = "keywords";
-	static final String COLLAPSIBLE_PROPERTY = "collapsible";
-	static final String COLLAPSIBLE_POSITION_PROPERTY = "collapsible_position";
-
 	enum BannerSize {
 		BANNER,
 		LARGE_BANNER,

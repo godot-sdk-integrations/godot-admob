@@ -7,6 +7,7 @@ package org.godotengine.plugin.android.admob.model;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.mediation.Adapter;
 
@@ -21,16 +22,18 @@ public class LoadAdRequest {
 	private static final String CLASS_NAME = LoadAdRequest.class.getSimpleName();
 	private static final String LOG_TAG = "godot::" + AdmobPlugin.CLASS_NAME + "::" + CLASS_NAME;
 
-	private static String AD_UNIT_ID_PROPERTY = "ad_unit_id";
-	private static String REQUEST_AGENT_PROPERTY = "request_agent";
-	private static String AD_SIZE_PROPERTY = "ad_size";
-	private static String AD_POSITION_PROPERTY = "ad_position";
-	private static String KEYWORDS_PROPERTY = "keywords";
-	private static String USER_ID_PROPERTY = "user_id";
-	private static String CUSTOM_DATA_PROPERTY = "custom_data";
-	private static String NETWORK_EXTRAS_PROPERTY = "network_extras";
-	private static String NETWORK_TAG_SUBPROPERTY = "network_tag";
-	private static String EXTRAS_SUBPROPERTY = "extras";
+	private static final String AD_UNIT_ID_PROPERTY = "ad_unit_id";
+	private static final String REQUEST_AGENT_PROPERTY = "request_agent";
+	private static final String AD_SIZE_PROPERTY = "ad_size";
+	private static final String AD_POSITION_PROPERTY = "ad_position";
+	private static final String COLLAPSIBLE_PROPERTY = "collapsible";
+	private static final String COLLAPSIBLE_POSITION_PROPERTY = "collapsible_position";
+	private static final String KEYWORDS_PROPERTY = "keywords";
+	private static final String USER_ID_PROPERTY = "user_id";
+	private static final String CUSTOM_DATA_PROPERTY = "custom_data";
+	private static final String NETWORK_EXTRAS_PROPERTY = "network_extras";
+	private static final String NETWORK_TAG_SUBPROPERTY = "network_tag";
+	private static final String EXTRAS_SUBPROPERTY = "extras";
 
 	private static final String AD_ID_FORMAT = "%s-%d";
 
@@ -83,6 +86,29 @@ public class LoadAdRequest {
 			String requestAgent = (String) _data.get(REQUEST_AGENT_PROPERTY);
 			if (requestAgent != null && !requestAgent.isEmpty()) {
 				builder.setRequestAgent(requestAgent);
+			}
+		}
+
+		if (_data.containsKey(KEYWORDS_PROPERTY)) {
+			for (Object keyword : (Object[]) _data.get(KEYWORDS_PROPERTY)) {
+				builder.addKeyword((String) keyword);
+			}
+		}
+
+		if (_data.containsKey(COLLAPSIBLE_PROPERTY)) {
+			Boolean isCollapsible = (Boolean) _data.get(COLLAPSIBLE_PROPERTY);
+			if (Boolean.TRUE.equals(isCollapsible)) {
+				String collapsiblePosition = "top";
+				if (_data.containsKey(COLLAPSIBLE_POSITION_PROPERTY)) {
+					collapsiblePosition = (String) _data.get(COLLAPSIBLE_POSITION_PROPERTY);
+				}
+				else {
+					Log.w(LOG_TAG, "Warning: Collapsible position not specified.");
+				}
+				Log.d(LOG_TAG, "Loading collapsible banner (" + collapsiblePosition + ")");
+				Bundle extras = new Bundle();
+				extras.putString("collapsible", collapsiblePosition);
+				builder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
 			}
 		}
 
@@ -152,12 +178,6 @@ public class LoadAdRequest {
 				}
 			} else {
 				Log.w(LOG_TAG, "network_extras must be an Array of Dictionaries. Skipping.");
-			}
-		}
-
-		if (_data.containsKey(KEYWORDS_PROPERTY)) {
-			for (Object keyword : (Object[]) _data.get(KEYWORDS_PROPERTY)) {
-				builder.addKeyword((String) keyword);
 			}
 		}
 

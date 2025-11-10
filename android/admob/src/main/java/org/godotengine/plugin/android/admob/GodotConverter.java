@@ -6,16 +6,12 @@ package org.godotengine.plugin.android.admob;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 
-import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.initialization.AdapterStatus;
-import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
 import com.google.android.ump.FormError;
@@ -23,7 +19,6 @@ import com.google.android.ump.FormError;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
-import java.util.Map;
 
 import org.godotengine.godot.Dictionary;
 
@@ -80,76 +75,6 @@ public class GodotConverter {
 		dict.put("type", item.getType());
 
 		return dict;
-	}
-
-	public static RequestConfiguration createRequestConfiguration(Dictionary data, Activity activity) {
-		RequestConfiguration.Builder builder = MobileAds.getRequestConfiguration().toBuilder();
-
-		if (data.containsKey("max_ad_content_rating"))
-			builder.setMaxAdContentRating((String) data.get("max_ad_content_rating"));
-
-		if (data.containsKey("tag_for_child_directed_treatment"))
-			builder.setTagForChildDirectedTreatment((int) data.get("tag_for_child_directed_treatment"));
-
-		if (data.containsKey("tag_for_under_age_of_consent"))
-			builder.setTagForUnderAgeOfConsent((int) data.get("tag_for_under_age_of_consent"));
-
-		if (data.containsKey("personalization_state"))
-			builder.setPublisherPrivacyPersonalizationState(getPublisherPrivacyPersonalizationState((int) data.get("personalization_state")));
-
-		ArrayList<String> testDeviceIds = new ArrayList<>();
-		if (data.containsKey("test_device_ids"))
-			testDeviceIds.addAll(Arrays.asList((String[]) data.get("test_device_ids")));
-
-		if (data.containsKey("is_real")) {
-			if ((boolean) data.get("is_real") == false) {
-				testDeviceIds.add(AdRequest.DEVICE_ID_EMULATOR);
-				testDeviceIds.add(getAdMobDeviceId(activity));
-			}
-		}
-
-		if (testDeviceIds.isEmpty() == false)
-			builder.setTestDeviceIds(testDeviceIds);
-
-		return builder.build();
-	}
-
-	public static AdRequest createAdRequest(Dictionary data) {
-		AdRequest.Builder builder = new AdRequest.Builder();
-
-		if (data.containsKey(Banner.REQUEST_AGENT_PROPERTY)) {
-			String requestAgent = (String) data.get(Banner.REQUEST_AGENT_PROPERTY);
-			if (requestAgent != null && !requestAgent.isEmpty()) {
-				builder.setRequestAgent(requestAgent);
-			}
-		}
-
-		// TODO: mediation support
-
-		if (data.containsKey(Banner.KEYWORDS_PROPERTY)) {
-			for (String keyword : (String[]) data.get(Banner.KEYWORDS_PROPERTY)) {
-				builder.addKeyword(keyword);
-			}
-		}
-
-		if (data.containsKey(Banner.COLLAPSIBLE_PROPERTY)) {
-			Boolean isCollapsible = (Boolean) data.get(Banner.COLLAPSIBLE_PROPERTY);
-			if (Boolean.TRUE.equals(isCollapsible)) {
-				String collapsiblePosition = "top";
-				if (data.containsKey(Banner.COLLAPSIBLE_POSITION_PROPERTY)) {
-					collapsiblePosition = (String) data.get(Banner.COLLAPSIBLE_POSITION_PROPERTY);
-				}
-				else {
-					Log.w(LOG_TAG, "Warning: Collapsible position not specified.");
-				}
-				Log.d(LOG_TAG, "Loading collapsible banner (" + collapsiblePosition + ")");
-				Bundle extras = new Bundle();
-				extras.putString("collapsible", collapsiblePosition);
-				builder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
-			}
-		}
-
-		return builder.build();
 	}
 
 	public static ServerSideVerificationOptions createSSVO(Dictionary data) {
