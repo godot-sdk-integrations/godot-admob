@@ -286,6 +286,7 @@ Admob Plugin makes the following ad networks available:
 - DT Exchange
 - i-mobile
 - InMobi
+- ironSource
 - Liftoff Monetize
 - LINE Ads Network
 - maio

@@ -5,21 +5,21 @@
 class_name MediationNetwork extends RefCounted
 
 enum Flag {
-	APPLOVIN =		1 << 0,		# 1
-	CHARTBOOST =	1 << 1,		# 2
-	DTEXCHANGE =	1 << 2,		# 4
-	IMOBILE =		1 << 3,		# 8
-	INMOBI =		1 << 4,		# 16
-	IRONSOURCE =	1 << 5,		# 32
-	LIFTOFF =		1 << 6,		# 64
-	LINE =			1 << 7,		# 128
-	MAIO =			1 << 8,		# 256
-	META =			1 << 9,		# 512
-	MINTEGRAL =		1 << 10,	# 1024
-	MOLOCO =		1 << 11,	# 2048
-	MYTARGET =		1 << 12,	# 4096
-	PANGLE =		1 << 13,	# 8192
-	UNITY =			1 << 14,	# 16384
+	APPLOVIN =		1 << 0,		## AppLovin
+	CHARTBOOST =	1 << 1,		## Chartboost
+	DTEXCHANGE =	1 << 2,		## DT Exchange (previously Fyber)
+	IMOBILE =		1 << 3,		## i-mobile
+	INMOBI =		1 << 4,		## InMobi
+	IRONSOURCE =	1 << 5,		## ironSource
+	LIFTOFF =		1 << 6,		## Liftoff Monetize (previously Vungle)
+	LINE =			1 << 7,		## LINE Ads Network
+	MAIO =			1 << 8,		## maio
+	META =			1 << 9,		## Meta Audience Network (previously Facebook)
+	MINTEGRAL =		1 << 10,	## Mintegral
+	MOLOCO =		1 << 11,	## Moloco
+	MYTARGET =		1 << 12,	## myTarget
+	PANGLE =		1 << 13,	## Pangle
+	UNITY =			1 << 14,	## Unity Ads
 }
 
 const FLAG_PROPERTY: String = "flag"

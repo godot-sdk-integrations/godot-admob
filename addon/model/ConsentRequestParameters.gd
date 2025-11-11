@@ -5,12 +5,12 @@
 class_name ConsentRequestParameters extends RefCounted
 
 enum DebugGeography {
-	NOT_SET = -1,
-	DISABLED = 0,
-	EEA = 1,
-	NOT_EEA = 2, # deprecated
-	REGULATED_US_STATE = 3,
-	OTHER = 4
+	NOT_SET = -1, ## Don't specify location. (Actual location will be used.)
+	DISABLED = 0, ## Use actual location.
+	EEA = 1, ## Use European Economic Area.
+	NOT_EEA = 2, ## Deprecated.
+	REGULATED_US_STATE = 3, ## Use a regulated state of USA. (ie. California)
+	OTHER = 4 ## Use any non-regulated location.
 }
 
 const IS_REAL_PROPERTY: String = "is_real"

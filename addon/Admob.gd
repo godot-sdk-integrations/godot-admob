@@ -67,97 +67,205 @@ const IOS_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099
 const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/5575463023"
 
 @export_category("General")
+## The plugin will use real app and ad IDs if true; debug IDs will be used otherwise.
 @export var is_real: bool: set = set_is_real
+
+## Setting used by publishers in Google's advertising platforms to specify the maximum content maturity level for the ads allowed to be served in their apps.
 @export var max_ad_content_rating: AdmobConfig.ContentRating = AdmobConfig.ContentRating.G: set = set_max_ad_content_rating
+
+## TFCD is a parameter that publishers and app developers use to indicate to Google that their content should be treated as child-directed for the purposes of
+## the Children's Online Privacy Protection Act (COPPA). 
 @export var child_directed: AdmobConfig.TagForChildDirectedTreatment = AdmobConfig.TagForChildDirectedTreatment.UNSPECIFIED: set = set_child_directed
+
+## TFUA is a technical parameter to indicate that a user is under the digital age of consent in the European Economic Area (EEA), the UK, and Switzerland.
 @export var under_age_of_consent: AdmobConfig.TagForUnderAgeOfConsent = AdmobConfig.TagForUnderAgeOfConsent.UNSPECIFIED: set = set_under_age_of_consent
+
+## A configuration option that controls the use of first-party IDs for tracking user interactions.
 @export var first_party_id_enabled: bool = true: set = set_first_party_id_enabled
+
+## A parameter used to determine whether a user can receive personalized ads, non-personalized ads, or limited ads based on their consent choices.
 @export var personalization_state: AdmobConfig.PersonalizationState = AdmobConfig.PersonalizationState.DEFAULT: set = set_personalization_state
+
+## A string used to identify the origin of an ad request when a third-party library or platform is used to mediate requests to the Google Mobile Ads SDK.
 @export var request_agent: String = PLUGIN_SINGLETON_NAME: set = set_request_agent
 
+
 @export_category("Banner")
+## Part of the screen where the banner ad will be anchored at.
 @export var banner_position: LoadAdRequest.AdPosition = LoadAdRequest.AdPosition.TOP: set = set_banner_position
+
+## The size of the banner ad.
 @export var banner_size: LoadAdRequest.AdSize = LoadAdRequest.AdSize.BANNER: set = set_banner_size
+
+## If not set to disabled, then specifies the direction towards which the banner ad will collapse.
 @export var banner_collapsible_position: LoadAdRequest.CollapsiblePosition = LoadAdRequest.CollapsiblePosition.DISABLED: set = set_banner_collapsible_position
 
+
 @export_category("App Open")
+## Specifies whether app open ad will be displayed when users return the app to the foreground state.
 @export var auto_show_on_resume: bool = false: set = set_auto_show_on_resume
+
 
 @export_category("Android-specific")
 @export_group("Android Application IDs","android_")
+## Specifies the AdMob application ID used when testing the app on Android.
 @export var android_debug_application_id: String = ""
+
+## Specifies the AdMob application ID used after releasing the Android app to production.
 @export var android_real_application_id: String = ""
 
+
 @export_group("Android Debug Ad Unit IDs", "android_debug_")
+## Specifies the AdMob banner ad ID used when testing the app on Android.
 @export var android_debug_banner_id: String = ANDROID_BANNER_DEMO_AD_UNIT_ID
+
+## Specifies the AdMob interstitial ad ID used when testing the app on Android.
 @export var android_debug_interstitial_id: String = ANDROID_INTERSTITIAL_DEMO_AD_UNIT_ID
+
+## Specifies the AdMob rewarded ad ID used when testing the app on Android.
 @export var android_debug_rewarded_id: String = ANDROID_REWARDED_DEMO_AD_UNIT_ID
+
+## Specifies the AdMob rewarded-interstitial ad ID used when testing the app on Android.
 @export var android_debug_rewarded_interstitial_id: String = ANDROID_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID
+
+## Specifies the AdMob app open ad ID used when testing the app on Android.
 @export var android_debug_app_open_id: String = ANDROID_APP_OPEN_DEMO_AD_UNIT_ID
 
+
 @export_group("Android Real Ad Unit IDs", "android_real_")
+## Specifies the AdMob banner ad ID used after releasing the Android app to production.
 @export var android_real_banner_id: String = ""
+
+## Specifies the AdMob interstitial ad ID used after releasing the Android app to production.
 @export var android_real_interstitial_id: String = ""
+
+## Specifies the AdMob rewarded ad ID used after releasing the Android app to production.
 @export var android_real_rewarded_id: String = ""
+
+## Specifies the AdMob rewarded-interstitial ad ID used after releasing the Android app to production.
 @export var android_real_rewarded_interstitial_id: String = ""
+
+## Specifies the AdMob app open ad ID used after releasing the Android app to production.
 @export var android_real_app_open_id: String = ""
+
 
 @export_category("iOS-specific")
 @export_group("iOS Application IDs","ios_")
+## Specifies the AdMob application ID used when testing the app on iOS.
 @export var ios_debug_application_id: String = ""
+
+## Specifies the AdMob application ID used after releasing the iOS app to production.
 @export var ios_real_application_id: String = ""
 
+
 @export_group("iOS Debug Ad Unit IDs", "ios_debug_")
+## Specifies the AdMob banner ad ID used when testing the app on iOS.
 @export var ios_debug_banner_id: String = IOS_BANNER_DEMO_AD_UNIT_ID
+
+## Specifies the AdMob interstitial ad ID used when testing the app on iOS.
 @export var ios_debug_interstitial_id: String = IOS_INTERSTITIAL_DEMO_AD_UNIT_ID
+
+## Specifies the AdMob rewarded ad ID used when testing the app on iOS.
 @export var ios_debug_rewarded_id: String = IOS_REWARDED_DEMO_AD_UNIT_ID
+
+## Specifies the AdMob rewarded-interstitial ad ID used when testing the app on iOS.
 @export var ios_debug_rewarded_interstitial_id: String = IOS_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID
+
+## Specifies the AdMob app open ad ID used when testing the app on iOS.
 @export var ios_debug_app_open_id: String = IOS_APP_OPEN_DEMO_AD_UNIT_ID
 
+
 @export_group("iOS Real Ad Unit IDs", "ios_real_")
+## Specifies the AdMob banner ad ID used after releasing the iOS app to production.
 @export var ios_real_banner_id: String = ""
+
+## Specifies the AdMob interstitial ad ID used after releasing the iOS app to production.
 @export var ios_real_interstitial_id: String = ""
+
+## Specifies the AdMob rewarded ad ID used after releasing the iOS app to production.
 @export var ios_real_rewarded_id: String = ""
+
+## Specifies the AdMob rewarded-interstitial ad ID used after releasing the iOS app to production.
 @export var ios_real_rewarded_interstitial_id: String = ""
+
+## Specifies the AdMob app open ad ID used after releasing the iOS app to production.
 @export var ios_real_app_open_id: String = ""
+
 
 @export_category("Mediation")
 @export_group("Networks")
-@export_flags(" ") var enabled_networks = 0	# Networks populated in _validate_property()
+## List of ad networks whose SDKs will be attached to the exported app.
+@export_flags(" ") var enabled_networks = 0	# Networks populated in _validate_property() function
+
+
 @export_group("Network Extras")
+## Allows passing of additional, network-specific parameters from the app to an ad network's adapter during an ad request. 
 @export var network_extras: Array[NetworkExtras] = []
 
+
 @export_category("App Tracking Transparency")
+## Whether the iOS-specific App Tracking Transparency (ATT) work flow is enabled for the app.
 @export var att_enabled: bool = false:
 	get:
 		return att_enabled
 	set(value):
 		att_enabled = value
+
+## The iOS-specific custom message explaining why your app is requesting tracking permission, to be displayed within the App Tracking Transparency (ATT) dialog presented to the user.
 @export_multiline var att_text: String = "": set = set_att_text
+
 
 @export_category("Cache")
 @export_group("Limits")
+## Maximum number of banner ads to keep in the cache before removing old ads.
 @export_range(1,100) var max_banner_ad_cache: int = 3: set = set_max_banner_ad_cache
+
+## Maximum number of interstitial ads to keep in the cache before removing old ads.
 @export_range(1,100) var max_interstitial_ad_cache: int = 3: set = set_max_interstitial_ad_cache
+
+## Maximum number of rewarded ads to keep in the cache before removing old ads.
 @export_range(1,100) var max_rewarded_ad_cache: int = 3: set = set_max_rewarded_ad_cache
+
+## Maximum number of rewarded-interstitial ads to keep in the cache before removing old ads.
 @export_range(1,100) var max_rewarded_interstitial_ad_cache: int = 3: set = set_max_rewarded_interstitial_ad_cache
 
+
 @export_group("Cleanup After Ad Displayed")
+## Cleanup cached banner ads after they are displayed.
 @export var remove_banner_ads_after_displayed: bool = false
+
+## Cleanup cached interstitial ads after they are displayed. Interstitial ads are single-use.
 @export var remove_interstitial_ads_after_displayed: bool = true
+
+## Cleanup cached rewarded ads after they are displayed. Rewarded ads are single-use.
 @export var remove_rewarded_ads_after_displayed: bool = true
+
+## Cleanup cached rewarded-interstitial ads after they are displayed. Rewarded-interstitial ads are single-use.
 @export var remove_rewarded_interstitial_ads_after_displayed: bool = true
 
+
 @export_group("Cleanup After Scene Exit")
+## Cleanup cached banner ads when the Admob node is destroyed.
 @export var remove_banner_ads_after_scene: bool = true
+
+## Cleanup cached interstitial ads when the Admob node is destroyed.
 @export var remove_interstitial_ads_after_scene: bool = true
+
+## Cleanup cached rewarded ads when the Admob node is destroyed.
 @export var remove_rewarded_ads_after_scene: bool = true
+
+## Cleanup cached rewarded-interstitial ads when the Admob node is destroyed.
 @export var remove_rewarded_interstitial_ads_after_scene: bool = true
+
 
 @export_category("Debug")
 @export_group("Settings")
+## The user location used when testing the consent management functionality.
 @export var debug_geography: ConsentRequestParameters.DebugGeography = ConsentRequestParameters.DebugGeography.NOT_SET : set = set_debug_geography
+
+## Identifier of the test device will be sent to AdMob if set to true.
 @export var add_test_device_id: bool = false : set = set_add_test_device_id
+
 
 var _banner_id: String
 var _interstitial_id: String

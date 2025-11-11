@@ -5,28 +5,28 @@
 class_name AdmobConfig extends RefCounted
 
 enum ContentRating {
-	G,
-	PG,
-	T,
-	MA
+	G, ## G means "General Audiences" and is suitable for all ages, containing no objectionable material (minimal violence, no nudity or sex scenes, and no drug use).
+	PG, ## PG stands for "Parental Guidance Suggested," meaning that some material may not be suitable for young children (may include themes, language, or mild violence).
+	T, ## T means Teen, and indicates content suitable for ages 13 and older (can include violence, suggestive themes, crude humor, simulated gambling, and/or infrequent strong language).
+	MA ## MA stands for "Mature Audience", signifying that the material is intended for adults (may include graphic violence, strong language, or explicit sexual activity).
 }
 
 enum TagForChildDirectedTreatment {
-	UNSPECIFIED = -1,
-	FALSE = 0,
-	TRUE = 1
+	UNSPECIFIED = -1, ## Means that you have not provided a specific instruction for your app's content to be treated as child-directed for COPPA purposes.
+	FALSE = 0, ## Means you are indicating that your app's content is not child-directed for the purposes of the Children's Online Privacy Protection Act (COPPA).
+	TRUE = 1 ## Tells ad networks to treat ad requests as if the content is directed towards children, which is important for complying with regulations like COPPA.
 }
 
 enum TagForUnderAgeOfConsent {
-	UNSPECIFIED = -1,
-	FALSE = 0,
-	TRUE = 1
+	UNSPECIFIED = -1, ## Means you have not provided any information on whether the user is under the age of consent, so the system does not apply any specific treatment for these users based on this tag alone.
+	FALSE = 0, ## Indicates that you do not want the specific ad request to receive the special handling suitable for users under the age of consent in the EEA, the UK, and Switzerland.
+	TRUE = 1 ## Indicates that you want the ad request to be handled in a manner suitable for users under the age of consent within the EEA, the UK, and Switzerland.
 }
 
 enum PersonalizationState {
-	DEFAULT = 0,
-	ENABLED = 1,
-	DISABLED = 2
+	DEFAULT = 0, ## By default, the SDK will attempt to serve personalized ads based on the user's past behavior and interests.
+	ENABLED = 1, ## Indicates that the Google Mobile Ads SDK is authorized to serve ads that are tailored to the user based on past activity and collected data. 
+	DISABLED = 2 ## Means that ad requests are set to serve non-personalized ads (NPA) only. 
 }
 
 const DATA_KEY_IS_REAL: String = "is_real"

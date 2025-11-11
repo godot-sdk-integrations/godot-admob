@@ -9,7 +9,10 @@ const NETWORK_TAG_PROPERTY: String = "network_tag"
 const EXTRAS_PROPERTY: String = "extras"
 
 
+## Identifies the target ad network for the extras.
 @export var network_flag: MediationNetwork.Flag = MediationNetwork.Flag.APPLOVIN
+
+## Dictionary holding one or more extras. Only keys of type String are allowed. Values can be String, int, or bool.
 @export var extras: Dictionary
 
 
