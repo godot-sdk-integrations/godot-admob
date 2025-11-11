@@ -39,23 +39,26 @@ body:
       - 4.3.stable
       - 4.4.1.stable
       - 4.5.stable
+      - 4.5.1.stable
       - 4.x
       - Other
-    default: 1
+    default: 3
   validations:
     required: true
 - type: dropdown
   id: godot_os
   attributes:
     label: OS Godot Is Running On
-    description: What operating system is Godot running on?
+    description: What operating system is the Godot Editor running on?
     options:
       - Windows 11
       - Windows (other)
       - macOS 15
+      - macOS 26
       - macOS (other)
       - Android 14
       - Android 15
+      - Android 16
       - Android (other)
       - Other OS
     default: 0
@@ -67,28 +70,27 @@ body:
     label: Plugin Version
     description: What version of the plugin are you running?
     options:
-      - "3.0"
-      - "3.1"
-      - "3.2"
-      - "3.3"
-      - "4.0"
       - "5.0"
+      - "5.1"
+      - "5.2"
       - Other
-    default: 4
+    default: 2
   validations:
     required: true
 - type: dropdown
   id: plugin_os
   attributes:
     label: OS Plugin Is Running On
-    description: What operating system the plugin (and your app) is running on?
+    description: What operating system is the plugin (and your app) running on?
     options:
       - Android 13
       - Android 14
       - Android 15
+      - Android 16
       - Android (other)
       - iOS 18.x
       - iOS 18.5
+      - iOS 26.x
       - iOS (other)
     default: 2
   validations:
