@@ -26,12 +26,24 @@ enum AdSize {
 	FLUID
 }
 
+enum CollapsiblePosition {
+	DISABLED, ## The banner ad will not be collapsible.
+	TOP, ## The banner ad will be collapsible from bottom to top.
+	BOTTOM ## The banner ad will be collapsible from top to bottom.
+}
+
+const COLLAPSIBLE_POSITION_NAMES: Dictionary = {
+	CollapsiblePosition.TOP: "top",
+	CollapsiblePosition.BOTTOM: "bottom",
+}
+
 const DATA_KEY_AD_UNIT_ID = "ad_unit_id"
 const DATA_KEY_REQUEST_AGENT = "request_agent"
 const DATA_KEY_AD_SIZE = "ad_size"
 const DATA_KEY_AD_POSITION = "ad_position"
 const DATA_KEY_KEYWORDS = "keywords"
 const DATA_KEY_USER_ID = "user_id"
+const DATA_KEY_COLLAPSIBLE_POSITION = "collapsible_position"
 const DATA_KEY_CUSTOM_DATA = "custom_data"
 const DATA_KEY_NETWORK_EXTRAS = "network_extras"
 
@@ -80,6 +92,12 @@ func add_keyword(a_value: String) -> LoadAdRequest:
 
 func set_user_id(a_value: String) -> LoadAdRequest:
 	_data[DATA_KEY_USER_ID] = a_value
+	return self
+
+
+func set_collapsible_position(a_value: CollapsiblePosition) -> LoadAdRequest:
+	if a_value != CollapsiblePosition.DISABLED:
+		_data[DATA_KEY_COLLAPSIBLE_POSITION] =  COLLAPSIBLE_POSITION_NAMES[a_value]
 	return self
 
 

@@ -24,8 +24,8 @@ import org.godotengine.plugin.android.admob.model.LoadAdRequest;
 
 
 interface BannerListener {
-	void onAdLoaded(String adId, ResponseInfo responseInfo);
-	void onAdRefreshed(String adId, ResponseInfo responseInfo);
+	void onAdLoaded(String adId, ResponseInfo responseInfo, boolean isCollapsible);
+	void onAdRefreshed(String adId, ResponseInfo responseInfo, boolean isCollapsible);
 	void onAdFailedToLoad(String adId, LoadAdError loadAdError);
 	void onAdImpression(String adId);
 	void onAdClicked(String adId);
@@ -37,9 +37,6 @@ interface BannerListener {
 public class Banner {
 	private static final String CLASS_NAME = Banner.class.getSimpleName();
 	private static final String LOG_TAG = "godot::" + AdmobPlugin.CLASS_NAME + "::" + CLASS_NAME;
-
-	private static final String AD_SIZE_PROPERTY = "ad_size";
-	private static final String AD_POSITION_PROPERTY = "ad_position";
 
 	enum BannerSize {
 		BANNER,
@@ -107,10 +104,12 @@ public class Banner {
 			public void onAdLoaded() {
 				if (Banner.this.firstLoad) {
 					Banner.this.firstLoad = false;
-					listener.onAdLoaded(Banner.this.adId, Banner.this.adView.getResponseInfo());
+					listener.onAdLoaded(Banner.this.adId, Banner.this.adView.getResponseInfo(),
+							Banner.this.adView.isCollapsible());
 				}
 				else {
-					listener.onAdRefreshed(Banner.this.adId, Banner.this.adView.getResponseInfo());
+					listener.onAdRefreshed(Banner.this.adId, Banner.this.adView.getResponseInfo(),
+							Banner.this.adView.isCollapsible());
 				}
 			}
 

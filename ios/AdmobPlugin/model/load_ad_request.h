@@ -21,6 +21,8 @@
 - (NSString*) requestAgent;
 - (NSString*) adSize;
 - (NSString*) adPosition;
+- (BOOL) hasCollapsiblePosition;
+- (NSString*) collapsiblePosition;
 - (NSArray*) keywords;
 - (NSString*) userId;
 - (NSString*) customData;

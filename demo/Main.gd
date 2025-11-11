@@ -10,6 +10,7 @@ extends Node
 @onready var reload_banner_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ReloadBannerButton
 @onready var banner_position_option_button: OptionButton = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/PositionHBoxContainer/OptionButton
 @onready var banner_size_option_button: OptionButton = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeHBoxContainer/OptionButton
+@onready var banner_collapsible_pos_option_button: OptionButton = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer/OptionButton
 @onready var interstitial_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/InterstitialButton
 @onready var rewarded_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/RewardedButton
 @onready var rewarded_interstitial_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/RewardedInterstitialButton
@@ -50,6 +51,13 @@ func _ready() -> void:
 		banner_size_option_button.add_item(__item)
 		if __item.casecmp_to(LoadAdRequest.AdSize.keys()[admob.banner_size]) == 0:
 			banner_size_option_button.select(__index)
+		__index += 1
+	
+	__index = 0
+	for __item: String in LoadAdRequest.CollapsiblePosition.keys():
+		banner_collapsible_pos_option_button.add_item(__item)
+		if __item.casecmp_to(LoadAdRequest.CollapsiblePosition.keys()[admob.banner_collapsible_position]) == 0:
+			banner_collapsible_pos_option_button.select(__index)
 		__index += 1
 
 	admob.initialize()
@@ -118,6 +126,7 @@ func _on_reload_banner_button_pressed() -> void:
 	reload_banner_button.disabled = true
 	admob.banner_position = LoadAdRequest.AdPosition[banner_position_option_button.get_item_text(banner_position_option_button.selected)]
 	admob.banner_size = LoadAdRequest.AdSize[banner_size_option_button.get_item_text(banner_size_option_button.selected)]
+	admob.banner_collapsible_position = LoadAdRequest.CollapsiblePosition[banner_collapsible_pos_option_button.get_item_text(banner_collapsible_pos_option_button.selected)]
 	admob.load_banner_ad()
 
 
@@ -158,17 +167,19 @@ func _on_reset_consent_button_pressed() -> void:
 	admob.reset_consent_info()
 
 
-func _on_admob_banner_ad_loaded(ad_id: String, response_info: ResponseInfo) -> void:
+func _on_admob_banner_ad_loaded(ad_id: String, response_info: ResponseInfo, is_collapsible: bool) -> void:
 	_is_banner_loaded = true
 	show_banner_button.disabled = false
 	reload_banner_button.disabled = false
-	_print_to_screen("banner loaded by %s network (%s) ad id: %s" %
-			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_id])
+	_print_to_screen("%sbanner loaded by %s network (%s) ad id: %s" %
+			["collapsible " if is_collapsible else "", response_info.get_network_tag(),
+			response_info.get_adapter_class_name(), ad_id])
 
 
-func _on_admob_banner_ad_refreshed(ad_id: String, response_info: ResponseInfo) -> void:
-	_print_to_screen("banner refreshed by %s network (%s) ad id: %s" %
-			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_id])
+func _on_admob_banner_ad_refreshed(ad_id: String, response_info: ResponseInfo, is_collapsible: bool) -> void:
+	_print_to_screen("%sbanner refreshed by %s network (%s) ad id: %s" %
+			["collapsible " if is_collapsible else "", response_info.get_network_tag(),
+			response_info.get_adapter_class_name(), ad_id])
 
 
 func _on_admob_banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError) -> void:

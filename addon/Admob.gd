@@ -6,9 +6,9 @@
 class_name Admob extends Node
 
 signal initialization_completed(status_data: InitializationStatus)
-signal banner_ad_loaded(ad_id: String, response_info: ResponseInfo)
+signal banner_ad_loaded(ad_id: String, response_info: ResponseInfo, is_collapsible: bool)
 signal banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError)
-signal banner_ad_refreshed(ad_id: String, response_info: ResponseInfo)
+signal banner_ad_refreshed(ad_id: String, response_info: ResponseInfo, is_collapsible: bool)
 signal banner_ad_clicked(ad_id: String)
 signal banner_ad_impression(ad_id: String)
 signal banner_ad_opened(ad_id: String)
@@ -54,13 +54,13 @@ signal tracking_authorization_denied
 
 const PLUGIN_SINGLETON_NAME: String = "@pluginName@"
 
-const ANDROID_BANNER_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/6300978111"
+const ANDROID_BANNER_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/2014213617"
 const ANDROID_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/1033173712"
 const ANDROID_REWARDED_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/5224354917"
 const ANDROID_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/5354046379"
 const ANDROID_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/9257395921"
 
-const IOS_BANNER_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/2934735716"
+const IOS_BANNER_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/8388050270"
 const IOS_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/4411468910"
 const IOS_REWARDED_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/1712485313"
 const IOS_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/6978759866"
@@ -78,6 +78,7 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export_category("Banner")
 @export var banner_position: LoadAdRequest.AdPosition = LoadAdRequest.AdPosition.TOP: set = set_banner_position
 @export var banner_size: LoadAdRequest.AdSize = LoadAdRequest.AdSize.BANNER: set = set_banner_size
+@export var banner_collapsible_position: LoadAdRequest.CollapsiblePosition = LoadAdRequest.CollapsiblePosition.DISABLED: set = set_banner_collapsible_position
 
 @export_category("App Open")
 @export var auto_show_on_resume: bool = false: set = set_auto_show_on_resume
@@ -142,7 +143,7 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export_range(1,100) var max_rewarded_interstitial_ad_cache: int = 3: set = set_max_rewarded_interstitial_ad_cache
 
 @export_group("Cleanup After Ad Displayed")
-@export var remove_banner_ads_after_displayed: bool = true
+@export var remove_banner_ads_after_displayed: bool = false
 @export var remove_interstitial_ads_after_displayed: bool = true
 @export var remove_rewarded_ads_after_displayed: bool = true
 @export var remove_rewarded_interstitial_ads_after_displayed: bool = true
@@ -345,6 +346,10 @@ func set_banner_size(a_value: LoadAdRequest.AdSize) -> void:
 	banner_size = a_value
 
 
+func set_banner_collapsible_position(a_value: LoadAdRequest.CollapsiblePosition) -> void:
+	banner_collapsible_position = a_value
+
+
 func set_auto_show_on_resume(a_value: bool) -> void:
 	auto_show_on_resume = a_value
 
@@ -398,6 +403,7 @@ func load_banner_ad(a_request: LoadAdRequest = null) -> void:
 					.set_ad_unit_id(_banner_id)
 					.set_ad_position(banner_position)
 					.set_ad_size(banner_size)
+					.set_collapsible_position(banner_collapsible_position)
 					.set_request_agent(request_agent))
 			if is_mediation_enabled():
 				a_request.set_network_extras(NetworkExtras.build_raw_data_array(network_extras))
@@ -749,27 +755,26 @@ func _on_initialization_completed(status_data: Dictionary) -> void:
 	initialization_completed.emit(InitializationStatus.new(status_data))
 
 
-func _on_banner_ad_loaded(a_ad_id: String, a_response_info: Dictionary) -> void:
+func _on_banner_ad_loaded(a_ad_id: String, a_response_info: Dictionary, a_is_collapsible: bool) -> void:
 	_active_banner_ads.push_front(a_ad_id)
 	while _active_banner_ads.size() > max_banner_ad_cache:
 		Admob.log_warn("%s: banner_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
 					_active_banner_ads.size(), max_banner_ad_cache])
 		var removed_ad_id: String = _active_banner_ads.pop_back()
 		_plugin_singleton.remove_banner_ad(removed_ad_id)
-	banner_ad_loaded.emit(a_ad_id, ResponseInfo.new(a_response_info))
+	banner_ad_loaded.emit(a_ad_id, ResponseInfo.new(a_response_info), a_is_collapsible)
 
 
 func _on_banner_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
 	banner_ad_failed_to_load.emit(a_ad_id, LoadAdError.new(error_data))
 
 
-func _on_banner_ad_refreshed(a_ad_id: String, a_response_info: Dictionary) -> void:
-	banner_ad_refreshed.emit(a_ad_id, ResponseInfo.new(a_response_info))
+func _on_banner_ad_refreshed(a_ad_id: String, a_response_info: Dictionary, a_is_collapsible: bool) -> void:
+	banner_ad_refreshed.emit(a_ad_id, ResponseInfo.new(a_response_info), a_is_collapsible)
 
 
 func _on_banner_ad_impression(a_ad_id: String) -> void:
 	if remove_banner_ads_after_displayed:
-		_active_banner_ads.erase(a_ad_id)
 		remove_banner_ad(a_ad_id)
 	banner_ad_impression.emit(a_ad_id)
 
@@ -806,7 +811,6 @@ func _on_interstitial_ad_refreshed(a_ad_id: String, a_response_info: Dictionary)
 
 func _on_interstitial_ad_impression(a_ad_id: String) -> void:
 	interstitial_ad_impression.emit(a_ad_id)
-
 
 
 func _on_interstitial_ad_clicked(a_ad_id: String) -> void:

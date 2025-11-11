@@ -86,9 +86,11 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_banner_width_in_pixels"), &AdmobPlugin::get_banner_width_in_pixels);
 	ClassDB::bind_method(D_METHOD("get_banner_height_in_pixels"), &AdmobPlugin::get_banner_height_in_pixels);
 
-	ADD_SIGNAL(MethodInfo(BANNER_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info"),
+			PropertyInfo(Variant::BOOL, "is_collapsible")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
-	ADD_SIGNAL(MethodInfo(BANNER_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info"),
+			PropertyInfo(Variant::BOOL, "is_collapsible")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_OPENED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));

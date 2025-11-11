@@ -12,8 +12,6 @@ import android.util.Log;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.initialization.AdapterStatus;
-import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
 import com.google.android.ump.FormError;
@@ -21,7 +19,6 @@ import com.google.android.ump.FormError;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
-import java.util.Map;
 
 import org.godotengine.godot.Dictionary;
 

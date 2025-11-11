@@ -160,9 +160,9 @@ public class AdmobPlugin extends GodotPlugin {
 
 		signals.add(new SignalInfo(SIGNAL_INITIALIZATION_COMPLETED, Dictionary.class));
 
-		signals.add(new SignalInfo(SIGNAL_BANNER_AD_LOADED, String.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_BANNER_AD_LOADED, String.class, Dictionary.class, Boolean.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_BANNER_AD_REFRESHED, String.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_BANNER_AD_REFRESHED, String.class, Dictionary.class, Boolean.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_IMPRESSION, String.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_CLICKED, String.class));
 		signals.add(new SignalInfo(SIGNAL_BANNER_AD_OPENED, String.class));
@@ -289,14 +289,14 @@ public class AdmobPlugin extends GodotPlugin {
 				Banner banner = new Banner(adId, loadAdRequest, activity, layout,
 						new BannerListener() {
 							@Override
-							public void onAdLoaded(String adId, ResponseInfo responseInfo) {
-								emitSignal(SIGNAL_BANNER_AD_LOADED, adId, new AdmobResponse(responseInfo).buildRawData());
+							public void onAdLoaded(String adId, ResponseInfo responseInfo, boolean isCollapsible) {
+								emitSignal(SIGNAL_BANNER_AD_LOADED, adId, new AdmobResponse(responseInfo).buildRawData(), isCollapsible);
 							}
 
 							@Override
-							public void onAdRefreshed(String adId, ResponseInfo responseInfo) {
+							public void onAdRefreshed(String adId, ResponseInfo responseInfo, boolean isCollapsible) {
 								Log.d(LOG_TAG, String.format("onAdRefreshed(%s) banner", adId));
-								emitSignal(SIGNAL_BANNER_AD_REFRESHED, adId, new AdmobResponse(responseInfo).buildRawData());
+								emitSignal(SIGNAL_BANNER_AD_REFRESHED, adId, new AdmobResponse(responseInfo).buildRawData(), isCollapsible);
 							}
 
 							@Override
