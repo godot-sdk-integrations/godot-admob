@@ -4,6 +4,9 @@
 
 package org.godotengine.plugin.android.admob;
 
+import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -15,13 +18,24 @@ import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.appopen.AppOpenAd;
 import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback;
 
 import java.util.Date;
 
-import org.godotengine.plugin.android.admob.model.AdmobResponse;
 import org.godotengine.plugin.android.admob.model.LoadAdRequest;
+
+
+interface AppOpenListener {
+	void onAdLoaded(String adUnitId, ResponseInfo responseInfo);
+	void onAdFailedToLoad(String adUnitId, LoadAdError loadAdError);
+	void onAdShowed(String adUnitId);
+	void onAdFailedToShow(String adUnitId, AdError adError);
+	void onAdImpression(String adUnitId);
+	void onAdClicked(String adUnitId);
+	void onAdClosed(String adUnitId);
+}
 
 
 public class AppOpenAdManager implements DefaultLifecycleObserver {
@@ -33,21 +47,21 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 	public boolean autoShowOnResume;
 	public boolean isLoadingAd;
 	public boolean isShowingAd;
-	public boolean appHasResumedAfterShowing;
 
-	private AdmobPlugin plugin;
+	private Activity activity;
+	private AppOpenListener listener;
 
 	private String adUnitId;
 	private AppOpenAd appOpenAd;
 	private long loadTime;
 
-	public AppOpenAdManager(AdmobPlugin plugin) {
-		this.plugin = plugin;
+	public AppOpenAdManager(Activity activity, AppOpenListener listener) {
+		this.activity = activity;
+		this.listener = listener;
 		this.appOpenAd = null;
 		this.autoShowOnResume = false;
 		this.isLoadingAd = false;
 		this.isShowingAd = false;
-		this.appHasResumedAfterShowing = true;
 		this.loadTime = 0L;
 	}
 
@@ -59,33 +73,32 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 		} else if (isAdAvailable()) {
 			Log.e(LOG_TAG, "Cannot load app open ad: already loaded");
 			isLoadingAd = false;
-		} else if (this.plugin.activity == null) {
+		} else if (this.activity == null) {
 			Log.e(LOG_TAG, "Cannot load app open ad: activity is null");
 			isLoadingAd = false;
-		} else if (this.plugin.activity.isFinishing()) {
+		} else if (this.activity.isFinishing()) {
 			Log.e(LOG_TAG, "Cannot load app open ad: activity is finishing");
 			isLoadingAd = false;
 		} else {
 			isLoadingAd = true;
 			Log.d(LOG_TAG, "Loading app open ad: " + adUnitId);
-			this.plugin.activity.runOnUiThread(() -> {
+			this.activity.runOnUiThread(() -> {
 				AdRequest request = loadAdRequest.createAdRequest();
-				AppOpenAd.load(AppOpenAdManager.this.plugin.activity, adUnitId, request, new AppOpenAdLoadCallback() {
+				AppOpenAd.load(AppOpenAdManager.this.activity, adUnitId, request, new AppOpenAdLoadCallback() {
 					@Override
 					public void onAdLoaded(@NonNull AppOpenAd ad) {
 						Log.d(LOG_TAG, "App open ad loaded.");
 						appOpenAd = ad;
 						isLoadingAd = false;
 						loadTime = (new Date()).getTime();
-						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_LOADED, ad.getAdUnitId(),
-								new AdmobResponse(ad.getResponseInfo()).buildRawData());
+						AppOpenAdManager.this.listener.onAdLoaded(ad.getAdUnitId(), ad.getResponseInfo());
 					}
 
 					@Override
 					public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
 						Log.e(LOG_TAG, "App open ad failed to load: " + loadAdError.getMessage());
 						isLoadingAd = false;
-						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, AppOpenAdManager.this.adUnitId, GodotConverter.convert(loadAdError));
+						AppOpenAdManager.this.listener.onAdFailedToLoad(AppOpenAdManager.this.adUnitId, loadAdError);
 					}
 				});
 			});
@@ -98,52 +111,50 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 		} else if (!isAdAvailable()) {
 			Log.d(LOG_TAG, "Cannot show app open ad: The app open ad is not ready yet.");
 		} else {
-			this.plugin.activity.runOnUiThread(() -> {
+			this.activity.runOnUiThread(() -> {
 				appOpenAd.setFullScreenContentCallback(new FullScreenContentCallback() {
 					@Override
 					public void onAdDismissedFullScreenContent() {
 						Log.d(LOG_TAG, "App open ad dismissed fullscreen content.");
-						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT, adUnitId);
-						isShowingAd = false;
+						AppOpenAdManager.this.listener.onAdClosed(AppOpenAdManager.this.adUnitId);
+						AppOpenAdManager.this.isShowingAd = false;
 					}
 
 					@Override
 					public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
 						Log.e(LOG_TAG, "App open ad failed to show fullscreen content: " + adError.getMessage());
-						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adUnitId, GodotConverter.convert(adError));
-						appOpenAd = null;
-						isShowingAd = false;
+						AppOpenAdManager.this.listener.onAdFailedToShow(AppOpenAdManager.this.adUnitId, adError);
+						AppOpenAdManager.this.appOpenAd = null;
 					}
 
 					@Override
 					public void onAdShowedFullScreenContent() {
 						Log.d(LOG_TAG, "App open ad showed fullscreen content.");
-						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT, adUnitId);
-						appOpenAd = null;
-						appHasResumedAfterShowing = false;
+						AppOpenAdManager.this.listener.onAdShowed(AppOpenAdManager.this.adUnitId);
+						AppOpenAdManager.this.appOpenAd = null;
+						AppOpenAdManager.this.isShowingAd = true;
 					}
 
 					@Override
 					public void onAdImpression() {
 						Log.d(LOG_TAG, "App open ad recorded an impression.");
-						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_IMPRESSION, adUnitId);
-						appOpenAd = null;
-						appHasResumedAfterShowing = false;
+						AppOpenAdManager.this.listener.onAdImpression(AppOpenAdManager.this.adUnitId);
+						AppOpenAdManager.this.appOpenAd = null;
+						AppOpenAdManager.this.isShowingAd = true;
 					}
 
 					@Override
 					public void onAdClicked() {
 						Log.d(LOG_TAG, "App open ad was clicked.");
-						AppOpenAdManager.this.plugin.emitGodotSignal(AdmobPlugin.SIGNAL_APP_OPEN_AD_CLICKED, adUnitId);
+						AppOpenAdManager.this.listener.onAdClicked(AppOpenAdManager.this.adUnitId);
 					}
 				});
 
-				if (this.plugin.activity == null || this.plugin.activity.isFinishing()) {
+				if (this.activity == null || this.activity.isFinishing()) {
 					Log.w(LOG_TAG, "Cannot show ad: invalid activity");
 				} else {
 					Log.d(LOG_TAG, "Showing app open ad.");
-					isShowingAd = true;
-					appOpenAd.show(this.plugin.activity);
+					appOpenAd.show(this.activity);
 				}
 			});
 		}
@@ -160,6 +171,24 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 
 	@Override
 	public void onStart(@NonNull LifecycleOwner owner) {
-		// Optionally show on foreground, but we'll use Godot's onMainResume instead
+		Log.i(LOG_TAG, "App moved to foreground");
+		if (autoShowOnResume) {
+			Log.d(LOG_TAG, "App has resumed and autoShowOnResume is true. Attempting to show app open ad.");
+
+			// Wait for app to be moved to foreground
+			new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					showAd();
+				}
+			}, 100); // Delay in milliseconds
+		} else {
+			Log.d(LOG_TAG, "App has resumed, but autoShowOnResume is false. Not showing app open ad.");
+		}
+	}
+
+	@Override
+	public void onStop(@NonNull LifecycleOwner owner) {
+		Log.i(LOG_TAG, "App moved to background");
 	}
 }

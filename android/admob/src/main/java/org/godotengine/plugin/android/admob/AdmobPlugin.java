@@ -5,17 +5,13 @@
 package org.godotengine.plugin.android.admob;
 
 import android.app.Activity;
-import android.app.Application;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.collection.ArraySet;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
@@ -47,6 +43,7 @@ import org.godotengine.plugin.android.admob.model.AdmobResponse;
 import org.godotengine.plugin.android.admob.model.AdmobStatus;
 import org.godotengine.plugin.android.admob.model.ConsentConfiguration;
 import org.godotengine.plugin.android.admob.model.LoadAdRequest;
+
 
 public class AdmobPlugin extends GodotPlugin {
 	public static final String CLASS_NAME = AdmobPlugin.class.getSimpleName();
@@ -142,9 +139,6 @@ public class AdmobPlugin extends GodotPlugin {
 		rewardedInterstitialAds = new HashMap<>();
 
 		isInitialized = false;
-
-		appOpenAdManager = new AppOpenAdManager(this);
-		ProcessLifecycleOwner.get().getLifecycle().addObserver(appOpenAdManager);
 	}
 
 	@NonNull
@@ -795,68 +789,47 @@ public class AdmobPlugin extends GodotPlugin {
 	@Override
 	public View onMainCreate(Activity activity) {
 		this.activity = activity;
-		try {
-			this.activity.getApplication().registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
-				@Override
-				public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {}
 
-				// Implement as in doc, but since single activity, minimal
-				@Override
-				public void onActivityStarted(@NonNull Activity activity) {
-					if (!appOpenAdManager.isShowingAd) {
-						// Update currentActivity if needed; but use plugin's activity
-					}
-				}
+		appOpenAdManager = new AppOpenAdManager(activity, new AppOpenListener() {
+			@Override
+			public void onAdLoaded(String adUnitId, ResponseInfo responseInfo) {
+				emitSignal(SIGNAL_APP_OPEN_AD_LOADED, adUnitId, new AdmobResponse(responseInfo).buildRawData());
+			}
 
-				@Override
-				public void onActivityResumed(@NonNull Activity activity) {}
+			@Override
+			public void onAdFailedToLoad(String adUnitId, LoadAdError loadAdError) {
+				emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, adUnitId, GodotConverter.convert(loadAdError));
+			}
 
-				@Override
-				public void onActivityPaused(@NonNull Activity activity) {}
+			@Override
+			public void onAdShowed(String adUnitId) {
+				emitSignal(SIGNAL_APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT, adUnitId);
+			}
 
-				@Override
-				public void onActivityStopped(@NonNull Activity activity) {}
+			@Override
+			public void onAdFailedToShow(String adUnitId, AdError adError) {
+				emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adUnitId, GodotConverter.convert(adError));
+			}
 
-				@Override
-				public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {}
+			@Override
+			public void onAdImpression(String adUnitId) {
+				emitSignal(SIGNAL_APP_OPEN_AD_IMPRESSION, adUnitId);
+			}
 
-				@Override
-				public void onActivityDestroyed(@NonNull Activity activity) {}
-			});
-		} catch (Exception e) {
-			Log.e(LOG_TAG, "Failed to register lifecycle: " + e);
-		}
-		this.activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+			@Override
+			public void onAdClicked(String adUnitId) {
+				emitSignal(SIGNAL_APP_OPEN_AD_CLICKED, adUnitId);
+			}
+
+			@Override
+			public void onAdClosed(String adUnitId) {
+				emitSignal(SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT, adUnitId);
+			}
+		});
+		ProcessLifecycleOwner.get().getLifecycle().addObserver(appOpenAdManager);
+
+		activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 		this.layout = new FrameLayout(activity); // create and add a new layout to Godot
 		return layout;
-	}
-
-
-	@Override
-	public void onMainResume() {
-		super.onMainResume();
-		if (appOpenAdManager.autoShowOnResume) {
-			if (appOpenAdManager.appHasResumedAfterShowing) {
-				Log.d(LOG_TAG, "App has resumed and autoShowOnResume is true. Attempting to show app open ad.");
-
-				// Wait for app to be moved to foreground
-				new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						appOpenAdManager.showAd();
-					}
-				}, 100); // Delay in milliseconds
-			} else {
-				Log.d(LOG_TAG, "App has resumed and autoShowOnResume is true, but this is the app resuming after showing an app open ad. Won't show ad.");
-				appOpenAdManager.appHasResumedAfterShowing = true; // Show upon next app resumption
-			}
-		} else {
-			Log.d(LOG_TAG, "App has resumed, but autoShowOnResume is false. Not showing app open ad.");
-		}
-	}
-
-
-	void emitGodotSignal(String signalName, Object... arguments) {
-		emitSignal(signalName, arguments);
 	}
 }
