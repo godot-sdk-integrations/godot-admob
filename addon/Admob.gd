@@ -90,7 +90,8 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export var request_agent: String = PLUGIN_SINGLETON_NAME: set = set_request_agent
 
 
-@export_category("Banner")
+@export_category("Ad Type-specific")
+@export_group("Banner", "banner_")
 ## Part of the screen where the banner ad will be anchored at.
 @export var banner_position: LoadAdRequest.AdPosition = LoadAdRequest.AdPosition.TOP: set = set_banner_position
 
@@ -101,7 +102,7 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export var banner_collapsible_position: LoadAdRequest.CollapsiblePosition = LoadAdRequest.CollapsiblePosition.DISABLED: set = set_banner_collapsible_position
 
 
-@export_category("App Open")
+@export_group("App Open")
 ## Specifies whether app open ad will be displayed when users return the app to the foreground state.
 @export var auto_show_on_resume: bool = false: set = set_auto_show_on_resume
 
@@ -192,18 +193,7 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export var ios_real_app_open_id: String = ""
 
 
-@export_category("Mediation")
-@export_group("Networks")
-## List of ad networks whose SDKs will be attached to the exported app.
-@export_flags(" ") var enabled_networks = 0	# Networks populated in _validate_property() function
-
-
-@export_group("Network Extras")
-## Allows passing of additional, network-specific parameters from the app to an ad network's adapter during an ad request. 
-@export var network_extras: Array[NetworkExtras] = []
-
-
-@export_category("App Tracking Transparency")
+@export_group("App Tracking Transparency")
 ## Whether the iOS-specific App Tracking Transparency (ATT) work flow is enabled for the app.
 @export var att_enabled: bool = false:
 	get:
@@ -213,6 +203,17 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 
 ## The iOS-specific custom message explaining why your app is requesting tracking permission, to be displayed within the App Tracking Transparency (ATT) dialog presented to the user.
 @export_multiline var att_text: String = "": set = set_att_text
+
+
+@export_category("Mediation")
+@export_group("Networks")
+## List of ad networks whose SDKs will be attached to the exported app.
+@export_flags(" ") var enabled_networks = 0	# Networks populated in _validate_property() function
+
+
+@export_group("Network Extras")
+## Allows passing of additional, network-specific parameters from the app to an ad network's adapter during an ad request. 
+@export var network_extras: Array[NetworkExtras] = []
 
 
 @export_category("Cache")
@@ -230,12 +231,9 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export_range(1,100) var max_rewarded_interstitial_ad_cache: int = 3: set = set_max_rewarded_interstitial_ad_cache
 
 
-@export_group("Cleanup After Ad Displayed")
-## Cleanup cached banner ads after they are displayed.
-@export var remove_banner_ads_after_displayed: bool = false
-
+@export_group("Cleanup After Ad Displayed") # For single-use ad types. Banner ads are multi-use.
 ## Cleanup cached interstitial ads after they are displayed. Interstitial ads are single-use.
-@export var remove_interstitial_ads_after_displayed: bool = true
+@export var remove_interstitial_ads_after_displayed: bool = false
 
 ## Cleanup cached rewarded ads after they are displayed. Rewarded ads are single-use.
 @export var remove_rewarded_ads_after_displayed: bool = true
@@ -325,21 +323,22 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
-	if remove_banner_ads_after_scene:
-		for __ad_id in _active_banner_ads:
-			remove_banner_ad(__ad_id)
+	if _plugin_singleton:
+		if remove_banner_ads_after_scene:
+			for __ad_id in _active_banner_ads:
+				remove_banner_ad(__ad_id)
 
-	if remove_interstitial_ads_after_scene:
-		for __ad_id in _active_interstitial_ads:
-			remove_interstitial_ad(__ad_id)
+		if remove_interstitial_ads_after_scene:
+			for __ad_id in _active_interstitial_ads:
+				remove_interstitial_ad(__ad_id)
 
-	if remove_rewarded_ads_after_scene:
-		for __ad_id in _active_rewarded_ads:
-			remove_rewarded_ad(__ad_id)
+		if remove_rewarded_ads_after_scene:
+			for __ad_id in _active_rewarded_ads:
+				remove_rewarded_ad(__ad_id)
 
-	if remove_rewarded_interstitial_ads_after_scene:
-		for __ad_id in _active_rewarded_interstitial_ads:
-			remove_rewarded_interstitial_ad(__ad_id)
+		if remove_rewarded_interstitial_ads_after_scene:
+			for __ad_id in _active_rewarded_interstitial_ads:
+				remove_rewarded_interstitial_ad(__ad_id)
 
 
 func _notification(a_what: int) -> void:
@@ -882,8 +881,6 @@ func _on_banner_ad_refreshed(a_ad_id: String, a_response_info: Dictionary, a_is_
 
 
 func _on_banner_ad_impression(a_ad_id: String) -> void:
-	if remove_banner_ads_after_displayed:
-		remove_banner_ad(a_ad_id)
 	banner_ad_impression.emit(a_ad_id)
 
 
@@ -927,7 +924,6 @@ func _on_interstitial_ad_clicked(a_ad_id: String) -> void:
 
 func _on_interstitial_ad_showed_full_screen_content(a_ad_id: String) -> void:
 	if remove_interstitial_ads_after_displayed:
-		_active_interstitial_ads.erase(a_ad_id)
 		remove_interstitial_ad(a_ad_id)
 	interstitial_ad_showed_full_screen_content.emit(a_ad_id)
 
@@ -964,7 +960,6 @@ func _on_rewarded_ad_clicked(a_ad_id: String) -> void:
 
 func _on_rewarded_ad_showed_full_screen_content(a_ad_id: String) -> void:
 	if remove_rewarded_ads_after_displayed:
-		_active_rewarded_ads.erase(a_ad_id)
 		remove_rewarded_ad(a_ad_id)
 	rewarded_ad_showed_full_screen_content.emit(a_ad_id)
 
@@ -1005,7 +1000,6 @@ func _on_rewarded_interstitial_ad_clicked(a_ad_id: String) -> void:
 
 func _on_rewarded_interstitial_ad_showed_full_screen_content(a_ad_id: String) -> void:
 	if remove_rewarded_interstitial_ads_after_displayed:
-		_active_rewarded_interstitial_ads.erase(a_ad_id)
 		remove_rewarded_interstitial_ad(a_ad_id)
 	rewarded_interstitial_ad_showed_full_screen_content.emit(a_ad_id)
 
