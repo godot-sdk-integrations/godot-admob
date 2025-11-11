@@ -5,22 +5,22 @@
 extends Node
 
 @onready var admob: Admob = $Admob as Admob
-@onready var show_banner_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ShowBannerButton
-@onready var hide_banner_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/HideBannerButton
-@onready var reload_banner_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ReloadBannerButton
-@onready var banner_position_option_button: OptionButton = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/PositionHBoxContainer/OptionButton
-@onready var banner_size_option_button: OptionButton = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeHBoxContainer/OptionButton
-@onready var banner_collapsible_pos_option_button: OptionButton = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer/OptionButton
-@onready var interstitial_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/InterstitialButton
-@onready var rewarded_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/RewardedButton
-@onready var rewarded_interstitial_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/RewardedInterstitialButton
-@onready var reload_interstitial_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/ReloadInterstitialButton
-@onready var reload_rewarded_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/ReloadRewardedButton
-@onready var reload_rewarded_interstitial_button: Button = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/ReloadRewardedInterstitialButton
-@onready var _label: RichTextLabel = $CanvasLayer/CenterContainer/VBoxContainer/RichTextLabel as RichTextLabel
-@onready var _geography_option_button: OptionButton = $CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/GeographyHBoxContainer/OptionButton
-@onready var _android_texture_rect: TextureRect = $CanvasLayer/CenterContainer/VBoxContainer/TextureHBoxContainer/AndroidTextureRect as TextureRect
-@onready var _ios_texture_rect: TextureRect = $CanvasLayer/CenterContainer/VBoxContainer/TextureHBoxContainer/iOSTextureRect as TextureRect
+@onready var show_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ShowBannerButton
+@onready var hide_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/HideBannerButton
+@onready var reload_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ReloadBannerButton
+@onready var banner_position_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/PositionHBoxContainer/OptionButton
+@onready var banner_size_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeHBoxContainer/OptionButton
+@onready var banner_collapsible_pos_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer/OptionButton
+@onready var interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/InterstitialButton
+@onready var rewarded_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/RewardedButton
+@onready var rewarded_interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/RewardedInterstitialButton
+@onready var reload_interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/ReloadInterstitialButton
+@onready var reload_rewarded_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/ReloadRewardedButton
+@onready var reload_rewarded_interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/ReloadRewardedInterstitialButton
+@onready var _label: RichTextLabel = $CanvasLayer/MainContainer/VBoxContainer/RichTextLabel as RichTextLabel
+@onready var _geography_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/GeographyHBoxContainer/OptionButton
+@onready var _android_texture_rect: TextureRect = $CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer/AndroidTextureRect as TextureRect
+@onready var _ios_texture_rect: TextureRect = $CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer/iOSTextureRect as TextureRect
 
 var _active_texture_rect: TextureRect
 
@@ -120,7 +120,6 @@ func _on_reload_banner_button_pressed() -> void:
 	print(" ------- Reload banner button PRESSED")
 	if _is_banner_loaded:
 		_is_banner_loaded = false
-		admob.remove_banner_ad(admob._active_banner_ads[0])
 
 	show_banner_button.disabled = true
 	reload_banner_button.disabled = true
@@ -338,7 +337,6 @@ func _on_reload_interstitial_button_pressed() -> void:
 	print(" ------- Reload interstitial button PRESSED")
 	if _is_interstitial_loaded:
 		_is_interstitial_loaded = false
-		admob.remove_interstitial_ad(admob._active_interstitial_ads[0])
 
 	interstitial_button.disabled = true
 	reload_interstitial_button.disabled = true
@@ -349,7 +347,6 @@ func _on_reload_rewarded_button_pressed() -> void:
 	print(" ------- Reload rewarded button PRESSED")
 	if _is_rewarded_video_loaded:
 		_is_rewarded_video_loaded = false
-		admob.remove_rewarded_ad(admob._active_rewarded_ads[0])
 
 	rewarded_button.disabled = true
 	reload_rewarded_button.disabled = true
@@ -360,7 +357,6 @@ func _on_reload_rewarded_interstitial_button_pressed() -> void:
 	print(" ------- Reload rewarded interstitial button PRESSED")
 	if _is_rewarded_interstitial_loaded:
 		_is_rewarded_interstitial_loaded = false
-		admob.remove_rewarded_interstitial_ad(admob._active_rewarded_interstitial_ads[0])
 
 	rewarded_interstitial_button.disabled = true
 	reload_rewarded_interstitial_button.disabled = true

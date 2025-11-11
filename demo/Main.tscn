@@ -1,42 +1,16 @@
-[gd_scene load_steps=9 format=3 uid="uid://daro5x6n3pd26"]
+[gd_scene load_steps=5 format=3 uid="uid://daro5x6n3pd26"]
 
 [ext_resource type="Script" uid="uid://bcqb5hwnjbtob" path="res://Main.gd" id="1_wt50o"]
-[ext_resource type="Script" uid="uid://dxhehyribdil8" path="res://addons/AdmobPlugin/Admob.gd" id="2_4x6et"]
+[ext_resource type="Script" uid="uid://csjf2kcg2q870" path="res://addons/AdmobPlugin/Admob.gd" id="2_4x6et"]
 [ext_resource type="Texture2D" uid="uid://cy0mnncxevupr" path="res://assets/admob-android.png" id="2_qti4s"]
-[ext_resource type="Texture2D" uid="uid://cpxlqpr0qmm71" path="res://assets/admob-ios.png" id="3_cm0pq"]
-[ext_resource type="Script" uid="uid://bvjoch7h1oxtr" path="res://addons/AdmobPlugin/model/NetworkExtras.gd" id="5_fos0i"]
-
-[sub_resource type="Resource" id="Resource_fos0i"]
-script = ExtResource("5_fos0i")
-network_flag = 16
-extras = {
-"country": "TRNC",
-"state": "Girne"
-}
-metadata/_custom_type_script = "uid://bvjoch7h1oxtr"
-
-[sub_resource type="Resource" id="Resource_3dxm6"]
-script = ExtResource("5_fos0i")
-network_flag = 8192
-extras = {
-"userDataString": "testUserDataString"
-}
-metadata/_custom_type_script = "uid://bvjoch7h1oxtr"
-
-[sub_resource type="Resource" id="Resource_lgr22"]
-script = ExtResource("5_fos0i")
-network_flag = 64
-extras = {
-"userId": "testUserId"
-}
-metadata/_custom_type_script = "uid://bvjoch7h1oxtr"
+[ext_resource type="Texture2D" uid="uid://b2myrgf8pkumi" path="res://assets/admob-ios.png" id="3_cm0pq"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_wt50o")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer"]
+[node name="MainContainer" type="MarginContainer" parent="CanvasLayer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -44,187 +18,194 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/CenterContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MainContainer"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="TextureHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer"]
+[node name="TextureHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
+size_flags_vertical = 0
 theme_override_constants/separation = 40
 
-[node name="AndroidTextureRect" type="TextureRect" parent="CanvasLayer/CenterContainer/VBoxContainer/TextureHBoxContainer"]
-custom_minimum_size = Vector2(0, 128)
+[node name="AndroidTextureRect" type="TextureRect" parent="CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer"]
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 texture = ExtResource("2_qti4s")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="iOSTextureRect" type="TextureRect" parent="CanvasLayer/CenterContainer/VBoxContainer/TextureHBoxContainer"]
+[node name="iOSTextureRect" type="TextureRect" parent="CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer"]
 custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 texture = ExtResource("3_cm0pq")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 0
 
-[node name="Label" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer/HBoxContainer"]
+[node name="Label" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
 text = "Admob Demo"
 horizontal_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 0
 theme_override_constants/separation = 11
 
-[node name="TabContainer" type="TabContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer"]
+[node name="TabContainer" type="TabContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 165)
 layout_mode = 2
 current_tab = 0
 
-[node name="Banner" type="VBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer"]
+[node name="Banner" type="VBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer"]
 layout_mode = 2
 theme_override_constants/separation = 6
 metadata/_tab_index = 0
 
-[node name="PositionHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
+[node name="PositionHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/PositionHBoxContainer"]
+[node name="Label" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/PositionHBoxContainer"]
 layout_mode = 2
 text = "Banner Position:"
 
-[node name="OptionButton" type="OptionButton" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/PositionHBoxContainer"]
+[node name="OptionButton" type="OptionButton" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/PositionHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SizeHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
+[node name="SizeHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeHBoxContainer"]
+[node name="Label" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeHBoxContainer"]
 layout_mode = 2
 text = "Banner Size:"
 
-[node name="OptionButton" type="OptionButton" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeHBoxContainer"]
+[node name="OptionButton" type="OptionButton" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CollapsiblePosHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
+[node name="CollapsiblePosHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer"]
+[node name="Label" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer"]
 layout_mode = 2
 text = "Collapsible Position:"
 
-[node name="OptionButton" type="OptionButton" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer"]
+[node name="OptionButton" type="OptionButton" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SizeButtonHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
+[node name="SizeButtonHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
 layout_mode = 2
 theme_override_constants/separation = 30
 
-[node name="SizeButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer"]
+[node name="SizeButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Get Size"
 
-[node name="PixelSizeButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer"]
+[node name="PixelSizeButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Get Size In Pixels"
 
-[node name="ButtonsHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
+[node name="ButtonsHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
 layout_mode = 2
 theme_override_constants/separation = 45
 
-[node name="ShowBannerButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer"]
+[node name="ShowBannerButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 disabled = true
 text = "Show"
 
-[node name="HideBannerButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer"]
+[node name="HideBannerButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 disabled = true
 text = "Hide"
 
-[node name="ReloadBannerButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer"]
+[node name="ReloadBannerButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 disabled = true
 text = "Reload"
 
-[node name="Other" type="VBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer"]
+[node name="Other" type="VBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer"]
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 15
 metadata/_tab_index = 1
 
-[node name="InterstitialHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other"]
+[node name="InterstitialHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="InterstitialButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer"]
+[node name="InterstitialButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
 text = "Show Interstitial Ad"
 
-[node name="ReloadInterstitialButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer"]
+[node name="ReloadInterstitialButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer"]
 layout_mode = 2
 disabled = true
 text = "Reload"
 
-[node name="RewardedHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other"]
+[node name="RewardedHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="RewardedButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer"]
+[node name="RewardedButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
 text = "Show Rewarded Ad"
 
-[node name="ReloadRewardedButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer"]
+[node name="ReloadRewardedButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer"]
 layout_mode = 2
 disabled = true
 text = "Reload"
 
-[node name="RewardedInterstitialHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other"]
+[node name="RewardedInterstitialHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="RewardedInterstitialButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer"]
+[node name="RewardedInterstitialButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
 text = "Show Rewarded Interstitial Ad"
 
-[node name="ReloadRewardedInterstitialButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer"]
+[node name="ReloadRewardedInterstitialButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer"]
 layout_mode = 2
 disabled = true
 text = "Reload"
 
-[node name="GeographyHBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer"]
+[node name="GeographyHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/GeographyHBoxContainer"]
+[node name="Label" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/GeographyHBoxContainer"]
 custom_minimum_size = Vector2(175, 0)
 layout_mode = 2
 text = "Debug Geography:"
 
-[node name="OptionButton" type="OptionButton" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/GeographyHBoxContainer"]
+[node name="OptionButton" type="OptionButton" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/GeographyHBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 selected = 1
@@ -241,28 +222,29 @@ popup/item_3/id = 3
 popup/item_4/text = "OTHER"
 popup/item_4/id = 4
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="Label" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(165, 0)
 layout_mode = 2
 text = "Consent Info:"
 
-[node name="UpdateConsentInfoButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="UpdateConsentInfoButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Update"
 
-[node name="ResetConsentButton" type="Button" parent="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="ResetConsentButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Reset"
 
-[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/CenterContainer/VBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/MainContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 210)
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_font_sizes/normal_font_size = 14
 scroll_following = true
 
@@ -271,22 +253,22 @@ script = ExtResource("2_4x6et")
 auto_show_on_resume = true
 android_debug_application_id = "ca-app-pub-3940256099942544~3347511713"
 ios_debug_application_id = "ca-app-pub-3940256099942544~1458002511"
-enabled_networks = 32767
-network_extras = Array[ExtResource("5_fos0i")]([SubResource("Resource_fos0i"), SubResource("Resource_3dxm6"), SubResource("Resource_lgr22")])
+ios_debug_banner_id = "ca-app-pub-3940256099942544/2934735716"
+remove_banner_ads_after_hidden = true
 
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/SizeButton" to="." method="_on_size_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/PixelSizeButton" to="." method="_on_pixel_size_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ShowBannerButton" to="." method="_on_show_banner_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/HideBannerButton" to="." method="_on_hide_banner_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ReloadBannerButton" to="." method="_on_reload_banner_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/InterstitialButton" to="." method="_on_interstitial_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/ReloadInterstitialButton" to="." method="_on_reload_interstitial_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/RewardedButton" to="." method="_on_rewarded_video_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/ReloadRewardedButton" to="." method="_on_reload_rewarded_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/RewardedInterstitialButton" to="." method="_on_rewarded_interstitial_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/ReloadRewardedInterstitialButton" to="." method="_on_reload_rewarded_interstitial_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer/UpdateConsentInfoButton" to="." method="_on_update_consent_info_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/CenterContainer/VBoxContainer/VBoxContainer/HBoxContainer/ResetConsentButton" to="." method="_on_reset_consent_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/SizeButton" to="." method="_on_size_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/PixelSizeButton" to="." method="_on_pixel_size_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ShowBannerButton" to="." method="_on_show_banner_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/HideBannerButton" to="." method="_on_hide_banner_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ReloadBannerButton" to="." method="_on_reload_banner_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/InterstitialButton" to="." method="_on_interstitial_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/ReloadInterstitialButton" to="." method="_on_reload_interstitial_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/RewardedButton" to="." method="_on_rewarded_video_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/ReloadRewardedButton" to="." method="_on_reload_rewarded_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/RewardedInterstitialButton" to="." method="_on_rewarded_interstitial_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/ReloadRewardedInterstitialButton" to="." method="_on_reload_rewarded_interstitial_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/HBoxContainer/UpdateConsentInfoButton" to="." method="_on_update_consent_info_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/HBoxContainer/ResetConsentButton" to="." method="_on_reset_consent_button_pressed"]
 [connection signal="app_open_ad_dismissed_full_screen_content" from="Admob" to="." method="_on_admob_app_open_ad_dismissed_full_screen_content"]
 [connection signal="app_open_ad_failed_to_load" from="Admob" to="." method="_on_admob_app_open_ad_failed_to_load"]
 [connection signal="app_open_ad_failed_to_show_full_screen_content" from="Admob" to="." method="_on_admob_app_open_ad_failed_to_show_full_screen_content"]
