@@ -32,6 +32,10 @@ A Godot plugin that provides a unified GDScript interface for integrating **Goog
 - [Installation](#installation)
 - [Usage](#usage)
 - [Signals](#signals)
+- [Banner Ads](#banner-ads)
+- [App Open Ads](#app-open-ads)
+- [User Consent](#user-consent)
+- [Multi-scene Projects](#multi-scene-projects)
 - [Mediation](#mediation)
 - [Export](#export)
 - [Platform-Specific Notes](#platform-specific-notes)
@@ -187,16 +191,53 @@ The following ad types are supported:
 	- `consent_info_updated`
 	- `consent_info_update_failed(error_data: FormError)`
 
-### <img src="addon/icon.png" width="18"> Banner Size
+---
+
+<a name="banner-ads"></a>
+
+### <img src="addon/icon.png" width="18"> Banner Ads
+Banner ads can be categorized as:
+
+- Adaptive Banner Ads
+- Fixed-size Banner Ads
+- Collapsible Banner Ads
+
+#### <img src="addon/icon.png" width="14"> Banner Position
+Banner position can be set to the following values:
+
+- TOP
+- BOTTOM
+- LEFT
+- RIGHT
+- TOP-LEFT
+- TOP-RIGHT
+- BOTTOM-LEFT
+- BOTTOM-RIGHT
+- CENTER
+
+#### <img src="addon/icon.png" width="14"> Banner Size
 - The following methods return the size of a Banner ad:
 	- `get_banner_dimension()`
 	- `get_banner_dimension_in_pixels()`
 - These methods are not supported for `FLUID` sized ads. For banner ads of size `FLUID`, the `get_banner_dimension()` method will return `(-3, -4)` and the `get_banner_dimension_in_pixels()` method will return `(-1, -1)`.
 
+#### <img src="addon/icon.png" width="14"> Collapsible Banner Ads
+Collapsible banner ads are banner ads that are initially presented as a larger overlay with a button to collapse them to their originally-requested banner size. Collapsible banner ads can be requested by setting the `collapsible position` value to `TOP` or `BOTTOM`.
+
+**Note that if `collapsible position` value is in conflict with the [`banner position`](#banner-position) value, then the collapsible banner ad may not function as intended. Set `banner position` and `collapsible position` to the same value for the best experience.**
+
+---
+
+<a name="app-open-ads"></a>
+
 ### <img src="addon/icon.png" width="18"> App Open Ads
 App open ads are a special ad format intended for publishers wishing to monetize their app load screens. App open ads can be closed at any time, and are designed to be shown at startup or when your users bring your app to the foreground.
 
 Set `auto_show_on_resume` to `true` in order to show app open ads when users resume (bring from background to foreground) your app. The app open ad should be loaded via the `load_app_open_ad()` method before it can be displayed at startup or upon resumption. Ideally, invoke the `load_app_open_ad()` method at startup and, if `auto_show_on_resume` is enabled, upon each `app_open_ad_impression` signal.
+
+---
+
+<a name="user-consent"></a>
 
 ### <img src="addon/icon.png" width="18"> User Consent
 - Methods:
@@ -206,6 +247,10 @@ Set `auto_show_on_resume` to `true` in order to show app open ads when users res
 	- `is_consent_form_available()`
 	- `load_consent_form()` - To be called if `get_consent_status()` returns status REQUIRED and `is_consent_form_available()` returns `false`.
 	- `show_consent_form()` - To be called after `consent_form_loaded` signal has been emitted or `is_consent_form_available()` returns `true`.
+
+---
+
+<a name="multi-scene-projects"></a>
 
 ### <img src="addon/icon.png" width="18"> Multi-scene projects
 
