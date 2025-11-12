@@ -260,7 +260,6 @@ func _on_admob_app_open_ad_failed_to_load(ad_id: String, error_data: LoadAdError
 func _on_admob_app_open_ad_showed_full_screen_content(ad_id: String) -> void:
 	_print_to_screen("app open showed full-screen content: %s" % ad_id)
 	_is_app_open_ad_displayed_at_startup = true
-	admob.load_app_open_ad()
 
 
 func _on_admob_app_open_ad_impression(ad_id: String) -> void:
@@ -277,6 +276,7 @@ func _on_admob_app_open_ad_failed_to_show_full_screen_content(ad_id: String, err
 
 func _on_admob_app_open_ad_dismissed_full_screen_content(ad_id: String) -> void:
 	_print_to_screen("app open dismissed: %s" % ad_id)
+	admob.load_app_open_ad()
 
 
 func _on_admob_consent_info_updated() -> void:

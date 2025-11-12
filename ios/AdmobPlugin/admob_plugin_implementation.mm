@@ -62,6 +62,8 @@ const String CONSENT_INFO_UPDATE_FAILED_SIGNAL = "consent_info_update_failed";
 const String TRACKING_AUTHORIZATION_GRANTED = "tracking_authorization_granted";
 const String TRACKING_AUTHORIZATION_DENIED = "tracking_authorization_denied";
 
+static NSString *const kLogTag = @"AdmobPlugin::";
+
 static const int FULL_WIDTH = -1;
 
 AdmobPlugin* AdmobPlugin::instance = NULL;
@@ -173,10 +175,10 @@ void AdmobPlugin::_bind_methods() {
 }
 
 Error AdmobPlugin::initialize() {
-	os_log_debug(admob_log, "AdmobPlugin initialize");
+	os_log_debug(admob_log, "%@ initialize", kLogTag);
 
 	if (initialized) {
-		os_log_error(admob_log, "AdmobPlugin already initialized");
+		os_log_error(admob_log, "%@ already initialized", kLogTag);
 		return FAILED;
 	}
 
@@ -189,11 +191,11 @@ Error AdmobPlugin::initialize() {
 	rewardedAds = [NSMutableDictionary dictionaryWithCapacity:10];
 	rewardedAdSequence = 0;
 
-	os_log_debug(admob_log, "Starting GADMobileAds initialization");
+	os_log_debug(admob_log, "%@ Starting GADMobileAds initialization", kLogTag);
 
 	[[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *_Nonnull status) {
 		initialized = true;
-		os_log_debug(admob_log, "AdmobPlugin initialization completed for %tu adapters.", [status.adapterStatusesByClassName count]);
+		os_log_debug(admob_log, "%@ initialization completed for %tu adapters.", kLogTag, [status.adapterStatusesByClassName count]);
 		Dictionary dictionary = [[[AdmobStatus alloc] initWithStatus:status] buildRawData];
 		emit_signal(INITIALIZATION_COMPLETED_SIGNAL, dictionary);
 	}];
@@ -202,10 +204,10 @@ Error AdmobPlugin::initialize() {
 }
 
 Error AdmobPlugin::set_request_configuration(Dictionary configData) {
-	os_log_debug(admob_log, "AdmobPlugin set_request_configuration");
+	os_log_debug(admob_log, "%@ set_request_configuration", kLogTag);
 
 	if (initialized == false) {
-		os_log_error(admob_log, "AdmobPlugin has not been initialized");
+		os_log_error(admob_log, "%@ has not been initialized", kLogTag);
 		return FAILED;
 	}
 
@@ -510,7 +512,7 @@ void AdmobPlugin::remove_rewarded_interstitial_ad(String adId) {
 void AdmobPlugin::load_app_open_ad(Dictionary requestDict, bool autoShowOnResume) {
 	LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: requestDict];
 	NSString* nsAdUnitId = [loadAdRequest adUnitId];
-	os_log_debug(admob_log, "AdmobPlugin load_app_open_ad: %@", nsAdUnitId);
+	os_log_debug(admob_log, "%@ load_app_open_ad: %@", kLogTag, nsAdUnitId);
 	if (this->appOpenAd == nil) {
 		this->appOpenAd = [[AppOpenAd alloc] initWithPlugin:this];
 	}
@@ -518,9 +520,9 @@ void AdmobPlugin::load_app_open_ad(Dictionary requestDict, bool autoShowOnResume
 }
 
 void AdmobPlugin::show_app_open_ad() {
-	os_log_debug(admob_log, "AdmobPlugin show_app_open_ad");
+	os_log_debug(admob_log, "%@ show_app_open_ad", kLogTag);
 	if (this->appOpenAd == nil) {
-		os_log_debug(admob_log, "Cannot show app open ad: ad instance is nil");
+		os_log_debug(admob_log, "%@ Cannot show app open ad: ad instance is nil", kLogTag);
 	} else {
 		[this->appOpenAd show];
 	}
@@ -528,9 +530,9 @@ void AdmobPlugin::show_app_open_ad() {
 
 bool AdmobPlugin::is_app_open_ad_available() {
 	bool isAvailable;
-	os_log_debug(admob_log, "AdmobPlugin is_app_open_ad_available");
+	os_log_debug(admob_log, "%@ is_app_open_ad_available", kLogTag);
 	if (this->appOpenAd == nil) {
-		os_log_debug(admob_log, "Cannot show app open ad: ad instance is nil");
+		os_log_debug(admob_log, "%@ Cannot show app open ad: ad instance is nil", kLogTag);
 		isAvailable = false;
 	} else {
 		isAvailable = [this->appOpenAd isAvailable];
@@ -539,15 +541,24 @@ bool AdmobPlugin::is_app_open_ad_available() {
 }
 
 void AdmobPlugin::applicationDidBecomeActive() {
-	if (this->appOpenAd == nil) {
-		os_log_debug(admob_log, "Cannot check app open ad: ad instance is nil");
-	} else {
-		if (this->appOpenAd.autoShowOnResume) {
-			os_log_debug(admob_log, "Showing app open ad: autoShowOnResume is true");
-			[this->appOpenAd show];
+	if (appOpenAd) {
+		if (appOpenAd.autoShowOnResume) {
+			if ([appOpenAd isAvailable] && !appOpenAd.isShowing) {
+				os_log_debug(admob_log, "%@ Auto-showing app open ad with 100ms delay", kLogTag);
+
+				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+					if ([appOpenAd isAvailable] && !appOpenAd.isShowing) {
+						[appOpenAd show];
+					}
+				});
+			} else {
+				os_log_debug(admob_log, "%@ App open ad not available or already showing", kLogTag);
+			}
 		} else {
-			os_log_debug(admob_log, "Wont show app open ad: autoShowOnResume is false");
-		} 
+			os_log_debug(admob_log, "%@ Wont show app open ad: autoShowOnResume is false", kLogTag);
+		}
+	} else {
+		os_log_debug(admob_log, "%@ Cannot check app open ad: ad instance is nil", kLogTag);
 	}
 }
 
@@ -682,7 +693,7 @@ AdmobPlugin* AdmobPlugin::get_singleton() {
 }
 
 AdmobPlugin::AdmobPlugin() {
-	os_log_debug(admob_log, "constructor AdmobPlugin");
+	os_log_debug(admob_log, "%@ constructor", kLogTag);
 
 	ERR_FAIL_COND(instance != NULL);
 
@@ -708,7 +719,7 @@ AdmobPlugin::AdmobPlugin() {
 }
 
 AdmobPlugin::~AdmobPlugin() {
-	os_log_debug(admob_log, "destructor AdmobPlugin");
+	os_log_debug(admob_log, "%@ destructor", kLogTag);
 
 	if (instance == this) {
 		instance = nullptr;

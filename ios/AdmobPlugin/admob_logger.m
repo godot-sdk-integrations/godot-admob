@@ -1,4 +1,7 @@
-// AdmobLogger.m
+//
+// © 2024-present https://github.com/cengiz-pz
+//
+
 #import "admob_logger.h"
 
 // Define and initialize the shared os_log_t instance
