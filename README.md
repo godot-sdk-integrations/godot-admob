@@ -39,7 +39,7 @@ A Godot plugin that provides a unified GDScript interface for integrating **Goog
 - [Mediation](#mediation)
 - [Export](#export)
 - [Platform-Specific Notes](#platform-specific-notes)
-- [Video Tutorial](#video-tutorial)
+- [Video Tutorials](#video-tutorials)
 - [Links](#links)
 - [All Plugins](#all-plugins)
 - [Credits](#credits)
@@ -376,11 +376,18 @@ During export, the plugin searches for an `Admob` node in the scene that is open
 
 ---
 
-<a name="video-tutorial"></a>
+<a name="video-tutorials"></a>
 
-# <img src="addon/icon.png" width="24"> Video Tutorial
+# <img src="addon/icon.png" width="24"> Video Tutorials
 
-[![Godot Android Admob Plugin Video Tutorial](https://img.youtube.com/vi/V9_Gpy0R3RE/0.jpg)](https://www.youtube.com/watch?v=V9_Gpy0R3RE)
+## **Admob Plugin on Android** -- _by [16BitDev](https://www.youtube.com/@16bitdev)_
+[![Admob Plugin on Android](https://img.youtube.com/vi/V9_Gpy0R3RE/0.jpg)](https://www.youtube.com/watch?v=V9_Gpy0R3RE)
+
+## **Consent Management with the Admob Plugin** -- _by [Code Artist](https://www.youtube.com/@codeartist1687)_
+[![Consent Management with the Admob Plugin](https://img.youtube.com/vi/MrLcPdoH-yU/0.jpg)](https://www.youtube.com/watch?v=MrLcPdoH-yU)
+
+## **Admob Plugin on Android** -- _by [Code Artist](https://www.youtube.com/@codeartist1687)_
+[![Admob Plugin on Android](https://img.youtube.com/vi/K13xFyOYySk/0.jpg)](https://www.youtube.com/watch?v=K13xFyOYySk)
 
 ---
 
@@ -392,6 +399,7 @@ During export, the plugin searches for an `Admob` node in the scene that is open
 - [AssetLib Entry iOS](https://godotengine.org/asset-library/asset/3178)
 
 ---
+
 # <img src="addon/icon.png" width="24"> All Plugins
 
 | Plugin | Android | iOS |
