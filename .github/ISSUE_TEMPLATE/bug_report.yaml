@@ -1,6 +1,6 @@
 name: 🐞 Bug
 description: File a bug/issue
-title: ""
+title: "🐞 "
 type: bug
 body:
 - type: checkboxes
