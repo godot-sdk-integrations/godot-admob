@@ -1,7 +1,7 @@
 name: 🐠 Feature Request
 description: Suggest an idea for this project
-title: "[FEATURE REQ] <title>"
-labels: ["Enhancement", "Question"]
+title: ""
+type: feature
 body:
 - type: checkboxes
   attributes:
