@@ -402,13 +402,13 @@ During export, the plugin searches for an `Admob` node in the scene that is open
 
 # <img src="addon/icon.png" width="24"> All Plugins
 
-| Plugin | Android | iOS |
-| :---: | :--- | :--- |
-| [Notification Scheduler](https://github.com/godot-sdk-integrations/godot-notification-scheduler) | ✅ | ✅ |
-| [Admob](https://github.com/godot-sdk-integrations/godot-admob) | ✅ | ✅ |
-| [Deeplink](https://github.com/godot-sdk-integrations/godot-deeplink) | ✅ | ✅ |
-| [Share](https://github.com/godot-sdk-integrations/godot-share) | ✅ | ✅ |
-| [In-App Review](https://github.com/godot-sdk-integrations/godot-inapp-review) | ✅ | ✅ |
+| Plugin | Android | iOS | Free | Open Source | License |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| [Notification Scheduler](https://github.com/godot-sdk-integrations/godot-notification-scheduler) | ✅ | ✅ | ✅ | ✅ | MIT |
+| [Admob](https://github.com/godot-sdk-integrations/godot-admob) | ✅ | ✅ | ✅ | ✅ | MIT |
+| [Deeplink](https://github.com/godot-sdk-integrations/godot-deeplink) | ✅ | ✅ | ✅ | ✅ | MIT |
+| [Share](https://github.com/godot-sdk-integrations/godot-share) | ✅ | ✅ | ✅ | ✅ | MIT |
+| [In-App Review](https://github.com/godot-sdk-integrations/godot-inapp-review) | ✅ | ✅ | ✅ | ✅ | MIT |
 
 ---
 
@@ -445,10 +445,16 @@ This section provides information on how to build the plugin for contributors.
 
 ### Build
 
-- Run `./script/build.sh -A <godot version>` initially to run a full build
-- Run `./script/build.sh -cgA <godot version>` to clean, redownload Godot, and rebuild
-- Run `./script/build.sh -ca` to clean and build without redownloading Godot
-- Run `./script/build.sh -h` for more information on the build script
+#### Build All and Create Release Archives for Both Platforms
+
+- Run `./script/build.sh -R` -- creates all 3 archives in the `./release` directory
+
+#### iOS Builds
+
+- Run `./ios/script/build.sh -A <godot version>` initially to run a full build
+- Run `./ios/script/build.sh -cgA <godot version>` to clean, redownload Godot, and rebuild
+- Run `./ios/script/build.sh -ca` to clean and build without redownloading Godot
+- Run `./ios/script/build.sh -h` for more information on the build script
 
 ---
 
