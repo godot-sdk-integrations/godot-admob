@@ -90,8 +90,6 @@ func load_export_config_from_node() -> Error:
 
 	if __admob_node:
 		is_real = __admob_node.is_real
-		debug_application_id = __admob_node.android_debug_application_id
-		real_application_id = __admob_node.android_real_application_id
 		enabled_mediation_networks = MediationNetwork.get_all_enabled(__admob_node.enabled_networks)
 
 		__result = load_platform_specific_export_config_from_node(__admob_node)
@@ -113,8 +111,6 @@ func load_platform_specific_export_config_from_node(a_node: Admob) -> Error:
 func print_loaded_config() -> void:
 	Admob.log_info("Loaded export configuration settings:")
 	Admob.log_info("... is_real: %s" % ("true" if is_real else "false"))
-	Admob.log_info("... debug_application_id: %s" % debug_application_id)
-	Admob.log_info("... real_application_id: %s" % real_application_id)
 	Admob.log_info("... enabled_mediation_networks: %s" % MediationNetwork.generate_tag_list(enabled_mediation_networks))
 
 

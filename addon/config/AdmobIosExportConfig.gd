@@ -27,6 +27,8 @@ func load_platform_specific_export_config_from_file(a_config_file: ConfigFile) -
 
 
 func load_platform_specific_export_config_from_node(a_node: Admob) -> Error:
+	debug_application_id = a_node.ios_debug_application_id
+	real_application_id = a_node.ios_real_application_id
 	att_enabled = a_node.att_enabled
 	att_text = a_node.att_text
 
@@ -35,5 +37,7 @@ func load_platform_specific_export_config_from_node(a_node: Admob) -> Error:
 
 func print_loaded_config() -> void:
 	super.print_loaded_config()
+	Admob.log_info("... debug_application_id: %s" % debug_application_id)
+	Admob.log_info("... real_application_id: %s" % real_application_id)
 	Admob.log_info("... att_enabled: %s" % ("true" if att_enabled else "false"))
 	Admob.log_info("... att_text: %s" % att_text)
