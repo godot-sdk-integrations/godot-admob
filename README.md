@@ -121,7 +121,7 @@ The following ad types are supported:
 	- `load_interstitia_adl(ad_request: LoadAdRequest)`
 	- `load_rewarded_ad(ad_request: LoadAdRequest)`
 	- `load_rewarded_interstitial_ad(ad_request: LoadAdRequest)`
-	- `load_app_open_ad(ad_unit_id: String, auto_show_on_resume: boolean)`
+	- `load_app_open_ad(ad_request: LoadAdRequest, auto_show_on_resume: boolean)`
 - the `Admob` node will emit the following signals once ads have been loaded or failed to load:
 	- `banner_ad_loaded(ad_id: String)`
 	- `banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`

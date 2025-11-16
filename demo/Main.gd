@@ -170,7 +170,7 @@ func _on_admob_banner_ad_loaded(ad_id: String, response_info: ResponseInfo, is_c
 	_is_banner_loaded = true
 	show_banner_button.disabled = false
 	reload_banner_button.disabled = false
-	_print_to_screen("%sbanner loaded by %s network (%s) ad id: %s" %
+	_print_to_screen("%sbanner ad loaded by %s network (%s) id: %s" %
 			["collapsible " if is_collapsible else "", response_info.get_network_tag(),
 			response_info.get_adapter_class_name(), ad_id])
 
@@ -190,7 +190,7 @@ func _on_admob_banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError) 
 func _on_admob_interstitial_ad_loaded(ad_id: String, response_info: ResponseInfo) -> void:
 	_is_interstitial_loaded = true
 	interstitial_button.disabled = false
-	_print_to_screen("interstitial loaded by %s network (%s) ad id: %s" %
+	_print_to_screen("interstitial ad loaded by %s network (%s) id: %s" %
 			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_id])
 
 
@@ -212,7 +212,7 @@ func _on_admob_interstitial_ad_dismissed_full_screen_content(ad_id: String) -> v
 func _on_admob_rewarded_ad_loaded(ad_id: String, response_info: ResponseInfo) -> void:
 	_is_rewarded_video_loaded = true
 	rewarded_button.disabled = false
-	_print_to_screen("rewarded video loaded by %s network (%s) ad id: %s" %
+	_print_to_screen("rewarded video ad loaded by %s network (%s) id: %s" %
 			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_id])
 
 
@@ -230,7 +230,7 @@ func _on_admob_rewarded_ad_user_earned_reward(ad_id: String, reward_data: Reward
 func _on_admob_rewarded_interstitial_ad_loaded(ad_id: String, response_info: ResponseInfo) -> void:
 	_is_rewarded_interstitial_loaded = true
 	rewarded_interstitial_button.disabled = false
-	_print_to_screen("rewarded interstitial loaded by %s network (%s) ad id: %s" %
+	_print_to_screen("rewarded interstitial ad loaded by %s network (%s) id: %s" %
 			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_id])
 
 
@@ -246,7 +246,7 @@ func _on_admob_rewarded_interstitial_ad_user_earned_reward(ad_id: String, reward
 
 
 func _on_admob_app_open_ad_loaded(ad_id: String, response_info: ResponseInfo) -> void:
-	_print_to_screen("app open loaded by %s network (%s) ad id: %s" %
+	_print_to_screen("app open ad loaded by %s network (%s) id: %s" %
 			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_id])
 	if not _is_app_open_ad_displayed_at_startup:
 		admob.show_app_open_ad()
