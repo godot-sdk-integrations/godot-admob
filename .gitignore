@@ -33,6 +33,7 @@ ios/godot/
 # Godot 4+ specific ignores
 demo/.godot/*
 !demo/.godot/uid_cache.bin
+demo/**/*.import
 
 # Godot-specific ignores
 .import/
