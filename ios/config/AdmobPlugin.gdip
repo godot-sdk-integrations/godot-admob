@@ -4,7 +4,9 @@
 
 [config]
 name="@pluginName@"
-binary="@pluginName@.a"
+binary_type="xcframework"
+binary="@pluginName@.release.xcframework"
+binary_debug="@pluginName@.debug.xcframework"
 
 initialization="@iosInitializationMethod@"
 deinitialization="@iosDeinitializationMethod@"
@@ -13,7 +15,7 @@ use_swift_runtime=true
 
 [dependencies]
 linked=[]
-embedded=[]
+embedded=[@pluginName@.release.xcframework, @pluginName@.debug.xcframework]
 system=[]
 
 capabilities=[]

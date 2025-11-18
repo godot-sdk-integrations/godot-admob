@@ -226,35 +226,33 @@ function generate_godot_headers()
 }
 
 
-function generate_static_library()
+function generate_dynamic_library()
 {
 	if [[ ! -f "$GODOT_DIR/GODOT_VERSION" ]]
 	then
-		display_error "Error: godot wasn't downloaded properly. Can't generate static library."
+		display_error "Error: godot wasn't downloaded properly. Can't generate dynamic library."
 		exit 1
 	fi
 
 	local target_type="$1"
 	local lib_directory="$2"
 
-	display_status "generating static libraries for $PLUGIN_NAME with target type $target_type..."
+	display_status "generating dynamic libraries for $PLUGIN_NAME with target type $target_type..."
 
 	pushd $IOS_DIR
 
 	# ARM64 Device
-	scons target=$target_type arch=arm64 ios_sdk=iphoneos $lib_directory=device target_name=$PLUGIN_NAME version=$GODOT_VERSION
+	scons target=$target_type arch=arm64 ios_sdk=iphoneos target_path=$lib_directory/ target_name=$PLUGIN_NAME version=$GODOT_VERSION
+
+	# ARM64 Simulator
+	scons target=$target_type arch=arm64 ios_sdk=iphonesimulator simulator=yes target_path=$lib_directory/ target_name=$PLUGIN_NAME version=$GODOT_VERSION
 
 	# x86_64 Simulator
-	scons target=$target_type arch=x86_64 ios_sdk=iphonesimulator simulator=yes target_name=$PLUGIN_NAME version=$GODOT_VERSION
+	scons target=$target_type arch=x86_64 ios_sdk=iphonesimulator simulator=yes target_path=$lib_directory/ target_name=$PLUGIN_NAME version=$GODOT_VERSION
 
 	popd
 
-	# Create universal binary
-	pushd $lib_directory
-	lipo -create "lib$PLUGIN_NAME.x86_64-simulator.$target_type.a" "lib$PLUGIN_NAME.arm64-ios.$target_type.a" -output "$PLUGIN_NAME.$target_type.a"
-	popd
-
-	echo_green "universal binary created: $lib_directory/$PLUGIN_NAME.a"
+	echo_green "dynamic libraries created in: $lib_directory"
 }
 
 
@@ -264,6 +262,72 @@ function install_pods()
 	pod install --repo-update --project-directory=$IOS_DIR/ || true
 }
 
+
+function create_xcframework()
+{
+	local target_type="$1"
+	local lib_directory="$2"
+
+	display_status "creating xcframework for $target_type..."
+
+	local device_dylib="$lib_directory/lib$PLUGIN_NAME.arm64-ios.$target_type.dylib"
+	local sim_arm64_dylib="$lib_directory/lib$PLUGIN_NAME.arm64-simulator.$target_type.dylib"
+	local sim_x86_64_dylib="$lib_directory/lib$PLUGIN_NAME.x86_64-simulator.$target_type.dylib"
+	local sim_universal_dylib="$lib_directory/lib$PLUGIN_NAME.simulator.$target_type.dylib"
+
+	# Create universal simulator binary
+	display_status "creating universal simulator binary..."
+	lipo -create "$sim_arm64_dylib" "$sim_x86_64_dylib" -output "$sim_universal_dylib"
+
+	# Create framework structure for device
+	local device_framework_dir="$lib_directory/device/$PLUGIN_NAME.framework"
+	mkdir -p "$device_framework_dir"
+	cp "$device_dylib" "$device_framework_dir/$PLUGIN_NAME"
+
+	# Create framework structure for simulator
+	local sim_framework_dir="$lib_directory/simulator/$PLUGIN_NAME.framework"
+	mkdir -p "$sim_framework_dir"
+	cp "$sim_universal_dylib" "$sim_framework_dir/$PLUGIN_NAME"
+
+	# Create Info.plist for both frameworks
+	cat > "$device_framework_dir/Info.plist" << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleExecutable</key>
+	<string>$PLUGIN_NAME</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.godotengine.$PLUGIN_NAME</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$PLUGIN_NAME</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>MinimumOSVersion</key>
+	<string>$IOS_PLATFORM_VERSION</string>
+</dict>
+</plist>
+EOF
+
+	cp "$device_framework_dir/Info.plist" "$sim_framework_dir/Info.plist"
+
+	# Create xcframework
+	local xcframework_name="$PLUGIN_NAME.$target_type.xcframework"
+	rm -rf "$FRAMEWORK_DIR/$xcframework_name"
+
+	xcodebuild -create-xcframework \
+		-framework "$device_framework_dir" \
+		-framework "$sim_framework_dir" \
+		-output "$FRAMEWORK_DIR/$xcframework_name"
+
+	echo_green "xcframework created: $FRAMEWORK_DIR/$xcframework_name"
+}
 
 function build_plugin()
 {
@@ -288,20 +352,29 @@ function build_plugin()
 	# Clear target directories
 	rm -rf "$DEST_DIR"
 	rm -rf "$LIB_DIR"
+	rm -rf "$FRAMEWORK_DIR"
 
 	# Create target directories
 	mkdir -p "$DEST_DIR"
 	mkdir -p "$LIB_DIR"
+	mkdir -p "$FRAMEWORK_DIR"
 
 	display_status "building plugin library with godot version $GODOT_VERSION ..."
 
 	# Compile library
-	generate_static_library release $LIB_DIR
-	generate_static_library release_debug $LIB_DIR
-	mv $LIB_DIR/$PLUGIN_NAME.release_debug.a $LIB_DIR/$PLUGIN_NAME.debug.a
+	generate_dynamic_library release $LIB_DIR
+	generate_dynamic_library release_debug $LIB_DIR
 
-	# Move library
-	cp $LIB_DIR/$PLUGIN_NAME.{release,debug}.a "$DEST_DIR"
+	# Create xcframeworks
+	create_xcframework release $LIB_DIR
+	create_xcframework release_debug $LIB_DIR
+
+	# Rename release_debug to debug
+	mv "$FRAMEWORK_DIR/$PLUGIN_NAME.release_debug.xcframework" "$FRAMEWORK_DIR/$PLUGIN_NAME.debug.xcframework"
+
+	# Copy xcframeworks to destination
+	cp -r "$FRAMEWORK_DIR/$PLUGIN_NAME.release.xcframework" "$DEST_DIR/"
+	cp -r "$FRAMEWORK_DIR/$PLUGIN_NAME.debug.xcframework" "$DEST_DIR/"
 
 	cp "$IOS_CONFIG_DIR"/*.gdip "$DEST_DIR"
 }
@@ -588,7 +661,9 @@ function create_zip_archive()
 	mkdir -p $tmp_directory/ios/framework
 	find $PODS_DIR -iname '*.xcframework' -type d -exec cp -r {} $tmp_directory/ios/framework \;
 
-	cp $LIB_DIR/$PLUGIN_NAME.{release,debug}.a $tmp_directory/ios/plugins
+	# Copy plugin xcframeworks
+	cp -r $FRAMEWORK_DIR/$PLUGIN_NAME.release.xcframework $tmp_directory/ios/plugins/
+	cp -r $FRAMEWORK_DIR/$PLUGIN_NAME.debug.xcframework $tmp_directory/ios/plugins/
 
 	mkdir -p $DEST_DIR
 

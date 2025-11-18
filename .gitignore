@@ -1,7 +1,7 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
+.DS_Store
 demo/addons
 demo/android
 demo/ios
