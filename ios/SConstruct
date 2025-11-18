@@ -193,10 +193,25 @@ sources.append(Glob(f'{plugin_name}/**/*.cpp'))
 sources.append(Glob(f'{plugin_name}/**/*.mm'))
 sources.append(Glob(f'{plugin_name}/**/*.m'))
 
-# lib<plugin>.<arch>-<simulator|iphone>.<release|debug|release_debug>.a
+# lib<plugin>.<arch>-<simulator|iphone>.<release|debug|release_debug>.dylib
 library_platform = env["arch"] + "-" + ("simulator" if env["simulator"] else "ios")
-library_name = env['target_name'] + "." + library_platform + "." + env['target'] + ".a"
-library = env.StaticLibrary(target=env['target_path'] + library_name, source=sources)
+library_name = env['target_name'] + "." + library_platform + "." + env['target'] + ".dylib"
+
+# Set install_name for dylib
+install_name = "@rpath/" + env['target_name'] + ".framework/" + env['target_name']
+env.Append(LINKFLAGS=['-dynamiclib', '-install_name', install_name])
+
+# Allow undefined symbols (they will be provided by Godot at runtime)
+env.Append(LINKFLAGS=['-undefined', 'dynamic_lookup'])
+
+# Link against required frameworks
+env.Append(LINKFLAGS=[
+	'-framework', 'Foundation',
+	'-framework', 'UIKit',
+	'-framework', 'CoreGraphics'
+])
+
+library = env.SharedLibrary(target=env['target_path'] + library_name, source=sources)
 
 Default(library)
 
