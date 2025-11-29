@@ -2,18 +2,32 @@
 # © 2024-present https://github.com/cengiz-pz
 #
 
-demo/addons
-demo/android
-demo/ios
-build/
-release/
-export.cfg
-
 # General
 *.lock
 *.log
 
-# Android
+# Project-specific
+build/
+demo/addons/*Plugin/**
+!demo/addons/*Plugin/
+!demo/addons/*Plugin/**/
+!demo/addons/*Plugin/**/*.import
+!demo/addons/*Plugin/**/*.uid
+demo/android
+demo/ios
+demo/assets/*Plugin
+demo/assets/splash_screens/*
+!demo/assets/splash_screens/*.png
+demo/assets/store_icons/*
+!demo/assets/store_icons/*.png
+ios/godot/
+release/
+
+# Godot-specific
+.import/
+.godot/
+
+# Android-specific
 .gradle/
 *.jar
 !android/gradle/wrapper/gradle-wrapper.jar
@@ -23,17 +37,15 @@ local.properties
 # Android Studio/IntelliJ
 .idea/
 
-# iOS
+# iOS-specific
 *.d
 *.o
 *.dblite
 Pods/
-ios/godot/
 
-# Godot 4+ specific ignores
-demo/.godot/*
-!demo/.godot/uid_cache.bin
-demo/**/*.import
+# Xcode
+xcuserdata/
+project.xcworkspace/
 
-# Godot-specific ignores
-.import/
+# macOS
+.DS_Store

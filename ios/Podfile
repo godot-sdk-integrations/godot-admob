@@ -38,7 +38,7 @@ read_properties(common_config_path, properties)
 # Read project-specific config second (overrides common config)
 read_properties(ios_config_path, properties)
 
-plugin_project_name = "#{properties['ios_project_name']}"
+plugin_project_name = "#{properties['pluginModuleName']}_plugin"
 
 project "#{plugin_project_name}.xcodeproj"
 workspace "./#{plugin_project_name}.xcodeproj/project.xcworkspace"

@@ -371,3 +371,5 @@ func _print_to_screen(a_message: String, a_is_error: bool = false) -> void:
 		printerr("Demo app:: " + a_message)
 	else:
 		print("Demo app:: " + a_message)
+
+	_label.scroll_to_line(_label.get_line_count() - 1)
