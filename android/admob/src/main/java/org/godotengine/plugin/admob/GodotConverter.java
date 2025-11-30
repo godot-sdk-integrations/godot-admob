@@ -9,9 +9,7 @@ import android.app.Activity;
 import android.provider.Settings;
 import android.util.Log;
 
-import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
 import com.google.android.ump.FormError;
@@ -31,25 +29,6 @@ public class GodotConverter {
 
 		dict.put("width", size.getWidth());
 		dict.put("height", size.getHeight());
-
-		return dict;
-	}
-
-	public static Dictionary convert(AdError error) {
-		Dictionary dict = new Dictionary();
-
-		dict.put("code", error.getCode());
-		dict.put("domain", error.getDomain());
-		dict.put("message", error.getMessage());
-		dict.put("cause", error.getCause() == null ? new Dictionary() : convert(error.getCause()));
-
-		return dict;
-	}
-
-	public static Dictionary convert(LoadAdError error) {
-		Dictionary dict = convert((AdError) error);
-
-		dict.put("response_info", error.getResponseInfo().toString());
 
 		return dict;
 	}

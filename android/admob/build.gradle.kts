@@ -47,7 +47,7 @@ android {
 
 	buildToolsVersion = libs.versions.buildTools.get()
 
-	// ✅ Force AAR filenames to match original case and format
+	// Force AAR filenames to match original case and format
 	libraryVariants.all {
 		outputs.all {
 			val outputImpl = this as LibraryVariantOutputImpl
@@ -226,7 +226,7 @@ tasks {
 		exclude("**/*.uid")
 		exclude("**/*.import")
 		from("${project.extra["demoAddOnsDirectory"]}/${project.extra["pluginName"]}") {
-			into("${project.extra["pluginName"]}-root/addons/${project.extra["pluginName"]}")
+			into("addons/${project.extra["pluginName"]}")
 		}
 		doLast {
 			println("Zip archive created at: ${archiveFile.get().asFile.path}")

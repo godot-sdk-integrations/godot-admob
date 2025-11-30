@@ -330,71 +330,11 @@
 	return dictionary;
 }
 
-+ (Dictionary) responseInfoToGodotDictionary:(GADResponseInfo*) responseInfo {
-	Dictionary dictionary;
-
-	dictionary["response_identifier"] = responseInfo.responseIdentifier ? [responseInfo.responseIdentifier UTF8String] : "";
-	dictionary["extras_dictionary"] = [GAPConverter nsDictionaryToGodotDictionary:responseInfo.extrasDictionary];
-	dictionary["loaded_ad_network_response_info"] = [GAPConverter adNetworkResponseInfoToGodotDictionary:responseInfo.loadedAdNetworkResponseInfo];
-	dictionary["ad_network_info_array"] = [GAPConverter adNetworkInfoArrayToGodotDictionary:responseInfo.adNetworkInfoArray];
-	dictionary["dictionary_representation"] = [GAPConverter nsDictionaryToGodotDictionary:responseInfo.dictionaryRepresentation];
-	
-	return dictionary;
-}
-
-+ (Dictionary) adNetworkResponseInfoToGodotDictionary:(GADAdNetworkResponseInfo*) adNetworkResponseInfo {
-	Dictionary dictionary;
-	
-	dictionary["ad_network_class_name"] = adNetworkResponseInfo.adNetworkClassName.UTF8String;
-	dictionary["ad_unit_mapping"] = [GAPConverter nsDictionaryToGodotDictionary:adNetworkResponseInfo.adUnitMapping];
-	dictionary["ad_source_name"] = adNetworkResponseInfo.adSourceName.UTF8String;
-	dictionary["ad_source_id"] = adNetworkResponseInfo.adSourceID.UTF8String;
-	dictionary["ad_source_instance_name"] = adNetworkResponseInfo.adSourceInstanceName.UTF8String;
-	dictionary["ad_source_instance_id"] = adNetworkResponseInfo.adSourceInstanceID.UTF8String;
-	dictionary["error"] = adNetworkResponseInfo.error ? [GAPConverter nsAdErrorToGodotDictionary:adNetworkResponseInfo.error] : Dictionary();
-	dictionary["latency"] = adNetworkResponseInfo.latency;
-	dictionary["dictionary_representation"] = [GAPConverter nsDictionaryToGodotDictionary:adNetworkResponseInfo.dictionaryRepresentation];
-	
-	return dictionary;
-}
-
-+ (Dictionary) adNetworkInfoArrayToGodotDictionary:(NSArray<GADAdNetworkResponseInfo*>*) adNetworkInfoArray {
-	Dictionary dictionary;
-
-	for (int i = 0; i < adNetworkInfoArray.count; i++) {
-		GADAdNetworkResponseInfo *responseInfo = [adNetworkInfoArray objectAtIndex:i];
-		dictionary[i] = [GAPConverter adNetworkResponseInfoToGodotDictionary:responseInfo];
-	}
-	
-	return dictionary;
-}
-
 + (Dictionary) adRewardToGodotDictionary:(GADAdReward*) adReward {
 	Dictionary dictionary;
 
 	dictionary["type"] = adReward.type.UTF8String;
 	dictionary["amount"] = [adReward.amount intValue];
-
-	return dictionary;
-}
-
-+ (Dictionary) nsAdErrorToGodotDictionary:(NSError*) nsError {
-	Dictionary dictionary;
-	
-	dictionary["code"] = (int) nsError.code;
-	dictionary["domain"] = [nsError.domain UTF8String];
-	dictionary["message"] = [nsError.localizedDescription UTF8String];
-	dictionary["cause"] = (nsError.userInfo[NSUnderlyingErrorKey]) ? [GAPConverter nsAdErrorToGodotDictionary:nsError.userInfo[NSUnderlyingErrorKey]] : Dictionary();
-	
-	return dictionary;
-}
-
-+ (Dictionary) nsLoadErrorToGodotDictionary:(NSError*) nsError {
-	Dictionary dictionary;
-	
-	dictionary = [GAPConverter nsAdErrorToGodotDictionary:nsError];
-	GADResponseInfo* responseInfo = nsError.userInfo[GADErrorUserInfoKeyResponseInfo];
-	dictionary["response_info"] = (responseInfo) ? [GAPConverter responseInfoToGodotDictionary:responseInfo] : Dictionary();
 
 	return dictionary;
 }

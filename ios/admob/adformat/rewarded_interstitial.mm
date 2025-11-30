@@ -8,6 +8,9 @@
 #import "admob_plugin_implementation.h"
 #import "admob_response.h"
 #import "admob_logger.h"
+#import "admob_ad_error.h"
+#import "admob_load_ad_error.h"
+
 
 @implementation RewardedInterstitialAd
 
@@ -23,9 +26,10 @@
 
 	[GADRewardedInterstitialAd loadWithAdUnitID:[loadAdRequest adUnitId] request:gadRequest completionHandler:^(GADRewardedInterstitialAd* ad, NSError* error) {
 		if (error) {
-			os_log_error(admob_log, "Failed to load RewardedInterstitialAd with error: %@", [error localizedDescription]);
+			AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
+			os_log_error(admob_log, "Failed to load RewardedInterstitialAd with error: %@", loadAdError.message);
 			AdmobPlugin::get_singleton()->emit_signal(REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
-						[GAPConverter nsLoadErrorToGodotDictionary:error]);
+						[loadAdError buildRawData]);
 		}
 		else {
 			self.gadAd = ad;
@@ -78,9 +82,10 @@
 }
 
 - (void) ad:(nonnull id<GADFullScreenPresentingAd>) ad didFailToPresentFullScreenContentWithError:(nonnull NSError *) error {
-	os_log_debug(admob_log, "RewardedInterstitialAd did fail to present full screen content.");
+	AdmobAdError *adError = [[AdmobAdError alloc] initWithNsError:error];
+	os_log_debug(admob_log, "RewardedInterstitialAd did fail to present full screen content: %@", adError);
 	AdmobPlugin::get_singleton()->emit_signal(REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
-				[GAPConverter nsAdErrorToGodotDictionary:error]);
+				[adError buildRawData]);
 }
 
 - (void) adWillPresentFullScreenContent:(nonnull id<GADFullScreenPresentingAd>) ad {

@@ -21,8 +21,8 @@ public class ConsentConfiguration {
 	private static final String CLASS_NAME = ConsentConfiguration.class.getSimpleName();
 	private static final String LOG_TAG = "godot::" + AdmobPlugin.CLASS_NAME + "::" + CLASS_NAME;
 
-	private static final String TAG_FOR_UNDER_AGE_OF_CONSENT_PROPERTY = "tag_for_under_age_of_consent";
 	private static final String IS_REAL_PROPERTY = "is_real";
+	private static final String TAG_FOR_UNDER_AGE_OF_CONSENT_PROPERTY = "tag_for_under_age_of_consent";
 	private static final String DEBUG_GEOGRAPHY_PROPERTY = "debug_geography";
 	private static final String TEST_DEVICE_HASHED_IDS_PROPERTY = "test_device_hashed_ids";
 
@@ -34,12 +34,12 @@ public class ConsentConfiguration {
 
 	public boolean isReal() {
 		Object val = _data.get(IS_REAL_PROPERTY);
-		return val == null ? true : (boolean) val;
+		return val == null ? false : (boolean) val;
 	}
 
 	public boolean getTagForUnderAgeOfConsent() {
 		Object val = _data.get(TAG_FOR_UNDER_AGE_OF_CONSENT_PROPERTY);
-		return val != null ? (boolean) val : false;
+		return val == null ? false : (boolean) val;
 	}
 
 	public ConsentRequestParameters createConsentRequestParameters(Activity activity) {
@@ -96,5 +96,40 @@ public class ConsentConfiguration {
 		}
 
 		return builder.build();
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder(CLASS_NAME);
+		sb.append("{");
+		sb.append(IS_REAL_PROPERTY).append("=").append(valueToString(IS_REAL_PROPERTY)).append(", ");
+		sb.append(TAG_FOR_UNDER_AGE_OF_CONSENT_PROPERTY).append("=").append(valueToString(TAG_FOR_UNDER_AGE_OF_CONSENT_PROPERTY)).append(", ");
+		sb.append(DEBUG_GEOGRAPHY_PROPERTY).append("=").append(valueToString(DEBUG_GEOGRAPHY_PROPERTY)).append(", ");
+		sb.append(TEST_DEVICE_HASHED_IDS_PROPERTY);
+		if (_data.containsKey(TEST_DEVICE_HASHED_IDS_PROPERTY)) {
+			sb.append("=[");
+			Object deviceIdsObj = _data.get(TEST_DEVICE_HASHED_IDS_PROPERTY);
+			if (deviceIdsObj instanceof Object[]) {
+				boolean isFirst = true;
+				for (Object deviceId : (Object[]) deviceIdsObj) {
+					if (deviceId instanceof String) {
+						if (isFirst) isFirst = false; else sb.append(", ");
+						sb.append((String) deviceId);
+					} else {
+						Log.w(LOG_TAG, "invalid id:" + deviceId);
+					}
+				}
+			} else {
+				sb.append("invalid array");
+			}
+			sb.append("]");
+		} else {
+			sb.append("null");
+		} 
+		sb.append("}");
+		return sb.toString();
+	}
+
+	private String valueToString(String tag) {
+		return _data.containsKey(tag) ? "" + _data.get(tag) : "null";
 	}
 }

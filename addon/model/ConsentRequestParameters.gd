@@ -33,8 +33,12 @@ func set_is_real(a_value: bool) -> ConsentRequestParameters:
 	return self
 
 
-func set_tag_for_under_age_of_consent(a_value: bool) -> ConsentRequestParameters:
-	_data[TAG_FOR_UNDER_AGE_OF_CONSENT_PROPERTY] = a_value
+func set_tag_for_under_age_of_consent(a_value: AdmobConfig.TagForUnderAgeOfConsent) -> ConsentRequestParameters:
+	match a_value:
+		AdmobConfig.TagForChildDirectedTreatment.TRUE:
+			_data[TAG_FOR_UNDER_AGE_OF_CONSENT_PROPERTY] = true
+		AdmobConfig.TagForChildDirectedTreatment.FALSE:
+			_data[TAG_FOR_UNDER_AGE_OF_CONSENT_PROPERTY] = false
 
 	return self
 

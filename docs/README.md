@@ -120,7 +120,7 @@ The following ad types are supported:
 	- wait for the `initialization_completed` signal
 - use one or more of the following `load_*()` methods to load ads from the `Admob` node:
 	- `load_banner_ad(ad_request: LoadAdRequest)`
-	- `load_interstitia_adl(ad_request: LoadAdRequest)`
+	- `load_interstitial_ad(ad_request: LoadAdRequest)`
 	- `load_rewarded_ad(ad_request: LoadAdRequest)`
 	- `load_rewarded_interstitial_ad(ad_request: LoadAdRequest)`
 	- `load_app_open_ad(ad_request: LoadAdRequest, auto_show_on_resume: boolean)`

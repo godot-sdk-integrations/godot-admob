@@ -34,7 +34,7 @@ public class AdmobAdapterResponse {
 		Dictionary dict = new Dictionary();
 
 		AdError adError = info.getAdError();
-		if (adError != null) dict.put(AD_ERROR_PROPERTY, GodotConverter.convert(adError));
+		if (adError != null) dict.put(AD_ERROR_PROPERTY, new AdmobAdError(adError).buildRawData());
 
 		dict.put(AD_SOURCE_ID_PROPERTY, info.getAdSourceId());
 		dict.put(AD_SOURCE_INSTANCE_ID_PROPERTY, info.getAdSourceInstanceId());

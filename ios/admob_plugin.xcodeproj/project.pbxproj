@@ -40,6 +40,8 @@
 		07787D632EDA6C22009B6F5F /* chartboost_mediation_network.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07787D132EDA6C22009B6F5F /* chartboost_mediation_network.mm */; };
 		07787D642EDA6C22009B6F5F /* moloco_mediation_network.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07787D2D2EDA6C22009B6F5F /* moloco_mediation_network.mm */; };
 		07787D652EDA6C22009B6F5F /* admob_response.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07787D3D2EDA6C22009B6F5F /* admob_response.mm */; };
+		078073332EDC1C5E00A6FF87 /* admob_ad_error.mm in Sources */ = {isa = PBXBuildFile; fileRef = 078073302EDC1C5E00A6FF87 /* admob_ad_error.mm */; };
+		078073342EDC1C5E00A6FF87 /* admob_load_ad_error.mm in Sources */ = {isa = PBXBuildFile; fileRef = 078073322EDC1C5E00A6FF87 /* admob_load_ad_error.mm */; };
 		90CAAA9924E71FF10013969F /* admob_plugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 90CAAA9824E71FF10013969F /* admob_plugin.mm */; };
 		90CAAAA424E724C50013969F /* admob_plugin_implementation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 90CAAAA324E724C50013969F /* admob_plugin_implementation.mm */; };
 		94A1B0B2910D06DA0F4D3D3C /* Pods_admob_plugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 380C444E6383B0C8ACA7CA7D /* Pods_admob_plugin.framework */; };
@@ -126,6 +128,10 @@
 		07787D412EDA6C22009B6F5F /* load_ad_request.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = load_ad_request.mm; sourceTree = "<group>"; };
 		07787D432EDA6C22009B6F5F /* ump_orientation_wrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ump_orientation_wrapper.h; sourceTree = "<group>"; };
 		07787D442EDA6C22009B6F5F /* ump_orientation_wrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ump_orientation_wrapper.m; sourceTree = "<group>"; };
+		0780732F2EDC1C5E00A6FF87 /* admob_ad_error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = admob_ad_error.h; sourceTree = "<group>"; };
+		078073302EDC1C5E00A6FF87 /* admob_ad_error.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = admob_ad_error.mm; sourceTree = "<group>"; };
+		078073312EDC1C5E00A6FF87 /* admob_load_ad_error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = admob_load_ad_error.h; sourceTree = "<group>"; };
+		078073322EDC1C5E00A6FF87 /* admob_load_ad_error.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = admob_load_ad_error.mm; sourceTree = "<group>"; };
 		1A3D1E30D9DC57319C20B62B /* Pods-admob_plugin.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-admob_plugin.release.xcconfig"; path = "Target Support Files/Pods-admob_plugin/Pods-admob_plugin.release.xcconfig"; sourceTree = "<group>"; };
 		380C444E6383B0C8ACA7CA7D /* Pods_admob_plugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_admob_plugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		403D7C7BCFBA671DEF15AE95 /* Pods-admob_plugin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-admob_plugin.debug.xcconfig"; path = "Target Support Files/Pods-admob_plugin/Pods-admob_plugin.debug.xcconfig"; sourceTree = "<group>"; };
@@ -217,6 +223,10 @@
 		07787D422EDA6C22009B6F5F /* model */ = {
 			isa = PBXGroup;
 			children = (
+				0780732F2EDC1C5E00A6FF87 /* admob_ad_error.h */,
+				078073302EDC1C5E00A6FF87 /* admob_ad_error.mm */,
+				078073312EDC1C5E00A6FF87 /* admob_load_ad_error.h */,
+				078073322EDC1C5E00A6FF87 /* admob_load_ad_error.mm */,
 				07787D372EDA6C22009B6F5F /* ad_position.h */,
 				07787D382EDA6C22009B6F5F /* admob_adapter_response.h */,
 				07787D392EDA6C22009B6F5F /* admob_adapter_response.mm */,
@@ -384,6 +394,8 @@
 				07787D4B2EDA6C22009B6F5F /* mediation_network.mm in Sources */,
 				07787D4C2EDA6C22009B6F5F /* banner.mm in Sources */,
 				07787D4D2EDA6C22009B6F5F /* pangle_mediation_network.mm in Sources */,
+				078073332EDC1C5E00A6FF87 /* admob_ad_error.mm in Sources */,
+				078073342EDC1C5E00A6FF87 /* admob_load_ad_error.mm in Sources */,
 				07787D4E2EDA6C22009B6F5F /* admob_status.mm in Sources */,
 				07787D4F2EDA6C22009B6F5F /* ump_orientation_wrapper.m in Sources */,
 				07787D502EDA6C22009B6F5F /* interstitial.mm in Sources */,
@@ -532,6 +544,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
+					"$(SRCROOT)/adformat",
+					"$(SRCROOT)/mediation",
+					"$(SRCROOT)/model",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -619,6 +634,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
+					"$(SRCROOT)/adformat",
+					"$(SRCROOT)/mediation",
+					"$(SRCROOT)/model",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (

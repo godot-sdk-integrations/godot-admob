@@ -4,7 +4,7 @@
 
 #import "admob_adapter_response.h"
 
-#import "gap_converter.h"
+#import "admob_ad_error.h"
 #import "mediation_network_factory.h"
 
 
@@ -40,7 +40,7 @@ static String const kLatencyProperty = "latency";
 
 	NSError *adError = self.info.error;
 	if (adError) {
-		dict[kAdErrorProperty] = [GAPConverter nsAdErrorToGodotDictionary:adError];
+		dict[kAdErrorProperty] = [[[AdmobAdError alloc] initWithNsError:adError] buildRawData];
 	}
 
 	dict[kAdSourceIdProperty] = [self.info.adSourceID UTF8String];
