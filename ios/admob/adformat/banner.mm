@@ -7,6 +7,9 @@
 #import "admob_plugin_implementation.h"
 #import "admob_response.h"
 #import "admob_logger.h"
+#import "admob_ad_error.h"
+#import "admob_load_ad_error.h"
+
 
 @implementation BannerAd
 
@@ -158,10 +161,11 @@
 }
 
 - (void) bannerView: (GADBannerView *) bannerView didFailToReceiveAdWithError: (NSError *) error {
-	os_log_error(admob_log, "BannerAd bannerView:didFailToReceiveAdWithError: %@", [error localizedDescription]);
+	AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
+	os_log_error(admob_log, "BannerAd bannerView:didFailToReceiveAdWithError: %@", loadAdError.message);
 	
 	AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_FAILED_TO_LOAD_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
-				[GAPConverter nsLoadErrorToGodotDictionary:error]);
+				[loadAdError buildRawData]);
 }
 
 - (void) bannerViewDidRecordClick: (GADBannerView*) bannerView {

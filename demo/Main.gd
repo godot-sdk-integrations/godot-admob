@@ -18,7 +18,6 @@ extends Node
 @onready var reload_rewarded_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/ReloadRewardedButton
 @onready var reload_rewarded_interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/ReloadRewardedInterstitialButton
 @onready var _label: RichTextLabel = $CanvasLayer/MainContainer/VBoxContainer/RichTextLabel as RichTextLabel
-@onready var _geography_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/GeographyHBoxContainer/OptionButton
 @onready var _android_texture_rect: TextureRect = $CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer/AndroidTextureRect as TextureRect
 @onready var _ios_texture_rect: TextureRect = $CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer/iOSTextureRect as TextureRect
 
@@ -293,9 +292,7 @@ func _process_consent_status(a_consent_status: String) -> void:
 	match a_consent_status:
 		ConsentInformation.ConsentStatus.UNKNOWN:
 			_print_to_screen("consent status is unknown")
-			admob.update_consent_info(ConsentRequestParameters.new()
-				.set_debug_geography(_geography_option_button.selected)
-				.add_test_device_hashed_id(OS.get_unique_id()))
+			admob.update_consent_info()
 		ConsentInformation.ConsentStatus.NOT_REQUIRED:
 			_print_to_screen("consent is not required")
 			_load_ads()
@@ -326,10 +323,7 @@ func _on_admob_consent_form_dismissed(a_error_data: FormError) -> void:
 
 
 func _on_update_consent_info_button_pressed() -> void:
-	print("selected debug geography: %d" % _geography_option_button.selected)
-	admob.update_consent_info(ConsentRequestParameters.new()
-		.set_debug_geography(_geography_option_button.selected)
-		.add_test_device_hashed_id(OS.get_unique_id()))
+	admob.update_consent_info()
 
 
 func _on_reload_interstitial_button_pressed() -> void:

@@ -39,6 +39,8 @@ import org.godotengine.godot.plugin.UsedByGodot;
 
 import org.godotengine.plugin.admob.mediation.PrivacySettings;
 import org.godotengine.plugin.admob.model.AdmobConfiguration;
+import org.godotengine.plugin.admob.model.AdmobAdError;
+import org.godotengine.plugin.admob.model.AdmobLoadAdError;
 import org.godotengine.plugin.admob.model.AdmobResponse;
 import org.godotengine.plugin.admob.model.AdmobStatus;
 import org.godotengine.plugin.admob.model.ConsentConfiguration;
@@ -295,7 +297,7 @@ public class AdmobPlugin extends GodotPlugin {
 
 							@Override
 							public void onAdFailedToLoad(String adId, LoadAdError adError) {
-								emitSignal(SIGNAL_BANNER_AD_FAILED_TO_LOAD, adId, GodotConverter.convert(adError));
+								emitSignal(SIGNAL_BANNER_AD_FAILED_TO_LOAD, adId, new AdmobLoadAdError(adError).buildRawData());
 							}
 
 							@Override
@@ -451,12 +453,12 @@ public class AdmobPlugin extends GodotPlugin {
 
 					@Override
 					public void onInterstitialFailedToLoad(String adId, LoadAdError loadAdError) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_LOAD, adId, GodotConverter.convert(loadAdError));
+						emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_LOAD, adId, new AdmobLoadAdError(loadAdError).buildRawData());
 					}
 
 					@Override
 					public void onInterstitialFailedToShow(String adId, AdError adError) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, GodotConverter.convert(adError));
+						emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, new AdmobAdError(adError).buildRawData());
 					}
 
 					@Override
@@ -532,7 +534,7 @@ public class AdmobPlugin extends GodotPlugin {
 
 					@Override
 					public void onRewardedVideoFailedToLoad(String adId, LoadAdError loadAdError) {
-						emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_LOAD, adId, GodotConverter.convert(loadAdError));
+						emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_LOAD, adId, new AdmobLoadAdError(loadAdError).buildRawData());
 					}
 
 					@Override
@@ -542,7 +544,7 @@ public class AdmobPlugin extends GodotPlugin {
 
 					@Override
 					public void onRewardedVideoFailedToShow(String adId, AdError adError) {
-						emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, GodotConverter.convert(adError));
+						emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, new AdmobAdError(adError).buildRawData());
 					}
 
 					@Override
@@ -618,7 +620,7 @@ public class AdmobPlugin extends GodotPlugin {
 
 					@Override
 					public void onRewardedInterstitialFailedToLoad(String adId, LoadAdError loadAdError) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD, adId, GodotConverter.convert(loadAdError));
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD, adId, new AdmobLoadAdError(loadAdError).buildRawData());
 					}
 
 					@Override
@@ -628,7 +630,7 @@ public class AdmobPlugin extends GodotPlugin {
 
 					@Override
 					public void onRewardedInterstitialFailedToShow(String adId, AdError adError) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, GodotConverter.convert(adError));
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, new AdmobAdError(adError).buildRawData());
 					}
 
 					@Override
@@ -756,12 +758,13 @@ public class AdmobPlugin extends GodotPlugin {
 
 	@UsedByGodot
 	public void update_consent_info(Dictionary consentRequestParameters) {
-		Log.d(LOG_TAG, "update_consent_info()");
+		ConsentConfiguration consentConfig = new ConsentConfiguration(consentRequestParameters);
+		Log.d(LOG_TAG, "update_consent_info(" + consentConfig.toString() + ")");
 		ConsentInformation consentInformation = UserMessagingPlatform.getConsentInformation(activity);
 
 		consentInformation.requestConsentInfoUpdate(
 			activity,
-			new ConsentConfiguration(consentRequestParameters).createConsentRequestParameters(activity),
+			consentConfig.createConsentRequestParameters(activity),
 			(ConsentInformation.OnConsentInfoUpdateSuccessListener) () -> {
 				emitSignal(SIGNAL_CONSENT_INFO_UPDATED);
 			},
@@ -798,7 +801,7 @@ public class AdmobPlugin extends GodotPlugin {
 
 			@Override
 			public void onAdFailedToLoad(String adUnitId, LoadAdError loadAdError) {
-				emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, adUnitId, GodotConverter.convert(loadAdError));
+				emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, adUnitId, new AdmobLoadAdError(loadAdError).buildRawData());
 			}
 
 			@Override
@@ -808,7 +811,7 @@ public class AdmobPlugin extends GodotPlugin {
 
 			@Override
 			public void onAdFailedToShow(String adUnitId, AdError adError) {
-				emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adUnitId, GodotConverter.convert(adError));
+				emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adUnitId, new AdmobAdError(adError).buildRawData());
 			}
 
 			@Override

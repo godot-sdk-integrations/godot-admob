@@ -11,5 +11,5 @@ func _init(a_data: Dictionary):
 	super(a_data)
 
 
-func get_response_info() -> String:
-	return _data[RESPONSE_INFO_PROPERTY]
+func get_response_info() -> ResponseInfo:
+	return ResponseInfo.new(_data[RESPONSE_INFO_PROPERTY]) if _data.has(RESPONSE_INFO_PROPERTY) else null

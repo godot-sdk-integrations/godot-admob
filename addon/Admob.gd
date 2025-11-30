@@ -261,8 +261,8 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 ## The user location used when testing the consent management functionality.
 @export var debug_geography: ConsentRequestParameters.DebugGeography = ConsentRequestParameters.DebugGeography.NOT_SET : set = set_debug_geography
 
-## Identifier of the test device will be sent to AdMob if set to true.
-@export var add_test_device_id: bool = false : set = set_add_test_device_id
+## A list of SHA-256–hashed device IDs that should be registered as test devices in AdMob.
+@export var test_device_hashed_ids: Array[String] = []
 
 
 var _banner_id: String
@@ -479,10 +479,6 @@ func set_max_rewarded_interstitial_ad_cache(a_value: int) -> void:
 
 func set_debug_geography(a_value: ConsentRequestParameters.DebugGeography) -> void:
 	debug_geography = a_value
-
-
-func set_add_test_device_id(a_value: bool) -> void:
-	add_test_device_id = a_value
 
 
 func is_mediation_enabled() -> bool:
@@ -823,20 +819,26 @@ func is_consent_form_available() -> bool:
 	return false
 
 
-func update_consent_info(consentRequestParameters: ConsentRequestParameters) -> void:
+func update_consent_info(a_parameters: ConsentRequestParameters = null) -> void:
 	if _plugin_singleton == null:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
-		consentRequestParameters.set_is_real(is_real)
+		if a_parameters == null:
+			a_parameters = ConsentRequestParameters.new()
 
-		if not is_real:
-			if debug_geography != ConsentRequestParameters.DebugGeography.NOT_SET:
-				consentRequestParameters.set_debug_geography(debug_geography)
+			if under_age_of_consent != AdmobConfig.TagForUnderAgeOfConsent.UNSPECIFIED:
+				a_parameters.set_tag_for_under_age_of_consent(under_age_of_consent)
 
-			if add_test_device_id:
-				consentRequestParameters.add_test_device_hashed_id(OS.get_unique_id())
+			if not is_real:
+				if debug_geography != ConsentRequestParameters.DebugGeography.NOT_SET:
+					a_parameters.set_debug_geography(debug_geography)
 
-		_plugin_singleton.update_consent_info(consentRequestParameters.get_raw_data())
+				for __device_id in test_device_hashed_ids:
+					a_parameters.add_test_device_hashed_id(__device_id)
+
+		a_parameters.set_is_real(is_real)
+
+		_plugin_singleton.update_consent_info(a_parameters.get_raw_data())
 
 
 func reset_consent_info() -> void:

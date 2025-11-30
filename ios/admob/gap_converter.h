@@ -38,12 +38,7 @@
 + (String) nsStringToGodotString:(NSString*) nsString;
 + (Dictionary) nsDictionaryToGodotDictionary:(NSDictionary*) nsDictionary;
 + (Dictionary) adSizeToGodotDictionary:(GADAdSize) adSize;
-+ (Dictionary) responseInfoToGodotDictionary:(GADResponseInfo*) responseInfo;
-+ (Dictionary) adNetworkResponseInfoToGodotDictionary:(GADAdNetworkResponseInfo*) adNetworkResponseInfo;
-+ (Dictionary) adNetworkInfoArrayToGodotDictionary:(NSArray<GADAdNetworkResponseInfo*>*) adNetworkInfoArray;
 + (Dictionary) adRewardToGodotDictionary:(GADAdReward*) adReward;
-+ (Dictionary) nsAdErrorToGodotDictionary:(NSError*) nsError;
-+ (Dictionary) nsLoadErrorToGodotDictionary:(NSError*) nsError;
 + (Dictionary) nsFormErrorToGodotDictionary:(NSError*) nsError;
 
 
