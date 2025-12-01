@@ -14,7 +14,6 @@ import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.rewarded.RewardItem;
-import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback;
 
@@ -41,16 +40,13 @@ public class RewardedInterstitial {
 	private final RewardedInterstitialListener listener;
 
 	private RewardedInterstitialAd rewardedAd;
-	private ServerSideVerificationOptions serverSideVerificationOptions;
 
-	RewardedInterstitial(final String adId, final LoadAdRequest loadRequest, Activity activity,
-				final RewardedInterstitialListener listener) {
+	RewardedInterstitial(final String adId, final LoadAdRequest loadRequest, Activity activity, final RewardedInterstitialListener listener) {
 		this.adId = adId;
 		this.loadRequest = loadRequest;
 		this.activity = activity;
 		this.listener = listener;
 		this.rewardedAd = null;
-		this.serverSideVerificationOptions = null;
 	}
 
 	void load() {
@@ -92,10 +88,6 @@ public class RewardedInterstitial {
 			Log.w(LOG_TAG, "setAd(): rewarded interstitial already set");
 		}
 		else {
-			// Avoid memory leaks.
-			if (this.rewardedAd != null)
-				this.rewardedAd.setFullScreenContentCallback(null);
-
 			if (rewardedAd != null) {
 				rewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
 					@Override
@@ -108,7 +100,7 @@ public class RewardedInterstitial {
 					@Override
 					public void onAdDismissedFullScreenContent() {
 						super.onAdDismissedFullScreenContent();
-						Log.w(LOG_TAG, "rewarded interstitial ad dismissed full screen content");
+						Log.i(LOG_TAG, "rewarded interstitial ad dismissed full screen content");
 						listener.onRewardedInterstitialClosed(RewardedInterstitial.this.adId);
 					}
 
@@ -133,24 +125,16 @@ public class RewardedInterstitial {
 						listener.onRewardedInterstitialOpened(RewardedInterstitial.this.adId);
 					}
 				});
-			}
 
-			if (serverSideVerificationOptions != null) {
-				rewardedAd.setServerSideVerificationOptions(serverSideVerificationOptions);
+				if (this.loadRequest.hasServerSideVerificationOptions()) {
+					rewardedAd.setServerSideVerificationOptions(this.loadRequest.createServerSideVerificationOptions());
+				}
 			}
+			// Avoid memory leaks
+			if (this.rewardedAd != null)
+				this.rewardedAd.setFullScreenContentCallback(null);
 
 			this.rewardedAd = rewardedAd;
-		}
-	}
-
-	void setServerSideVerificationOptions(ServerSideVerificationOptions ssvo) {
-		this.serverSideVerificationOptions = ssvo;
-
-		if (rewardedAd == null) {
-			Log.w(LOG_TAG, "setServerSideVerificationOptions(): Ad is null. SSVO will be set when ad is loaded.");
-		}
-		else {
-			rewardedAd.setServerSideVerificationOptions(ssvo);
 		}
 	}
 }

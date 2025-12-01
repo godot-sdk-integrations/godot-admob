@@ -35,20 +35,8 @@
 			self.gadAd = ad;
 			self.gadAd.fullScreenContentDelegate = self;
 
-			NSString* userId = [loadAdRequest userId];
-			NSString* customData = [loadAdRequest customData];
-			if ([userId length] > 0 || [customData length] > 0) {
-				GADServerSideVerificationOptions *gadOptions = [[GADServerSideVerificationOptions alloc] init];
-
-				if ([customData length] > 0) {
-					gadOptions.customRewardString = customData;
-				}
-
-				if ([userId length] > 0) {
-					gadOptions.userIdentifier = userId;
-				}
-
-				self.gadAd.serverSideVerificationOptions = gadOptions;
+			if ([loadAdRequest hasServerSideVerificationOptions]) {
+				self.gadAd.serverSideVerificationOptions = [loadAdRequest createGADServerSideVerificationOptions];
 			}
 			
 			os_log_debug(admob_log, "RewardedAd %@ loaded successfully", self.adId);

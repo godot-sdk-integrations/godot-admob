@@ -24,11 +24,16 @@
 - (BOOL) hasCollapsiblePosition;
 - (NSString*) collapsiblePosition;
 - (NSArray*) keywords;
+- (BOOL) hasUserId;
 - (NSString*) userId;
+- (BOOL) hasCustomData;
 - (NSString*) customData;
 - (Array) networkExtras;
 
 - (GADRequest*) createGADRequest;
+
+- (BOOL) hasServerSideVerificationOptions;
+- (GADServerSideVerificationOptions *) createGADServerSideVerificationOptions;
 
 @end
 

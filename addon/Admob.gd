@@ -89,6 +89,9 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 ## A string used to identify the origin of an ad request when a third-party library or platform is used to mediate requests to the Google Mobile Ads SDK.
 @export var request_agent: String = PLUGIN_SINGLETON_NAME: set = set_request_agent
 
+## Whether the plugin should automatically apply the configuration after initialization has been completed.
+@export var auto_configure_on_initialize: bool = true
+
 
 @export_category("Ad Type-specific")
 @export_group("Banner", "banner_")
@@ -96,7 +99,7 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export var banner_position: LoadAdRequest.AdPosition = LoadAdRequest.AdPosition.TOP: set = set_banner_position
 
 ## The size of the banner ad.
-@export var banner_size: LoadAdRequest.AdSize = LoadAdRequest.AdSize.BANNER: set = set_banner_size
+@export var banner_size: LoadAdRequest.FixedSize = LoadAdRequest.FixedSize.BANNER: set = set_banner_size
 
 ## If not set to disabled, then specifies the direction towards which the banner ad will collapse.
 @export var banner_collapsible_position: LoadAdRequest.CollapsiblePosition = LoadAdRequest.CollapsiblePosition.DISABLED: set = set_banner_collapsible_position
@@ -413,6 +416,17 @@ func initialize() -> void:
 		_plugin_singleton.initialize()
 
 
+func get_initialization_status() -> InitializationStatus:
+	var __status: InitializationStatus
+
+	if _plugin_singleton == null:
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+	else:
+		__status = InitializationStatus.new(_plugin_singleton.get_initialization_status())
+
+	return __status
+
+
 func set_is_real(a_value: bool) -> void:
 	is_real = a_value
 
@@ -449,7 +463,7 @@ func set_banner_position(a_value: LoadAdRequest.AdPosition) -> void:
 	banner_position = a_value
 
 
-func set_banner_size(a_value: LoadAdRequest.AdSize) -> void:
+func set_banner_size(a_value: LoadAdRequest.FixedSize) -> void:
 	banner_size = a_value
 
 
@@ -485,16 +499,35 @@ func is_mediation_enabled() -> bool:
 	return enabled_networks > 0
 
 
-func configure_ads() -> void:
+func create_request_configuration() -> AdmobConfig:
+	return (AdmobConfig.new()
+			.set_is_real(is_real)
+			.set_max_ad_content_rating(max_ad_content_rating)
+			.set_child_directed_treatment(child_directed)
+			.set_under_age_of_consent(under_age_of_consent)
+			.set_first_party_id_enabled(first_party_id_enabled)
+			.set_personalization_state(personalization_state))
+
+
+func set_request_configuration(a_config: AdmobConfig = null) -> void:
 	if _plugin_singleton != null:
-		_plugin_singleton.set_request_configuration(AdmobConfig.new()
+		if a_config == null:
+			a_config = (AdmobConfig.new()
 					.set_is_real(is_real)
 					.set_max_ad_content_rating(max_ad_content_rating)
 					.set_child_directed_treatment(child_directed)
 					.set_under_age_of_consent(under_age_of_consent)
 					.set_first_party_id_enabled(first_party_id_enabled)
-					.set_personalization_state(personalization_state)
-					.get_raw_data())
+					.set_personalization_state(personalization_state))
+
+		_plugin_singleton.set_request_configuration(a_config.get_raw_data())
+	else:
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+
+
+func set_app_pause_on_background(a_pause: bool) -> void:
+	if _plugin_singleton != null:
+		_plugin_singleton.set_app_pause_on_background(a_pause)
 	else:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
@@ -620,6 +653,39 @@ func get_banner_dimension_in_pixels(a_ad_id: String = "") -> Vector2:
 						_plugin_singleton.get_banner_height_in_pixels(a_ad_id))
 
 	return Vector2.ZERO
+
+
+func get_current_adaptive_banner_size(a_width: int) -> AdSize:
+	var __ad_size: AdSize
+
+	if _plugin_singleton == null:
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+	else:
+		return AdSize.new(_plugin_singleton.get_current_adaptive_banner_size(a_width))
+
+	return __ad_size
+
+
+func get_portrait_adaptive_banner_size(a_width: int) -> AdSize:
+	var __ad_size: AdSize
+
+	if _plugin_singleton == null:
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+	else:
+		return AdSize.new(_plugin_singleton.get_portrait_adaptive_banner_size(a_width))
+
+	return __ad_size
+
+
+func get_landscape_adaptive_banner_size(a_width: int) -> AdSize:
+	var __ad_size: AdSize
+
+	if _plugin_singleton == null:
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+	else:
+		return AdSize.new(_plugin_singleton.get_landscape_adaptive_banner_size(a_width))
+
+	return __ad_size
 
 
 func create_interstitial_ad_request() -> LoadAdRequest:
@@ -878,7 +944,9 @@ func open_app_settings() -> void:
 
 
 func _on_initialization_completed(status_data: Dictionary) -> void:
-	configure_ads()
+	if auto_configure_on_initialize:
+		set_request_configuration()
+
 	initialization_completed.emit(InitializationStatus.new(status_data))
 
 

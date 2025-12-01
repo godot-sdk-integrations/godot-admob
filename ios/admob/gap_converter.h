@@ -37,7 +37,6 @@
 // To Godot
 + (String) nsStringToGodotString:(NSString*) nsString;
 + (Dictionary) nsDictionaryToGodotDictionary:(NSDictionary*) nsDictionary;
-+ (Dictionary) adSizeToGodotDictionary:(GADAdSize) adSize;
 + (Dictionary) adRewardToGodotDictionary:(GADAdReward*) adReward;
 + (Dictionary) nsFormErrorToGodotDictionary:(NSError*) nsError;
 

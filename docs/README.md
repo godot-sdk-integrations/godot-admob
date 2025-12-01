@@ -41,6 +41,7 @@ A Godot plugin that provides a unified GDScript interface for integrating **Goog
 - [Mediation](#mediation)
 - [Export](#export)
 - [Platform-Specific Notes](#platform-specific-notes)
+- [General Troubleshooting](#general-troubleshooting)
 - [Video Tutorials](#video-tutorials)
 - [Links](#links)
 - [All Plugins](#all-plugins)
@@ -201,7 +202,7 @@ The following ad types are supported:
 - `initialize()` - initialize plugin
 - `set_request_configuration(AdmobConfig)` - set general configuration that is applied to all ad requests
 - `get_initialization_status()` - get initialization status of enabled mediation networks
-- `get_current_adaptive_banner_size()`
+- `get_current_adaptive_banner_size()` - get an AdSize with the given width and a Google-optimized height to create a banner ad
 - `get_portrait_adaptive_banner_size()`
 - `get_landscape_adaptive_banner_size()`
 - `load_banner_ad(LoadAdRequest)` - load a banner ad that matches the request parameters
@@ -235,7 +236,14 @@ The following ad types are supported:
 
 ### <img src="../addon/icon.png" width="16"> iOS-only Methods
 - `request_tracking_authorization()` - display App Tracking Transparency (ATT) dialog
-- `set_ios_app_pause_on_background()`
+- `set_app_pause_on_background()` - set the configurable option (default: disabled) that controls whether the Godot engine should simulate an "app lost focus" state when full-screen ads are displayed
+
+### <img src="../addon/icon.png" width="16"> Helper Methods
+- `create_request_configuration()` - creates a `AdmobConfig` object populated with the ad configuration from the `Admob` node.
+- `create_banner_ad_request()` - creates a `LoadAdRequest` object populated with the banner ad configuration from the `Admob` node.
+- `create_interstitial_ad_request()` - creates a `LoadAdRequest` object populated with the insterstitial ad configuration from the `Admob` node.
+- `create_rewarded_ad_request()` - creates a `LoadAdRequest` object populated with the rewarded ad configuration from the `Admob` node.
+- `create_rewarded_interstitial_ad_request()` - creates a `LoadAdRequest` object populated with the rewarded interstitial ad configuration from the `Admob` node.
 
 ---
 
@@ -421,6 +429,27 @@ Each ad-loaded signal includes a `ResponseInfo` object. Check it to view how eve
 ### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> Initialization Status
 The `initialization_completed` signal includes an `InitializationStatus` object. Check it to view the initialization status of every enabled ad network. Additionally, the `get_initialization_status()` method also returns the `InitializationStatus` object.
 
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> Mediation Network Configuration
+Links to documentation pages and dashboards:
+
+| Network | Android | iOS | 🖥 |
+| :--- | :---: | :---: | :---: |
+| Applovin | [Config](https://developers.google.com/admob/android/mediation/applovin) | [Config](https://developers.google.com/admob/ios/mediation/applovin) | [Dashboard](https://dash.applovin.com/signup) |
+| Chartboost | [Config](https://developers.google.com/admob/android/mediation/chartboost) | [Config](https://developers.google.com/admob/ios/mediation/chartboost) | [Dashboard](https://platform.chartboost.com/signup) |
+| DT Exchange | [Config](https://developers.google.com/admob/android/mediation/dt-exchange) | [Config](https://developers.google.com/admob/ios/mediation/dt-exchange) | [Dashboard](https://console.fyber.com/sign-up) |
+| i-mobile | [Config](https://developers.google.com/admob/android/mediation/imobile) | [Config](https://developers.google.com/admob/ios/mediation/imobile) | [Dashboard](https://www2.i-mobile.co.jp/pre_register_partner.aspx) |
+| InMobi | [Config](https://developers.google.com/admob/android/mediation/inmobi) | [Config](https://developers.google.com/admob/ios/mediation/inmobi) | [Dashboard](https://publisher.inmobi.com/signup) |
+| ironSource | [Config](https://developers.google.com/admob/android/mediation/ironsource) | [Config](https://developers.google.com/admob/ios/mediation/ironsource) | [Dashboard](https://platform.ironsrc.com/partners/identity/signup) |
+| Liftoff Monetize | [Config](https://developers.google.com/admob/android/mediation/liftoff-monetize) | [Config](https://developers.google.com/admob/ios/mediation/liftoff-monetize) | [Dashboard](https://publisher.vungle.com/applications) |
+| LINE Ads Network | [Config](https://developers.google.com/admob/android/mediation/line) | [Config](https://developers.google.com/admob/ios/mediation/line) | [Dashboard](https://pages.linebiz.com/line-ads-network/) |
+| maio | [Config](https://developers.google.com/admob/android/mediation/maio) | [Config](https://developers.google.com/admob/ios/mediation/maio) | [Dashboard](https://maio.jp/publisher/login) |
+| Meta Audience Network | [Config](https://developers.google.com/admob/android/mediation/meta) | [Config](https://developers.google.com/admob/ios/mediation/meta) | [Dashboard](https://business.facebook.com/pub/start) |
+| Mintegral | [Config](https://developers.google.com/admob/android/mediation/mintegral) | [Config](https://developers.google.com/admob/ios/mediation/mintegral) | [Dashboard](https://dev.mintegral.com/user/signup) |
+| Moloco | [Config](https://developers.google.com/admob/android/mediation/moloco) | [Config](https://developers.google.com/admob/ios/mediation/moloco) | [Dashboard](https://publisher.moloco.cloud/login) |
+| myTarget | [Config](https://developers.google.com/admob/android/mediation/mytarget) | [Config](https://developers.google.com/admob/ios/mediation/mytarget) | [Dashboard](https://target.vk.ru/) |
+| Pangle | [Config](https://developers.google.com/admob/android/mediation/pangle) | [Config](https://developers.google.com/admob/ios/mediation/pangle) | [Dashboard](https://pangleglobal.com/media/register) |
+| Unity Ads | [Config](https://developers.google.com/admob/android/mediation/unity) | [Config](https://developers.google.com/admob/ios/mediation/unity) | [Dashboard](https://cloud.unity.com/home/) |
+
 ---
 
 <a name="export"></a>
@@ -484,6 +513,7 @@ During export, the plugin searches for an `Admob` node in the scene that is open
 
 ### iOS
 - Follow instructions on [Exporting for iOS](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html)
+- **Mediation**: if you have enabled mediation networks, after exporting your project to iOS, open the generated `.xcworkspace`on Xcode (not `.xcodeproj`!)
 - **Missing APP ID** crashes: make sure that you
   - enter your Admob APP ID in the Admob node and pay attention to the [iOS Export section](#ios-export).
   - or enter it in the `android_export.cfg` file as described in the [File-based Export](#export) section.
@@ -495,6 +525,26 @@ During export, the plugin searches for an `Admob` node in the scene that is open
     - Call `Admob` node's `request_tracking_authorization()` method.
     - Handle `Admob` node's `tracking_authorization_granted` and `tracking_authorization_denied` signals.
     - If the user initially rejects the tracking request, then later on you can check if the user changed their mind and allow them to update their settings by opening the system app settings using the `Admob` node's `open_app_settings()` method.
+
+---
+
+<a name="general-troubleshooting"></a>
+
+# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="24"> General Troubleshooting
+
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Ad Blockers
+
+Ad blockers can prevent AdMob from loading ad resources, block network calls to Google’s ad servers, or hide rendered ad views, which results in missing impressions, zero-fill rates, or seemingly “stuck” loading states. Because these failures happen outside your app’s control, AdMob won’t report clear errors. Potential blocking can be detected by checking for repeated load failures with no error codes, monitoring network logs for blocked Google ad domains, or prompting users to disable known system-wide blockers (VPN-based, DNS-based) when ads consistently fail. In production, the only reliable remedy is asking users to whitelist the app or disable the blocking service.
+
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> DNS Settings
+
+DNS settings can affect AdMob by causing ad-request failures if the device or network cannot properly resolve the domains used by Google’s ad and consent services. Misconfigured DNS (including privacy-filtered DNS or restrictive enterprise DNS) may block or misroute requests, leading to missing ads, slow loads, or consent-flow errors. Issues can be detected by checking device logs for failed hostname resolutions, testing with a different DNS provider (e.g., Google Public DNS or the ISP’s default), or trying another network to confirm whether DNS is the cause. To remedy problems, users should switch to a reliable DNS provider, disable overly aggressive filtering, ensure required Google domains are allowed, and verify that VPNs or DNS-based firewalls aren’t interfering with ad traffic.
+
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Regional Restrictions
+
+AdMob is not available everywhere. A list of restricted countries and regions can be found at the link below.
+
+- [Regional Restrictions](https://support.google.com/admob/answer/6163675?hl=en)
 
 ---
 
@@ -515,7 +565,7 @@ During export, the plugin searches for an `Admob` node in the scene that is open
 
 <a name="links"></a>
 
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Links
+# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="24"> Links
 
 - [AssetLib Entry Android](https://godotengine.org/asset-library/asset/2548)
 - [AssetLib Entry iOS](https://godotengine.org/asset-library/asset/3178)

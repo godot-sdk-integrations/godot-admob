@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://daro5x6n3pd26"]
 
 [ext_resource type="Script" uid="uid://bcqb5hwnjbtob" path="res://Main.gd" id="1_wt50o"]
-[ext_resource type="Script" uid="uid://cwcllsle7jhg3" path="res://addons/AdmobPlugin/Admob.gd" id="2_4x6et"]
+[ext_resource type="Script" uid="uid://dlj8a6vfplu57" path="res://addons/AdmobPlugin/Admob.gd" id="2_4x6et"]
 [ext_resource type="Texture2D" uid="uid://cy0mnncxevupr" path="res://assets/admob-android.png" id="2_qti4s"]
 [ext_resource type="Texture2D" uid="uid://b2myrgf8pkumi" path="res://assets/admob-ios.png" id="3_cm0pq"]
 

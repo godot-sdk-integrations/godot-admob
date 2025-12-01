@@ -9,9 +9,7 @@ import android.app.Activity;
 import android.provider.Settings;
 import android.util.Log;
 
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.rewarded.RewardItem;
-import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
 import com.google.android.ump.FormError;
 
 import java.security.MessageDigest;
@@ -23,15 +21,6 @@ import org.godotengine.godot.Dictionary;
 
 public class GodotConverter {
 	private static final String LOG_TAG = AdmobPlugin.LOG_TAG + "::" + GodotConverter.class.getSimpleName();
-
-	public static Dictionary convert(AdSize size) {
-		Dictionary dict = new Dictionary();
-
-		dict.put("width", size.getWidth());
-		dict.put("height", size.getHeight());
-
-		return dict;
-	}
 
 	public static Dictionary convert(FormError error) {
 		Dictionary dict = new Dictionary();
@@ -54,20 +43,6 @@ public class GodotConverter {
 		dict.put("type", item.getType());
 
 		return dict;
-	}
-
-	public static ServerSideVerificationOptions createSSVO(Dictionary data) {
-		ServerSideVerificationOptions.Builder builder = new ServerSideVerificationOptions.Builder();
-
-		if (data.containsKey("custom_data")) {
-			builder.setCustomData((String) data.get("custom_data"));
-		}
-
-		if (data.containsKey("user_id")) {
-			builder.setUserId((String) data.get("user_id"));
-		}
-
-		return builder.build();
 	}
 
 	/**

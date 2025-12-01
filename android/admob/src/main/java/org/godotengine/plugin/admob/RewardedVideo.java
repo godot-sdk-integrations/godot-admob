@@ -16,7 +16,6 @@ import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
-import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
 
 import org.godotengine.plugin.admob.model.LoadAdRequest;
 
@@ -43,16 +42,13 @@ public class RewardedVideo {
 	private final RewardedVideoListener listener;
 
 	private RewardedAd rewardedAd;
-	private ServerSideVerificationOptions serverSideVerificationOptions;
 
-	RewardedVideo(final String adId, final LoadAdRequest loadRequest, Activity activity,
-				final RewardedVideoListener listener) {
+	RewardedVideo(final String adId, final LoadAdRequest loadRequest, Activity activity, final RewardedVideoListener listener) {
 		this.adId = adId;
 		this.loadRequest = loadRequest;
 		this.activity = activity;
 		this.listener = listener;
 		this.rewardedAd = null;
-		this.serverSideVerificationOptions = null;
 	}
 
 	void load() {
@@ -94,10 +90,6 @@ public class RewardedVideo {
 			Log.w(LOG_TAG, "setAd(): rewarded already set");
 		}
 		else {
-			// Avoid memory leaks.
-			if (this.rewardedAd != null)
-				this.rewardedAd.setFullScreenContentCallback(null);
-
 			if (rewardedAd != null) {
 				rewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
 					@Override
@@ -110,7 +102,7 @@ public class RewardedVideo {
 					@Override
 					public void onAdDismissedFullScreenContent() {
 						super.onAdDismissedFullScreenContent();
-						Log.w(LOG_TAG, "rewarded video ad dismissed full screen content");
+						Log.i(LOG_TAG, "rewarded video ad dismissed full screen content");
 						listener.onRewardedVideoClosed(RewardedVideo.this.adId);
 					}
 
@@ -135,24 +127,16 @@ public class RewardedVideo {
 						listener.onRewardedVideoOpened(RewardedVideo.this.adId);
 					}
 				});
-			}
 
-			if (serverSideVerificationOptions != null) {
-				rewardedAd.setServerSideVerificationOptions(serverSideVerificationOptions);
+				if (this.loadRequest.hasServerSideVerificationOptions()) {
+					rewardedAd.setServerSideVerificationOptions(this.loadRequest.createServerSideVerificationOptions());
+				}
 			}
+			// Avoid memory leaks
+			if (this.rewardedAd != null)
+				this.rewardedAd.setFullScreenContentCallback(null);
 
 			this.rewardedAd = rewardedAd;
-		}
-	}
-
-	void setServerSideVerificationOptions(ServerSideVerificationOptions ssvo) {
-		this.serverSideVerificationOptions = ssvo;
-
-		if (rewardedAd == null) {
-			Log.w(LOG_TAG, "setServerSideVerificationOptions(): Ad is null. SSVO will be set when ad is loaded.");
-		}
-		else {
-			rewardedAd.setServerSideVerificationOptions(ssvo);
 		}
 	}
 }
