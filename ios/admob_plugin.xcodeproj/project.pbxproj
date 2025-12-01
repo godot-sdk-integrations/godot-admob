@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07696F9E2EDD61D3000C21B2 /* admob_ad_size.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07696F9D2EDD61D2000C21B2 /* admob_ad_size.mm */; };
 		07787D452EDA6C22009B6F5F /* unity_mediation_network.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07787D352EDA6C22009B6F5F /* unity_mediation_network.mm */; };
 		07787D462EDA6C22009B6F5F /* app_open.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07787D022EDA6C22009B6F5F /* app_open.mm */; };
 		07787D472EDA6C22009B6F5F /* ad_format_base.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07787D002EDA6C22009B6F5F /* ad_format_base.mm */; };
@@ -61,6 +62,8 @@
 
 /* Begin PBXFileReference section */
 		073B52C32ECF241C0063663B /* admob_plugin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "admob_plugin-Bridging-Header.h"; sourceTree = "<group>"; };
+		07696F9C2EDD61D2000C21B2 /* admob_ad_size.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = admob_ad_size.h; sourceTree = "<group>"; };
+		07696F9D2EDD61D2000C21B2 /* admob_ad_size.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = admob_ad_size.mm; sourceTree = "<group>"; };
 		07787CFF2EDA6C22009B6F5F /* ad_format_base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ad_format_base.h; sourceTree = "<group>"; };
 		07787D002EDA6C22009B6F5F /* ad_format_base.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ad_format_base.mm; sourceTree = "<group>"; };
 		07787D012EDA6C22009B6F5F /* app_open.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = app_open.h; sourceTree = "<group>"; };
@@ -223,6 +226,8 @@
 		07787D422EDA6C22009B6F5F /* model */ = {
 			isa = PBXGroup;
 			children = (
+				07696F9C2EDD61D2000C21B2 /* admob_ad_size.h */,
+				07696F9D2EDD61D2000C21B2 /* admob_ad_size.mm */,
 				0780732F2EDC1C5E00A6FF87 /* admob_ad_error.h */,
 				078073302EDC1C5E00A6FF87 /* admob_ad_error.mm */,
 				078073312EDC1C5E00A6FF87 /* admob_load_ad_error.h */,
@@ -387,6 +392,7 @@
 				90CAAAA424E724C50013969F /* admob_plugin_implementation.mm in Sources */,
 				07787D452EDA6C22009B6F5F /* unity_mediation_network.mm in Sources */,
 				07787D462EDA6C22009B6F5F /* app_open.mm in Sources */,
+				07696F9E2EDD61D3000C21B2 /* admob_ad_size.mm in Sources */,
 				07787D472EDA6C22009B6F5F /* ad_format_base.mm in Sources */,
 				07787D482EDA6C22009B6F5F /* maio_mediation_network.mm in Sources */,
 				07787D492EDA6C22009B6F5F /* imobile_mediation_network.mm in Sources */,

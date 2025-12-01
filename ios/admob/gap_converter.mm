@@ -321,15 +321,6 @@
 	return dictionary;
 }
 
-+ (Dictionary) adSizeToGodotDictionary:(GADAdSize) adSize {
-	Dictionary dictionary;
-	
-	dictionary["width"] = adSize.size.width;
-	dictionary["height"] = adSize.size.height;
-	
-	return dictionary;
-}
-
 + (Dictionary) adRewardToGodotDictionary:(GADAdReward*) adReward {
 	Dictionary dictionary;
 

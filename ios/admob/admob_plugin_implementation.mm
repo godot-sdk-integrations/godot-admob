@@ -8,6 +8,7 @@
 #import <AdSupport/AdSupport.h>
 
 #import "gap_converter.h"
+#import "admob_ad_size.h"
 #import "admob_config.h"
 #import "admob_status.h"
 #import "admob_logger.h"
@@ -72,7 +73,7 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("initialize"), &AdmobPlugin::initialize);
 	ClassDB::bind_method(D_METHOD("set_request_configuration"), &AdmobPlugin::set_request_configuration);
 	ClassDB::bind_method(D_METHOD("get_initialization_status"), &AdmobPlugin::get_initialization_status);
-	ClassDB::bind_method(D_METHOD("set_ios_app_pause_on_background"), &AdmobPlugin::set_ios_app_pause_on_background);
+	ClassDB::bind_method(D_METHOD("set_app_pause_on_background"), &AdmobPlugin::set_app_pause_on_background);
 
 	ADD_SIGNAL(MethodInfo(INITIALIZATION_COMPLETED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "status_data")));
 
@@ -223,7 +224,7 @@ Dictionary AdmobPlugin::get_initialization_status() {
 	return [[[AdmobStatus alloc] initWithStatus:status] buildRawData];
 }
 
-void AdmobPlugin::set_ios_app_pause_on_background(bool pause) {
+void AdmobPlugin::set_app_pause_on_background(bool pause) {
 	[AdFormatBase setPauseOnBackground:pause];
 }
 
@@ -231,8 +232,8 @@ Dictionary AdmobPlugin::get_current_adaptive_banner_size(int width) {
 	os_log_debug(admob_log, "AdmobPlugin get_current_adaptive_banner_size");
 	int currentWidth = (width == FULL_WIDTH) ? getAdWidth() : width;
 
-	GADAdSize adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(currentWidth);
-	Dictionary dictionary = [GAPConverter adSizeToGodotDictionary:adSize];
+	AdmobAdSize *adSize = [[AdmobAdSize alloc] initWithAdSize: GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(currentWidth)];
+	Dictionary dictionary = [adSize buildRawData];
 
 	return dictionary;
 }
@@ -241,8 +242,8 @@ Dictionary AdmobPlugin::get_portrait_adaptive_banner_size(int width) {
 	os_log_debug(admob_log, "AdmobPlugin get_portrait_adaptive_banner_size");
 	int currentWidth = (width == FULL_WIDTH) ? getAdWidth() : width;
 
-	GADAdSize adSize = GADPortraitAnchoredAdaptiveBannerAdSizeWithWidth(currentWidth);
-	Dictionary dictionary = [GAPConverter adSizeToGodotDictionary:adSize];
+	AdmobAdSize *adSize = [[AdmobAdSize alloc] initWithAdSize: GADPortraitAnchoredAdaptiveBannerAdSizeWithWidth(currentWidth)];
+	Dictionary dictionary = [adSize buildRawData];
 
 	return dictionary;
 }
@@ -251,8 +252,8 @@ Dictionary AdmobPlugin::get_landscape_adaptive_banner_size(int width) {
 	os_log_debug(admob_log, "AdmobPlugin get_landscape_adaptive_banner_size");
 	int currentWidth = (width == FULL_WIDTH) ? getAdWidth() : width;
 
-	GADAdSize adSize = GADLandscapeAnchoredAdaptiveBannerAdSizeWithWidth(currentWidth);
-	Dictionary dictionary = [GAPConverter adSizeToGodotDictionary:adSize];
+	AdmobAdSize *adSize = [[AdmobAdSize alloc] initWithAdSize: GADLandscapeAnchoredAdaptiveBannerAdSizeWithWidth(currentWidth)];
+	Dictionary dictionary = [adSize buildRawData];
 
 	return dictionary;
 }

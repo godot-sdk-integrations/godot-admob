@@ -65,8 +65,16 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 	return self.rawData.has(KEYWORDS_PROPERTY) ? [GAPConverter toNsStringArray: (Array) self.rawData[KEYWORDS_PROPERTY]] : @[];
 }
 
+- (BOOL) hasUserId {
+	return self.rawData.has(USER_ID_PROPERTY);
+}
+
 - (NSString*) userId {
 	return self.rawData.has(USER_ID_PROPERTY) ? [GAPConverter toNsString: (String) self.rawData[USER_ID_PROPERTY]] : @"";
+}
+
+- (BOOL) hasCustomData {
+	return self.rawData.has(CUSTOM_DATA_PROPERTY);
 }
 
 - (NSString*) customData {
@@ -178,6 +186,24 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 	}
 
 	return request;
+}
+
+- (BOOL) hasServerSideVerificationOptions {
+	return ([self hasUserId] || [self hasCustomData]);
+}
+
+- (GADServerSideVerificationOptions *) createGADServerSideVerificationOptions {
+	GADServerSideVerificationOptions *gadOptions = [[GADServerSideVerificationOptions alloc] init];
+
+	if ([self hasUserId]) {
+		gadOptions.userIdentifier = [self userId];
+	}
+
+	if ([self hasCustomData]) {
+		gadOptions.customRewardString = [self customData];
+	}
+
+	return gadOptions;
 }
 
 @end

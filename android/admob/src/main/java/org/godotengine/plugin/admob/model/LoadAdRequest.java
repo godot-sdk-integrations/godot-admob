@@ -10,6 +10,7 @@ import android.util.Log;
 import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.mediation.Adapter;
+import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
 
 import org.godotengine.godot.Dictionary;
 
@@ -182,6 +183,26 @@ public class LoadAdRequest {
 			} else {
 				Log.w(LOG_TAG, "network_extras must be an Array of Dictionaries. Skipping.");
 			}
+		}
+
+		return builder.build();
+	}
+
+
+	public boolean hasServerSideVerificationOptions() {
+		return _data.containsKey(CUSTOM_DATA_PROPERTY) || _data.containsKey(USER_ID_PROPERTY);
+	}
+
+
+	public ServerSideVerificationOptions createServerSideVerificationOptions() {
+		ServerSideVerificationOptions.Builder builder = new ServerSideVerificationOptions.Builder();
+
+		if (_data.containsKey(CUSTOM_DATA_PROPERTY)) {
+			builder.setCustomData((String) _data.get(CUSTOM_DATA_PROPERTY));
+		}
+
+		if (_data.containsKey(USER_ID_PROPERTY)) {
+			builder.setUserId((String) _data.get(USER_ID_PROPERTY));
 		}
 
 		return builder.build();

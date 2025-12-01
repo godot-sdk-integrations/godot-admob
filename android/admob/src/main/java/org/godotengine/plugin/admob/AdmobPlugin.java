@@ -5,7 +5,10 @@
 package org.godotengine.plugin.admob;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -40,6 +43,7 @@ import org.godotengine.godot.plugin.UsedByGodot;
 import org.godotengine.plugin.admob.mediation.PrivacySettings;
 import org.godotengine.plugin.admob.model.AdmobConfiguration;
 import org.godotengine.plugin.admob.model.AdmobAdError;
+import org.godotengine.plugin.admob.model.AdmobAdSize;
 import org.godotengine.plugin.admob.model.AdmobLoadAdError;
 import org.godotengine.plugin.admob.model.AdmobResponse;
 import org.godotengine.plugin.admob.model.AdmobStatus;
@@ -257,21 +261,24 @@ public class AdmobPlugin extends GodotPlugin {
 	public Dictionary get_current_adaptive_banner_size(int width) {
 		Log.d(LOG_TAG, "get_current_adaptive_banner_size()");
 		int currentWidth = (width == AdSize.FULL_WIDTH) ? Banner.getAdWidth(activity) : width;
-		return GodotConverter.convert(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, currentWidth));
+		AdmobAdSize adSize = new AdmobAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, currentWidth));
+		return adSize.buildRawData();
 	}
 
 	@UsedByGodot
 	public Dictionary get_portrait_adaptive_banner_size(int width) {
 		Log.d(LOG_TAG, "get_portrait_adaptive_banner_size()");
 		int currentWidth = (width == AdSize.FULL_WIDTH) ? Banner.getAdWidth(activity) : width;
-		return GodotConverter.convert(AdSize.getPortraitAnchoredAdaptiveBannerAdSize(activity, currentWidth));
+		AdmobAdSize adSize = new AdmobAdSize(AdSize.getPortraitAnchoredAdaptiveBannerAdSize(activity, currentWidth));
+		return adSize.buildRawData();
 	}
 
 	@UsedByGodot
 	public Dictionary get_landscape_adaptive_banner_size(int width) {
 		Log.d(LOG_TAG, "get_landscape_adaptive_banner_size()");
 		int currentWidth = (width == AdSize.FULL_WIDTH) ? Banner.getAdWidth(activity) : width;
-		return GodotConverter.convert(AdSize.getLandscapeAnchoredAdaptiveBannerAdSize(activity, currentWidth));
+		AdmobAdSize adSize = new AdmobAdSize(AdSize.getLandscapeAnchoredAdaptiveBannerAdSize(activity, currentWidth));
+		return adSize.buildRawData();
 	}
 
 	@UsedByGodot
@@ -567,7 +574,6 @@ public class AdmobPlugin extends GodotPlugin {
 						emitSignal(SIGNAL_REWARDED_AD_USER_EARNED_REWARD, adId, GodotConverter.convert(reward));
 					}
 				});
-				ad.setServerSideVerificationOptions(GodotConverter.createSSVO(adData));
 				rewardedAds.put(adId, ad);
 				Log.d(LOG_TAG, String.format("load_rewarded_ad(): %s", adId));
 				ad.load();
@@ -653,7 +659,6 @@ public class AdmobPlugin extends GodotPlugin {
 						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD, adId, GodotConverter.convert(reward));
 					}
 				});
-				ad.setServerSideVerificationOptions(GodotConverter.createSSVO(adData));
 				rewardedInterstitialAds.put(adId, ad);
 				Log.d(LOG_TAG, String.format("load_rewarded_interstitial_ad(): %s", adId));
 				ad.load();
@@ -789,6 +794,26 @@ public class AdmobPlugin extends GodotPlugin {
 		privacySettings.applyPrivacySettings(activity.getApplicationContext());
 	}
 
+	@UsedByGodot
+	public void open_app_settings() {
+		if (!isInitialized) {
+			Log.e(LOG_TAG, "open_app_settings(): plugin is not initialized!");
+			return;
+		}
+
+		Log.d(LOG_TAG, "open_app_settings()");
+
+		try {
+			Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
+			intent.setData(uri);
+			activity.startActivity(intent);
+		} catch (Exception e) {
+			Log.e(LOG_TAG, "open_app_settings():: Failed due to "+ e.getMessage());
+		}
+	}
+
 	@Override
 	public View onMainCreate(Activity activity) {
 		this.activity = activity;
@@ -834,5 +859,17 @@ public class AdmobPlugin extends GodotPlugin {
 		activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 		this.layout = new FrameLayout(activity); // create and add a new layout to Godot
 		return layout;
+	}
+
+	/*** UNSUPPORTED METHODS ***/
+
+	@UsedByGodot
+	public void set_app_pause_on_background(boolean value) {
+		Log.w(LOG_TAG, "set_app_pause_on_background() not supported on Android");
+	}
+
+	@UsedByGodot
+	public void request_tracking_authorization() {
+		Log.w(LOG_TAG, "request_tracking_authorization() not supported on Android");
 	}
 }

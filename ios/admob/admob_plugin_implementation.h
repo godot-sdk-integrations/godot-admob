@@ -88,7 +88,7 @@ private:
 	Error initialize();
 	Error set_request_configuration(Dictionary configData);
 	Dictionary get_initialization_status();
-	void set_ios_app_pause_on_background(bool pause);
+	void set_app_pause_on_background(bool pause);
 
 	Dictionary get_current_adaptive_banner_size(int width);
 	Dictionary get_portrait_adaptive_banner_size(int width);

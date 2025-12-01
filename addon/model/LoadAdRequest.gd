@@ -16,7 +16,7 @@ enum AdPosition {
 	CENTER ## Ad will be anchored at the center of the screen.
 }
 
-enum AdSize {
+enum FixedSize {
 	BANNER, ## A standard ad size that refers to a rectangular ad unit, most commonly 320x50 density-independent pixels (dp).
 	LARGE_BANNER, ## A fixed-size banner with dimensions of 320x100 density-independent pixels (dp).
 	MEDIUM_RECTANGLE, ## A standard 300x250 pixel ad, often referred to as the Interactive Advertising Bureau (IAB) medium rectangle.
@@ -67,8 +67,8 @@ func set_request_agent(a_value: String) -> LoadAdRequest:
 	return self
 
 
-func set_ad_size(a_value: AdSize) -> LoadAdRequest:
-	_data[DATA_KEY_AD_SIZE] = AdSize.keys()[a_value]
+func set_ad_size(a_value: FixedSize) -> LoadAdRequest:
+	_data[DATA_KEY_AD_SIZE] = FixedSize.keys()[a_value]
 	return self
 
 
