@@ -51,7 +51,7 @@ func _ready() -> void:
 		if __item.casecmp_to(LoadAdRequest.FixedSize.keys()[admob.banner_size]) == 0:
 			banner_size_option_button.select(__index)
 		__index += 1
-	
+
 	__index = 0
 	for __item: String in LoadAdRequest.CollapsiblePosition.keys():
 		banner_collapsible_pos_option_button.add_item(__item)
@@ -75,11 +75,11 @@ func _on_admob_initialization_completed(status_data: InitializationStatus) -> vo
 
 
 func _load_ads() -> void:
-	admob.load_app_open_ad()
-
-	# For cold start/loading screen:
 	if admob.is_app_open_ad_available():
-		admob.show_app_open_ad()
+		if not _is_app_open_ad_displayed_at_startup:
+			admob.show_app_open_ad()
+	else:
+		admob.load_app_open_ad()
 
 	admob.load_banner_ad()
 	admob.load_interstitial_ad()

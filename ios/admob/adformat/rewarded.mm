@@ -38,7 +38,7 @@
 			if ([loadAdRequest hasServerSideVerificationOptions]) {
 				self.gadAd.serverSideVerificationOptions = [loadAdRequest createGADServerSideVerificationOptions];
 			}
-			
+
 			os_log_debug(admob_log, "RewardedAd %@ loaded successfully", self.adId);
 			AdmobPlugin::get_singleton()->emit_signal(REWARDED_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
 					[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);

@@ -29,16 +29,20 @@ const String ENABLED_NETWORKS_PROPERTY = "enabled_networks";
 
 - (void) applyPrivacySettings {
 	os_log_debug(admob_log, "%@:: applyPrivacySettings()", LOG_TAG);
-	Array enabledNetworksArray = [self enabledNetworks];
-	os_log_debug(admob_log, "%@:: Found %d enabled networks to process", LOG_TAG, enabledNetworksArray.size());
 
-	for (NSUInteger i = 0; i < enabledNetworksArray.size(); ++i) {
-		NSString *networkTag = [GAPConverter toNsString:enabledNetworksArray[i]];
-		MediationNetwork *network = [MediationNetworkFactory createNetwork:networkTag];
-		if (!network) {
-			NSLog(@"%@:: Mediation network not found for network tag '%@'", LOG_TAG, networkTag);
-		} else {
-			[network applyPrivacySettings:self];
+	Array enabledNetworksArray = [self enabledNetworks];
+	os_log_debug(admob_log, "%@:: Found %lld enabled networks to process", LOG_TAG, (long long)enabledNetworksArray.size());
+
+	for (const Variant &item : enabledNetworksArray) {
+		if (item.get_type() == Variant::STRING) {
+			NSString *networkTag = [GAPConverter toNsString:(String)item];
+
+			MediationNetwork *network = [MediationNetworkFactory createNetwork:networkTag];
+			if (!network) {
+				NSLog(@"%@:: Mediation network not found for network tag '%@'", LOG_TAG, networkTag);
+			} else {
+				[network applyPrivacySettings:self];
+			}
 		}
 	}
 }

@@ -11,11 +11,11 @@ SINGLE_LINE_ARRAY=false
 print_usage() {
 	echo "Usage: $0 [-a] [-s] [-q] [-h] -f <file> <property_name>"
 	echo "Options:"
-	echo "  -a          Treat property value as a comma-separated array"
-	echo "  -s          Output array items on a single line"
-	echo "  -q          Quote output items"
-	echo "  -h          Show this help message and exit"
-	echo "  -f <file>   Specify the config file (required)"
+	echo "	-a			Treat property value as a comma-separated array"
+	echo "	-s			Output array items on a single line"
+	echo "	-q			Quote output items"
+	echo "	-h			Show this help message and exit"
+	echo "	-f <file>	Specify the config file (required)"
 }
 
 # Parse options

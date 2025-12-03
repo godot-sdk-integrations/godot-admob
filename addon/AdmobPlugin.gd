@@ -207,7 +207,7 @@ class IosExportPlugin extends EditorExportPlugin:
 	func _generate_podfile(a_project_dir: String, a_project_name: String) -> Error:
 		var __result = Error.OK
 		var __podfile_path = a_project_dir.path_join("Podfile")
-		
+
 		# Generate Podfile content
 		var __pod_content = """
 source 'https://github.com/CocoaPods/Specs.git'
@@ -216,7 +216,7 @@ use_frameworks!
 project '%s.xcodeproj'
 
 target '%s' do
-  platform :ios, '%s'
+	platform :ios, '%s'
 
 %s
 end
@@ -241,9 +241,9 @@ end
 		var __result: Error = Error.OK
 
 		var __script_content = """#!/bin/bash
-set -e  # Exit on error
+set -e	# Exit on error
 
-cd "$(dirname "$0")"  # Change to project dir
+cd "$(dirname "$0")" 	# Change to project dir
 echo "Setting up CocoaPods for mediation..."
 pod install --repo-update
 

@@ -33,9 +33,11 @@ static String const kResponseIdProperty = "response_id";
 
 	NSArray<GADAdNetworkResponseInfo *> *adapterResponses = self.info.adNetworkInfoArray;
 	Array responseDicts = Array();
-	responseDicts.resize(adapterResponses.count);
-	for (NSUInteger i = 0; i < adapterResponses.count; i++) {
-		AdmobAdapterResponse *adapterResponse = [[AdmobAdapterResponse alloc] initWithAdapterResponseInfo:adapterResponses[i]];
+	int count = (int)adapterResponses.count;
+	responseDicts.resize(count);
+	for (int i = 0; i < count; i++) {
+		GADAdNetworkResponseInfo *adapterInfo = adapterResponses[i];
+		AdmobAdapterResponse *adapterResponse = [[AdmobAdapterResponse alloc] initWithAdapterResponseInfo:adapterInfo];
 		responseDicts[i] = [adapterResponse buildRawData];
 	}
 	dict[kAdapterResponsesProperty] = responseDicts;

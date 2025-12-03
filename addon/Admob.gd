@@ -74,7 +74,7 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export var max_ad_content_rating: AdmobConfig.ContentRating = AdmobConfig.ContentRating.G: set = set_max_ad_content_rating
 
 ## TFCD is a parameter that publishers and app developers use to indicate to Google that their content should be treated as child-directed for the purposes of
-## the Children's Online Privacy Protection Act (COPPA). 
+## the Children's Online Privacy Protection Act (COPPA).
 @export var child_directed: AdmobConfig.TagForChildDirectedTreatment = AdmobConfig.TagForChildDirectedTreatment.UNSPECIFIED: set = set_child_directed
 
 ## TFUA is a technical parameter to indicate that a user is under the digital age of consent in the European Economic Area (EEA), the UK, and Switzerland.
@@ -215,7 +215,7 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 
 
 @export_group("Network Extras")
-## Allows passing of additional, network-specific parameters from the app to an ad network's adapter during an ad request. 
+## Allows passing of additional, network-specific parameters from the app to an ad network's adapter during an ad request.
 @export var network_extras: Array[NetworkExtras] = []
 
 

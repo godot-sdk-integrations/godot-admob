@@ -177,7 +177,7 @@ merge_zips() {
 
 	# The cleanest way that works on both macOS and Linux is to use a temporary directory.
 	local tmp_dir=$(mktemp -d)
-	
+
 	# Ensure the temporary directory is removed on exit (trap)
 	trap "rm -rf \"$tmp_dir\"" EXIT
 

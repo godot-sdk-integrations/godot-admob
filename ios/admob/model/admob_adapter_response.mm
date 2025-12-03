@@ -48,11 +48,11 @@ static String const kLatencyProperty = "latency";
 	dict[kAdSourceInstanceNameProperty] = [self.info.adSourceInstanceName UTF8String];
 	dict[kAdSourceNameProperty] = [self.info.adSourceName UTF8String];
 	dict[kAdapterClassNameProperty] = [self.adapterClassName UTF8String];
-	
+
 	if (self.networkTag) {
 		dict[kNetworkTagProperty] = [self.networkTag UTF8String];
 	}
-	
+
 	dict[kLatencyProperty] = self.info.latency;
 
 	return dict;

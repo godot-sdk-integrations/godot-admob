@@ -44,7 +44,7 @@ const String TEST_DEVICE_IDS_PROPERTY = "test_device_ids";
 		} else if (property == 0) {
 			value = @NO;
 		} else {
-			value = nil;  // unspecified
+			value = nil;	// unspecified
 		}
 	} else {
 		value = nil;	// unspecified
@@ -61,7 +61,7 @@ const String TEST_DEVICE_IDS_PROPERTY = "test_device_ids";
 		} else if (property == 0) {
 			value = @NO;
 		} else {
-			value = nil;  // unspecified
+			value = nil;	// unspecified
 		}
 	} else {
 		value = nil;	// unspecified

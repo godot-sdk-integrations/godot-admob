@@ -25,7 +25,7 @@
 	self.adPosition = [GAPConverter nsStringToAdPosition: [loadAdRequest adPosition]];
 	self.adSize = [GAPConverter nsStringToAdSize: [loadAdRequest adSize]];
 	self.adUnitId = [loadAdRequest adUnitId];
-	
+
 	[self addBanner];
 
 	[self.bannerView loadRequest:[loadAdRequest createGADRequest]];
@@ -95,47 +95,47 @@
 			[self addBannerConstraint:NSLayoutAttributeCenterX toView:GDTAppDelegateService.viewController.view];
 			[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
 			break;
-			
+
 		case AdPositionBottom:
 			[self addBannerConstraint:NSLayoutAttributeCenterX toView:GDTAppDelegateService.viewController.view];
 			[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
 			break;
-			
+
 		case AdPositionLeft:
 			[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
 			[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
 			break;
-			
+
 		case AdPositionRight:
 			[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
 			[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
 			break;
-			
+
 		case AdPositionTopLeft:
 			[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
 			[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
 			break;
-			
+
 		case AdPositionTopRight:
 			[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
 			[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
 			break;
-			
+
 		case AdPositionBottomLeft:
 			[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
 			[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
 			break;
-			
+
 		case AdPositionBottomRight:
 			[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
 			[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
 			break;
-			
+
 		case AdPositionCenter:
 			[self addBannerConstraint:NSLayoutAttributeCenterX toView:GDTAppDelegateService.viewController.view];
 			[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view];
 			break;
-			
+
 		case AdPositionCustom:
 			[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide attributeConstant:0];
 			[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide attributeConstant:0];
@@ -163,7 +163,7 @@
 - (void) bannerView: (GADBannerView *) bannerView didFailToReceiveAdWithError: (NSError *) error {
 	AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
 	os_log_error(admob_log, "BannerAd bannerView:didFailToReceiveAdWithError: %@", loadAdError.message);
-	
+
 	AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_FAILED_TO_LOAD_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
 				[loadAdError buildRawData]);
 }

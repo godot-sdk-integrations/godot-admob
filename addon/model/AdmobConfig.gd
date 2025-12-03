@@ -25,8 +25,8 @@ enum TagForUnderAgeOfConsent {
 
 enum PersonalizationState {
 	DEFAULT = 0, ## By default, the SDK will attempt to serve personalized ads based on the user's past behavior and interests.
-	ENABLED = 1, ## Indicates that the Google Mobile Ads SDK is authorized to serve ads that are tailored to the user based on past activity and collected data. 
-	DISABLED = 2 ## Means that ad requests are set to serve non-personalized ads (NPA) only. 
+	ENABLED = 1, ## Indicates that the Google Mobile Ads SDK is authorized to serve ads that are tailored to the user based on past activity and collected data.
+	DISABLED = 2 ## Means that ad requests are set to serve non-personalized ads (NPA) only.
 }
 
 const DATA_KEY_IS_REAL: String = "is_real"
