@@ -28,7 +28,7 @@ static NSString *const LOG_TAG = @"godot::AdmobPlugin::MediationNetworkFactory";
 
 + (MediationNetwork *)createNetwork:(NSString *)networkTag {
 	NSString *tag = [[networkTag stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] lowercaseString];
-	
+
 	static NSDictionary<NSString *, MediationNetwork* (^)(void)> *networkFactoryMap = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
@@ -51,19 +51,19 @@ static NSString *const LOG_TAG = @"godot::AdmobPlugin::MediationNetworkFactory";
 			UnityMediationNetwork.TAG: ^{ return [[UnityMediationNetwork alloc] init]; }
 		};
 	});
-	
+
 	MediationNetwork* (^supplier)(void) = networkFactoryMap[tag];
 	if (!supplier) {
 		NSLog(@"%@:: Invalid or unsupported network tag '%@'. Unable to create network object.", LOG_TAG, networkTag);
 		return nil;
 	}
-	
+
 	return supplier();
 }
 
 + (NSString *)getTagForAdapterClass:(NSString *)adapterClass {
 	NSString *className = [adapterClass stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-	
+
 	static NSDictionary<NSString *, NSString *> *adapterMap = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
@@ -87,7 +87,7 @@ static NSString *const LOG_TAG = @"godot::AdmobPlugin::MediationNetworkFactory";
 			UnityMediationNetwork.ADAPTER_CLASS: UnityMediationNetwork.TAG
 		};
 	});
-	
+
 	return adapterMap[className];
 }
 

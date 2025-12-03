@@ -12,18 +12,18 @@ A Godot plugin that provides a unified GDScript interface for integrating **Goog
 
 **Key Features:**
 - Load and show...
-  - Banner Ads
-  - Interstitial Ads
-  - Rewarded Video Ads
-  - Rewarded Interstitial Ads
-  - App Open Ads
+	- Banner Ads
+	- Interstitial Ads
+	- Rewarded Video Ads
+	- Rewarded Interstitial Ads
+	- App Open Ads
 - Emits signals when ads are loaded, viewed, clicked, dismissed, rewards received, & more
 - Allows configuration of all settings on a node
 - Works with Google AdMob ad network by default
 - Allows enabling of 15 additional ad networks
 - Provides two export configuration options:
-  - Node-based
-  - File-based
+	- Node-based
+	- File-based
 
 ---
 
@@ -358,13 +358,26 @@ Set `auto_show_on_resume` to `true` in order to show app open ads when users res
 <a name="user-consent"></a>
 
 ### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="18"> User Consent
-- Methods:
-	- `get_consent_status()` - Returns a consent status value defined in `ConsentInformation.gd`
-	- `update_consent_info(params: ConsentRequestParameters)` - To be called if `get_consent_status()` returns status UNKNOWN.
-	- `reset_consent_info()` - To be used only when testing and debugging your application.
-	- `is_consent_form_available()`
-	- `load_consent_form()` - To be called if `get_consent_status()` returns status REQUIRED and `is_consent_form_available()` returns `false`.
-	- `show_consent_form()` - To be called after `consent_form_loaded` signal has been emitted or `is_consent_form_available()` returns `true`.
+The consent status indicates that the user has been presented with the consent form and has submitted a choice (either consent or withhold consent), making the consent information available for use. It does not indicate that the user has specifically consented to personalized ads — only that consent information has been obtained. Therefore, the plugin will return a status of "OBTAINED" even when the user selects "Do Not Consent" on the consent form.
+
+The UMP SDK handles propagation of the user's actual consent choice to the Google Mobile Ads SDK automatically. Ad requests made after consent is obtained will respect the user's selection (e.g., non-personalized ads if they did not consent).
+
+#### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="14"> User Consent Methods
+
+- `get_consent_status()` - Returns a consent status value defined in `ConsentInformation.gd`
+- `update_consent_info(params: ConsentRequestParameters)` - To be called if `get_consent_status()` returns status UNKNOWN.
+- `reset_consent_info()` - To be used only when testing and debugging your application.
+- `is_consent_form_available()`
+- `load_consent_form()` - To be called if `get_consent_status()` returns status REQUIRED and `is_consent_form_available()` returns `false`.
+- `show_consent_form()` - To be called after `consent_form_loaded` signal has been emitted or `is_consent_form_available()` returns `true`.
+
+
+#### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="14"> Testing User Consent Logic
+In order to test user consent logic for your app, you need to add your test device's hashed identifier to the `test_device_hashed_ids` array of your `Admob` node (or set it programmatically). If you don't know your test device hashed identifier, then run your app with `is_real` set to `false` and look for a log entry such as the following that is logged on iOS.
+
+```
+<UMP SDK> To enable debug mode for this device, set: UMPDebugSettings.testDeviceIdentifiers = @[ @"76E885D5-7ACF-4EA8-9B2D-CD8DABB21A1B" ];
+```
 
 ---
 
@@ -394,7 +407,7 @@ AdManager.admob_node.show_banner()
 
 ## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Mediation
 
-Admob Plugin's mediation feature allows selection of up to 15 additional ad mediation networks to serve your ads.  For efficiency, <u>**the plugin will only add the SDKs of enabled networks**</u> to your app.
+Admob Plugin's mediation feature allows selection of up to 15 additional ad mediation networks to serve your ads. For efficiency, <u>**the plugin will only add the SDKs of enabled networks**</u> to your app.
 
 Admob Plugin makes the following ad networks available:
 
@@ -500,31 +513,31 @@ During export, the plugin searches for an `Admob` node in the scene that is open
 ### Android
 - Download Android export template and enable gradle build from export settings
 - **Missing APP ID:**
-  - If your game crashes due to missing APP ID, then make sure that you
-    - enter your Admob APP ID in the Admob node and pay attention to the [Android Export section](#android-export).
-    - or enter it in the `android_export.cfg` file as described in the [File-based Export](#export) section.
+- If your game crashes due to missing APP ID, then make sure that you
+	- enter your Admob APP ID in the Admob node and pay attention to the [Android Export section](#android-export).
+	- or enter it in the `android_export.cfg` file as described in the [File-based Export](#export) section.
 - **Troubleshooting:**
-  - Logs: `adb logcat | grep 'godot'` (Linux), `adb.exe logcat | select-string "godot"` (Windows)
-  - You may find the following resources helpful:
-    - https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_android.html
-    - https://developer.android.com/tools/adb
-    - https://developer.android.com/studio/debug
-    - https://developer.android.com/courses
+- Logs: `adb logcat | grep 'godot'` (Linux), `adb.exe logcat | select-string "godot"` (Windows)
+- You may find the following resources helpful:
+	- https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_android.html
+	- https://developer.android.com/tools/adb
+	- https://developer.android.com/studio/debug
+	- https://developer.android.com/courses
 
 ### iOS
 - Follow instructions on [Exporting for iOS](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html)
 - **Mediation**: if you have enabled mediation networks, after exporting your project to iOS, open the generated `.xcworkspace`on Xcode (not `.xcodeproj`!)
 - **Missing APP ID** crashes: make sure that you
-  - enter your Admob APP ID in the Admob node and pay attention to the [iOS Export section](#ios-export).
-  - or enter it in the `android_export.cfg` file as described in the [File-based Export](#export) section.
+	- enter your Admob APP ID in the Admob node and pay attention to the [iOS Export section](#ios-export).
+	- or enter it in the `android_export.cfg` file as described in the [File-based Export](#export) section.
 - View XCode logs while running the game for troubleshooting.
 - See [Godot iOS Export Troubleshooting](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html#troubleshooting).
 - **App Tracking Transparency**, or ATT for short, is Apple's opt-in privacy framework that requires all iOS apps to ask users for permission to share their data. This is done in the form of a popup where users can either consent or deny tracking.
-  - To enable ATT in your app
-    - Enter a descriptive text that will be displayed on the ATT dialog in your `Admob` node's `att_text`field.
-    - Call `Admob` node's `request_tracking_authorization()` method.
-    - Handle `Admob` node's `tracking_authorization_granted` and `tracking_authorization_denied` signals.
-    - If the user initially rejects the tracking request, then later on you can check if the user changed their mind and allow them to update their settings by opening the system app settings using the `Admob` node's `open_app_settings()` method.
+	- To enable ATT in your app
+		- Enter a descriptive text that will be displayed on the ATT dialog in your `Admob` node's `att_text`field.
+		- Call `Admob` node's `request_tracking_authorization()` method.
+		- Handle `Admob` node's `tracking_authorization_granted` and `tracking_authorization_denied` signals.
+		- If the user initially rejects the tracking request, then later on you can check if the user changed their mind and allow them to update their settings by opening the system app settings using the `Admob` node's `open_app_settings()` method.
 
 ---
 

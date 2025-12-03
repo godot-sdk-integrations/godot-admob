@@ -41,11 +41,11 @@ Among other settings, the `ios/config/config.properties` file allows for the con
 
 **Options:**
 1. Use [Android Studio](https://developer.android.com/studio) to build via **Build->Assemble Project** menu
-    - Switch **Active Build Variant** to **release** and repeat
-    - Run **packageDistribution** task to create release archive
+	- Switch **Active Build Variant** to **release** and repeat
+	- Run **packageDistribution** task to create release archive
 2. Use project-root-level **build.sh** script
-    - `./script/build.sh -ca` - clean existing build, do a debug build for Android
-    - `./script/build.sh -carz` - clean existing build, do a release build for Android, and create release archive in the `android/<plugin-name>/build/dist` directory
+	- `./script/build.sh -ca` - clean existing build, do a debug build for Android
+	- `./script/build.sh -carz` - clean existing build, do a release build for Android, and create release archive in the `android/<plugin-name>/build/dist` directory
 
 #### Build All and Create Release Archives for Both Platforms
 

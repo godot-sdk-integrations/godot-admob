@@ -21,7 +21,7 @@ enum FixedSize {
 	LARGE_BANNER, ## A fixed-size banner with dimensions of 320x100 density-independent pixels (dp).
 	MEDIUM_RECTANGLE, ## A standard 300x250 pixel ad, often referred to as the Interactive Advertising Bureau (IAB) medium rectangle.
 	FULL_BANNER, ## An ad size constant for an Interactive Advertising Bureau (IAB) full-size banner, which has a fixed size of 468x60 density-independent pixels (dp).
-	LEADERBOARD, ## A banner ad with dimensions of 728 pixels wide by 90 pixels tall. This is a standard display ad size that is designed for tablet screens. 
+	LEADERBOARD, ## A banner ad with dimensions of 728 pixels wide by 90 pixels tall. This is a standard display ad size that is designed for tablet screens.
 	SKYSCRAPER, ## Deprecated
 	FLUID ## Deprecated
 }
@@ -97,7 +97,7 @@ func set_user_id(a_value: String) -> LoadAdRequest:
 
 func set_collapsible_position(a_value: CollapsiblePosition) -> LoadAdRequest:
 	if a_value != CollapsiblePosition.DISABLED:
-		_data[DATA_KEY_COLLAPSIBLE_POSITION] =  COLLAPSIBLE_POSITION_NAMES[a_value]
+		_data[DATA_KEY_COLLAPSIBLE_POSITION] = COLLAPSIBLE_POSITION_NAMES[a_value]
 	return self
 
 

@@ -7,12 +7,15 @@
 #import <AppTrackingTransparency/AppTrackingTransparency.h>
 #import <AdSupport/AdSupport.h>
 
+#import <UserMessagingPlatform/UserMessagingPlatform.h>
+
+#import "admob_plugin-Swift.h"
+
 #import "gap_converter.h"
 #import "admob_ad_size.h"
 #import "admob_config.h"
 #import "admob_status.h"
 #import "admob_logger.h"
-#import "ump_orientation_wrapper.h"
 #import "privacy_settings.h"
 
 
@@ -571,15 +574,13 @@ Error AdmobPlugin::load_consent_form() {
 		return FAILED;
 	}
 
-	[UMPConsentForm loadWithCompletionHandler:^(UMPConsentForm * _Nullable umpConsentForm, NSError* _Nullable error) {
+	[consentManager loadFormWithCompletion:^(NSError * _Nullable error) {
 		if (error) {
-			os_log_error(admob_log, "AdmobPlugin load_consent_form: Error loading UMPConsentForm. Error code: %ld", error.code);
+			os_log_error(admob_log, "AdmobPlugin load_consent_form: Error loading ConsentForm. Error code: %ld", (long)error.code);
 			Dictionary errorDictionary = [GAPConverter nsFormErrorToGodotDictionary:error];
-			emit_signal(CONSENT_FORM_FAILED_TO_LOAD_SIGNAL, errorDictionary);
-		}
-		else {
-			consentForm = umpConsentForm;
-			emit_signal(CONSENT_FORM_LOADED_SIGNAL);
+			AdmobPlugin::get_singleton()->emit_signal(CONSENT_FORM_FAILED_TO_LOAD_SIGNAL, errorDictionary);
+		} else {
+			AdmobPlugin::get_singleton()->emit_signal(CONSENT_FORM_LOADED_SIGNAL);
 		}
 	}];
 
@@ -587,30 +588,23 @@ Error AdmobPlugin::load_consent_form() {
 }
 
 Error AdmobPlugin::show_consent_form() {
-	if (consentForm) {
-		os_log_debug(admob_log, "AdmobPlugin show_consent_form");
+	os_log_debug(admob_log, "AdmobPlugin show_consent_form");
 
-		UMPOrientationWrapper *wrapper = [UMPOrientationWrapper new];
-		wrapper.modalPresentationStyle = UIModalPresentationFullScreen;
-		wrapper.wrappedForm = consentForm;
-		wrapper.presentationCompletion = ^(NSError * _Nullable error) {
+	UIViewController *rootVC = GDTAppDelegateService.viewController;
+
+	if (rootVC) {
+		[consentManager showFormFrom:rootVC completion:^(NSError * _Nullable error) {
 			Dictionary formErrorDictionary;
 			if (error) {
-				os_log_error(admob_log, "AdmobPlugin show_consent_form: Error presenting UMPConsentForm");
+				os_log_error(admob_log, "AdmobPlugin show_consent_form: Error presenting ConsentForm");
 				formErrorDictionary = [GAPConverter nsFormErrorToGodotDictionary:error];
 			}
 			os_log_debug(admob_log, "AdmobPlugin show_consent_form: completion handler");
 
 			AdmobPlugin::get_singleton()->emit_signal(CONSENT_FORM_DISMISSED_SIGNAL, formErrorDictionary);
-		};
-
-		dispatch_async(dispatch_get_main_queue(), ^{
-			UIViewController *rootVC = GDTAppDelegateService.viewController;
-			[rootVC presentViewController:wrapper animated:YES completion:nil];
-		});
-	}
-	else {
-		os_log_error(admob_log, "AdmobPlugin show_consent_form: ERROR: consent form not found!");
+		}];
+	} else {
+		os_log_error(admob_log, "AdmobPlugin show_consent_form: ERROR: Root View Controller not found!");
 		return FAILED;
 	}
 
@@ -618,43 +612,34 @@ Error AdmobPlugin::show_consent_form() {
 }
 
 String AdmobPlugin::get_consent_status() {
-	UMPConsentStatus status = [UMPConsentInformation.sharedInstance consentStatus];
-	os_log_debug(admob_log, "AdmobPlugin get_consent_status: %ld", (long) status);
-	switch (status) {
-		case UMPConsentStatusUnknown:
-			return [@"UNKNOWN" UTF8String];
-		case UMPConsentStatusNotRequired:
-			return [@"NOT_REQUIRED" UTF8String];
-		case UMPConsentStatusRequired:
-			return [@"REQUIRED" UTF8String];
-		case UMPConsentStatusObtained:
-			return [@"OBTAINED" UTF8String];
-		default:
-			return [@"UNKNOWN" UTF8String];
-	}
+	NSString* status = [consentManager getConsentStatusString];
+	os_log_debug(admob_log, "AdmobPlugin get_consent_status: %@", status);
+	return [status UTF8String];
 }
 
 bool AdmobPlugin::is_consent_form_available() {
-	return [UMPConsentInformation.sharedInstance formStatus] == UMPFormStatusAvailable;
+	return [consentManager isFormAvailable];
 }
 
 void AdmobPlugin::update_consent_info(Dictionary consentRequestParameters) {
 	os_log_debug(admob_log, "AdmobPlugin update_consent_info");
+
 	UMPRequestParameters* parameters = [GAPConverter godotDictionaryToUMPRequestParameters:consentRequestParameters];
-	[UMPConsentInformation.sharedInstance requestConsentInfoUpdateWithParameters:parameters completionHandler:^(NSError *_Nullable error) {
+
+	[consentManager requestConsentInfoUpdateWith:parameters completion:^(NSError * _Nullable error) {
 		if (error) {
 			Dictionary formErrorDictionary = [GAPConverter nsFormErrorToGodotDictionary:error];
-			emit_signal(CONSENT_INFO_UPDATE_FAILED_SIGNAL, formErrorDictionary);
+			AdmobPlugin::get_singleton()->emit_signal(CONSENT_INFO_UPDATE_FAILED_SIGNAL, formErrorDictionary);
 		}
 		else {
-			emit_signal(CONSENT_INFO_UPDATED_SIGNAL);
+			AdmobPlugin::get_singleton()->emit_signal(CONSENT_INFO_UPDATED_SIGNAL);
 		}
 	}];
 }
 
 void AdmobPlugin::reset_consent_info() {
 	os_log_debug(admob_log, "AdmobPlugin reset_consent_info");
-	[UMPConsentInformation.sharedInstance reset];
+	[consentManager reset];
 }
 
 void AdmobPlugin::set_mediation_privacy_settings(Dictionary settings) {
@@ -710,7 +695,7 @@ AdmobPlugin::AdmobPlugin() {
 	rewardedAds = [[NSMutableDictionary alloc] init];
 	rewardedInterstitialAds = [[NSMutableDictionary alloc] init];
 	appOpenAd = nil;
-	consentForm = nil;
+	consentManager = [[ConsentManager alloc] init];
 	foregroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification
 													object:nil
 													queue:[NSOperationQueue mainQueue]

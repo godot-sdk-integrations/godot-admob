@@ -18,7 +18,6 @@
 		07787D4C2EDA6C22009B6F5F /* banner.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07787D042EDA6C22009B6F5F /* banner.mm */; };
 		07787D4D2EDA6C22009B6F5F /* pangle_mediation_network.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07787D312EDA6C22009B6F5F /* pangle_mediation_network.mm */; };
 		07787D4E2EDA6C22009B6F5F /* admob_status.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07787D3F2EDA6C22009B6F5F /* admob_status.mm */; };
-		07787D4F2EDA6C22009B6F5F /* ump_orientation_wrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 07787D442EDA6C22009B6F5F /* ump_orientation_wrapper.m */; };
 		07787D502EDA6C22009B6F5F /* interstitial.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07787D062EDA6C22009B6F5F /* interstitial.mm */; };
 		07787D512EDA6C22009B6F5F /* gap_converter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07787D0F2EDA6C22009B6F5F /* gap_converter.mm */; };
 		07787D522EDA6C22009B6F5F /* ironsource_mediation_network.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07787D1D2EDA6C22009B6F5F /* ironsource_mediation_network.mm */; };
@@ -43,6 +42,7 @@
 		07787D652EDA6C22009B6F5F /* admob_response.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07787D3D2EDA6C22009B6F5F /* admob_response.mm */; };
 		078073332EDC1C5E00A6FF87 /* admob_ad_error.mm in Sources */ = {isa = PBXBuildFile; fileRef = 078073302EDC1C5E00A6FF87 /* admob_ad_error.mm */; };
 		078073342EDC1C5E00A6FF87 /* admob_load_ad_error.mm in Sources */ = {isa = PBXBuildFile; fileRef = 078073322EDC1C5E00A6FF87 /* admob_load_ad_error.mm */; };
+		07AF2A202EDE9CFC008A870E /* ConsentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07AF2A1F2EDE9CFC008A870E /* ConsentManager.swift */; };
 		90CAAA9924E71FF10013969F /* admob_plugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 90CAAA9824E71FF10013969F /* admob_plugin.mm */; };
 		90CAAAA424E724C50013969F /* admob_plugin_implementation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 90CAAAA324E724C50013969F /* admob_plugin_implementation.mm */; };
 		94A1B0B2910D06DA0F4D3D3C /* Pods_admob_plugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 380C444E6383B0C8ACA7CA7D /* Pods_admob_plugin.framework */; };
@@ -129,12 +129,11 @@
 		07787D3F2EDA6C22009B6F5F /* admob_status.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = admob_status.mm; sourceTree = "<group>"; };
 		07787D402EDA6C22009B6F5F /* load_ad_request.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = load_ad_request.h; sourceTree = "<group>"; };
 		07787D412EDA6C22009B6F5F /* load_ad_request.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = load_ad_request.mm; sourceTree = "<group>"; };
-		07787D432EDA6C22009B6F5F /* ump_orientation_wrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ump_orientation_wrapper.h; sourceTree = "<group>"; };
-		07787D442EDA6C22009B6F5F /* ump_orientation_wrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ump_orientation_wrapper.m; sourceTree = "<group>"; };
 		0780732F2EDC1C5E00A6FF87 /* admob_ad_error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = admob_ad_error.h; sourceTree = "<group>"; };
 		078073302EDC1C5E00A6FF87 /* admob_ad_error.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = admob_ad_error.mm; sourceTree = "<group>"; };
 		078073312EDC1C5E00A6FF87 /* admob_load_ad_error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = admob_load_ad_error.h; sourceTree = "<group>"; };
 		078073322EDC1C5E00A6FF87 /* admob_load_ad_error.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = admob_load_ad_error.mm; sourceTree = "<group>"; };
+		07AF2A1F2EDE9CFC008A870E /* ConsentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentManager.swift; sourceTree = "<group>"; };
 		1A3D1E30D9DC57319C20B62B /* Pods-admob_plugin.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-admob_plugin.release.xcconfig"; path = "Target Support Files/Pods-admob_plugin/Pods-admob_plugin.release.xcconfig"; sourceTree = "<group>"; };
 		380C444E6383B0C8ACA7CA7D /* Pods_admob_plugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_admob_plugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		403D7C7BCFBA671DEF15AE95 /* Pods-admob_plugin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-admob_plugin.debug.xcconfig"; path = "Target Support Files/Pods-admob_plugin/Pods-admob_plugin.debug.xcconfig"; sourceTree = "<group>"; };
@@ -279,6 +278,7 @@
 		90CAAA9624E71FF10013969F /* admob */ = {
 			isa = PBXGroup;
 			children = (
+				07AF2A1F2EDE9CFC008A870E /* ConsentManager.swift */,
 				07787D0B2EDA6C22009B6F5F /* adformat */,
 				07787D0C2EDA6C22009B6F5F /* admob_logger.h */,
 				07787D0D2EDA6C22009B6F5F /* admob_logger.m */,
@@ -286,8 +286,6 @@
 				07787D0F2EDA6C22009B6F5F /* gap_converter.mm */,
 				07787D362EDA6C22009B6F5F /* mediation */,
 				07787D422EDA6C22009B6F5F /* model */,
-				07787D432EDA6C22009B6F5F /* ump_orientation_wrapper.h */,
-				07787D442EDA6C22009B6F5F /* ump_orientation_wrapper.m */,
 				073B52C32ECF241C0063663B /* admob_plugin-Bridging-Header.h */,
 				90CAAA9724E71FF10013969F /* admob_plugin.h */,
 				90CAAA9824E71FF10013969F /* admob_plugin.mm */,
@@ -403,7 +401,6 @@
 				078073332EDC1C5E00A6FF87 /* admob_ad_error.mm in Sources */,
 				078073342EDC1C5E00A6FF87 /* admob_load_ad_error.mm in Sources */,
 				07787D4E2EDA6C22009B6F5F /* admob_status.mm in Sources */,
-				07787D4F2EDA6C22009B6F5F /* ump_orientation_wrapper.m in Sources */,
 				07787D502EDA6C22009B6F5F /* interstitial.mm in Sources */,
 				07787D512EDA6C22009B6F5F /* gap_converter.mm in Sources */,
 				07787D522EDA6C22009B6F5F /* ironsource_mediation_network.mm in Sources */,
@@ -426,6 +423,7 @@
 				07787D632EDA6C22009B6F5F /* chartboost_mediation_network.mm in Sources */,
 				07787D642EDA6C22009B6F5F /* moloco_mediation_network.mm in Sources */,
 				07787D652EDA6C22009B6F5F /* admob_response.mm in Sources */,
+				07AF2A202EDE9CFC008A870E /* ConsentManager.swift in Sources */,
 				90CAAA9924E71FF10013969F /* admob_plugin.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -626,7 +624,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "deeplink/admob_plugin-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "admob/admob_plugin-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -707,7 +705,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "deeplink/admob_plugin-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "admob/admob_plugin-Bridging-Header.h";
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

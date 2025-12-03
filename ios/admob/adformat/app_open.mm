@@ -116,12 +116,13 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	}
 }
 
-- (void) adDidPresentFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
-	os_log_debug(admob_log, "%@ Did present full screen", kLogTag);
-	// adDidPresentFullScreenContent is not called by the SDK (SDK bug?)
-	// will use adWillPresentFullScreenContent, which is called by SDK
-}
-
+/**
+* Starting with Google Mobile Ads SDK 11.0, the delegate method:
+* (void)adDidPresentFullScreenContent:(id<GADFullScreenPresentingAd>)ad
+* was officially marked as NS_UNAVAILABLE because the SDK no longer reliably calls it (it was flaky across
+* different ad networks in the mediation waterfall). Google now expects developers to treat
+* adWillPresentFullScreenContent: as the definitive "ad is now showing" signal.
+*/
 - (void) adWillPresentFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
 	os_log_debug(admob_log, "%@ Will present full screen", kLogTag);
 

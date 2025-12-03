@@ -67,7 +67,7 @@ public class InmobiMediationNetwork extends MediationNetwork {
 
 		// Get the Method object for updateGDPRConsent(String)
 		Method updateConsentMethod = consentClass.getMethod("updateGDPRConsent", jsonObjectClass);
-		
+
 		// Invoke the static method with 'null', because the method is static, and the consentObject.
 		updateConsentMethod.invoke(null, consentObject);
 	}

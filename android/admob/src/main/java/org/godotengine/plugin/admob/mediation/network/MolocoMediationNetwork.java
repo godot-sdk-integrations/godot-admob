@@ -53,21 +53,21 @@ public class MolocoMediationNetwork extends MediationNetwork {
 		try {
 			/*
 			 * PrivacySettings privacySettings = new PrivacySettings(
-			 *           / isUserConsent /         false,
-			 *           / isAgeRestrictedUser /   false,
-			 *           / isDoNotSell /           true);
+			 *			/ isUserConsent /			false,
+			 			/ isAgeRestrictedUser /		false,
+			 *			/ isDoNotSell /				true);
 			 * MolocoPrivacy.setPrivacy(privacySettings);
 			 */
 
-			//  Get the required Classes using the fully qualified names
+			// Get the required Classes using the fully qualified names
 			Class<?> privacySettingsClass = Class.forName("com.moloco.sdk.publisher.privacy.MolocoPrivacy$PrivacySettings");
 			Class<?> molocoPrivacyClass = Class.forName("com.moloco.sdk.publisher.privacy.MolocoPrivacy");
 
 			// Instantiate PrivacySettings: new PrivacySettings(false, false, true) constructor
 			Constructor<?> settingsConstructor = privacySettingsClass.getConstructor(
-				Boolean.class, // isUserConsent
-				Boolean.class, // isAgeRestrictedUser
-				Boolean.class  // isDoNotSell
+				Boolean.class,	// isUserConsent
+				Boolean.class,	// isAgeRestrictedUser
+				Boolean.class 	// isDoNotSell
 			);
 
 			// Create the new object instance, passing the argument values

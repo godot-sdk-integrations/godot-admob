@@ -60,7 +60,7 @@ public class ConsentConfiguration {
 					Log.d(LOG_TAG, "Setting debug geography to: " + debugGeography);
 					debugSettingsBuilder.setDebugGeography(debugGeography);
 				} else {
-					Log.e(LOG_TAG, "Invalid " + DEBUG_GEOGRAPHY_PROPERTY + " type: " + 
+					Log.e(LOG_TAG, "Invalid " + DEBUG_GEOGRAPHY_PROPERTY + " type: " +
 						(debugGeographyObj != null ? debugGeographyObj.getClass().getSimpleName() : "null") +
 						", value: " + debugGeographyObj);
 				}
@@ -82,7 +82,7 @@ public class ConsentConfiguration {
 						}
 					}
 				} else {
-					Log.e(LOG_TAG, "Invalid " + TEST_DEVICE_HASHED_IDS_PROPERTY + " type: " + 
+					Log.e(LOG_TAG, "Invalid " + TEST_DEVICE_HASHED_IDS_PROPERTY + " type: " +
 						(deviceIdsObj != null ? deviceIdsObj.getClass().getName() : "null") +
 						", value: " + deviceIdsObj);
 				}
@@ -124,7 +124,7 @@ public class ConsentConfiguration {
 			sb.append("]");
 		} else {
 			sb.append("null");
-		} 
+		}
 		sb.append("}");
 		return sb.toString();
 	}

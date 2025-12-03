@@ -130,7 +130,7 @@ public class AdmobPlugin extends GodotPlugin {
 	private Map<String, Interstitial> interstitialAds;
 	private Map<String, RewardedVideo> rewardedAds;
 	private Map<String, RewardedInterstitial> rewardedInterstitialAds;
-	
+
 	private AppOpenAdManager appOpenAdManager;
 
 	private ConsentForm consentForm;

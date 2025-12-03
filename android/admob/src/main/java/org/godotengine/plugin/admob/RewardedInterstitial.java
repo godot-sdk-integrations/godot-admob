@@ -63,7 +63,7 @@ public class RewardedInterstitial {
 				@Override
 				public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
 					super.onAdFailedToLoad(loadAdError);
-					
+
 					setAd(null); // safety
 					Log.e(LOG_TAG, "rewarded interstitial ad failed to load. errorCode: " + loadAdError.getCode());
 					listener.onRewardedInterstitialFailedToLoad(RewardedInterstitial.this.adId, loadAdError);

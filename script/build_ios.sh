@@ -235,7 +235,7 @@ function download_godot()
 	# Download the .tar.xz archive
 	if ! curl -L --fail --progress-bar -o "$archive_path" "$release_url"; then
 		rm -f "$archive_path"
-		display_error "Failed to download Godot binary from:\n  $release_url\nPlease verify that GODOT_VERSION (${GODOT_VERSION}) and GODOT_RELEASE_TYPE (${GODOT_RELEASE_TYPE}) are correct."
+		display_error "Failed to download Godot binary from:\n$release_url\nPlease verify that GODOT_VERSION (${GODOT_VERSION}) and GODOT_RELEASE_TYPE (${GODOT_RELEASE_TYPE}) are correct."
 		exit 1
 	fi
 
@@ -434,7 +434,7 @@ function replace_extra_properties()
 
 		# Create pattern with @ delimiters
 		local pattern="@${key}@"
-		
+
 		# Escape pattern for grep/sed
 		local escaped_pattern
 		escaped_pattern=$(printf '%s' "$pattern" | sed 's/[][\\^$.*]/\\&/g' | sed 's/\./\\./g')
@@ -528,7 +528,7 @@ function replace_mediation_properties()
 			display_error "Missing required property '${network}.podVersion' in '$mediation_config_file'"
 			exit 1
 		fi
-		
+
 		# Fetch Android dependencies as comma-separated array and quote each
 		deps=()
 		while IFS= read -r id; do
@@ -551,7 +551,7 @@ function replace_mediation_properties()
 			display_error "Missing required property '${network}.dependencies' in '$mediation_config_file' or it is empty. At least one entry is required."
 			exit 1
 		fi
-		
+
 		# Fetch SK Ad Network IDs as comma-separated array and quote each
 		skad_ids=()
 		while IFS= read -r id; do

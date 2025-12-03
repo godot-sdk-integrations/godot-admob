@@ -48,7 +48,7 @@ static NSString *const LOG_TAG = @"godot::AdmobPlugin::MediationNetwork";
 			}
 		}
 	}
-	
+
 	if ([settings containsAgeRestrictedUserData]) {
 		@try {
 			[self applyAgeRestrictedUserSettings:[settings isAgeRestrictedUser]];
@@ -61,7 +61,7 @@ static NSString *const LOG_TAG = @"godot::AdmobPlugin::MediationNetwork";
 			}
 		}
 	}
-	
+
 	if ([settings containsCcpaSaleConsentData]) {
 		@try {
 			[self applyCCPASettings:[settings hasCcpaSaleConsent]];

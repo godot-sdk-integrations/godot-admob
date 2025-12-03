@@ -80,7 +80,7 @@
 - (void) adWillPresentFullScreenContent:(nonnull id<GADFullScreenPresentingAd>) ad {
 	os_log_debug(admob_log, "InterstitialAd adWillPresentFullScreenContent");
 	AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, [GAPConverter nsStringToGodotString:self.adId]);
-	
+
 	if (AdFormatBase.pauseOnBackground) {
 		os_log_debug(admob_log, "InterstitialAd pauseOnBackground is true");
 		OS_AppleEmbedded::get_singleton()->on_focus_out();

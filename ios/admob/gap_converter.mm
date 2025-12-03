@@ -24,76 +24,76 @@
 }
 
 + (id) toNsObject:(Variant) godotValue {
-    switch (godotValue.get_type()) {
-        case Variant::Type::NIL:
-            return [NSNull null];
+	switch (godotValue.get_type()) {
+		case Variant::Type::NIL:
+			return [NSNull null];
 
-        case Variant::Type::BOOL:
-            return [NSNumber numberWithBool:(bool)godotValue];
+		case Variant::Type::BOOL:
+			return [NSNumber numberWithBool:(bool)godotValue];
 
-        case Variant::Type::INT:
-            return [NSNumber numberWithLongLong:(int64_t)godotValue];
+		case Variant::Type::INT:
+			return [NSNumber numberWithLongLong:(int64_t)godotValue];
 
-        case Variant::Type::FLOAT:
-            return [NSNumber numberWithDouble:(double)godotValue];
+		case Variant::Type::FLOAT:
+			return [NSNumber numberWithDouble:(double)godotValue];
 
-        case Variant::Type::STRING:
-            return [GAPConverter toNsString:(String)godotValue];
+		case Variant::Type::STRING:
+			return [GAPConverter toNsString:(String)godotValue];
 
-        case Variant::Type::ARRAY: {
-            Array array = godotValue;
-            NSMutableArray *nsArray = [NSMutableArray arrayWithCapacity:array.size()];
-            for (int i = 0; i < array.size(); ++i) {
-                id nsValue = [GAPConverter toNsObject:array[i]];
-                [nsArray addObject:nsValue ?: [NSNull null]];
-            }
-            return nsArray;
-        }
+		case Variant::Type::ARRAY: {
+			Array array = godotValue;
+			NSMutableArray *nsArray = [NSMutableArray arrayWithCapacity:array.size()];
+			for (int i = 0; i < array.size(); ++i) {
+				id nsValue = [GAPConverter toNsObject:array[i]];
+				[nsArray addObject:nsValue ?: [NSNull null]];
+			}
+			return nsArray;
+		}
 
-        case Variant::Type::DICTIONARY:
-            return [GAPConverter toNsDictionary:(Dictionary)godotValue];
+		case Variant::Type::DICTIONARY:
+			return [GAPConverter toNsDictionary:(Dictionary)godotValue];
 
-        case Variant::Type::VECTOR2:
-        case Variant::Type::VECTOR3:
-        case Variant::Type::VECTOR4:
-        case Variant::Type::COLOR:
-        case Variant::Type::RECT2:
-        case Variant::Type::RECT2I:
-        case Variant::Type::TRANSFORM2D:
-        case Variant::Type::TRANSFORM3D:
-            // For these, use string serialization (you can customize this)
-            return [GAPConverter toNsString:godotValue.operator String()];
+		case Variant::Type::VECTOR2:
+		case Variant::Type::VECTOR3:
+		case Variant::Type::VECTOR4:
+		case Variant::Type::COLOR:
+		case Variant::Type::RECT2:
+		case Variant::Type::RECT2I:
+		case Variant::Type::TRANSFORM2D:
+		case Variant::Type::TRANSFORM3D:
+			// For these, use string serialization (you can customize this)
+			return [GAPConverter toNsString:godotValue.operator String()];
 
-        default:
-            // Unsupported or complex type — convert to string fallback
-            return [GAPConverter toNsString:godotValue.operator String()];
-    }
+		default:
+			// Unsupported or complex type — convert to string fallback
+			return [GAPConverter toNsString:godotValue.operator String()];
+	}
 }
 
 + (NSDictionary*) toNsDictionary:(Dictionary)godotDictionary {
-    NSMutableDictionary *nsDictionary = [NSMutableDictionary dictionary];
+	NSMutableDictionary *nsDictionary = [NSMutableDictionary dictionary];
 
-    Array keys = godotDictionary.keys();
-    int size = keys.size();
-    for (int i = 0; i < size; ++i) {
-        Variant key = keys[i];
-        Variant value = godotDictionary[key];
+	Array keys = godotDictionary.keys();
+	int size = keys.size();
+	for (int i = 0; i < size; ++i) {
+		Variant key = keys[i];
+		Variant value = godotDictionary[key];
 
-        id nsKey = [GAPConverter toNsObject:key];
-        id nsValue = [GAPConverter toNsObject:value];
+		id nsKey = [GAPConverter toNsObject:key];
+		id nsValue = [GAPConverter toNsObject:value];
 
-        if (!nsKey) nsKey = [NSNull null];
-        if (!nsValue) nsValue = [NSNull null];
+		if (!nsKey) nsKey = [NSNull null];
+		if (!nsValue) nsValue = [NSNull null];
 
-        // Ensure key is NSString (NSDictionary requires NSString keys)
-        if (![nsKey isKindOfClass:[NSString class]]) {
-            nsKey = [nsKey description];
-        }
+		// Ensure key is NSString (NSDictionary requires NSString keys)
+		if (![nsKey isKindOfClass:[NSString class]]) {
+			nsKey = [nsKey description];
+		}
 
-        [nsDictionary setObject:nsValue forKey:nsKey];
-    }
+		[nsDictionary setObject:nsValue forKey:nsKey];
+	}
 
-    return nsDictionary;
+	return nsDictionary;
 }
 
 
@@ -217,7 +217,7 @@
 	if (debugMode) {
 		parameters.debugSettings = [GAPConverter godotDictionaryToUMPDebugSettings:godotDictionary];
 	}
-	
+
 	return parameters;
 }
 
@@ -227,7 +227,7 @@
 	// Handle debug geography
 	if (godotDictionary.has("debug_geography")) {
 		int debugGeographyValue = (int)godotDictionary["debug_geography"];
-		NSLog(@"Debug geography value from dictionary: %d", debugGeographyValue);
+		os_log_debug(admob_log, "Debug geography value from dictionary: %d", debugGeographyValue);
 		switch (debugGeographyValue) {
 			case 0: // DEBUG_GEOGRAPHY_DISABLED
 				debugSettings.geography = UMPDebugGeographyDisabled;
@@ -239,14 +239,14 @@
 				debugSettings.geography = UMPDebugGeographyRegulatedUSState;
 				break;
 			default:
-				NSLog(@"Unsupported debug geography value: %d, defaulting to UMPDebugGeographyOther", debugGeographyValue);
+				os_log_error(admob_log, "Unsupported debug geography value: %d, defaulting to UMPDebugGeographyOther", debugGeographyValue);
 			case 2: // DEBUG_GEOGRAPHY_NOT_EEA deprecated
 			case 4: // DEBUG_GEOGRAPHY_OTHER
 				debugSettings.geography = UMPDebugGeographyOther;
 				break;
 		}
 	} else {
-		NSLog(@"No debug_geography key found in dictionary, defaulting to Disabled");
+		os_log_debug(admob_log, "No debug_geography key found in dictionary, defaulting to Disabled");
 		debugSettings.geography = UMPDebugGeographyDisabled;
 	}
 
@@ -258,12 +258,12 @@
 			String item = testDeviceIds[i];
 			NSString *deviceId = [NSString stringWithUTF8String:item.utf8().get_data()];
 			[convertedArray addObject:deviceId];
-			NSLog(@"Added test device ID: %@", deviceId);
+			os_log_debug(admob_log, "Added test device ID: %@", deviceId);
 		}
 		[convertedArray addObject:[GAPConverter getAdmobDeviceID]];
 		debugSettings.testDeviceIdentifiers = convertedArray;
 	} else {
-		NSLog(@"No test_device_hashed_ids key found in dictionary");
+		os_log_debug(admob_log, "No test_device_hashed_ids key found in dictionary");
 		NSMutableArray<NSString *> *convertedArray = [NSMutableArray array];
 		[convertedArray addObject:[GAPConverter getAdmobDeviceID]];
 		debugSettings.testDeviceIdentifiers = convertedArray;
@@ -332,7 +332,7 @@
 
 + (Dictionary) nsFormErrorToGodotDictionary:(NSError*) nsError {
 	Dictionary dictionary;
-	
+
 	dictionary["error_code"] = (int) nsError.code;
 	dictionary["message"] = [nsError.localizedDescription UTF8String];
 
@@ -345,13 +345,16 @@
 + (NSString*) getAdmobDeviceID {
 	NSUUID* adid = [[ASIdentifierManager sharedManager] advertisingIdentifier];
 	const char *cStr = [adid.UUIDString UTF8String];
+
 	unsigned char digest[CC_SHA256_DIGEST_LENGTH];
-	CC_SHA256(cStr, strlen(cStr), digest);
 
-	NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+	CC_SHA256(cStr, (CC_LONG)strlen(cStr), digest);
 
-	for (int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
+	NSMutableString *output = [NSMutableString stringWithCapacity:CC_SHA256_DIGEST_LENGTH * 2];
+
+	for (int i = 0; i < CC_SHA256_DIGEST_LENGTH; i++) {
 		[output appendFormat:@"%02x", digest[i]];
+	}
 
 	return output;
 }

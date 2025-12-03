@@ -23,7 +23,7 @@ static String const kResponseInfoProperty = "response_info";
 
 - (Dictionary) buildRawData {
 	Dictionary dict = [super buildRawData];
-	
+
 	if (self.responseInfo) {
 		dict[kResponseInfoProperty] = [self.responseInfo buildRawData];
 	}

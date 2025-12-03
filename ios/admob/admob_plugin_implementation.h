@@ -5,9 +5,6 @@
 #ifndef admob_plugin_implementation_h
 #define admob_plugin_implementation_h
 
-#include <UserMessagingPlatform/UMPConsentForm.h>
-#include <UserMessagingPlatform/UMPConsentInformation.h>
-
 #import <Foundation/Foundation.h>
 
 #import "banner.h"
@@ -15,6 +12,9 @@
 #import "rewarded.h"
 #import "rewarded_interstitial.h"
 #import "app_open.h"
+
+
+@class ConsentManager;
 
 
 extern const String INITIALIZATION_COMPLETED_SIGNAL;
@@ -80,7 +80,8 @@ private:
 	NSMutableDictionary<NSString*, InterstitialAd*>* interstitialAds;
 	NSMutableDictionary<NSString*, RewardedAd*>* rewardedAds;
 	NSMutableDictionary<NSString*, RewardedInterstitialAd*>* rewardedInterstitialAds;
-	UMPConsentForm* consentForm;
+
+	ConsentManager* consentManager;
 
 	AppOpenAd* appOpenAd; // One app open ad per app (if enabled)
 	id<NSObject> foregroundObserver; // Notification observer token
@@ -139,7 +140,7 @@ private:
 	static void _bind_methods();
 
 public:
- 
+
 	static AdmobPlugin* get_singleton();
 
 	AdmobPlugin();
