@@ -34,6 +34,7 @@ A Godot plugin that provides a unified GDScript interface for integrating **Goog
 - [Signals](#signals)
 - [Methods](#methods)
 - [Classes](#classes)
+- [Nodes](#nodes)
 - [Banner Ads](#banner-ads)
 - [App Open Ads](#app-open-ads)
 - [User Consent](#user-consent)
@@ -147,7 +148,7 @@ The following ad types are supported:
 
 <a name="signals"></a>
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="18"> Signals
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Signals
 - register listeners for one or more of the following signals of the `Admob` node:
 	- `initialization_completed(status_data: InitializationStatus)`
 	- `banner_ad_loaded(ad_id: String, response_info: ResponseInfo)`
@@ -198,7 +199,7 @@ The following ad types are supported:
 
 <a name="methods"></a>
 
-## <img src="../addon/icon.png" width="20"> Methods
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Methods
 - `initialize()` - initialize plugin
 - `set_request_configuration(AdmobConfig)` - set general configuration that is applied to all ad requests
 - `get_initialization_status()` - get initialization status of enabled mediation networks
@@ -234,11 +235,11 @@ The following ad types are supported:
 - `set_mediation_privacy_settings(NetworkPrivacySettings)` - set privacy settings for enabled ad mediation networks
 - `open_app_settings()` - open the system dialog for app-specific settings
 
-### <img src="../addon/icon.png" width="16"> iOS-only Methods
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> iOS-only Methods
 - `request_tracking_authorization()` - display App Tracking Transparency (ATT) dialog
 - `set_app_pause_on_background()` - set the configurable option (default: disabled) that controls whether the Godot engine should simulate an "app lost focus" state when full-screen ads are displayed
 
-### <img src="../addon/icon.png" width="16"> Helper Methods
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> Helper Methods
 - `create_request_configuration()` - creates a `AdmobConfig` object populated with the ad configuration from the `Admob` node.
 - `create_banner_ad_request()` - creates a `LoadAdRequest` object populated with the banner ad configuration from the `Admob` node.
 - `create_interstitial_ad_request()` - creates a `LoadAdRequest` object populated with the insterstitial ad configuration from the `Admob` node.
@@ -249,78 +250,102 @@ The following ad types are supported:
 
 <a name="classes"></a>
 
-## <img src="../addon/icon.png" width="20"> Classes
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Classes
 
-### <img src="../addon/icon.png" width="16"> AdapterResponseInfo
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> AdapterResponseInfo
 - Encapsulates adapter response data that is returned by the SDK for an ad request.
 - Properties: `ad_error`, `ad_source_id`, `ad_source_instance_id`, `ad_source_instance_name`, `ad_source_name`, `adapter_class_name`, `network_tag`, `latency`
 
-### <img src="../addon/icon.png" width="16"> AdapterStatus
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> AdapterStatus
 - Encapsulates adapter status data that is returned by the SDK after initialization or status request.
 - Properties: `adapter_class`, `latency`, `initialization_state`, `description`
 
-### <img src="../addon/icon.png" width="16"> AdError
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> AdError
 - Encapsulates error data that is returned by the SDK if an ad fails to display or in other scenarios.
 - Properties: `code`, `domain`, `message`, `cause`
 
-### <img src="../addon/icon.png" width="16"> AdmobConfig
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> AdmobAdSize
+- Encapsulates ad size data returned by the SDK.
+- Properties: `width`, `height`
+
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> AdmobConfig
 - Encapsulates general configuration data that is applied to all ad requests.
 - Properties: `is_real`, `max_ad_content_rating`, `tag_for_child_directed_treatment`, `tag_for_under_age_of_consent`, `first_party_id_enabled`, `personalization_state`, `test_device_ids`
 
-### <img src="../addon/icon.png" width="16"> ConsentInformation
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> ConsentInformation
 - Contains consent status values.
 
-### <img src="../addon/icon.png" width="16"> ConsentRequestParameters
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> ConsentRequestParameters
 - Encapsulates consent request data that is sent when requesting users' consent for data collection.
 - Properties: `is_real`, `tag_for_under_age_of_consent`, `debug_geography`, `test_device_hashed_ids`
 
-### <img src="../addon/icon.png" width="16"> FormError
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> FormError
 - Encapsulates error data that is returned by the SDK if an ad fails to load or display a consent form.
 - Properties: `code`, `message`
 
-### <img src="../addon/icon.png" width="16"> InitializationStatus
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> InitializationStatus
 - Contains a dictionary of `AdapterStatus` objects.
 
-### <img src="../addon/icon.png" width="16"> LoadAdError
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> LoadAdError
 - Encapsulates error data that is returned by the SDK if an ad fails to load.
 - Properties: `code`, `domain`, `message`, `cause`, `response_info`
 
-### <img src="../addon/icon.png" width="16"> LoadAdRequest
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> LoadAdRequest
 - Encapsulates data that defines a request for an ad.
 - Properties: `ad_unit_id`, `request_agent`, `ad_size`, `ad_position`, `keywords`, `user_id`, `collapsible_position`, `custom_data`, `network_extras`
 
-### <img src="../addon/icon.png" width="16"> MediationNetwork
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> MediationNetwork
 - Encapsulates data that defines an ad mediation network.
 - Properties: `flag`, `tag`, `dependencies`, `maven_repo`, `pod`, `pod_version`, `sk_ad_network_ids`
 
-### <img src="../addon/icon.png" width="16"> NetworkExtras
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> NetworkExtras
 - Encapsulates data that facilitates setting of extra properties required by an ad mediation network.
 - Properties: `network_tag`, `extras`
 
-### <img src="../addon/icon.png" width="16"> NetworkPrivacySettings
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> NetworkPrivacySettings
 - Encapsulates data that represents a user's privacy settings.
 - Properties: `has_gdpr_consent`, `is_age_restricted_user`, `has_ccpa_sale_consent`, `enabled_networks`
 
-### <img src="../addon/icon.png" width="16"> ResponseInfo
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> ResponseInfo
 - Encapsulates data that defines the response for an ad request.
 - Properties: `adapter_responses`, `loaded_adapter_response`, `adapter_class_name`, `network_tag`, `response_id`
 
-### <img src="../addon/icon.png" width="16"> RewardItem
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> RewardItem
 - Encapsulates data that defines the received reward from a rewarded ad.
 - Properties: `amount`, `type`
 
 ---
 
+<a name="nodes"></a>
+
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Nodes
+
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> InlıneAdaptiveBanner
+
+`InlıneAdaptiveBanner` is a custom Godot node that provides support for loading and showing AdMob inline adaptive banners. Place it inside a Godot Container node such as the `ScrollContainer` and set its `ad_unit_id` and `custom_minimum_size.x` properties.
+
+**Properties:**
+- `ad_unit_id` - Ad unit ID of the inline adaptive banner ad to be loaded.
+- `max_ad_height` - Maximum pixel height of the requested ad. If set to -1, height will be determined automatically.
+- `clip_threshold` - Minimum portion of the banner’s area (as a percentage) that must be clipped before the banner is considered hidden.
+- `resize_threshold` - Width-change threshold (in pixels) that triggers a banner reload when the ad container is resized by this amount or more.
+- `admob_path` - Path to `Admob` node. Alternatively, the `initialize()` method can be used to provide a reference to the `Admob` node.
+
+**Methods:**
+- `initialize(admob_node)` - An alternative to initializing with the `admob_path` property.
+
+---
+
 <a name="banner-ads"></a>
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="18"> Banner Ads
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Banner Ads
 Banner ads can be categorized as:
 
 - Adaptive Banner Ads
 - Fixed-size Banner Ads
 - Collapsible Banner Ads
 
-#### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="14"> Banner Position
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="18"> Banner Position
 Banner position can be set to the following values:
 
 - TOP
@@ -333,13 +358,13 @@ Banner position can be set to the following values:
 - BOTTOM-RIGHT
 - CENTER
 
-#### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="14"> Banner Size
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="18"> Banner Size
 - The following methods return the size of a Banner ad:
 	- `get_banner_dimension()`
 	- `get_banner_dimension_in_pixels()`
 - These methods are not supported for `FLUID` sized ads. For banner ads of size `FLUID`, the `get_banner_dimension()` method will return `(-3, -4)` and the `get_banner_dimension_in_pixels()` method will return `(-1, -1)`.
 
-#### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="14"> Collapsible Banner Ads
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="18"> Collapsible Banner Ads
 Collapsible banner ads are banner ads that are initially presented as a larger overlay with a button to collapse them to their originally-requested banner size. Collapsible banner ads can be requested by setting the `collapsible position` value to `TOP` or `BOTTOM`.
 
 **Note that if `collapsible position` value is in conflict with the [`banner position`](#banner-position) value, then the collapsible banner ad may not function as intended. Set `banner position` and `collapsible position` to the same value for the best experience.**
@@ -348,7 +373,7 @@ Collapsible banner ads are banner ads that are initially presented as a larger o
 
 <a name="app-open-ads"></a>
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="18"> App Open Ads
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> App Open Ads
 App open ads are a special ad format intended for publishers wishing to monetize their app load screens. App open ads can be closed at any time, and are designed to be shown at startup or when your users bring your app to the foreground.
 
 Set `auto_show_on_resume` to `true` in order to show app open ads when users resume (bring from background to foreground) your app. The app open ad should be loaded via the `load_app_open_ad()` method before it can be displayed at startup or upon resumption. Ideally, invoke the `load_app_open_ad()` method at startup and, if `auto_show_on_resume` is enabled, upon each `app_open_ad_impression` signal.
@@ -357,12 +382,12 @@ Set `auto_show_on_resume` to `true` in order to show app open ads when users res
 
 <a name="user-consent"></a>
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="18"> User Consent
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> User Consent
 The consent status indicates that the user has been presented with the consent form and has submitted a choice (either consent or withhold consent), making the consent information available for use. It does not indicate that the user has specifically consented to personalized ads — only that consent information has been obtained. Therefore, the plugin will return a status of "OBTAINED" even when the user selects "Do Not Consent" on the consent form.
 
 The UMP SDK handles propagation of the user's actual consent choice to the Google Mobile Ads SDK automatically. Ad requests made after consent is obtained will respect the user's selection (e.g., non-personalized ads if they did not consent).
 
-#### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="14"> User Consent Methods
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="18"> User Consent Methods
 
 - `get_consent_status()` - Returns a consent status value defined in `ConsentInformation.gd`
 - `update_consent_info(params: ConsentRequestParameters)` - To be called if `get_consent_status()` returns status UNKNOWN.
@@ -372,7 +397,7 @@ The UMP SDK handles propagation of the user's actual consent choice to the Googl
 - `show_consent_form()` - To be called after `consent_form_loaded` signal has been emitted or `is_consent_form_available()` returns `true`.
 
 
-#### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="14"> Testing User Consent Logic
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="18"> Testing User Consent Logic
 In order to test user consent logic for your app, you need to add your test device's hashed identifier to the `test_device_hashed_ids` array of your `Admob` node (or set it programmatically). If you don't know your test device hashed identifier, then run your app with `is_real` set to `false` and look for a log entry such as the following that is logged on iOS.
 
 ```
@@ -383,7 +408,7 @@ In order to test user consent logic for your app, you need to add your test devi
 
 <a name="multi-scene-projects"></a>
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="18"> Multi-scene projects
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Multi-scene projects
 
 The recommended way to use the `Admob Plugin` in a multi-scene Godot project is as follows:
 

@@ -375,6 +375,18 @@ public class AdmobPlugin extends GodotPlugin {
 	}
 
 	@UsedByGodot
+	public void move_banner_ad(String adId, float x, float y) {
+		Log.d(LOG_TAG, String.format("move_banner_ad('%s', %.1f, %.1f)", adId, x, y));
+		Banner banner = bannerAds.get(adId);
+		if (banner != null) {
+			banner.move(x, y);
+		}
+		else {
+			Log.e(LOG_TAG, String.format("move_banner_ad(): Error: banner ad %s not found", adId));
+		}
+	}
+
+	@UsedByGodot
 	public int get_banner_width(String adId) {
 		int result = 0;
 

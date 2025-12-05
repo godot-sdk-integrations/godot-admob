@@ -46,9 +46,9 @@ func _ready() -> void:
 		__index += 1
 
 	__index = 0
-	for __item in LoadAdRequest.FixedSize.keys():
+	for __item in LoadAdRequest.RequestedAdSize.keys():
 		banner_size_option_button.add_item(__item)
-		if __item.casecmp_to(LoadAdRequest.FixedSize.keys()[admob.banner_size]) == 0:
+		if __item.casecmp_to(LoadAdRequest.RequestedAdSize.keys()[admob.banner_size]) == 0:
 			banner_size_option_button.select(__index)
 		__index += 1
 
@@ -123,7 +123,7 @@ func _on_reload_banner_button_pressed() -> void:
 	show_banner_button.disabled = true
 	reload_banner_button.disabled = true
 	admob.banner_position = LoadAdRequest.AdPosition[banner_position_option_button.get_item_text(banner_position_option_button.selected)]
-	admob.banner_size = LoadAdRequest.FixedSize[banner_size_option_button.get_item_text(banner_size_option_button.selected)]
+	admob.banner_size = LoadAdRequest.RequestedAdSize[banner_size_option_button.get_item_text(banner_size_option_button.selected)]
 	admob.banner_collapsible_position = LoadAdRequest.CollapsiblePosition[banner_collapsible_pos_option_button.get_item_text(banner_collapsible_pos_option_button.selected)]
 	admob.load_banner_ad()
 

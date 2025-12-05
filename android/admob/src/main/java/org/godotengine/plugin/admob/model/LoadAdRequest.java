@@ -26,6 +26,8 @@ public class LoadAdRequest {
 	private static final String AD_UNIT_ID_PROPERTY = "ad_unit_id";
 	private static final String REQUEST_AGENT_PROPERTY = "request_agent";
 	private static final String AD_SIZE_PROPERTY = "ad_size";
+	private static final String ADAPTIVE_WIDTH_PROPERTY = "adaptive_width";
+	private static final String ADAPTIVE_MAX_HEIGHT_PROPERTY = "adaptive_max_height";
 	private static final String AD_POSITION_PROPERTY = "ad_position";
 	private static final String COLLAPSIBLE_POSITION_PROPERTY = "collapsible_position";
 	private static final String KEYWORDS_PROPERTY = "keywords";
@@ -63,6 +65,16 @@ public class LoadAdRequest {
 
 	public String getAdSize() {
 		return (String) _data.get(AD_SIZE_PROPERTY);
+	}
+
+
+	public int getAdaptiveWidth() {
+		return _data.containsKey(ADAPTIVE_WIDTH_PROPERTY) ? (int) _data.get(ADAPTIVE_WIDTH_PROPERTY) : -1;
+	}
+
+
+	public int getAdaptiveMaxHeight() {
+		return _data.containsKey(ADAPTIVE_MAX_HEIGHT_PROPERTY) ? (int) _data.get(ADAPTIVE_MAX_HEIGHT_PROPERTY) : -1;
 	}
 
 

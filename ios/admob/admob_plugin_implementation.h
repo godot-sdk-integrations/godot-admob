@@ -95,25 +95,26 @@ private:
 	Dictionary get_portrait_adaptive_banner_size(int width);
 	Dictionary get_landscape_adaptive_banner_size(int width);
 	Error load_banner_ad(Dictionary adData);
-	void show_banner_ad(String uid);
-	void hide_banner_ad(String uid);
-	void remove_banner_ad(String uid);
-	int get_banner_width(String uid);
-	int get_banner_height(String uid);
-	int get_banner_width_in_pixels(String uid);
-	int get_banner_height_in_pixels(String uid);
+	void show_banner_ad(String adId);
+	void hide_banner_ad(String adId);
+	void remove_banner_ad(String adId);
+	void move_banner_ad(String adId, real_t x, real_t y);
+	int get_banner_width(String adId);
+	int get_banner_height(String adId);
+	int get_banner_width_in_pixels(String adId);
+	int get_banner_height_in_pixels(String adId);
 
 	Error load_interstitial_ad(Dictionary adData);
-	void show_interstitial_ad(String uid);
-	void remove_interstitial_ad(String uid);
+	void show_interstitial_ad(String adId);
+	void remove_interstitial_ad(String adId);
 
 	Error load_rewarded_ad(Dictionary adData);
-	void show_rewarded_ad(String uid);
-	void remove_rewarded_ad(String uid);
+	void show_rewarded_ad(String adId);
+	void remove_rewarded_ad(String adId);
 
 	Error load_rewarded_interstitial_ad(Dictionary adData);
-	void show_rewarded_interstitial_ad(String uid);
-	void remove_rewarded_interstitial_ad(String uid);
+	void show_rewarded_interstitial_ad(String adId);
+	void remove_rewarded_interstitial_ad(String adId);
 
 	void load_app_open_ad(Dictionary requestDict, bool autoShowOnResume);
 	void show_app_open_ad();

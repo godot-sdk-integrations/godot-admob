@@ -15,7 +15,7 @@
 
 @property (nonatomic, strong) GADBannerView* bannerView;
 @property (nonatomic, strong) NSString* adUnitId;
-@property (nonatomic) GADAdSize adSize;
+@property (nonatomic) GADAdSize gadAdSize;
 @property (nonatomic) AdPosition adPosition;
 @property (nonatomic) BOOL isLoaded;
 

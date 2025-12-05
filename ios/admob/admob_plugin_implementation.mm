@@ -87,6 +87,7 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("show_banner_ad"), &AdmobPlugin::show_banner_ad);
 	ClassDB::bind_method(D_METHOD("hide_banner_ad"), &AdmobPlugin::hide_banner_ad);
 	ClassDB::bind_method(D_METHOD("remove_banner_ad"), &AdmobPlugin::remove_banner_ad);
+	ClassDB::bind_method(D_METHOD("move_banner_ad", "ad_id", "x", "y"), &AdmobPlugin::move_banner_ad);
 	ClassDB::bind_method(D_METHOD("get_banner_width"), &AdmobPlugin::get_banner_width);
 	ClassDB::bind_method(D_METHOD("get_banner_height"), &AdmobPlugin::get_banner_height);
 	ClassDB::bind_method(D_METHOD("get_banner_width_in_pixels"), &AdmobPlugin::get_banner_width_in_pixels);
@@ -338,6 +339,17 @@ void AdmobPlugin::remove_banner_ad(String adId) {
 	}
 	else {
 		os_log_error(admob_log, "AdmobPlugin remove_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+	}
+}
+
+void AdmobPlugin::move_banner_ad(String adId, real_t x, real_t y) {
+	os_log_debug(admob_log, "AdmobPlugin move_banner_ad('%s',%.2f,%.2f)", adId.utf8().get_data(), x, y);
+	BannerAd* banner = [bannerAds objectForKey:[GAPConverter toNsString:adId]];
+	if (banner) {
+		CGFloat scale = [[UIScreen mainScreen] scale];
+		CGRect frame = banner.bannerView.frame;
+		frame.origin = CGPointMake(x / scale, y / scale);
+		banner.bannerView.frame = frame;
 	}
 }
 

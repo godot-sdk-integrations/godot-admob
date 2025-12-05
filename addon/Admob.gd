@@ -99,7 +99,7 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export var banner_position: LoadAdRequest.AdPosition = LoadAdRequest.AdPosition.TOP: set = set_banner_position
 
 ## The size of the banner ad.
-@export var banner_size: LoadAdRequest.FixedSize = LoadAdRequest.FixedSize.BANNER: set = set_banner_size
+@export var banner_size: LoadAdRequest.RequestedAdSize = LoadAdRequest.RequestedAdSize.BANNER: set = set_banner_size
 
 ## If not set to disabled, then specifies the direction towards which the banner ad will collapse.
 @export var banner_collapsible_position: LoadAdRequest.CollapsiblePosition = LoadAdRequest.CollapsiblePosition.DISABLED: set = set_banner_collapsible_position
@@ -463,7 +463,7 @@ func set_banner_position(a_value: LoadAdRequest.AdPosition) -> void:
 	banner_position = a_value
 
 
-func set_banner_size(a_value: LoadAdRequest.FixedSize) -> void:
+func set_banner_size(a_value: LoadAdRequest.RequestedAdSize) -> void:
 	banner_size = a_value
 
 
@@ -619,6 +619,13 @@ func remove_banner_ad(a_ad_id: String = "") -> void:
 				Admob.log_error("Cannot remove banner ad. Ad with ID '%s' not found." % a_ad_id)
 
 
+func move_banner_ad(a_ad_id: String, a_x: float, a_y: float) -> void:
+	if _plugin_singleton == null:
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+	else:
+		_plugin_singleton.move_banner_ad(a_ad_id, a_x, a_y)
+
+
 func get_banner_dimension(a_ad_id: String = "") -> Vector2:
 	if _plugin_singleton == null:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
@@ -649,7 +656,7 @@ func get_banner_dimension_in_pixels(a_ad_id: String = "") -> Vector2:
 				return Vector2(_plugin_singleton.get_banner_width_in_pixels(last_loaded_banner_ad_id),
 							_plugin_singleton.get_banner_height_in_pixels(last_loaded_banner_ad_id))
 		else:
-			return Vector2(_plugin_singleton.get_banner_height_in_pixels(a_ad_id),
+			return Vector2(_plugin_singleton.get_banner_width_in_pixels(a_ad_id),
 						_plugin_singleton.get_banner_height_in_pixels(a_ad_id))
 
 	return Vector2.ZERO

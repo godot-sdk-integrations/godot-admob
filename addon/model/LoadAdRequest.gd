@@ -13,17 +13,20 @@ enum AdPosition {
 	TOP_RIGHT, ## Ad will be anchored at the top-right of the screen.
 	BOTTOM_LEFT, ## Ad will be anchored at the bottom-left of the screen.
 	BOTTOM_RIGHT, ## Ad will be anchored at the bottom-right of the screen.
-	CENTER ## Ad will be anchored at the center of the screen.
+	CENTER, ## Ad will be anchored at the center of the screen.
+	CUSTOM ## Ad position will be set dynamically.
 }
 
-enum FixedSize {
+enum RequestedAdSize {
 	BANNER, ## A standard ad size that refers to a rectangular ad unit, most commonly 320x50 density-independent pixels (dp).
 	LARGE_BANNER, ## A fixed-size banner with dimensions of 320x100 density-independent pixels (dp).
 	MEDIUM_RECTANGLE, ## A standard 300x250 pixel ad, often referred to as the Interactive Advertising Bureau (IAB) medium rectangle.
 	FULL_BANNER, ## An ad size constant for an Interactive Advertising Bureau (IAB) full-size banner, which has a fixed size of 468x60 density-independent pixels (dp).
 	LEADERBOARD, ## A banner ad with dimensions of 728 pixels wide by 90 pixels tall. This is a standard display ad size that is designed for tablet screens.
+	ADAPTIVE, ## An ad that automatically adjusts its width and height to fit the device’s available screen space, providing the best-performing banner size for that specific layout.
+	INLINE_ADAPTIVE, ## An ad that dynamically optimizes its height for the available inline content width, ensuring a smoothly integrated banner that fits naturally within scrollable or in-feed layouts.
 	SKYSCRAPER, ## Deprecated
-	FLUID ## Deprecated
+	FLUID, ## Deprecated
 }
 
 enum CollapsiblePosition {
@@ -40,10 +43,12 @@ const COLLAPSIBLE_POSITION_NAMES: Dictionary = {
 const DATA_KEY_AD_UNIT_ID = "ad_unit_id"
 const DATA_KEY_REQUEST_AGENT = "request_agent"
 const DATA_KEY_AD_SIZE = "ad_size"
+const DATA_KEY_ADAPTIVE_WIDTH = "adaptive_width"
+const DATA_KEY_ADAPTIVE_MAX_HEIGHT = "adaptive_max_height"
 const DATA_KEY_AD_POSITION = "ad_position"
+const DATA_KEY_COLLAPSIBLE_POSITION = "collapsible_position"
 const DATA_KEY_KEYWORDS = "keywords"
 const DATA_KEY_USER_ID = "user_id"
-const DATA_KEY_COLLAPSIBLE_POSITION = "collapsible_position"
 const DATA_KEY_CUSTOM_DATA = "custom_data"
 const DATA_KEY_NETWORK_EXTRAS = "network_extras"
 
@@ -67,13 +72,29 @@ func set_request_agent(a_value: String) -> LoadAdRequest:
 	return self
 
 
-func set_ad_size(a_value: FixedSize) -> LoadAdRequest:
-	_data[DATA_KEY_AD_SIZE] = FixedSize.keys()[a_value]
+func set_ad_size(a_value: RequestedAdSize) -> LoadAdRequest:
+	_data[DATA_KEY_AD_SIZE] = RequestedAdSize.keys()[a_value]
+	return self
+
+
+func set_adaptive_width(a_value: int) -> LoadAdRequest:
+	_data[DATA_KEY_ADAPTIVE_WIDTH] = a_value
+	return self
+
+
+func set_adaptive_max_height(a_value: int) -> LoadAdRequest:
+	_data[DATA_KEY_ADAPTIVE_MAX_HEIGHT] = a_value
 	return self
 
 
 func set_ad_position(a_value: AdPosition) -> LoadAdRequest:
 	_data[DATA_KEY_AD_POSITION] = AdPosition.keys()[a_value]
+	return self
+
+
+func set_collapsible_position(a_value: CollapsiblePosition) -> LoadAdRequest:
+	if a_value != CollapsiblePosition.DISABLED:
+		_data[DATA_KEY_COLLAPSIBLE_POSITION] = COLLAPSIBLE_POSITION_NAMES[a_value]
 	return self
 
 
@@ -92,12 +113,6 @@ func add_keyword(a_value: String) -> LoadAdRequest:
 
 func set_user_id(a_value: String) -> LoadAdRequest:
 	_data[DATA_KEY_USER_ID] = a_value
-	return self
-
-
-func set_collapsible_position(a_value: CollapsiblePosition) -> LoadAdRequest:
-	if a_value != CollapsiblePosition.DISABLED:
-		_data[DATA_KEY_COLLAPSIBLE_POSITION] = COLLAPSIBLE_POSITION_NAMES[a_value]
 	return self
 
 

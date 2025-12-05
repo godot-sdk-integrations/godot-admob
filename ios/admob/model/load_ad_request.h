@@ -10,6 +10,8 @@
 
 #include "core/object/class_db.h"
 
+#import "ad_position.h"
+
 
 @interface LoadAdRequest : NSObject
 
@@ -30,6 +32,8 @@
 - (NSString*) customData;
 - (Array) networkExtras;
 
+- (GADAdSize) getGADAdSize;
+- (AdPosition) getAdPosition;
 - (GADRequest*) createGADRequest;
 
 - (BOOL) hasServerSideVerificationOptions;

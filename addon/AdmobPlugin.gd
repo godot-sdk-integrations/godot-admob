@@ -27,6 +27,7 @@ var ios_export_plugin: IosExportPlugin
 
 func _enter_tree() -> void:
 	add_custom_type(PLUGIN_NODE_TYPE_NAME, PLUGIN_PARENT_NODE_TYPE, preload("%s.gd" % PLUGIN_NODE_TYPE_NAME), preload("icon.png"))
+	add_custom_type("InlineAdaptiveBanner", "Control", preload("InlineAdaptiveBanner.gd"), preload("icon.png"))
 	android_export_plugin = AndroidExportPlugin.new()
 	add_export_plugin(android_export_plugin)
 	ios_export_plugin = IosExportPlugin.new()

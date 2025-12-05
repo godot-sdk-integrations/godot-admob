@@ -14,6 +14,8 @@
 const String AD_UNIT_ID_PROPERTY = "ad_unit_id";
 const String REQUEST_AGENT_PROPERTY = "request_agent";
 const String AD_SIZE_PROPERTY = "ad_size";
+const String ADAPTIVE_WIDTH_PROPERTY = "adaptive_width";
+const String ADAPTIVE_MAX_HEIGHT_PROPERTY = "adaptive_max_height";
 const String AD_POSITION_PROPERTY = "ad_position";
 const String COLLAPSIBLE_POSITION_PROPERTY = "collapsible_position";
 const String KEYWORDS_PROPERTY = "keywords";
@@ -47,6 +49,33 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 
 - (NSString*) adSize {
 	return self.rawData.has(AD_SIZE_PROPERTY) ? [GAPConverter toNsString: (String) self.rawData[AD_SIZE_PROPERTY]] : @"";
+}
+
+- (BOOL) hasAdaptiveWidth {
+	return self.rawData.has(ADAPTIVE_WIDTH_PROPERTY);
+}
+
+- (CGFloat) adaptiveWidth {
+	CGFloat adaptiveWidth = 0;
+	Variant v = self.rawData[ADAPTIVE_WIDTH_PROPERTY];
+	if (v.get_type() == Variant::FLOAT || v.get_type() == Variant::INT) {
+		adaptiveWidth = (CGFloat)v.operator double();
+	}
+	return adaptiveWidth;
+}
+
+- (BOOL) hasAdaptiveMaxHeight {
+	return self.rawData.has(ADAPTIVE_MAX_HEIGHT_PROPERTY);
+}
+
+- (CGFloat) adaptiveMaxHeight {
+	CGFloat adaptiveMaxHeight = 0;
+	Variant v = self.rawData[ADAPTIVE_MAX_HEIGHT_PROPERTY];
+	if (v.get_type() == Variant::FLOAT || v.get_type() == Variant::INT) {
+		double val = v.operator double();
+		if (val > 0) adaptiveMaxHeight = (CGFloat)val;
+	}
+	return adaptiveMaxHeight;
 }
 
 - (NSString*) adPosition {
@@ -83,6 +112,83 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 
 - (Array) networkExtras {
 	return self.rawData.has(NETWORK_EXTRAS_PROPERTY) ? (Array) self.rawData[NETWORK_EXTRAS_PROPERTY] : Array();
+}
+
+- (GADAdSize) getGADAdSize {
+	GADAdSize gadAdSize = GADAdSizeBanner;	// default
+
+	NSString* adSizeStr = [self adSize];
+	if ([adSizeStr isEqualToString:@"BANNER"]) {
+		gadAdSize = GADAdSizeBanner;
+	} else if ([adSizeStr isEqualToString:@"LARGE_BANNER"]) {
+		gadAdSize = GADAdSizeLargeBanner;
+	} else if ([adSizeStr isEqualToString:@"MEDIUM_RECTANGLE"]) {
+		gadAdSize = GADAdSizeMediumRectangle;
+	} else if ([adSizeStr isEqualToString:@"FULL_BANNER"]) {
+		gadAdSize = GADAdSizeFullBanner;
+	} else if ([adSizeStr isEqualToString:@"LEADERBOARD"]) {
+		gadAdSize = GADAdSizeLeaderboard;
+	} else if ([adSizeStr isEqualToString:@"SKYSCRAPER"]) {
+		gadAdSize = GADAdSizeSkyscraper;
+	} else if ([adSizeStr isEqualToString:@"FLUID"]) {
+		gadAdSize = GADAdSizeFluid;
+	} else if ([adSizeStr isEqualToString:@"ADAPTIVE"]) {
+		CGFloat width = [[UIScreen mainScreen] bounds].size.width;
+		if ([self hasAdaptiveWidth]) {
+			width = [self adaptiveWidth];
+		}
+		gadAdSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(width);
+	} else if ([adSizeStr isEqualToString:@"INLINE_ADAPTIVE"]) {
+		CGFloat width = [[UIScreen mainScreen] bounds].size.width;
+		if ([self hasAdaptiveWidth]) {
+			width = [self adaptiveWidth];
+		}
+
+		CGFloat maxHeight = 0;  // 0 means no limit (defaults to device height)
+		if ([self hasAdaptiveMaxHeight]) {
+			maxHeight = [self adaptiveMaxHeight];
+		}
+
+		if (maxHeight > 0) {
+			gadAdSize = GADInlineAdaptiveBannerAdSizeWithWidthAndMaxHeight(width, maxHeight);
+		} else {
+			gadAdSize = GADCurrentOrientationInlineAdaptiveBannerAdSizeWithWidth(width);
+		}
+	}
+
+	return gadAdSize;
+}
+
+- (AdPosition) getAdPosition {
+	AdPosition adPosition;
+
+	NSString* adPositionStr = [self adPosition];
+	if ([adPositionStr isEqualToString:@"TOP"]) {
+		adPosition = AdPositionTop;
+	} else if ([adPositionStr isEqualToString:@"BOTTOM"]) {
+		adPosition = AdPositionBottom;
+	} else if ([adPositionStr isEqualToString:@"LEFT"]) {
+		adPosition = AdPositionLeft;
+	} else if ([adPositionStr isEqualToString:@"RIGHT"]) {
+		adPosition = AdPositionLeft;
+	} else if ([adPositionStr isEqualToString:@"TOP_LEFT"]) {
+		adPosition = AdPositionTopLeft;
+	} else if ([adPositionStr isEqualToString:@"TOP_RIGHT"]) {
+		adPosition = AdPositionTopRight;
+	} else if ([adPositionStr isEqualToString:@"BOTTOM_LEFT"]) {
+		adPosition = AdPositionBottomLeft;
+	} else if ([adPositionStr isEqualToString:@"BOTTOM_RIGHT"]) {
+		adPosition = AdPositionBottomRight;
+	} else if ([adPositionStr isEqualToString:@"CENTER"]) {
+		adPosition = AdPositionCenter;
+	} else if ([adPositionStr isEqualToString:@"CUSTOM"]) {
+		adPosition = AdPositionCustom;
+	} else {
+		os_log_error(admob_log, "AdmobPlugin banner load: ERROR: invalid ad position '%@'", adPositionStr);
+		adPosition = AdPositionTop;
+	}
+
+	return adPosition;
 }
 
 - (GADRequest *) createGADRequest {
