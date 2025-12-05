@@ -10,6 +10,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -45,7 +46,9 @@ public class Banner {
 		FULL_BANNER,
 		LEADERBOARD,
 		SKYSCRAPER,
-		FLUID
+		FLUID,
+		ADAPTIVE,
+		INLINE_ADAPTIVE
 	}
 
 	enum AdPosition {
@@ -57,7 +60,8 @@ public class Banner {
 		TOP_RIGHT,
 		BOTTOM_LEFT,
 		BOTTOM_RIGHT,
-		CENTER
+		CENTER,
+		CUSTOM
 	}
 
 	private final String adId;
@@ -86,12 +90,9 @@ public class Banner {
 			Log.e(LOG_TAG, "Error: Banner size is required! Defaulting to BANNER.");
 		}
 
-		if (loadRequest.hasAdPosition()) {
-			this.adPosition = AdPosition.valueOf(loadRequest.getAdPosition());
-		}
-		else {
-			this.adPosition = AdPosition.TOP;
-			Log.w(LOG_TAG, "Warning: Banner position not specified. Defaulting to TOP.");
+		this.adPosition = loadRequest.hasAdPosition() ? AdPosition.valueOf(loadRequest.getAdPosition()) : AdPosition.TOP;
+		if ("CUSTOM".equals(loadRequest.getAdPosition())) {
+			this.adPosition = AdPosition.CUSTOM;
 		}
 
 		this.activity = activity;
@@ -206,7 +207,16 @@ public class Banner {
 				FrameLayout.LayoutParams.WRAP_CONTENT,
 				FrameLayout.LayoutParams.WRAP_CONTENT
 		);
-		adParams.gravity = gravity;
+		if (bannerSize == BannerSize.INLINE_ADAPTIVE) {
+			adParams.width = getWidthInPixels();
+		}
+		if (adPosition == AdPosition.CUSTOM) {
+			adParams.gravity = 0;
+			adParams.leftMargin = 0;
+			adParams.topMargin = 0;
+		} else {
+			adParams.gravity = gravity;
+		}
 
 		// Create new view & set old params
 		adView = new AdView(activity);
@@ -219,6 +229,20 @@ public class Banner {
 
 		// Request
 		adView.loadAd(loadRequest.createAdRequest());
+	}
+
+	public void move(final float x, final float y) {
+		this.adParams.leftMargin = (int) x;
+		this.adParams.topMargin = (int) y;
+		this.adParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+		if (this.bannerSize == Banner.BannerSize.INLINE_ADAPTIVE) {
+			this.adParams.width = this.getWidthInPixels();
+		} else {
+			this.adParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+		}
+		activity.runOnUiThread(() -> {
+			layout.updateViewLayout(this.adView, this.adParams);
+		});
 	}
 
 	public void remove() {
@@ -261,6 +285,15 @@ public class Banner {
 			case LEADERBOARD -> AdSize.LEADERBOARD;
 			case SKYSCRAPER -> AdSize.WIDE_SKYSCRAPER;
 			case FLUID -> AdSize.FLUID;
+			case ADAPTIVE -> {
+				int widthDp = loadRequest.getAdaptiveWidth() != -1 ? loadRequest.getAdaptiveWidth() : getAdWidth(activity);
+				yield AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, widthDp);
+			}
+			case INLINE_ADAPTIVE -> {
+				int widthDp = loadRequest.getAdaptiveWidth() != -1 ? loadRequest.getAdaptiveWidth() : getAdWidth(activity);
+				int maxHeight = loadRequest.getAdaptiveMaxHeight() != -1 ? loadRequest.getAdaptiveMaxHeight() : AdSize.AUTO_HEIGHT;
+				yield AdSize.getInlineAdaptiveBannerAdSize(widthDp, maxHeight);
+			}
 			default -> AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, getAdWidth(activity));
 		};
 		Log.d(LOG_TAG, String.format("getAdSize(): ad size [width: %d; height: %d].", result.getWidth(), result.getHeight()));
@@ -280,6 +313,7 @@ public class Banner {
 			case BOTTOM_LEFT -> Gravity.BOTTOM | Gravity.START;
 			case BOTTOM_RIGHT -> Gravity.BOTTOM | Gravity.END;
 			case CENTER -> Gravity.CENTER;
+			case CUSTOM -> 0;
 		};
 		Log.d(LOG_TAG, String.format("getGravity(): result = %d.", result));
 		return result;

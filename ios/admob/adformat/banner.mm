@@ -22,8 +22,8 @@
 }
 
 - (void) load:(LoadAdRequest*) loadAdRequest {
-	self.adPosition = [GAPConverter nsStringToAdPosition: [loadAdRequest adPosition]];
-	self.adSize = [GAPConverter nsStringToAdSize: [loadAdRequest adSize]];
+	self.gadAdSize = [loadAdRequest getGADAdSize];
+	self.adPosition = [loadAdRequest getAdPosition];
 	self.adUnitId = [loadAdRequest adUnitId];
 
 	[self addBanner];
@@ -64,14 +64,18 @@
 }
 
 - (void) addBanner {
-	self.bannerView = [[GADBannerView alloc] initWithAdSize:self.adSize];
+	self.bannerView = [[GADBannerView alloc] initWithAdSize:self.gadAdSize];
 	self.bannerView.adUnitID = self.adUnitId;
 	self.bannerView.delegate = self;
 	self.bannerView.rootViewController = self;
 	[self.bannerView setHidden:YES];
 	self.bannerView.translatesAutoresizingMaskIntoConstraints = NO;
 	[GDTAppDelegateService.viewController.view addSubview:self.bannerView];
-	[self updateBannerPosition:static_cast<AdPosition>(self.adPosition)];	// Center on screen
+	if (self.adPosition != AdPositionCustom) {
+		[self updateBannerPosition:static_cast<AdPosition>(self.adPosition)];
+	} else {
+		self.bannerView.frame = CGRectZero;
+	}
 }
 
 - (void) addBannerConstraint:(NSLayoutAttribute)attribute toView:(id)toView {
@@ -137,8 +141,7 @@
 			break;
 
 		case AdPositionCustom:
-			[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide attributeConstant:0];
-			[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide attributeConstant:0];
+			// Do nothing, position set externally
 			break;
 	}
 

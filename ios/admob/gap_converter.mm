@@ -125,62 +125,6 @@
 	return state;
 }
 
-+ (AdPosition) nsStringToAdPosition:(NSString*) nsString {
-	AdPosition adPosition;
-
-	if ([nsString isEqualToString:@"TOP"]) {
-		adPosition = AdPositionTop;
-	} else if ([nsString isEqualToString:@"BOTTOM"]) {
-		adPosition = AdPositionBottom;
-	} else if ([nsString isEqualToString:@"LEFT"]) {
-		adPosition = AdPositionLeft;
-	} else if ([nsString isEqualToString:@"RIGHT"]) {
-		adPosition = AdPositionLeft;
-	} else if ([nsString isEqualToString:@"TOP_LEFT"]) {
-		adPosition = AdPositionTopLeft;
-	} else if ([nsString isEqualToString:@"TOP_RIGHT"]) {
-		adPosition = AdPositionTopRight;
-	} else if ([nsString isEqualToString:@"BOTTOM_LEFT"]) {
-		adPosition = AdPositionBottomLeft;
-	} else if ([nsString isEqualToString:@"BOTTOM_RIGHT"]) {
-		adPosition = AdPositionBottomRight;
-	} else if ([nsString isEqualToString:@"CENTER"]) {
-		adPosition = AdPositionCenter;
-	} else if ([nsString isEqualToString:@"CUSTOM"]) {
-		adPosition = AdPositionCustom;
-	} else {
-		os_log_error(admob_log, "AdmobPlugin banner load: ERROR: invalid ad position '%@'", nsString);
-		adPosition = AdPositionTop;
-	}
-
-	return adPosition;
-}
-
-+ (GADAdSize) nsStringToAdSize:(NSString*) nsString {
-	GADAdSize adSize;
-
-	if ([nsString isEqualToString:@"BANNER"]) {
-		adSize = GADAdSizeBanner;
-	} else if ([nsString isEqualToString:@"LARGE_BANNER"]) {
-		adSize = GADAdSizeLargeBanner;
-	} else if ([nsString isEqualToString:@"MEDIUM_RECTANGLE"]) {
-		adSize = GADAdSizeMediumRectangle;
-	} else if ([nsString isEqualToString:@"FULL_BANNER"]) {
-		adSize = GADAdSizeFullBanner;
-	} else if ([nsString isEqualToString:@"LEADERBOARD"]) {
-		adSize = GADAdSizeLeaderboard;
-	} else if ([nsString isEqualToString:@"SKYSCRAPER"]) {
-		adSize = GADAdSizeSkyscraper;
-	} else if ([nsString isEqualToString:@"FLUID"]) {
-		adSize = GADAdSizeFluid;
-	} else {
-		adSize = GADAdSizeInvalid;
-		os_log_error(admob_log, "AdmobPlugin nsStringToAdSize: ERROR: invalid ad size '%@'", nsString);
-	}
-
-	return adSize;
-}
-
 + (GADServerSideVerificationOptions*) godotDictionaryToServerSideVerificationOptions:(Dictionary) godotDictionary {
 	GADServerSideVerificationOptions *options = [[GADServerSideVerificationOptions alloc] init];
 
