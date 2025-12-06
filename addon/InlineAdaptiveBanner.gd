@@ -4,7 +4,12 @@
 
 class_name InlineAdaptiveBanner extends Control
 
+
 const MINIMUM_VALID_WIDTH: float = 50.0
+const MINIMUM_CLIP_THRESHOLD: float = 0.05
+const MAXIMUM_CLIP_THRESHOLD: float = 1.0
+const MINIMUM_RESIZE_THRESHOLD: float = 10.0
+const MAXIMUM_RESIZE_THRESHOLD: float = 500.0
 
 ## Ad unit ID of the inline adaptive banner ad to be loaded.
 @export var ad_unit_id: String = ""
@@ -13,14 +18,14 @@ const MINIMUM_VALID_WIDTH: float = 50.0
 @export var max_ad_height: int = -1
 
 ## Minimum portion of the banner’s area (as a percentage) that must be clipped before the banner is considered hidden.
-@export_range(0.05, 1.0, 0.05) var clip_threshold: float = 0.1:
+@export_range(MINIMUM_CLIP_THRESHOLD, MAXIMUM_CLIP_THRESHOLD, 0.05) var clip_threshold: float = 0.1:
 	set(a_value):
-		clip_threshold = clampf(a_value, 0.05, 1.0)
+		clip_threshold = clampf(a_value, MINIMUM_CLIP_THRESHOLD, MAXIMUM_CLIP_THRESHOLD)
 
 ## Width-change threshold (in pixels) that triggers a banner reload when the ad container is resized by this amount or more.
-@export_range(10.0, 500.0, 5.0) var resize_threshold: float = 50.0:
+@export_range(MINIMUM_RESIZE_THRESHOLD, MAXIMUM_RESIZE_THRESHOLD, 5.0) var resize_threshold: float = 50.0:
 	set(a_value):
-		resize_threshold = clampf(a_value, 10.0, 500.0)
+		resize_threshold = clampf(a_value, MINIMUM_RESIZE_THRESHOLD, MAXIMUM_RESIZE_THRESHOLD)
 
 ## Path to Admob node.
 @export_node_path("Admob") var admob_path: NodePath
@@ -122,32 +127,6 @@ func remove_ad() -> void:
 	ad_id = ""
 
 # --------------------------------------------------------------
-# RESIZE
-# --------------------------------------------------------------
-
-func _on_resized() -> void:
-	if do_ignore_resize or not is_banner_loaded:
-		do_ignore_resize = false
-		return
-
-	if abs(size.x - last_width) < resize_threshold:
-		return
-
-	last_width = size.x
-	if ad_id != "":
-		remove_ad()
-	call_deferred("_deferred_load_ad")
-
-	_mark_position_dirty()
-
-func _on_visibility_changed() -> void:
-	if ad_id != "":
-		if is_visible_in_tree():
-			show_ad()
-		else:
-			hide_ad()
-
-# --------------------------------------------------------------
 # POSITIONING
 # --------------------------------------------------------------
 
@@ -224,6 +203,28 @@ func update_banner_position() -> void:
 # SIGNAL HANDLERS
 # --------------------------------------------------------------
 
+func _on_resized() -> void:
+	if do_ignore_resize or not is_banner_loaded:
+		do_ignore_resize = false
+		return
+
+	if abs(size.x - last_width) < resize_threshold:
+		return
+
+	last_width = size.x
+	if ad_id != "":
+		remove_ad()
+	call_deferred("_deferred_load_ad")
+
+	_mark_position_dirty()
+
+func _on_visibility_changed() -> void:
+	if ad_id != "":
+		if is_visible_in_tree():
+			show_ad()
+		else:
+			hide_ad()
+
 func _on_banner_ad_loaded(loaded_ad_id: String, _response: ResponseInfo, _is_collapsible: bool) -> void:
 	if !pending_load:
 		return
@@ -236,6 +237,8 @@ func _on_banner_ad_loaded(loaded_ad_id: String, _response: ResponseInfo, _is_col
 	_mark_position_dirty()
 
 func _on_banner_ad_refreshed(_id: String, _response: ResponseInfo, _is_collapsible: bool) -> void:
+	hide_ad()	# Prevent ad from briefly displaying out of position
+	last_position = Vector2.ZERO	# Reset last position to force-move ad back to position
 	_apply_loaded_size()
 	_mark_position_dirty()
 

@@ -13,6 +13,10 @@ A Godot plugin that provides a unified GDScript interface for integrating **Goog
 **Key Features:**
 - Load and show...
 	- Banner Ads
+		- Fixed-size
+		- Adaptive
+		- Inline-adaptive
+		- Collapsible
 	- Interstitial Ads
 	- Rewarded Video Ads
 	- Rewarded Interstitial Ads
