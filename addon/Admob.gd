@@ -66,6 +66,9 @@ const IOS_REWARDED_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/171248
 const IOS_REWARDED_INTERSTITIAL_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/6978759866"
 const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/5575463023"
 
+const MINIMUM_CACHE_SIZE: int = 1
+const MAXIMUM_CACHE_SIZE: int = 1000
+
 @export_category("General")
 ## The plugin will use real app and ad IDs if true; debug IDs will be used otherwise.
 @export var is_real: bool: set = set_is_real
@@ -222,16 +225,16 @@ const IOS_APP_OPEN_DEMO_AD_UNIT_ID: String = "ca-app-pub-3940256099942544/557546
 @export_category("Cache")
 @export_group("Limits")
 ## Maximum number of banner ads to keep in the cache before removing old ads.
-@export_range(1,100) var max_banner_ad_cache: int = 3: set = set_max_banner_ad_cache
+@export_range(MINIMUM_CACHE_SIZE,MAXIMUM_CACHE_SIZE) var max_banner_ad_cache: int = 3: set = set_max_banner_ad_cache
 
 ## Maximum number of interstitial ads to keep in the cache before removing old ads.
-@export_range(1,100) var max_interstitial_ad_cache: int = 3: set = set_max_interstitial_ad_cache
+@export_range(MINIMUM_CACHE_SIZE,MAXIMUM_CACHE_SIZE) var max_interstitial_ad_cache: int = 3: set = set_max_interstitial_ad_cache
 
 ## Maximum number of rewarded ads to keep in the cache before removing old ads.
-@export_range(1,100) var max_rewarded_ad_cache: int = 3: set = set_max_rewarded_ad_cache
+@export_range(MINIMUM_CACHE_SIZE,MAXIMUM_CACHE_SIZE) var max_rewarded_ad_cache: int = 3: set = set_max_rewarded_ad_cache
 
 ## Maximum number of rewarded-interstitial ads to keep in the cache before removing old ads.
-@export_range(1,100) var max_rewarded_interstitial_ad_cache: int = 3: set = set_max_rewarded_interstitial_ad_cache
+@export_range(MINIMUM_CACHE_SIZE,MAXIMUM_CACHE_SIZE) var max_rewarded_interstitial_ad_cache: int = 3: set = set_max_rewarded_interstitial_ad_cache
 
 
 @export_group("Cleanup After Ad Displayed") # For single-use ad types. Banner ads are multi-use.
@@ -276,17 +279,19 @@ var _app_open_id: String
 
 var _plugin_singleton: Object
 
-var _active_banner_ads: Array
-var _active_interstitial_ads: Array
-var _active_rewarded_ads: Array
-var _active_rewarded_interstitial_ads: Array
+var _active_banner_ads: AdCache
+var _active_interstitial_ads: AdCache
+var _active_rewarded_ads: AdCache
+var _active_rewarded_interstitial_ads: AdCache
 
 
 func _init() -> void:
-	_active_banner_ads = []
-	_active_interstitial_ads = []
-	_active_rewarded_ads = []
-	_active_rewarded_interstitial_ads = []
+	_active_banner_ads = AdCache.new(max_banner_ad_cache, "banner_ad", remove_banner_ad)
+	_active_interstitial_ads = AdCache.new(max_interstitial_ad_cache, "interstitial_ad",
+			remove_interstitial_ad)
+	_active_rewarded_ads = AdCache.new(max_rewarded_ad_cache, "rewarded_ad", remove_rewarded_ad)
+	_active_rewarded_interstitial_ads = AdCache.new(max_rewarded_interstitial_ad_cache,
+			"rewarded_interstitial_ad", remove_rewarded_interstitial_ad)
 
 
 func _validate_property(property: Dictionary) -> void:
@@ -328,19 +333,19 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if _plugin_singleton:
 		if remove_banner_ads_after_scene:
-			for __ad_id in _active_banner_ads:
+			for __ad_id in _active_banner_ads.all_keys():
 				remove_banner_ad(__ad_id)
 
 		if remove_interstitial_ads_after_scene:
-			for __ad_id in _active_interstitial_ads:
+			for __ad_id in _active_interstitial_ads.all_keys():
 				remove_interstitial_ad(__ad_id)
 
 		if remove_rewarded_ads_after_scene:
-			for __ad_id in _active_rewarded_ads:
+			for __ad_id in _active_rewarded_ads.all_keys():
 				remove_rewarded_ad(__ad_id)
 
 		if remove_rewarded_interstitial_ads_after_scene:
-			for __ad_id in _active_rewarded_interstitial_ads:
+			for __ad_id in _active_rewarded_interstitial_ads.all_keys():
 				remove_rewarded_interstitial_ad(__ad_id)
 
 
@@ -476,19 +481,19 @@ func set_auto_show_on_resume(a_value: bool) -> void:
 
 
 func set_max_banner_ad_cache(a_value: int) -> void:
-	max_banner_ad_cache = a_value
+	max_banner_ad_cache = clampi(a_value, MINIMUM_CACHE_SIZE, MAXIMUM_CACHE_SIZE)
 
 
 func set_max_interstitial_ad_cache(a_value: int) -> void:
-	max_interstitial_ad_cache = a_value
+	max_interstitial_ad_cache = clampi(a_value, MINIMUM_CACHE_SIZE, MAXIMUM_CACHE_SIZE)
 
 
 func set_max_rewarded_ad_cache(a_value: int) -> void:
-	max_rewarded_ad_cache = a_value
+	max_rewarded_ad_cache = clampi(a_value, MINIMUM_CACHE_SIZE, MAXIMUM_CACHE_SIZE)
 
 
 func set_max_rewarded_interstitial_ad_cache(a_value: int) -> void:
-	max_rewarded_interstitial_ad_cache = a_value
+	max_rewarded_interstitial_ad_cache = clampi(a_value, MINIMUM_CACHE_SIZE, MAXIMUM_CACHE_SIZE)
 
 
 func set_debug_geography(a_value: ConsentRequestParameters.DebugGeography) -> void:
@@ -577,9 +582,9 @@ func show_banner_ad(a_ad_id: String = "") -> void:
 			if _active_banner_ads.is_empty():
 				Admob.log_error("Cannot show banner ad. No banner ads loaded.")
 			else:
-				_plugin_singleton.show_banner_ad(_active_banner_ads[0])	# show last ad to load
+				_plugin_singleton.show_banner_ad(_active_banner_ads.last_key())	# show last ad to load
 		else:
-			if _active_banner_ads.has(a_ad_id):
+			if _active_banner_ads.has_key(a_ad_id):
 				_plugin_singleton.show_banner_ad(a_ad_id)
 			else:
 				Admob.log_error("Cannot show banner. Ad with ID '%s' not found." % a_ad_id)
@@ -593,9 +598,9 @@ func hide_banner_ad(a_ad_id: String = "") -> void:
 			if _active_banner_ads.is_empty():
 				Admob.log_error("Cannot hide banner ad. No banner ads loaded.")
 			else:
-				_plugin_singleton.hide_banner_ad(_active_banner_ads[0])	# hide last ad to load
+				_plugin_singleton.hide_banner_ad(_active_banner_ads.last_key())	# hide last ad to load
 		else:
-			if _active_banner_ads.has(a_ad_id):
+			if _active_banner_ads.has_key(a_ad_id):
 				_plugin_singleton.hide_banner_ad(a_ad_id)
 			else:
 				Admob.log_error("Cannot hide banner. Ad with ID '%s' not found." % a_ad_id)
@@ -609,10 +614,9 @@ func remove_banner_ad(a_ad_id: String = "") -> void:
 			if _active_banner_ads.is_empty():
 				Admob.log_error("Cannot remove banner ad. No banner ads loaded.")
 			else:
-				_plugin_singleton.remove_banner_ad(_active_banner_ads[0])	# remove last ad to load
-				_active_banner_ads.remove_at(0)
+				_plugin_singleton.remove_banner_ad(_active_banner_ads.erase_last())	# remove last ad to load
 		else:
-			if _active_banner_ads.has(a_ad_id):
+			if _active_banner_ads.has_key(a_ad_id):
 				_active_banner_ads.erase(a_ad_id)
 				_plugin_singleton.remove_banner_ad(a_ad_id)
 			else:
@@ -634,7 +638,7 @@ func get_banner_dimension(a_ad_id: String = "") -> Vector2:
 			if _active_banner_ads.is_empty():
 				Admob.log_error("Cannot get banner ad dimensions. No banner ads loaded.")
 			else:
-				var last_loaded_banner_ad_id = _active_banner_ads[0]
+				var last_loaded_banner_ad_id = _active_banner_ads.last_key()
 				return Vector2(_plugin_singleton.get_banner_width(last_loaded_banner_ad_id),
 							_plugin_singleton.get_banner_height(last_loaded_banner_ad_id))
 		else:
@@ -652,7 +656,7 @@ func get_banner_dimension_in_pixels(a_ad_id: String = "") -> Vector2:
 			if _active_banner_ads.is_empty():
 				Admob.log_error("Cannot get banner ad dimensions. No banner ads loaded.")
 			else:
-				var last_loaded_banner_ad_id = _active_banner_ads[0]
+				var last_loaded_banner_ad_id = _active_banner_ads.last_key()
 				return Vector2(_plugin_singleton.get_banner_width_in_pixels(last_loaded_banner_ad_id),
 							_plugin_singleton.get_banner_height_in_pixels(last_loaded_banner_ad_id))
 		else:
@@ -725,20 +729,26 @@ func show_interstitial_ad(a_ad_id: String = "") -> void:
 			if _active_interstitial_ads.is_empty():
 				Admob.log_error("Cannot show interstitial ad. No interstitial ads loaded.")
 			else:
-				_plugin_singleton.show_interstitial_ad(_active_interstitial_ads[0])	# show last ad to load
+				_plugin_singleton.show_interstitial_ad(_active_interstitial_ads.last_key())	# show last ad to load
 		else:
 			_plugin_singleton.show_interstitial_ad(a_ad_id)
 
 
-func remove_interstitial_ad(a_ad_id: String) -> void:
+func remove_interstitial_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
-		if _active_interstitial_ads.has(a_ad_id):
-			_active_interstitial_ads.erase(a_ad_id)
-			_plugin_singleton.remove_interstitial_ad(a_ad_id)
+		if a_ad_id.is_empty():
+			if _active_interstitial_ads.is_empty():
+				Admob.log_error("Cannot remove interstitial ad. No interstitial ads loaded.")
+			else:
+				_plugin_singleton.remove_interstitial_ad(_active_interstitial_ads.erase_last())	# remove last ad to load
 		else:
-			Admob.log_error("Cannot remove interstitial ad. Ad with ID '%s' not found." % a_ad_id)
+			if _active_interstitial_ads.has_key(a_ad_id):
+				_active_interstitial_ads.erase(a_ad_id)
+				_plugin_singleton.remove_interstitial_ad(a_ad_id)
+			else:
+				Admob.log_error("Cannot remove interstitial ad. Ad with ID '%s' not found." % a_ad_id)
 
 
 func create_rewarded_ad_request() -> LoadAdRequest:
@@ -771,20 +781,26 @@ func show_rewarded_ad(a_ad_id: String = "") -> void:
 			if _active_rewarded_ads.is_empty():
 				Admob.log_error("Cannot show rewarded ad. No rewarded ads loaded.")
 			else:
-				_plugin_singleton.show_rewarded_ad(_active_rewarded_ads[0])	# show last ad to load
+				_plugin_singleton.show_rewarded_ad(_active_rewarded_ads.last_key())	# show last ad to load
 		else:
 			_plugin_singleton.show_rewarded_ad(a_ad_id)
 
 
-func remove_rewarded_ad(a_ad_id: String) -> void:
+func remove_rewarded_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
-		if _active_rewarded_ads.has(a_ad_id):
-			_active_rewarded_ads.erase(a_ad_id)
-			_plugin_singleton.remove_rewarded_ad(a_ad_id)
+		if a_ad_id.is_empty():
+			if _active_rewarded_ads.is_empty():
+				Admob.log_error("Cannot remove rewarded ad. No rewarded ads loaded.")
+			else:
+				_plugin_singleton.remove_rewarded_ad(_active_rewarded_ads.erase_last())	# remove last ad to load
 		else:
-			Admob.log_error("Cannot remove rewarded ad. Ad with ID '%s' not found." % a_ad_id)
+			if _active_rewarded_ads.has_key(a_ad_id):
+				_active_rewarded_ads.erase(a_ad_id)
+				_plugin_singleton.remove_rewarded_ad(a_ad_id)
+			else:
+				Admob.log_error("Cannot remove rewarded ad. Ad with ID '%s' not found." % a_ad_id)
 
 
 func create_rewarded_interstitial_ad_request() -> LoadAdRequest:
@@ -817,20 +833,26 @@ func show_rewarded_interstitial_ad(a_ad_id: String = "") -> void:
 			if _active_rewarded_interstitial_ads.is_empty():
 				Admob.log_error("Cannot show rewarded interstitial ad. No rewarded interstitial ads loaded.")
 			else:
-				_plugin_singleton.show_rewarded_interstitial_ad(_active_rewarded_interstitial_ads[0])	# show last ad to load
+				_plugin_singleton.show_rewarded_interstitial_ad(_active_rewarded_interstitial_ads.last_key())		# show last ad to load
 		else:
 			_plugin_singleton.show_rewarded_interstitial_ad(a_ad_id)
 
 
-func remove_rewarded_interstitial_ad(a_ad_id: String) -> void:
+func remove_rewarded_interstitial_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
-		if _active_rewarded_interstitial_ads.has(a_ad_id):
-			_active_rewarded_interstitial_ads.erase(a_ad_id)
-			_plugin_singleton.remove_rewarded_interstitial_ad(a_ad_id)
+		if a_ad_id.is_empty():
+			if _active_rewarded_interstitial_ads.is_empty():
+				Admob.log_error("Cannot remove rewarded interstitial ad. No rewarded interstitial ads loaded.")
+			else:
+				_plugin_singleton.remove_rewarded_interstitial_ad(_active_rewarded_interstitial_ads.erase_last())	# remove last ad to load
 		else:
-			Admob.log_error("Cannot remove rewarded interstitial ad. Ad with ID '%s' not found." % a_ad_id)
+			if _active_rewarded_interstitial_ads.has_key(a_ad_id):
+				_active_rewarded_interstitial_ads.erase(a_ad_id)
+				_plugin_singleton.remove_rewarded_interstitial_ad(a_ad_id)
+			else:
+				Admob.log_error("Cannot remove rewarded interstitial ad. Ad with ID '%s' not found." % a_ad_id)
 
 
 func load_app_open_ad(a_request: LoadAdRequest = null) -> void:
@@ -958,13 +980,9 @@ func _on_initialization_completed(status_data: Dictionary) -> void:
 
 
 func _on_banner_ad_loaded(a_ad_id: String, a_response_info: Dictionary, a_is_collapsible: bool) -> void:
-	_active_banner_ads.push_front(a_ad_id)
-	while _active_banner_ads.size() > max_banner_ad_cache:
-		Admob.log_warn("%s: banner_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
-					_active_banner_ads.size(), max_banner_ad_cache])
-		var removed_ad_id: String = _active_banner_ads.pop_back()
-		_plugin_singleton.remove_banner_ad(removed_ad_id)
-	banner_ad_loaded.emit(a_ad_id, ResponseInfo.new(a_response_info), a_is_collapsible)
+	var __response_info: ResponseInfo = ResponseInfo.new(a_response_info)
+	_active_banner_ads.cache(a_ad_id, __response_info)
+	banner_ad_loaded.emit(a_ad_id, __response_info, a_is_collapsible)
 
 
 func _on_banner_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
@@ -992,13 +1010,9 @@ func _on_banner_ad_closed(a_ad_id: String) -> void:
 
 
 func _on_interstitial_ad_loaded(a_ad_id: String, a_response_info: Dictionary) -> void:
-	_active_interstitial_ads.push_front(a_ad_id)
-	while _active_interstitial_ads.size() > max_interstitial_ad_cache:
-		Admob.log_warn("%s: interstitial_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
-					_active_interstitial_ads.size(), max_interstitial_ad_cache])
-		var removed_ad_id: String = _active_interstitial_ads.pop_back()
-		_plugin_singleton.remove_interstitial_ad(removed_ad_id)
-	interstitial_ad_loaded.emit(a_ad_id, ResponseInfo.new(a_response_info))
+	var __response_info: ResponseInfo = ResponseInfo.new(a_response_info)
+	_active_interstitial_ads.cache(a_ad_id, __response_info)
+	interstitial_ad_loaded.emit(a_ad_id, __response_info)
 
 
 func _on_interstitial_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
@@ -1032,13 +1046,9 @@ func _on_interstitial_ad_dismissed_full_screen_content(a_ad_id: String) -> void:
 
 
 func _on_rewarded_ad_loaded(a_ad_id: String, a_response_info: Dictionary) -> void:
-	_active_rewarded_ads.push_front(a_ad_id)
-	while _active_rewarded_ads.size() > max_rewarded_ad_cache:
-		Admob.log_warn("%s: rewarded_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
-					_active_rewarded_ads.size(), max_rewarded_ad_cache])
-		var removed_ad_id: String = _active_rewarded_ads.pop_back()
-		_plugin_singleton.remove_rewarded_ad(removed_ad_id)
-	rewarded_ad_loaded.emit(a_ad_id, ResponseInfo.new(a_response_info))
+	var __response_info: ResponseInfo = ResponseInfo.new(a_response_info)
+	_active_rewarded_ads.cache(a_ad_id, __response_info)
+	rewarded_ad_loaded.emit(a_ad_id, __response_info)
 
 
 func _on_rewarded_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
@@ -1072,13 +1082,9 @@ func _on_rewarded_ad_user_earned_reward(a_ad_id: String, reward_data: Dictionary
 
 
 func _on_rewarded_interstitial_ad_loaded(a_ad_id: String, a_response_info: Dictionary) -> void:
-	_active_rewarded_interstitial_ads.push_front(a_ad_id)
-	while _active_rewarded_interstitial_ads.size() > max_rewarded_interstitial_ad_cache:
-		Admob.log_warn("%s: rewarded_interstitial_ad cache size (%d) has exceeded maximum (%d)" % [PLUGIN_SINGLETON_NAME,
-					_active_rewarded_interstitial_ads.size(), max_rewarded_interstitial_ad_cache])
-		var removed_ad_id: String = _active_rewarded_interstitial_ads.pop_back()
-		_plugin_singleton.remove_rewarded_interstitial_ad(removed_ad_id)
-	rewarded_interstitial_ad_loaded.emit(a_ad_id, ResponseInfo.new(a_response_info))
+	var __response_info: ResponseInfo = ResponseInfo.new(a_response_info)
+	_active_rewarded_interstitial_ads.cache(a_ad_id, __response_info)
+	rewarded_interstitial_ad_loaded.emit(a_ad_id, __response_info)
 
 
 func _on_rewarded_interstitial_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
