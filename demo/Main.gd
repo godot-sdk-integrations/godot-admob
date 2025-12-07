@@ -5,9 +5,13 @@
 extends Node
 
 @onready var admob: Admob = $Admob as Admob
+@onready var ad_id_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/IDHBoxContainer/AdIdOptionButton
 @onready var show_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ShowBannerButton
 @onready var hide_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/HideBannerButton
-@onready var reload_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ReloadBannerButton
+@onready var size_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/SizeButton
+@onready var size_px_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/PixelSizeButton
+@onready var remove_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/RemoveBannerButton
+@onready var load_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/LoadButtonHBoxContainer/LoadBannerButton
 @onready var banner_position_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/PositionHBoxContainer/OptionButton
 @onready var banner_size_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeHBoxContainer/OptionButton
 @onready var banner_collapsible_pos_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer/OptionButton
@@ -23,8 +27,8 @@ extends Node
 
 var _active_texture_rect: TextureRect
 
+var _is_banner_loading = false
 var _is_app_open_ad_displayed_at_startup: bool = false
-var _is_banner_loaded: bool = false
 var _is_interstitial_loaded: bool = false
 var _is_rewarded_video_loaded: bool = false
 var _is_rewarded_interstitial_loaded: bool = false
@@ -87,45 +91,79 @@ func _load_ads() -> void:
 	admob.load_rewarded_interstitial_ad()
 
 
-func _on_size_button_pressed() -> void:
-	print(" ------- Get banner size button PRESSED")
-	if _is_banner_loaded:
-		_print_to_screen("Banner size: " + str(admob.get_banner_dimension()))
+func _is_banner_loaded() -> bool:
+	return ad_id_option_button.item_count > 0
 
 
-func _on_pixel_size_button_pressed() -> void:
-	print(" ------- Get banner pixel size button PRESSED")
-	if _is_banner_loaded:
-		_print_to_screen("Banner size in pixels: " + str(admob.get_banner_dimension_in_pixels()))
-
-
-func _on_show_banner_button_pressed() -> void:
-	print(" ------- Show banner button PRESSED")
-	if _is_banner_loaded:
-		show_banner_button.disabled = true
-		hide_banner_button.disabled = false
-		admob.show_banner_ad()
-
-
-func _on_hide_banner_button_pressed() -> void:
-	print(" ------- Hide banner button PRESSED")
-	if _is_banner_loaded:
+func _update_banner_buttons() -> void:
+	if _is_banner_loaded():
 		show_banner_button.disabled = false
+		hide_banner_button.disabled = false
+		size_banner_button.disabled = false
+		size_px_banner_button.disabled = false
+		remove_banner_button.disabled = false
+	else:
+		show_banner_button.disabled = true
 		hide_banner_button.disabled = true
-		admob.hide_banner_ad()
+		size_banner_button.disabled = true
+		size_px_banner_button.disabled = true
+		remove_banner_button.disabled = true
 
 
-func _on_reload_banner_button_pressed() -> void:
-	print(" ------- Reload banner button PRESSED")
-	if _is_banner_loaded:
-		_is_banner_loaded = false
-
-	show_banner_button.disabled = true
-	reload_banner_button.disabled = true
+func _on_load_banner_button_pressed() -> void:
 	admob.banner_position = LoadAdRequest.AdPosition[banner_position_option_button.get_item_text(banner_position_option_button.selected)]
 	admob.banner_size = LoadAdRequest.RequestedAdSize[banner_size_option_button.get_item_text(banner_size_option_button.selected)]
 	admob.banner_collapsible_position = LoadAdRequest.CollapsiblePosition[banner_collapsible_pos_option_button.get_item_text(banner_collapsible_pos_option_button.selected)]
+	print(" --- Load banner button PRESSED --- pos: %s --- size: %s --- collapsible pos: %s" % [
+		LoadAdRequest.AdPosition.keys()[admob.banner_position],
+		LoadAdRequest.RequestedAdSize.keys()[admob.banner_size],
+		LoadAdRequest.CollapsiblePosition.keys()[admob.banner_collapsible_position]
+	])
+
+	var __request: LoadAdRequest = admob.create_banner_ad_request()
+	__request.set_ad_unit_id(_get_banner_ad_unit_id(admob.banner_collapsible_position != LoadAdRequest.CollapsiblePosition.DISABLED))
+	_is_banner_loading = true
+	load_banner_button.disabled = true
 	admob.load_banner_ad()
+
+
+func _on_size_button_pressed() -> void:
+	if _is_banner_loaded():
+		var __banner_ad_id: String = ad_id_option_button.get_item_text(ad_id_option_button.selected)
+		print(" --- Get banner size button PRESSED --- ad id: %s" % __banner_ad_id)
+		_print_to_screen("Banner size: " + str(admob.get_banner_dimension(__banner_ad_id)))
+
+
+func _on_pixel_size_button_pressed() -> void:
+	if _is_banner_loaded():
+		var __banner_ad_id: String = ad_id_option_button.get_item_text(ad_id_option_button.selected)
+		print(" --- Get banner pixel size button PRESSED --- ad id: %s" % __banner_ad_id)
+		_print_to_screen("Banner size in pixels: " + str(admob.get_banner_dimension_in_pixels(__banner_ad_id)))
+
+
+func _on_show_banner_button_pressed() -> void:
+	if _is_banner_loaded():
+		var __banner_ad_id: String = ad_id_option_button.get_item_text(ad_id_option_button.selected)
+		print(" --- Show banner button PRESSED --- ad id: %s" % __banner_ad_id)
+		admob.show_banner_ad(__banner_ad_id)
+
+
+func _on_hide_banner_button_pressed() -> void:
+	if _is_banner_loaded():
+		var __banner_ad_id: String = ad_id_option_button.get_item_text(ad_id_option_button.selected)
+		print(" --- Hide banner button PRESSED --- ad id: %s" % __banner_ad_id)
+		admob.hide_banner_ad(__banner_ad_id)
+
+
+func _on_remove_banner_button_pressed() -> void:
+	if _is_banner_loaded():
+		var __banner_ad_id: String = ad_id_option_button.get_item_text(ad_id_option_button.selected)
+		print(" --- Remove banner button PRESSED --- ad id: %s" % __banner_ad_id)
+		admob.remove_banner_ad(__banner_ad_id)
+		ad_id_option_button.remove_item(ad_id_option_button.selected)
+		if ad_id_option_button.item_count > 0:
+			ad_id_option_button.select(ad_id_option_button.item_count-1)
+		_update_banner_buttons()
 
 
 func _on_interstitial_button_pressed() -> void:
@@ -166,9 +204,10 @@ func _on_reset_consent_button_pressed() -> void:
 
 
 func _on_admob_banner_ad_loaded(ad_id: String, response_info: ResponseInfo, is_collapsible: bool) -> void:
-	_is_banner_loaded = true
-	show_banner_button.disabled = false
-	reload_banner_button.disabled = false
+	_is_banner_loading = false
+	load_banner_button.disabled = false
+	ad_id_option_button.add_item(ad_id)
+	_update_banner_buttons()
 	_print_to_screen("%sbanner ad loaded by %s network (%s) id: %s" %
 			["collapsible " if is_collapsible else "", response_info.get_network_tag(),
 			response_info.get_adapter_class_name(), ad_id])
@@ -183,7 +222,8 @@ func _on_admob_banner_ad_refreshed(ad_id: String, response_info: ResponseInfo, i
 func _on_admob_banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError) -> void:
 	_print_to_screen("banner %s failed to load. error: %d, message: %s" %
 				[ad_id, error_data.get_code(), error_data.get_message()], true)
-	reload_banner_button.disabled = false
+	_is_banner_loading = false
+	load_banner_button.disabled = false
 
 
 func _on_admob_interstitial_ad_loaded(ad_id: String, response_info: ResponseInfo) -> void:
@@ -354,6 +394,18 @@ func _on_reload_rewarded_interstitial_button_pressed() -> void:
 	rewarded_interstitial_button.disabled = true
 	reload_rewarded_interstitial_button.disabled = true
 	admob.load_rewarded_interstitial_ad()
+
+
+func _get_banner_ad_unit_id(a_is_collapsible: bool) -> String:
+	var __ad_unit_id = admob._banner_id
+
+	if a_is_collapsible:
+		if OS.has_feature("ios"):
+			__ad_unit_id = "ca-app-pub-3940256099942544/8388050270"
+		else:
+			__ad_unit_id = "ca-app-pub-3940256099942544/6300978111"
+
+	return __ad_unit_id
 
 
 func _print_to_screen(a_message: String, a_is_error: bool = false) -> void:
