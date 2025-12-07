@@ -19,15 +19,15 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/margin_left = 15
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 15
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MainContainer"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 15
 
 [node name="TextureHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer"]
 layout_mode = 2
@@ -72,7 +72,7 @@ current_tab = 0
 
 [node name="Banner" type="VBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 metadata/_tab_index = 0
 
 [node name="PositionHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
@@ -111,41 +111,64 @@ text = "Collapsible Position:"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SizeButtonHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
+[node name="LoadButtonHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_constants/separation = 30
 
-[node name="SizeButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer"]
+[node name="LoadBannerButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/LoadButtonHBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-text = "Get Size"
+disabled = true
+text = "Load Banner Ad"
 
-[node name="PixelSizeButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer"]
+[node name="IDHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/IDHBoxContainer"]
+layout_mode = 2
+text = "ID:"
+
+[node name="AdIdOptionButton" type="OptionButton" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/IDHBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Get Size In Pixels"
+fit_to_longest_item = false
 
 [node name="ButtonsHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
 layout_mode = 2
-theme_override_constants/separation = 45
+theme_override_constants/separation = 5
 
 [node name="ShowBannerButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer"]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 disabled = true
 text = "Show"
 
 [node name="HideBannerButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer"]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 disabled = true
 text = "Hide"
 
-[node name="ReloadBannerButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer"]
-custom_minimum_size = Vector2(100, 0)
+[node name="SizeButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Get Size"
+
+[node name="PixelSizeButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Get Size (px)"
+
+[node name="RemoveBannerButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer"]
+custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 disabled = true
-text = "Reload"
+text = "Remove"
 
 [node name="InlineBanner" type="ScrollContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer"]
 visible = false
@@ -263,11 +286,12 @@ ios_debug_banner_id = "ca-app-pub-3940256099942544/2934735716"
 debug_geography = 1
 test_device_hashed_ids = Array[String](["91C505D5-7ACF-4EE8-9A1D-CD8DCDD21A1B"])
 
-[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/SizeButton" to="." method="_on_size_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeButtonHBoxContainer/PixelSizeButton" to="." method="_on_pixel_size_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/LoadButtonHBoxContainer/LoadBannerButton" to="." method="_on_load_banner_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ShowBannerButton" to="." method="_on_show_banner_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/HideBannerButton" to="." method="_on_hide_banner_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ReloadBannerButton" to="." method="_on_reload_banner_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/SizeButton" to="." method="_on_size_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/PixelSizeButton" to="." method="_on_pixel_size_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/RemoveBannerButton" to="." method="_on_remove_banner_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/InterstitialButton" to="." method="_on_interstitial_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/ReloadInterstitialButton" to="." method="_on_reload_interstitial_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/RewardedButton" to="." method="_on_rewarded_video_button_pressed"]

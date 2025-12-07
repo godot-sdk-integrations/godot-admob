@@ -34,12 +34,10 @@ var admob: Admob
 var ad_id: String = ""
 
 var last_width: float
-var last_position: Vector2
 
 var pending_load: bool = false
 var is_position_dirty: bool = false
 var is_banner_visible: bool = false
-var is_banner_loaded: bool = false
 var do_ignore_resize: bool = false
 
 func _enter_tree() -> void:
@@ -123,7 +121,6 @@ func move_ad(a_physical_position: Vector2) -> void:
 func remove_ad() -> void:
 	admob.remove_banner_ad(ad_id)
 	is_banner_visible = false
-	is_banner_loaded = false
 	ad_id = ""
 
 # --------------------------------------------------------------
@@ -145,7 +142,7 @@ func _deferred_update_position() -> void:
 	update_banner_position()
 
 func update_banner_position() -> void:
-	if ad_id == "" or not is_banner_loaded:
+	if ad_id == "":
 		return
 
 	# Check basic tree visibility (Tabs, hidden parents)
@@ -194,17 +191,17 @@ func update_banner_position() -> void:
 		if not is_banner_visible:
 			show_ad()
 
-		var __physical_position = _godot_to_physical(global_position)
-		if __physical_position != last_position:
-			move_ad(__physical_position)
-			last_position = __physical_position
+		move_ad(_godot_to_physical(global_position))
 
 # --------------------------------------------------------------
 # SIGNAL HANDLERS
 # --------------------------------------------------------------
 
 func _on_resized() -> void:
-	if do_ignore_resize or not is_banner_loaded:
+	if ad_id == "":
+		return
+
+	if do_ignore_resize:
 		do_ignore_resize = false
 		return
 
@@ -212,8 +209,7 @@ func _on_resized() -> void:
 		return
 
 	last_width = size.x
-	if ad_id != "":
-		remove_ad()
+	remove_ad()
 	call_deferred("_deferred_load_ad")
 
 	_mark_position_dirty()
@@ -230,17 +226,16 @@ func _on_banner_ad_loaded(loaded_ad_id: String, _response: ResponseInfo, _is_col
 		return
 
 	pending_load = false
-	is_banner_loaded = true
 	ad_id = loaded_ad_id
 
 	_apply_loaded_size()
 	_mark_position_dirty()
 
-func _on_banner_ad_refreshed(_id: String, _response: ResponseInfo, _is_collapsible: bool) -> void:
-	hide_ad()	# Prevent ad from briefly displaying out of position
-	last_position = Vector2.ZERO	# Reset last position to force-move ad back to position
-	_apply_loaded_size()
-	_mark_position_dirty()
+func _on_banner_ad_refreshed(refreshed_ad_id: String, _response: ResponseInfo, _is_collapsible: bool) -> void:
+	if refreshed_ad_id.casecmp_to(ad_id) == 0:
+		hide_ad()	# Prevent ad from briefly displaying out of position
+		_apply_loaded_size()
+		_mark_position_dirty()
 
 func _on_banner_ad_failed_to_load(_id: String, _err: LoadAdError) -> void:
 	if pending_load:
@@ -257,11 +252,8 @@ func _apply_loaded_size() -> void:
 		var __godot_size: Vector2 = _physical_to_godot(admob.get_banner_dimension_in_pixels(ad_id))
 		custom_minimum_size.y = __godot_size.y
 		size.y = __godot_size.y
-	else:
-		custom_minimum_size.y = 0
-		size.y = 0
 
-	minimum_size_changed.emit()
+		minimum_size_changed.emit()
 
 func _calculate_scale_factor() -> Vector2:
 	var screen_size: Vector2 = DisplayServer.window_get_size() as Vector2

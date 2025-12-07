@@ -225,7 +225,7 @@ const MAXIMUM_CACHE_SIZE: int = 1000
 @export_category("Cache")
 @export_group("Limits")
 ## Maximum number of banner ads to keep in the cache before removing old ads.
-@export_range(MINIMUM_CACHE_SIZE,MAXIMUM_CACHE_SIZE) var max_banner_ad_cache: int = 3: set = set_max_banner_ad_cache
+@export_range(MINIMUM_CACHE_SIZE,MAXIMUM_CACHE_SIZE) var max_banner_ad_cache: int = 10: set = set_max_banner_ad_cache
 
 ## Maximum number of interstitial ads to keep in the cache before removing old ads.
 @export_range(MINIMUM_CACHE_SIZE,MAXIMUM_CACHE_SIZE) var max_interstitial_ad_cache: int = 3: set = set_max_interstitial_ad_cache

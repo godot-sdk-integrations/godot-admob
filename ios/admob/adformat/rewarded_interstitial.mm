@@ -24,35 +24,39 @@
 - (void) load:(LoadAdRequest*) loadAdRequest {
 	GADRequest* gadRequest = [loadAdRequest createGADRequest];
 
-	[GADRewardedInterstitialAd loadWithAdUnitID:[loadAdRequest adUnitId] request:gadRequest completionHandler:^(GADRewardedInterstitialAd* ad, NSError* error) {
-		if (error) {
-			AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
-			os_log_error(admob_log, "Failed to load RewardedInterstitialAd with error: %@", loadAdError.message);
-			AdmobPlugin::get_singleton()->emit_signal(REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
-						[loadAdError buildRawData]);
-		}
-		else {
-			self.gadAd = ad;
-			self.gadAd.fullScreenContentDelegate = self;
-
-			if ([loadAdRequest hasServerSideVerificationOptions]) {
-				self.gadAd.serverSideVerificationOptions = [loadAdRequest createGADServerSideVerificationOptions];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[GADRewardedInterstitialAd loadWithAdUnitID:[loadAdRequest adUnitId] request:gadRequest completionHandler:^(GADRewardedInterstitialAd* ad, NSError* error) {
+			if (error) {
+				AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
+				os_log_error(admob_log, "Failed to load RewardedInterstitialAd with error: %@", loadAdError.message);
+				AdmobPlugin::get_singleton()->emit_signal(REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
+							[loadAdError buildRawData]);
 			}
+			else {
+				self.gadAd = ad;
+				self.gadAd.fullScreenContentDelegate = self;
 
-			os_log_debug(admob_log, "RewardedInterstitialAd %@ loaded successfully", self.adId);
-			AdmobPlugin::get_singleton()->emit_signal(REWARDED_INTERSTITIAL_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
-					[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
-		}
-	}];
+				if ([loadAdRequest hasServerSideVerificationOptions]) {
+					self.gadAd.serverSideVerificationOptions = [loadAdRequest createGADServerSideVerificationOptions];
+				}
+
+				os_log_debug(admob_log, "RewardedInterstitialAd %@ loaded successfully", self.adId);
+				AdmobPlugin::get_singleton()->emit_signal(REWARDED_INTERSTITIAL_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
+						[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
+			}
+		}];
+    });
 }
 
 - (void) show {
 	if (self.gadAd) {
-		 [self.gadAd presentFromRootViewController:[GDTAppDelegateService viewController] userDidEarnRewardHandler:^{
-			 GADAdReward* reward = self.gadAd.adReward;
-			 AdmobPlugin::get_singleton()->emit_signal(REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
-						[GAPConverter adRewardToGodotDictionary:reward]);
-		 }];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self.gadAd presentFromRootViewController:[GDTAppDelegateService viewController] userDidEarnRewardHandler:^{
+				GADAdReward* reward = self.gadAd.adReward;
+				AdmobPlugin::get_singleton()->emit_signal(REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
+							[GAPConverter adRewardToGodotDictionary:reward]);
+			}];
+    	});
 	}
 	else {
 		os_log_debug(admob_log, "RewardedInterstitialAd show: ad not set");
