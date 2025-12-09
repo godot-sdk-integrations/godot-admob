@@ -16,23 +16,25 @@ import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 
+import org.godotengine.plugin.admob.model.AdmobAdInfo;
 import org.godotengine.plugin.admob.model.LoadAdRequest;
 
 interface InterstitialListener {
-	void onInterstitialLoaded(String adId, ResponseInfo responseInfo);
-	void onInterstitialReloaded(String adId, ResponseInfo responseInfo);
-	void onInterstitialFailedToLoad(String adId, LoadAdError loadAdError);
-	void onInterstitialFailedToShow(String adId, AdError adError);
-	void onInterstitialOpened(String adId);
-	void onInterstitialClosed(String adId);
-	void onInterstitialClicked(String adId);
-	void onInterstitialImpression(String adId);
+	void onInterstitialLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo);
+	void onInterstitialReloaded(AdmobAdInfo adInfo, ResponseInfo responseInfo);
+	void onInterstitialFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError);
+	void onInterstitialFailedToShow(AdmobAdInfo adInfo, AdError adError);
+	void onInterstitialOpened(AdmobAdInfo adInfo);
+	void onInterstitialClosed(AdmobAdInfo adInfo);
+	void onInterstitialClicked(AdmobAdInfo adInfo);
+	void onInterstitialImpression(AdmobAdInfo adInfo);
 }
 
 public class Interstitial {
 	private static final String CLASS_NAME = Interstitial.class.getSimpleName();
 	private static final String LOG_TAG = "godot::" + AdmobPlugin.CLASS_NAME + "::" + CLASS_NAME;
 
+	private AdmobAdInfo adInfo;
 	private final String adId;
 	private final LoadAdRequest loadRequest;
 	private final Activity activity;
@@ -42,10 +44,11 @@ public class Interstitial {
 
 	boolean firstLoad;
 
-	Interstitial(final String adId, final LoadAdRequest loadRequest, final Activity activity,
-				final InterstitialListener listener) {
-		this.adId = adId;
-		this.loadRequest = loadRequest;
+	Interstitial(AdmobAdInfo adInfo, final Activity activity, final InterstitialListener listener) {
+		this.adInfo = adInfo;
+		this.adId = adInfo.getAdId();
+		this.loadRequest = adInfo.getLoadAdRequest();
+
 		this.activity = activity;
 		this.listener = listener;
 		this.firstLoad = true;
@@ -62,11 +65,11 @@ public class Interstitial {
 					if (firstLoad) {
 						Log.i(LOG_TAG, "interstitial ad loaded");
 						firstLoad = false;
-						listener.onInterstitialLoaded(Interstitial.this.adId, interstitialAd.getResponseInfo());
+						listener.onInterstitialLoaded(Interstitial.this.adInfo, interstitialAd.getResponseInfo());
 					}
 					else {
 						Log.i(LOG_TAG, "interstitial ad refreshed");
-						listener.onInterstitialReloaded(Interstitial.this.adId, interstitialAd.getResponseInfo());
+						listener.onInterstitialReloaded(Interstitial.this.adInfo, interstitialAd.getResponseInfo());
 					}
 				}
 
@@ -75,7 +78,7 @@ public class Interstitial {
 					super.onAdFailedToLoad(loadAdError);
 					setAd(null);	// safety
 					Log.e(LOG_TAG, "interstitial ad failed to load - error code: " + loadAdError.getCode());
-					listener.onInterstitialFailedToLoad(Interstitial.this.adId, loadAdError);
+					listener.onInterstitialFailedToLoad(Interstitial.this.adInfo, loadAdError);
 				}
 			});
 		});
@@ -109,7 +112,7 @@ public class Interstitial {
 					public void onAdClicked() {
 						super.onAdClicked();
 						Log.i(LOG_TAG, "interstitial ad clicked");
-						listener.onInterstitialClicked(Interstitial.this.adId);
+						listener.onInterstitialClicked(Interstitial.this.adInfo);
 					}
 
 					@Override
@@ -117,7 +120,7 @@ public class Interstitial {
 						super.onAdDismissedFullScreenContent();
 						setAd(null);
 						Log.i(LOG_TAG, "interstitial ad dismissed full screen content");
-						listener.onInterstitialClosed(Interstitial.this.adId);
+						listener.onInterstitialClosed(Interstitial.this.adInfo);
 						load();
 					}
 
@@ -125,21 +128,21 @@ public class Interstitial {
 					public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
 						super.onAdFailedToShowFullScreenContent(adError);
 						Log.e(LOG_TAG, "interstitial ad failed to show full screen content");
-						listener.onInterstitialFailedToShow(Interstitial.this.adId, adError);
+						listener.onInterstitialFailedToShow(Interstitial.this.adInfo, adError);
 					}
 
 					@Override
 					public void onAdShowedFullScreenContent() {
 						super.onAdShowedFullScreenContent();
 						Log.i(LOG_TAG, "interstitial ad showed full screen content");
-						listener.onInterstitialOpened(Interstitial.this.adId);
+						listener.onInterstitialOpened(Interstitial.this.adInfo);
 					}
 
 					@Override
 					public void onAdImpression() {
 						super.onAdImpression();
 						Log.i(LOG_TAG, "interstitial ad impression");
-						listener.onInterstitialImpression(Interstitial.this.adId);
+						listener.onInterstitialImpression(Interstitial.this.adInfo);
 					}
 				});
 			}

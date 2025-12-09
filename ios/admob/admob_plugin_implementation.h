@@ -22,6 +22,7 @@ extern const String BANNER_AD_LOADED_SIGNAL;
 extern const String BANNER_AD_FAILED_TO_LOAD_SIGNAL;
 extern const String BANNER_AD_REFRESHED_SIGNAL;
 extern const String BANNER_AD_IMPRESSION_SIGNAL;
+extern const String BANNER_AD_SIZE_MEASURED_SIGNAL;
 extern const String BANNER_AD_CLICKED_SIGNAL;
 extern const String BANNER_AD_OPENED_SIGNAL;
 extern const String BANNER_AD_CLOSED_SIGNAL;

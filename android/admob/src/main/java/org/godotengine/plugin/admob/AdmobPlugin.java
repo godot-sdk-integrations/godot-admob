@@ -43,6 +43,7 @@ import org.godotengine.godot.plugin.UsedByGodot;
 import org.godotengine.plugin.admob.mediation.PrivacySettings;
 import org.godotengine.plugin.admob.model.AdmobConfiguration;
 import org.godotengine.plugin.admob.model.AdmobAdError;
+import org.godotengine.plugin.admob.model.AdmobAdInfo;
 import org.godotengine.plugin.admob.model.AdmobAdSize;
 import org.godotengine.plugin.admob.model.AdmobLoadAdError;
 import org.godotengine.plugin.admob.model.AdmobResponse;
@@ -60,6 +61,7 @@ public class AdmobPlugin extends GodotPlugin {
 	static final String SIGNAL_BANNER_AD_FAILED_TO_LOAD = "banner_ad_failed_to_load";
 	static final String SIGNAL_BANNER_AD_REFRESHED = "banner_ad_refreshed";
 	static final String SIGNAL_BANNER_AD_IMPRESSION = "banner_ad_impression";
+	static final String SIGNAL_BANNER_AD_SIZE_MEASURED = "banner_ad_size_measured";
 	static final String SIGNAL_BANNER_AD_CLICKED = "banner_ad_clicked";
 	static final String SIGNAL_BANNER_AD_OPENED = "banner_ad_opened";
 	static final String SIGNAL_BANNER_AD_CLOSED = "banner_ad_closed";
@@ -160,48 +162,49 @@ public class AdmobPlugin extends GodotPlugin {
 
 		signals.add(new SignalInfo(SIGNAL_INITIALIZATION_COMPLETED, Dictionary.class));
 
-		signals.add(new SignalInfo(SIGNAL_BANNER_AD_LOADED, String.class, Dictionary.class, Boolean.class));
-		signals.add(new SignalInfo(SIGNAL_BANNER_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_BANNER_AD_REFRESHED, String.class, Dictionary.class, Boolean.class));
-		signals.add(new SignalInfo(SIGNAL_BANNER_AD_IMPRESSION, String.class));
-		signals.add(new SignalInfo(SIGNAL_BANNER_AD_CLICKED, String.class));
-		signals.add(new SignalInfo(SIGNAL_BANNER_AD_OPENED, String.class));
-		signals.add(new SignalInfo(SIGNAL_BANNER_AD_CLOSED, String.class));
+		signals.add(new SignalInfo(SIGNAL_BANNER_AD_LOADED, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_BANNER_AD_FAILED_TO_LOAD, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_BANNER_AD_REFRESHED, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_BANNER_AD_IMPRESSION, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_BANNER_AD_SIZE_MEASURED, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_BANNER_AD_CLICKED, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_BANNER_AD_OPENED, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_BANNER_AD_CLOSED, Dictionary.class));
 
-		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_LOADED, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_REFRESHED, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_IMPRESSION, String.class));
-		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_CLICKED, String.class));
-		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, String.class));
-		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, String.class));
+		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_LOADED, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_FAILED_TO_LOAD, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_REFRESHED, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_IMPRESSION, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_CLICKED, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, Dictionary.class));
 
-		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_LOADED, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_IMPRESSION, String.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_CLICKED, String.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_SHOWED_FULL_SCREEN_CONTENT, String.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT, String.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_USER_EARNED_REWARD, String.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_LOADED, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_FAILED_TO_LOAD, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_IMPRESSION, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_CLICKED, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_SHOWED_FULL_SCREEN_CONTENT, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_USER_EARNED_REWARD, Dictionary.class, Dictionary.class));
 
-		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_IMPRESSION, String.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_CLICKED, String.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, String.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, String.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD, String.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_IMPRESSION, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_CLICKED, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD, Dictionary.class, Dictionary.class));
 
-		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_LOADED, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_IMPRESSION, String.class));
-		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_CLICKED, String.class));
-		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT, String.class));
-		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, String.class, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT, String.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_LOADED, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_IMPRESSION, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_CLICKED, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT, Dictionary.class));
 
 		signals.add(new SignalInfo(SIGNAL_CONSENT_FORM_LOADED));
 		signals.add(new SignalInfo(SIGNAL_CONSENT_FORM_FAILED_TO_LOAD, Dictionary.class));
@@ -289,42 +292,47 @@ public class AdmobPlugin extends GodotPlugin {
 			LoadAdRequest loadAdRequest = new LoadAdRequest(adData);
 			if (loadAdRequest.isValid()) {
 				String adId = loadAdRequest.generateAdId(++bannerAdIdSequence);
-				Banner banner = new Banner(adId, loadAdRequest, activity, layout,
+				AdmobAdInfo adInfo = new AdmobAdInfo(adId, loadAdRequest);
+				Banner banner = new Banner(adInfo, activity, layout,
 						new BannerListener() {
 							@Override
-							public void onAdLoaded(String adId, ResponseInfo responseInfo, boolean isCollapsible) {
-								emitSignal(SIGNAL_BANNER_AD_LOADED, adId, new AdmobResponse(responseInfo).buildRawData(), isCollapsible);
+							public void onAdLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
+								emitSignal(SIGNAL_BANNER_AD_LOADED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
 							}
 
 							@Override
-							public void onAdRefreshed(String adId, ResponseInfo responseInfo, boolean isCollapsible) {
-								Log.d(LOG_TAG, String.format("onAdRefreshed(%s) banner", adId));
-								emitSignal(SIGNAL_BANNER_AD_REFRESHED, adId, new AdmobResponse(responseInfo).buildRawData(), isCollapsible);
+							public void onAdRefreshed(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
+								emitSignal(SIGNAL_BANNER_AD_REFRESHED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
 							}
 
 							@Override
-							public void onAdFailedToLoad(String adId, LoadAdError adError) {
-								emitSignal(SIGNAL_BANNER_AD_FAILED_TO_LOAD, adId, new AdmobLoadAdError(adError).buildRawData());
+							public void onAdFailedToLoad(AdmobAdInfo adInfo, LoadAdError adError) {
+								emitSignal(SIGNAL_BANNER_AD_FAILED_TO_LOAD, adInfo.buildRawData(), new AdmobLoadAdError(adError).buildRawData());
 							}
 
 							@Override
-							public void onAdClicked(String adId) {
-								emitSignal(SIGNAL_BANNER_AD_CLICKED, adId);
+							public void onAdImpression(AdmobAdInfo adInfo) {
+								emitSignal(SIGNAL_BANNER_AD_IMPRESSION, adInfo.buildRawData());
 							}
 
 							@Override
-							public void onAdClosed(String adId) {
-								emitSignal(SIGNAL_BANNER_AD_CLOSED, adId);
+							public void onAdSizeMeasured(AdmobAdInfo adInfo) {
+								emitSignal(SIGNAL_BANNER_AD_SIZE_MEASURED, adInfo.buildRawData());
 							}
 
 							@Override
-							public void onAdImpression(String adId) {
-								emitSignal(SIGNAL_BANNER_AD_IMPRESSION, adId);
+							public void onAdClicked(AdmobAdInfo adInfo) {
+								emitSignal(SIGNAL_BANNER_AD_CLICKED, adInfo.buildRawData());
 							}
 
 							@Override
-							public void onAdOpened(String adId) {
-								emitSignal(SIGNAL_BANNER_AD_OPENED, adId);
+							public void onAdOpened(AdmobAdInfo adInfo) {
+								emitSignal(SIGNAL_BANNER_AD_OPENED, adInfo.buildRawData());
+							}
+
+							@Override
+							public void onAdClosed(AdmobAdInfo adInfo) {
+								emitSignal(SIGNAL_BANNER_AD_CLOSED, adInfo.buildRawData());
 							}
 						});
 				bannerAds.put(adId, banner);
@@ -459,45 +467,46 @@ public class AdmobPlugin extends GodotPlugin {
 			if (loadAdRequest.isValid()) {
 				String adId = loadAdRequest.generateAdId(++interstitialAdIdSequence);
 
-				Interstitial ad = new Interstitial(adId, loadAdRequest, activity, new InterstitialListener() {
+				AdmobAdInfo adInfo = new AdmobAdInfo(adId, loadAdRequest);
+				Interstitial ad = new Interstitial(adInfo, activity, new InterstitialListener() {
 					@Override
-					public void onInterstitialLoaded(String adId, ResponseInfo responseInfo) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_LOADED, adId, new AdmobResponse(responseInfo).buildRawData());
+					public void onInterstitialLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_LOADED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
 					}
 
 					@Override
-					public void onInterstitialReloaded(String adId, ResponseInfo responseInfo) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_REFRESHED, adId, new AdmobResponse(responseInfo).buildRawData());
+					public void onInterstitialReloaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_REFRESHED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
 					}
 
 					@Override
-					public void onInterstitialFailedToLoad(String adId, LoadAdError loadAdError) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_LOAD, adId, new AdmobLoadAdError(loadAdError).buildRawData());
+					public void onInterstitialFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_LOAD, adInfo.buildRawData(), new AdmobLoadAdError(loadAdError).buildRawData());
 					}
 
 					@Override
-					public void onInterstitialFailedToShow(String adId, AdError adError) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, new AdmobAdError(adError).buildRawData());
+					public void onInterstitialFailedToShow(AdmobAdInfo adInfo, AdError adError) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adInfo.buildRawData(), new AdmobAdError(adError).buildRawData());
 					}
 
 					@Override
-					public void onInterstitialOpened(String adId) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, adId);
+					public void onInterstitialOpened(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, adInfo.buildRawData());
 					}
 
 					@Override
-					public void onInterstitialClosed(String adId) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, adId);
+					public void onInterstitialClosed(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, adInfo.buildRawData());
 					}
 
 					@Override
-					public void onInterstitialClicked(String adId) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_CLICKED, adId);
+					public void onInterstitialClicked(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_CLICKED, adInfo.buildRawData());
 					}
 
 					@Override
-					public void onInterstitialImpression(String adId) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_IMPRESSION, adId);
+					public void onInterstitialImpression(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_INTERSTITIAL_AD_IMPRESSION, adInfo.buildRawData());
 					}
 				});
 				interstitialAds.put(adId, ad);
@@ -545,45 +554,46 @@ public class AdmobPlugin extends GodotPlugin {
 			if (loadAdRequest.isValid()) {
 				String adId = loadAdRequest.generateAdId(++rewardedAdIdSequence);
 
-				RewardedVideo ad = new RewardedVideo(adId, loadAdRequest, activity, new RewardedVideoListener() {
+				AdmobAdInfo adInfo = new AdmobAdInfo(adId, loadAdRequest);
+				RewardedVideo ad = new RewardedVideo(adInfo, activity, new RewardedVideoListener() {
 					@Override
-					public void onRewardedVideoLoaded(String adId, ResponseInfo responseInfo) {
-						emitSignal(SIGNAL_REWARDED_AD_LOADED, adId, new AdmobResponse(responseInfo).buildRawData());
+					public void onRewardedVideoLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
+						emitSignal(SIGNAL_REWARDED_AD_LOADED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
 					}
 
 					@Override
-					public void onRewardedVideoFailedToLoad(String adId, LoadAdError loadAdError) {
-						emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_LOAD, adId, new AdmobLoadAdError(loadAdError).buildRawData());
+					public void onRewardedVideoFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError) {
+						emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_LOAD, adInfo.buildRawData(), new AdmobLoadAdError(loadAdError).buildRawData());
 					}
 
 					@Override
-					public void onRewardedVideoOpened(String adId) {
-						emitSignal(SIGNAL_REWARDED_AD_SHOWED_FULL_SCREEN_CONTENT, adId);
+					public void onRewardedVideoOpened(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_REWARDED_AD_SHOWED_FULL_SCREEN_CONTENT, adInfo.buildRawData());
 					}
 
 					@Override
-					public void onRewardedVideoFailedToShow(String adId, AdError adError) {
-						emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, new AdmobAdError(adError).buildRawData());
+					public void onRewardedVideoFailedToShow(AdmobAdInfo adInfo, AdError adError) {
+						emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adInfo.buildRawData(), new AdmobAdError(adError).buildRawData());
 					}
 
 					@Override
-					public void onRewardedVideoClosed(String adId) {
-						emitSignal(SIGNAL_REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT, adId);
+					public void onRewardedVideoClosed(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT, adInfo.buildRawData());
 					}
 
 					@Override
-					public void onRewardedClicked(String adId) {
-						emitSignal(SIGNAL_REWARDED_AD_CLICKED, adId);
+					public void onRewardedClicked(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_REWARDED_AD_CLICKED, adInfo.buildRawData());
 					}
 
 					@Override
-					public void onRewardedAdImpression(String adId) {
-						emitSignal(SIGNAL_REWARDED_AD_IMPRESSION, adId);
+					public void onRewardedAdImpression(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_REWARDED_AD_IMPRESSION, adInfo.buildRawData());
 					}
 
 					@Override
-					public void onRewarded(String adId, RewardItem reward) {
-						emitSignal(SIGNAL_REWARDED_AD_USER_EARNED_REWARD, adId, GodotConverter.convert(reward));
+					public void onRewarded(AdmobAdInfo adInfo, RewardItem reward) {
+						emitSignal(SIGNAL_REWARDED_AD_USER_EARNED_REWARD, adInfo.buildRawData(), GodotConverter.convert(reward));
 					}
 				});
 				rewardedAds.put(adId, ad);
@@ -630,45 +640,46 @@ public class AdmobPlugin extends GodotPlugin {
 			if (loadAdRequest.isValid()) {
 				String adId = loadAdRequest.generateAdId(++rewardedInterstitialAdIdSequence);
 
-				RewardedInterstitial ad = new RewardedInterstitial(adId, loadAdRequest, activity, new RewardedInterstitialListener() {
+				AdmobAdInfo adInfo = new AdmobAdInfo(adId, loadAdRequest);
+				RewardedInterstitial ad = new RewardedInterstitial(adInfo, activity, new RewardedInterstitialListener() {
 					@Override
-					public void onRewardedInterstitialLoaded(String adId, ResponseInfo responseInfo) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, adId, new AdmobResponse(responseInfo).buildRawData());
+					public void onRewardedInterstitialLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
 					}
 
 					@Override
-					public void onRewardedInterstitialFailedToLoad(String adId, LoadAdError loadAdError) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD, adId, new AdmobLoadAdError(loadAdError).buildRawData());
+					public void onRewardedInterstitialFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD, adInfo.buildRawData(), new AdmobLoadAdError(loadAdError).buildRawData());
 					}
 
 					@Override
-					public void onRewardedInterstitialOpened(String adId) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, adId);
+					public void onRewardedInterstitialOpened(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, adInfo.buildRawData());
 					}
 
 					@Override
-					public void onRewardedInterstitialFailedToShow(String adId, AdError adError) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adId, new AdmobAdError(adError).buildRawData());
+					public void onRewardedInterstitialFailedToShow(AdmobAdInfo adInfo, AdError adError) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adInfo.buildRawData(), new AdmobAdError(adError).buildRawData());
 					}
 
 					@Override
-					public void onRewardedInterstitialClosed(String adId) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, adId);
+					public void onRewardedInterstitialClosed(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, adInfo.buildRawData());
 					}
 
 					@Override
-					public void onRewardedClicked(String adId) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_CLICKED, adId);
+					public void onRewardedClicked(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_CLICKED, adInfo.buildRawData());
 					}
 
 					@Override
-					public void onRewardedAdImpression(String adId) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_IMPRESSION, adId);
+					public void onRewardedAdImpression(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_IMPRESSION, adInfo.buildRawData());
 					}
 
 					@Override
-					public void onRewarded(String adId, RewardItem reward) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD, adId, GodotConverter.convert(reward));
+					public void onRewarded(AdmobAdInfo adInfo, RewardItem reward) {
+						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD, adInfo.buildRawData(), GodotConverter.convert(reward));
 					}
 				});
 				rewardedInterstitialAds.put(adId, ad);
@@ -832,38 +843,38 @@ public class AdmobPlugin extends GodotPlugin {
 
 		appOpenAdManager = new AppOpenAdManager(activity, new AppOpenListener() {
 			@Override
-			public void onAdLoaded(String adUnitId, ResponseInfo responseInfo) {
-				emitSignal(SIGNAL_APP_OPEN_AD_LOADED, adUnitId, new AdmobResponse(responseInfo).buildRawData());
+			public void onAdLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
+				emitSignal(SIGNAL_APP_OPEN_AD_LOADED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
 			}
 
 			@Override
-			public void onAdFailedToLoad(String adUnitId, LoadAdError loadAdError) {
-				emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, adUnitId, new AdmobLoadAdError(loadAdError).buildRawData());
+			public void onAdFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError) {
+				emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, adInfo.buildRawData(), new AdmobLoadAdError(loadAdError).buildRawData());
 			}
 
 			@Override
-			public void onAdShowed(String adUnitId) {
-				emitSignal(SIGNAL_APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT, adUnitId);
+			public void onAdShowed(AdmobAdInfo adInfo) {
+				emitSignal(SIGNAL_APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT, adInfo.buildRawData());
 			}
 
 			@Override
-			public void onAdFailedToShow(String adUnitId, AdError adError) {
-				emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adUnitId, new AdmobAdError(adError).buildRawData());
+			public void onAdFailedToShow(AdmobAdInfo adInfo, AdError adError) {
+				emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adInfo.buildRawData(), new AdmobAdError(adError).buildRawData());
 			}
 
 			@Override
-			public void onAdImpression(String adUnitId) {
-				emitSignal(SIGNAL_APP_OPEN_AD_IMPRESSION, adUnitId);
+			public void onAdImpression(AdmobAdInfo adInfo) {
+				emitSignal(SIGNAL_APP_OPEN_AD_IMPRESSION, adInfo.buildRawData());
 			}
 
 			@Override
-			public void onAdClicked(String adUnitId) {
-				emitSignal(SIGNAL_APP_OPEN_AD_CLICKED, adUnitId);
+			public void onAdClicked(AdmobAdInfo adInfo) {
+				emitSignal(SIGNAL_APP_OPEN_AD_CLICKED, adInfo.buildRawData());
 			}
 
 			@Override
-			public void onAdClosed(String adUnitId) {
-				emitSignal(SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT, adUnitId);
+			public void onAdClosed(AdmobAdInfo adInfo) {
+				emitSignal(SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT, adInfo.buildRawData());
 			}
 		});
 		ProcessLifecycleOwner.get().getLifecycle().addObserver(appOpenAdManager);

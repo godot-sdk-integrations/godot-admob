@@ -11,9 +11,6 @@ const MAXIMUM_CLIP_THRESHOLD: float = 1.0
 const MINIMUM_RESIZE_THRESHOLD: float = 10.0
 const MAXIMUM_RESIZE_THRESHOLD: float = 500.0
 
-## Ad unit ID of the inline adaptive banner ad to be loaded.
-@export var ad_unit_id: String = ""
-
 ## Maximum pixel height of the requested ad. If set to -1, height will be automatically determined.
 @export var max_ad_height: int = -1
 
@@ -30,7 +27,29 @@ const MAXIMUM_RESIZE_THRESHOLD: float = 500.0
 ## Path to Admob node.
 @export_node_path("Admob") var admob_path: NodePath
 
+## Whether the inline-adaptive banner ad should be automatically loaded.
+@export var auto_load: bool = false
+
+@export_category("Ad Unit Identifier")
+## Use ad unit identifier value defined in the Admob node.
+@export var inherit_from_admob_node: bool = false
+
+@export_group("Android", "ad_unit_id_android")
+## Ad unit ID of the inline adaptive banner ad to be loaded on the Android platform.
+@export var ad_unit_id_android_debug: String = "ca-app-pub-3940256099942544/2014213617"
+
+## Ad unit ID of the inline adaptive banner ad to be loaded on the Android platform.
+@export var ad_unit_id_android_real: String = ""
+
+@export_group("iOS", "ad_unit_id_ios")
+## Ad unit ID of the inline adaptive banner ad to be loaded on the iOS platform.
+@export var ad_unit_id_ios_debug: String = "ca-app-pub-3940256099942544/2934735716"
+
+## Ad unit ID of the inline adaptive banner ad to be loaded on the iOS platform.
+@export var ad_unit_id_ios_real: String = ""
+
 var admob: Admob
+var _ad_unit_id: String
 var ad_id: String = ""
 
 var last_width: float
@@ -63,15 +82,34 @@ func _ready() -> void:
 	last_width = size.x
 	resized.connect(_on_resized)
 
-	if admob:
-		call_deferred("_deferred_load_ad")
-
 func initialize(a_admob_node: Admob) -> void:
 	admob = a_admob_node
+
 	visibility_changed.connect(_on_visibility_changed)
 	admob.banner_ad_loaded.connect(_on_banner_ad_loaded)
 	admob.banner_ad_failed_to_load.connect(_on_banner_ad_failed_to_load)
 	admob.banner_ad_refreshed.connect(_on_banner_ad_refreshed)
+	admob.banner_ad_size_measured.connect(_on_banner_ad_size_measured)
+
+	if admob.is_initialization_completed:
+		if auto_load:
+			call_deferred("_deferred_load_ad")
+	else:
+		admob.initialization_completed.connect(_on_Admob_initialization_completed)
+
+	if inherit_from_admob_node:
+		_ad_unit_id = admob._banner_id
+	else:
+		if OS.has_feature("ios"):
+			if admob.is_real:
+				_ad_unit_id = ad_unit_id_ios_real
+			else:
+				_ad_unit_id = ad_unit_id_ios_debug
+		else:
+			if admob.is_real:
+				_ad_unit_id = ad_unit_id_android_real
+			else:
+				_ad_unit_id = ad_unit_id_android_debug
 
 func _deferred_load_ad() -> void:
 	load_ad()
@@ -82,20 +120,18 @@ func _deferred_load_ad() -> void:
 # --------------------------------------------------------------
 
 func load_ad() -> void:
-	if ad_unit_id == "":
+	if _ad_unit_id == "":
 		return
 
 	var req := LoadAdRequest.new()
-	req.set_ad_unit_id(ad_unit_id)
+	req.set_ad_unit_id(_ad_unit_id)
 	req.set_ad_size(LoadAdRequest.RequestedAdSize.INLINE_ADAPTIVE)
 
-	var __scale_factor: Vector2 = _calculate_scale_factor()
-	var __physical_width: float = size.x / __scale_factor.x
-	if __physical_width < MINIMUM_VALID_WIDTH:
-		admob.log_warn("Can't load ad. Invalid inline adaptive banner width: %.1f" % __physical_width)
+	if custom_minimum_size.x < MINIMUM_VALID_WIDTH:
+		admob.log_warn("Can't load ad. Invalid inline adaptive banner width: %.1f" % custom_minimum_size.x)
 		return
 
-	req.set_adaptive_width(round(__physical_width))
+	req.set_adaptive_width(round(custom_minimum_size.x))
 
 	if max_ad_height != -1:
 		req.set_adaptive_max_height(max_ad_height)
@@ -197,6 +233,10 @@ func update_banner_position() -> void:
 # SIGNAL HANDLERS
 # --------------------------------------------------------------
 
+func _on_Admob_initialization_completed(_status: InitializationStatus) -> void:
+	if auto_load:
+		call_deferred("_deferred_load_ad")
+
 func _on_resized() -> void:
 	if ad_id == "":
 		return
@@ -221,39 +261,51 @@ func _on_visibility_changed() -> void:
 		else:
 			hide_ad()
 
-func _on_banner_ad_loaded(loaded_ad_id: String, _response: ResponseInfo, _is_collapsible: bool) -> void:
+func _on_banner_ad_loaded(loaded_ad_info: AdInfo, _response: ResponseInfo) -> void:
 	if !pending_load:
 		return
 
-	pending_load = false
-	ad_id = loaded_ad_id
+	if loaded_ad_info.get_load_ad_request().get_ad_size() != LoadAdRequest.RequestedAdSize.INLINE_ADAPTIVE:
+		return
 
-	_apply_loaded_size()
+	if loaded_ad_info.get_load_ad_request().get_ad_unit_id().casecmp_to(_ad_unit_id) != 0:
+		return
+
+	pending_load = false
+	ad_id = loaded_ad_info.get_ad_id()
+
+	_apply_loaded_size(Vector2(loaded_ad_info.get_measured_width(), loaded_ad_info.get_measured_height()))
 	_mark_position_dirty()
 
-func _on_banner_ad_refreshed(refreshed_ad_id: String, _response: ResponseInfo, _is_collapsible: bool) -> void:
-	if refreshed_ad_id.casecmp_to(ad_id) == 0:
-		hide_ad()	# Prevent ad from briefly displaying out of position
-		_apply_loaded_size()
-		_mark_position_dirty()
+func _on_banner_ad_failed_to_load(failed_ad_info: AdInfo, _err: LoadAdError) -> void:
+	if failed_ad_info.get_load_ad_request().get_ad_size() != LoadAdRequest.RequestedAdSize.INLINE_ADAPTIVE:
+		return
 
-func _on_banner_ad_failed_to_load(_id: String, _err: LoadAdError) -> void:
+	if failed_ad_info.get_load_ad_request().get_ad_unit_id().casecmp_to(_ad_unit_id) != 0:
+		return
+
 	if pending_load:
 		pending_load = false
+
+func _on_banner_ad_size_measured(ad_info: AdInfo) -> void:
+	if ad_info.get_ad_id().casecmp_to(ad_id) == 0:
+		_apply_loaded_size(Vector2(ad_info.get_measured_width(), ad_info.get_measured_height()))
+
+func _on_banner_ad_refreshed(refreshed_ad_info: AdInfo, _response: ResponseInfo) -> void:
+	if refreshed_ad_info.get_ad_id().casecmp_to(ad_id) == 0:
+		hide_ad()	# Prevent ad from briefly displaying out of position
+		_apply_loaded_size(Vector2(refreshed_ad_info.get_measured_width(), refreshed_ad_info.get_measured_height()))
+		_mark_position_dirty()
 
 # --------------------------------------------------------------
 # UTILITY
 # --------------------------------------------------------------
 
-func _apply_loaded_size() -> void:
-	if ad_id != "":
-		do_ignore_resize = true
+func _apply_loaded_size(a_size: Vector2) -> void:
+	do_ignore_resize = true
 
-		var __godot_size: Vector2 = _physical_to_godot(admob.get_banner_dimension_in_pixels(ad_id))
-		custom_minimum_size.y = __godot_size.y
-		size.y = __godot_size.y
-
-		minimum_size_changed.emit()
+	custom_minimum_size = a_size
+	size = a_size
 
 func _calculate_scale_factor() -> Vector2:
 	var screen_size: Vector2 = DisplayServer.window_get_size() as Vector2

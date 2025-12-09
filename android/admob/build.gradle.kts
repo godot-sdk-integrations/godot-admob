@@ -84,7 +84,12 @@ tasks {
 	}
 
 	register<Delete>("cleanDemoAddons") {
-		delete("${project.extra["demoAddOnsDirectory"]}/${project.extra["pluginName"]}")
+		// Keep the directory itself and delete everything inside except for .uid and .import files
+		delete(fileTree("${project.extra["demoAddOnsDirectory"]}/${project.extra["pluginName"]}").apply {
+			include("**/*")
+			exclude("**/*.uid")
+			exclude("**/*.import")
+		})
 	}
 
 	register<Copy>("copyPngsToDemo") {

@@ -219,4 +219,8 @@ public class LoadAdRequest {
 
 		return builder.build();
 	}
+
+	public Dictionary getRawData() {
+		return _data;
+	}
 }

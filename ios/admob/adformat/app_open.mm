@@ -8,8 +8,16 @@
 #import "admob_response.h"
 #import "admob_logger.h"
 #import "admob_ad_error.h"
+#import "admob_ad_info.h"
 #import "admob_load_ad_error.h"
 #import "gap_converter.h"
+
+
+@interface AppOpenAd ()
+
+@property (nonatomic, strong) AdmobAdInfo *adInfo;
+
+@end
 
 
 @implementation AppOpenAd
@@ -32,19 +40,19 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	return self;
 }
 
-- (void) loadWithRequest:(LoadAdRequest *)loadRequest autoShowOnResume:(BOOL)autoShow {
+- (void) loadWithRequest:(LoadAdRequest *)loadAdRequest autoShowOnResume:(BOOL)autoShow {
 	if (self.isLoading) {
 		os_log_debug(admob_log, "%@ Cannot load app open ad: App open ad is already loading", kLogTag);
 	} else if ([self isAvailable]) {
 		os_log_debug(admob_log, "%@ Cannot load app open ad: App open ad is not available", kLogTag);
 	} else {
 		self.isLoading = YES;
-		self.adUnitId = [loadRequest adUnitId];
+		self.adUnitId = [loadAdRequest adUnitId];
 		self.autoShowOnResume = autoShow;
 		self.loadTime = 0;
 		self.loadedAd = nil;
 
-		GADRequest *gadRequest = [loadRequest createGADRequest];
+		GADRequest *gadRequest = [loadAdRequest createGADRequest];
 
 		os_log_debug(admob_log, "%@ Loading app open ad: %@", kLogTag, self.adUnitId);
 
@@ -52,11 +60,13 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 					completionHandler:^(GADAppOpenAd *_Nullable ad, NSError *_Nullable error) {
 			self.isLoading = NO;
 
+			_adInfo = [[AdmobAdInfo alloc] initWithId:self.adUnitId request:loadAdRequest];
 			if (error) {
 				AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
 				os_log_error(admob_log, "%@ Failed to load: %@", kLogTag, loadAdError.message);
+
 				self.plugin->emit_signal(APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL,
-										[GAPConverter nsStringToGodotString:self.adUnitId],
+										[self.adInfo buildRawData],
 										[loadAdError buildRawData]);
 			} else {
 				self.loadedAd = ad;
@@ -65,7 +75,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 
 				os_log_debug(admob_log, "%@ Loaded %@ successfully", kLogTag, self.adUnitId);
 				self.plugin->emit_signal(APP_OPEN_AD_LOADED_SIGNAL,
-										[GAPConverter nsStringToGodotString:self.adUnitId],
+										[self.adInfo buildRawData],
 										[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
 			}
 		}];
@@ -102,8 +112,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	self.isShowing = YES;
 
 	if (self.plugin) {
-		self.plugin->emit_signal(APP_OPEN_AD_IMPRESSION_SIGNAL,
-								 [GAPConverter nsStringToGodotString:self.adUnitId]);
+		self.plugin->emit_signal(APP_OPEN_AD_IMPRESSION_SIGNAL, [self.adInfo buildRawData]);
 	}
 }
 
@@ -111,8 +120,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	os_log_debug(admob_log, "%@ Clicked", kLogTag);
 
 	if (self.plugin) {
-		self.plugin->emit_signal(APP_OPEN_AD_CLICKED_SIGNAL,
-								 [GAPConverter nsStringToGodotString:self.adUnitId]);
+		self.plugin->emit_signal(APP_OPEN_AD_CLICKED_SIGNAL, [self.adInfo buildRawData]);
 	}
 }
 
@@ -127,8 +135,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	os_log_debug(admob_log, "%@ Will present full screen", kLogTag);
 
 	if (self.plugin) {
-		self.plugin->emit_signal(APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL,
-								 [GAPConverter nsStringToGodotString:self.adUnitId]);
+		self.plugin->emit_signal(APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
 	}
 }
 
@@ -142,7 +149,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 
 	if (self.plugin) {
 		self.plugin->emit_signal(APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL,
-								[GAPConverter nsStringToGodotString:self.adUnitId],
+								[self.adInfo buildRawData],
 								[adError buildRawData]);
 	}
 }
@@ -154,8 +161,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	self.loadTime = 0;
 
 	if (self.plugin) {
-		self.plugin->emit_signal(APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL,
-								 [GAPConverter nsStringToGodotString:self.adUnitId]);
+		self.plugin->emit_signal(APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
 	}
 }
 

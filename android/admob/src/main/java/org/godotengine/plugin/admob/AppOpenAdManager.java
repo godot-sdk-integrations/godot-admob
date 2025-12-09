@@ -24,17 +24,18 @@ import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback;
 
 import java.util.Date;
 
+import org.godotengine.plugin.admob.model.AdmobAdInfo;
 import org.godotengine.plugin.admob.model.LoadAdRequest;
 
 
 interface AppOpenListener {
-	void onAdLoaded(String adUnitId, ResponseInfo responseInfo);
-	void onAdFailedToLoad(String adUnitId, LoadAdError loadAdError);
-	void onAdShowed(String adUnitId);
-	void onAdFailedToShow(String adUnitId, AdError adError);
-	void onAdImpression(String adUnitId);
-	void onAdClicked(String adUnitId);
-	void onAdClosed(String adUnitId);
+	void onAdLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo);
+	void onAdFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError);
+	void onAdShowed(AdmobAdInfo adInfo);
+	void onAdFailedToShow(AdmobAdInfo adInfo, AdError adError);
+	void onAdImpression(AdmobAdInfo adInfo);
+	void onAdClicked(AdmobAdInfo adInfo);
+	void onAdClosed(AdmobAdInfo adInfo);
 }
 
 
@@ -51,7 +52,7 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 	private Activity activity;
 	private AppOpenListener listener;
 
-	private String adUnitId;
+	private AdmobAdInfo adInfo;
 	private AppOpenAd appOpenAd;
 	private long loadTime;
 
@@ -66,8 +67,7 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 	}
 
 	public void loadAd(LoadAdRequest loadAdRequest) {
-		this.adUnitId = loadAdRequest.getAdUnitId();
-
+		this.adInfo = new AdmobAdInfo(loadAdRequest.getAdUnitId(), loadAdRequest);
 		if (isLoadingAd) {
 			Log.e(LOG_TAG, "Cannot load app open ad: loading already in progress");
 		} else if (isAdAvailable()) {
@@ -81,6 +81,7 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 			isLoadingAd = false;
 		} else {
 			isLoadingAd = true;
+			String adUnitId = loadAdRequest.getAdUnitId();
 			Log.d(LOG_TAG, "Loading app open ad: " + adUnitId);
 			this.activity.runOnUiThread(() -> {
 				AdRequest request = loadAdRequest.createAdRequest();
@@ -91,14 +92,14 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 						appOpenAd = ad;
 						isLoadingAd = false;
 						loadTime = (new Date()).getTime();
-						AppOpenAdManager.this.listener.onAdLoaded(ad.getAdUnitId(), ad.getResponseInfo());
+						AppOpenAdManager.this.listener.onAdLoaded(AppOpenAdManager.this.adInfo, ad.getResponseInfo());
 					}
 
 					@Override
 					public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
 						Log.e(LOG_TAG, "App open ad failed to load: " + loadAdError.getMessage());
 						isLoadingAd = false;
-						AppOpenAdManager.this.listener.onAdFailedToLoad(AppOpenAdManager.this.adUnitId, loadAdError);
+						AppOpenAdManager.this.listener.onAdFailedToLoad(AppOpenAdManager.this.adInfo, loadAdError);
 					}
 				});
 			});
@@ -116,21 +117,21 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 					@Override
 					public void onAdDismissedFullScreenContent() {
 						Log.d(LOG_TAG, "App open ad dismissed fullscreen content.");
-						AppOpenAdManager.this.listener.onAdClosed(AppOpenAdManager.this.adUnitId);
+						AppOpenAdManager.this.listener.onAdClosed(AppOpenAdManager.this.adInfo);
 						AppOpenAdManager.this.isShowingAd = false;
 					}
 
 					@Override
 					public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
 						Log.e(LOG_TAG, "App open ad failed to show fullscreen content: " + adError.getMessage());
-						AppOpenAdManager.this.listener.onAdFailedToShow(AppOpenAdManager.this.adUnitId, adError);
+						AppOpenAdManager.this.listener.onAdFailedToShow(AppOpenAdManager.this.adInfo, adError);
 						AppOpenAdManager.this.appOpenAd = null;
 					}
 
 					@Override
 					public void onAdShowedFullScreenContent() {
 						Log.d(LOG_TAG, "App open ad showed fullscreen content.");
-						AppOpenAdManager.this.listener.onAdShowed(AppOpenAdManager.this.adUnitId);
+						AppOpenAdManager.this.listener.onAdShowed(AppOpenAdManager.this.adInfo);
 						AppOpenAdManager.this.appOpenAd = null;
 						AppOpenAdManager.this.isShowingAd = true;
 					}
@@ -138,7 +139,7 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 					@Override
 					public void onAdImpression() {
 						Log.d(LOG_TAG, "App open ad recorded an impression.");
-						AppOpenAdManager.this.listener.onAdImpression(AppOpenAdManager.this.adUnitId);
+						AppOpenAdManager.this.listener.onAdImpression(AppOpenAdManager.this.adInfo);
 						AppOpenAdManager.this.appOpenAd = null;
 						AppOpenAdManager.this.isShowingAd = true;
 					}
@@ -146,7 +147,7 @@ public class AppOpenAdManager implements DefaultLifecycleObserver {
 					@Override
 					public void onAdClicked() {
 						Log.d(LOG_TAG, "App open ad was clicked.");
-						AppOpenAdManager.this.listener.onAdClicked(AppOpenAdManager.this.adUnitId);
+						AppOpenAdManager.this.listener.onAdClicked(AppOpenAdManager.this.adInfo);
 					}
 				});
 
