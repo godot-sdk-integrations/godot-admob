@@ -6,44 +6,45 @@
 class_name Admob extends Node
 
 signal initialization_completed(status_data: InitializationStatus)
-signal banner_ad_loaded(ad_id: String, response_info: ResponseInfo, is_collapsible: bool)
-signal banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError)
-signal banner_ad_refreshed(ad_id: String, response_info: ResponseInfo, is_collapsible: bool)
-signal banner_ad_clicked(ad_id: String)
-signal banner_ad_impression(ad_id: String)
-signal banner_ad_opened(ad_id: String)
-signal banner_ad_closed(ad_id: String)
-signal interstitial_ad_loaded(ad_id: String, response_info: ResponseInfo)
-signal interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError)
-signal interstitial_ad_refreshed(ad_id: String, response_info: ResponseInfo)
-signal interstitial_ad_impression(ad_id: String)
-signal interstitial_ad_clicked(ad_id: String)
-signal interstitial_ad_showed_full_screen_content(ad_id: String)
-signal interstitial_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)
-signal interstitial_ad_dismissed_full_screen_content(ad_id: String)
-signal rewarded_ad_loaded(ad_id: String, response_info: ResponseInfo)
-signal rewarded_ad_failed_to_load(ad_id: String, error_data: LoadAdError)
-signal rewarded_ad_impression(ad_id: String)
-signal rewarded_ad_clicked(ad_id: String)
-signal rewarded_ad_showed_full_screen_content(ad_id: String)
-signal rewarded_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)
-signal rewarded_ad_dismissed_full_screen_content(ad_id: String)
-signal rewarded_ad_user_earned_reward(ad_id: String, reward_data: RewardItem)
-signal rewarded_interstitial_ad_loaded(ad_id: String, response_info: ResponseInfo)
-signal rewarded_interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError)
-signal rewarded_interstitial_ad_impression(ad_id: String)
-signal rewarded_interstitial_ad_clicked(ad_id: String)
-signal rewarded_interstitial_ad_showed_full_screen_content(ad_id: String)
-signal rewarded_interstitial_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)
-signal rewarded_interstitial_ad_dismissed_full_screen_content(ad_id: String)
-signal rewarded_interstitial_ad_user_earned_reward(ad_id: String, reward_data: RewardItem)
-signal app_open_ad_loaded(ad_id: String, response_info: ResponseInfo)
-signal app_open_ad_failed_to_load(ad_id: String, error_data: LoadAdError)
-signal app_open_ad_impression(ad_id: String)
-signal app_open_ad_clicked(ad_id: String)
-signal app_open_ad_showed_full_screen_content(ad_id: String)
-signal app_open_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)
-signal app_open_ad_dismissed_full_screen_content(ad_id: String)
+signal banner_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo)
+signal banner_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)
+signal banner_ad_refreshed(ad_info: AdInfo, response_info: ResponseInfo)
+signal banner_ad_impression(ad_info: AdInfo)
+signal banner_ad_size_measured(ad_info: AdInfo)
+signal banner_ad_clicked(ad_info: AdInfo)
+signal banner_ad_opened(ad_info: AdInfo)
+signal banner_ad_closed(ad_info: AdInfo)
+signal interstitial_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo)
+signal interstitial_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)
+signal interstitial_ad_refreshed(ad_info: AdInfo, response_info: ResponseInfo)
+signal interstitial_ad_impression(ad_info: AdInfo)
+signal interstitial_ad_clicked(ad_info: AdInfo)
+signal interstitial_ad_showed_full_screen_content(ad_info: AdInfo)
+signal interstitial_ad_failed_to_show_full_screen_content(ad_info: AdInfo, error_data: AdError)
+signal interstitial_ad_dismissed_full_screen_content(ad_info: AdInfo)
+signal rewarded_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo)
+signal rewarded_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)
+signal rewarded_ad_impression(ad_info: AdInfo)
+signal rewarded_ad_clicked(ad_info: AdInfo)
+signal rewarded_ad_showed_full_screen_content(ad_info: AdInfo)
+signal rewarded_ad_failed_to_show_full_screen_content(ad_info: AdInfo, error_data: AdError)
+signal rewarded_ad_dismissed_full_screen_content(ad_info: AdInfo)
+signal rewarded_ad_user_earned_reward(ad_info: AdInfo, reward_data: RewardItem)
+signal rewarded_interstitial_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo)
+signal rewarded_interstitial_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)
+signal rewarded_interstitial_ad_impression(ad_info: AdInfo)
+signal rewarded_interstitial_ad_clicked(ad_info: AdInfo)
+signal rewarded_interstitial_ad_showed_full_screen_content(ad_info: AdInfo)
+signal rewarded_interstitial_ad_failed_to_show_full_screen_content(ad_info: AdInfo, error_data: AdError)
+signal rewarded_interstitial_ad_dismissed_full_screen_content(ad_info: AdInfo)
+signal rewarded_interstitial_ad_user_earned_reward(ad_info: AdInfo, reward_data: RewardItem)
+signal app_open_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo)
+signal app_open_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)
+signal app_open_ad_impression(ad_info: AdInfo)
+signal app_open_ad_clicked(ad_info: AdInfo)
+signal app_open_ad_showed_full_screen_content(ad_info: AdInfo)
+signal app_open_ad_failed_to_show_full_screen_content(ad_info: AdInfo, error_data: AdError)
+signal app_open_ad_dismissed_full_screen_content(ad_info: AdInfo)
 signal consent_form_loaded
 signal consent_form_dismissed(error_data: FormError)
 signal consent_form_failed_to_load(error_data: FormError)
@@ -270,6 +271,7 @@ const MAXIMUM_CACHE_SIZE: int = 1000
 ## A list of SHA-256–hashed device IDs that should be registered as test devices in AdMob.
 @export var test_device_hashed_ids: Array[String] = []
 
+var is_initialization_completed: bool
 
 var _banner_id: String
 var _interstitial_id: String
@@ -286,6 +288,8 @@ var _active_rewarded_interstitial_ads: AdCache
 
 
 func _init() -> void:
+	is_initialization_completed = false
+
 	_active_banner_ads = AdCache.new(max_banner_ad_cache, "banner_ad", remove_banner_ad)
 	_active_interstitial_ads = AdCache.new(max_interstitial_ad_cache, "interstitial_ad",
 			remove_interstitial_ad)
@@ -368,8 +372,9 @@ func _connect_signals() -> void:
 	_plugin_singleton.connect("banner_ad_loaded", _on_banner_ad_loaded)
 	_plugin_singleton.connect("banner_ad_failed_to_load", _on_banner_ad_failed_to_load)
 	_plugin_singleton.connect("banner_ad_refreshed", _on_banner_ad_refreshed)
-	_plugin_singleton.connect("banner_ad_clicked", _on_banner_ad_clicked)
 	_plugin_singleton.connect("banner_ad_impression", _on_banner_ad_impression)
+	_plugin_singleton.connect("banner_ad_size_measured", _on_banner_ad_size_measured)
+	_plugin_singleton.connect("banner_ad_clicked", _on_banner_ad_clicked)
 	_plugin_singleton.connect("banner_ad_opened", _on_banner_ad_opened)
 	_plugin_singleton.connect("banner_ad_closed", _on_banner_ad_closed)
 	_plugin_singleton.connect("interstitial_ad_loaded", _on_interstitial_ad_loaded)
@@ -895,7 +900,7 @@ func show_consent_form() -> void:
 		_plugin_singleton.show_consent_form()
 
 
-func get_consent_status() -> String:
+func get_consent_status() -> UserConsent:
 	var __result: String
 
 	if _plugin_singleton == null:
@@ -903,7 +908,7 @@ func get_consent_status() -> String:
 	else:
 		__result = _plugin_singleton.get_consent_status()
 
-	return __result
+	return UserConsent.new(__result) if __result else null
 
 
 func is_consent_form_available() -> bool:
@@ -976,173 +981,185 @@ func _on_initialization_completed(status_data: Dictionary) -> void:
 	if auto_configure_on_initialize:
 		set_request_configuration()
 
+	is_initialization_completed = true
 	initialization_completed.emit(InitializationStatus.new(status_data))
 
 
-func _on_banner_ad_loaded(a_ad_id: String, a_response_info: Dictionary, a_is_collapsible: bool) -> void:
+func _on_banner_ad_loaded(a_ad_data: Dictionary, a_response_info: Dictionary) -> void:
+	var __ad_info: AdInfo = AdInfo.new(a_ad_data)
 	var __response_info: ResponseInfo = ResponseInfo.new(a_response_info)
-	_active_banner_ads.cache(a_ad_id, __response_info)
-	banner_ad_loaded.emit(a_ad_id, __response_info, a_is_collapsible)
+	_active_banner_ads.cache(__ad_info.get_ad_id(), __response_info)
+	banner_ad_loaded.emit(__ad_info, __response_info)
 
 
-func _on_banner_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
-	banner_ad_failed_to_load.emit(a_ad_id, LoadAdError.new(error_data))
+func _on_banner_ad_failed_to_load(a_ad_data: Dictionary, error_data: Dictionary)  -> void:
+	banner_ad_failed_to_load.emit(AdInfo.new(a_ad_data), LoadAdError.new(error_data))
 
 
-func _on_banner_ad_refreshed(a_ad_id: String, a_response_info: Dictionary, a_is_collapsible: bool) -> void:
-	banner_ad_refreshed.emit(a_ad_id, ResponseInfo.new(a_response_info), a_is_collapsible)
+func _on_banner_ad_refreshed(a_ad_data: Dictionary, a_response_info: Dictionary) -> void:
+	banner_ad_refreshed.emit(AdInfo.new(a_ad_data), ResponseInfo.new(a_response_info))
 
 
-func _on_banner_ad_impression(a_ad_id: String) -> void:
-	banner_ad_impression.emit(a_ad_id)
+func _on_banner_ad_impression(a_ad_data: Dictionary) -> void:
+	banner_ad_impression.emit(AdInfo.new(a_ad_data))
 
 
-func _on_banner_ad_clicked(a_ad_id: String) -> void:
-	banner_ad_clicked.emit(a_ad_id)
+func _on_banner_ad_size_measured(a_ad_data: Dictionary) -> void:
+	banner_ad_size_measured.emit(AdInfo.new(a_ad_data))
 
 
-func _on_banner_ad_opened(a_ad_id: String) -> void:
-	banner_ad_opened.emit(a_ad_id)
+func _on_banner_ad_clicked(a_ad_data: Dictionary) -> void:
+	banner_ad_clicked.emit(AdInfo.new(a_ad_data))
 
 
-func _on_banner_ad_closed(a_ad_id: String) -> void:
-	banner_ad_closed.emit(a_ad_id)
+func _on_banner_ad_opened(a_ad_data: Dictionary) -> void:
+	banner_ad_opened.emit(AdInfo.new(a_ad_data))
 
 
-func _on_interstitial_ad_loaded(a_ad_id: String, a_response_info: Dictionary) -> void:
+func _on_banner_ad_closed(a_ad_data: Dictionary) -> void:
+	banner_ad_closed.emit(AdInfo.new(a_ad_data))
+
+
+func _on_interstitial_ad_loaded(a_ad_data: Dictionary, a_response_info: Dictionary) -> void:
+	var __ad_info: AdInfo = AdInfo.new(a_ad_data)
 	var __response_info: ResponseInfo = ResponseInfo.new(a_response_info)
-	_active_interstitial_ads.cache(a_ad_id, __response_info)
-	interstitial_ad_loaded.emit(a_ad_id, __response_info)
+	_active_interstitial_ads.cache(__ad_info.get_ad_id(), __response_info)
+	interstitial_ad_loaded.emit(__ad_info, __response_info)
 
 
-func _on_interstitial_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
-	interstitial_ad_failed_to_load.emit(a_ad_id, LoadAdError.new(error_data))
+func _on_interstitial_ad_failed_to_load(a_ad_data: Dictionary, error_data: Dictionary)  -> void:
+	interstitial_ad_failed_to_load.emit(AdInfo.new(a_ad_data), LoadAdError.new(error_data))
 
 
-func _on_interstitial_ad_refreshed(a_ad_id: String, a_response_info: Dictionary) -> void:
-	interstitial_ad_refreshed.emit(a_ad_id, ResponseInfo.new(a_response_info))
+func _on_interstitial_ad_refreshed(a_ad_data: Dictionary, a_response_info: Dictionary) -> void:
+	interstitial_ad_refreshed.emit(AdInfo.new(a_ad_data), ResponseInfo.new(a_response_info))
 
 
-func _on_interstitial_ad_impression(a_ad_id: String) -> void:
-	interstitial_ad_impression.emit(a_ad_id)
+func _on_interstitial_ad_impression(a_ad_data: Dictionary) -> void:
+	interstitial_ad_impression.emit(AdInfo.new(a_ad_data))
 
 
-func _on_interstitial_ad_clicked(a_ad_id: String) -> void:
-	interstitial_ad_clicked.emit(a_ad_id)
+func _on_interstitial_ad_clicked(a_ad_data: Dictionary) -> void:
+	interstitial_ad_clicked.emit(AdInfo.new(a_ad_data))
 
 
-func _on_interstitial_ad_showed_full_screen_content(a_ad_id: String) -> void:
+func _on_interstitial_ad_showed_full_screen_content(a_ad_data: Dictionary) -> void:
+	var __ad_info: AdInfo = AdInfo.new(a_ad_data)
 	if remove_interstitial_ads_after_displayed:
-		remove_interstitial_ad(a_ad_id)
-	interstitial_ad_showed_full_screen_content.emit(a_ad_id)
+		remove_interstitial_ad(__ad_info.get_ad_id())
+	interstitial_ad_showed_full_screen_content.emit(__ad_info)
 
 
-func _on_interstitial_ad_failed_to_show_full_screen_content(a_ad_id: String, error_data: Dictionary) -> void:
-	interstitial_ad_failed_to_show_full_screen_content.emit(a_ad_id, AdError.new(error_data))
+func _on_interstitial_ad_failed_to_show_full_screen_content(a_ad_data: Dictionary, error_data: Dictionary) -> void:
+	interstitial_ad_failed_to_show_full_screen_content.emit(AdInfo.new(a_ad_data), AdError.new(error_data))
 
 
-func _on_interstitial_ad_dismissed_full_screen_content(a_ad_id: String) -> void:
-	interstitial_ad_dismissed_full_screen_content.emit(a_ad_id)
+func _on_interstitial_ad_dismissed_full_screen_content(a_ad_data: Dictionary) -> void:
+	interstitial_ad_dismissed_full_screen_content.emit(AdInfo.new(a_ad_data))
 
 
-func _on_rewarded_ad_loaded(a_ad_id: String, a_response_info: Dictionary) -> void:
+func _on_rewarded_ad_loaded(a_ad_data: Dictionary, a_response_info: Dictionary) -> void:
+	var __ad_info: AdInfo = AdInfo.new(a_ad_data)
 	var __response_info: ResponseInfo = ResponseInfo.new(a_response_info)
-	_active_rewarded_ads.cache(a_ad_id, __response_info)
-	rewarded_ad_loaded.emit(a_ad_id, __response_info)
+	_active_rewarded_ads.cache(__ad_info.get_ad_id(), __response_info)
+	rewarded_ad_loaded.emit(__ad_info, __response_info)
 
 
-func _on_rewarded_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
-	rewarded_ad_failed_to_load.emit(a_ad_id, LoadAdError.new(error_data))
+func _on_rewarded_ad_failed_to_load(a_ad_data: Dictionary, error_data: Dictionary)  -> void:
+	rewarded_ad_failed_to_load.emit(AdInfo.new(a_ad_data), LoadAdError.new(error_data))
 
 
-func _on_rewarded_ad_impression(a_ad_id: String) -> void:
-	rewarded_ad_impression.emit(a_ad_id)
+func _on_rewarded_ad_impression(a_ad_data: Dictionary) -> void:
+	rewarded_ad_impression.emit(AdInfo.new(a_ad_data))
 
 
-func _on_rewarded_ad_clicked(a_ad_id: String) -> void:
-	rewarded_ad_clicked.emit(a_ad_id)
+func _on_rewarded_ad_clicked(a_ad_data: Dictionary) -> void:
+	rewarded_ad_clicked.emit(AdInfo.new(a_ad_data))
 
 
-func _on_rewarded_ad_showed_full_screen_content(a_ad_id: String) -> void:
+func _on_rewarded_ad_showed_full_screen_content(a_ad_data: Dictionary) -> void:
+	var __ad_info: AdInfo = AdInfo.new(a_ad_data)
 	if remove_rewarded_ads_after_displayed:
-		remove_rewarded_ad(a_ad_id)
-	rewarded_ad_showed_full_screen_content.emit(a_ad_id)
+		remove_rewarded_ad(__ad_info.get_ad_id())
+	rewarded_ad_showed_full_screen_content.emit(__ad_info)
 
 
-func _on_rewarded_ad_failed_to_show_full_screen_content(a_ad_id: String, error_data: Dictionary) -> void:
-	rewarded_ad_failed_to_show_full_screen_content.emit(a_ad_id, AdError.new(error_data))
+func _on_rewarded_ad_failed_to_show_full_screen_content(a_ad_data: Dictionary, error_data: Dictionary) -> void:
+	rewarded_ad_failed_to_show_full_screen_content.emit(AdInfo.new(a_ad_data), AdError.new(error_data))
 
 
-func _on_rewarded_ad_dismissed_full_screen_content(a_ad_id: String) -> void:
-	rewarded_ad_dismissed_full_screen_content.emit(a_ad_id)
+func _on_rewarded_ad_dismissed_full_screen_content(a_ad_data: Dictionary) -> void:
+	rewarded_ad_dismissed_full_screen_content.emit(AdInfo.new(a_ad_data))
 
 
-func _on_rewarded_ad_user_earned_reward(a_ad_id: String, reward_data: Dictionary) -> void:
-	rewarded_ad_user_earned_reward.emit(a_ad_id, RewardItem.new(reward_data))
+func _on_rewarded_ad_user_earned_reward(a_ad_data: Dictionary, reward_data: Dictionary) -> void:
+	rewarded_ad_user_earned_reward.emit(AdInfo.new(a_ad_data), RewardItem.new(reward_data))
 
 
-func _on_rewarded_interstitial_ad_loaded(a_ad_id: String, a_response_info: Dictionary) -> void:
+func _on_rewarded_interstitial_ad_loaded(a_ad_data: Dictionary, a_response_info: Dictionary) -> void:
+	var __ad_info: AdInfo = AdInfo.new(a_ad_data)
 	var __response_info: ResponseInfo = ResponseInfo.new(a_response_info)
-	_active_rewarded_interstitial_ads.cache(a_ad_id, __response_info)
-	rewarded_interstitial_ad_loaded.emit(a_ad_id, __response_info)
+	_active_rewarded_interstitial_ads.cache(__ad_info.get_ad_id(), __response_info)
+	rewarded_interstitial_ad_loaded.emit(__ad_info, __response_info)
 
 
-func _on_rewarded_interstitial_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
-	rewarded_interstitial_ad_failed_to_load.emit(a_ad_id, LoadAdError.new(error_data))
+func _on_rewarded_interstitial_ad_failed_to_load(a_ad_data: Dictionary, error_data: Dictionary)  -> void:
+	rewarded_interstitial_ad_failed_to_load.emit(AdInfo.new(a_ad_data), LoadAdError.new(error_data))
 
 
-func _on_rewarded_interstitial_ad_impression(a_ad_id: String) -> void:
-	rewarded_interstitial_ad_impression.emit(a_ad_id)
+func _on_rewarded_interstitial_ad_impression(a_ad_data: Dictionary) -> void:
+	rewarded_interstitial_ad_impression.emit(AdInfo.new(a_ad_data))
 
 
-func _on_rewarded_interstitial_ad_clicked(a_ad_id: String) -> void:
-	rewarded_interstitial_ad_clicked.emit(a_ad_id)
+func _on_rewarded_interstitial_ad_clicked(a_ad_data: Dictionary) -> void:
+	rewarded_interstitial_ad_clicked.emit(AdInfo.new(a_ad_data))
 
 
-func _on_rewarded_interstitial_ad_showed_full_screen_content(a_ad_id: String) -> void:
+func _on_rewarded_interstitial_ad_showed_full_screen_content(a_ad_data: Dictionary) -> void:
+	var __ad_info: AdInfo = AdInfo.new(a_ad_data)
 	if remove_rewarded_interstitial_ads_after_displayed:
-		remove_rewarded_interstitial_ad(a_ad_id)
-	rewarded_interstitial_ad_showed_full_screen_content.emit(a_ad_id)
+		remove_rewarded_interstitial_ad(__ad_info.get_ad_id())
+	rewarded_interstitial_ad_showed_full_screen_content.emit(__ad_info)
 
 
-func _on_rewarded_interstitial_ad_failed_to_show_full_screen_content(a_ad_id: String, error_data: Dictionary) -> void:
-	rewarded_interstitial_ad_failed_to_show_full_screen_content.emit(a_ad_id, AdError.new(error_data))
+func _on_rewarded_interstitial_ad_failed_to_show_full_screen_content(a_ad_data: Dictionary, error_data: Dictionary) -> void:
+	rewarded_interstitial_ad_failed_to_show_full_screen_content.emit(AdInfo.new(a_ad_data), AdError.new(error_data))
 
 
-func _on_rewarded_interstitial_ad_dismissed_full_screen_content(a_ad_id: String) -> void:
-	rewarded_interstitial_ad_dismissed_full_screen_content.emit(a_ad_id)
+func _on_rewarded_interstitial_ad_dismissed_full_screen_content(a_ad_data: Dictionary) -> void:
+	rewarded_interstitial_ad_dismissed_full_screen_content.emit(AdInfo.new(a_ad_data))
 
 
-func _on_rewarded_interstitial_ad_user_earned_reward(a_ad_id: String, reward_data: Dictionary) -> void:
-	rewarded_interstitial_ad_user_earned_reward.emit(a_ad_id, RewardItem.new(reward_data))
+func _on_rewarded_interstitial_ad_user_earned_reward(a_ad_data: Dictionary, reward_data: Dictionary) -> void:
+	rewarded_interstitial_ad_user_earned_reward.emit(AdInfo.new(a_ad_data), RewardItem.new(reward_data))
 
 
-func _on_app_open_ad_loaded(a_ad_id: String, a_response_info: Dictionary) -> void:
-	app_open_ad_loaded.emit(a_ad_id, ResponseInfo.new(a_response_info))
+func _on_app_open_ad_loaded(a_ad_data: Dictionary, a_response_info: Dictionary) -> void:
+	app_open_ad_loaded.emit(AdInfo.new(a_ad_data), ResponseInfo.new(a_response_info))
 
 
-func _on_app_open_ad_failed_to_load(a_ad_id: String, error_data: Dictionary) -> void:
-	app_open_ad_failed_to_load.emit(a_ad_id, LoadAdError.new(error_data))
+func _on_app_open_ad_failed_to_load(a_ad_data: Dictionary, error_data: Dictionary) -> void:
+	app_open_ad_failed_to_load.emit(AdInfo.new(a_ad_data), LoadAdError.new(error_data))
 
 
-func _on_app_open_ad_impression(a_ad_id: String) -> void:
-	app_open_ad_impression.emit(a_ad_id)
+func _on_app_open_ad_impression(a_ad_data: Dictionary) -> void:
+	app_open_ad_impression.emit(AdInfo.new(a_ad_data))
 
 
-func _on_app_open_ad_clicked(a_ad_id: String) -> void:
-	app_open_ad_clicked.emit(a_ad_id)
+func _on_app_open_ad_clicked(a_ad_data: Dictionary) -> void:
+	app_open_ad_clicked.emit(AdInfo.new(a_ad_data))
 
 
-func _on_app_open_ad_showed_full_screen_content(a_ad_id: String) -> void:
-	app_open_ad_showed_full_screen_content.emit(a_ad_id)
+func _on_app_open_ad_showed_full_screen_content(a_ad_data: Dictionary) -> void:
+	app_open_ad_showed_full_screen_content.emit(AdInfo.new(a_ad_data))
 
 
-func _on_app_open_ad_failed_to_show_full_screen_content(a_ad_id: String, error_data: Dictionary) -> void:
-	app_open_ad_failed_to_show_full_screen_content.emit(a_ad_id, AdError.new(error_data))
+func _on_app_open_ad_failed_to_show_full_screen_content(a_ad_data: Dictionary, error_data: Dictionary) -> void:
+	app_open_ad_failed_to_show_full_screen_content.emit(AdInfo.new(a_ad_data), AdError.new(error_data))
 
 
-func _on_app_open_ad_dismissed_full_screen_content(a_ad_id: String) -> void:
-	app_open_ad_dismissed_full_screen_content.emit(a_ad_id)
+func _on_app_open_ad_dismissed_full_screen_content(a_ad_data: Dictionary) -> void:
+	app_open_ad_dismissed_full_screen_content.emit(AdInfo.new(a_ad_data))
 
 
 func _on_consent_form_loaded() -> void:
@@ -1174,12 +1191,12 @@ func _on_tracking_authorization_denied() -> void:
 
 
 static func log_error(a_description: String) -> void:
-	push_error(a_description)
+	push_error("%s: %s" % [PLUGIN_SINGLETON_NAME, a_description])
 
 
 static func log_warn(a_description: String) -> void:
-	push_warning(a_description)
+	push_warning("%s: %s" % [PLUGIN_SINGLETON_NAME, a_description])
 
 
 static func log_info(a_description: String) -> void:
-	print_rich("[color=lime]INFO: %s[/color]" % a_description)
+	print_rich("[color=lime]%s: INFO: %s[/color]" % [PLUGIN_SINGLETON_NAME, a_description])

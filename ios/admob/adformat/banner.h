@@ -24,6 +24,7 @@
 - (void) destroy;
 - (void) hide;
 - (void) show;
+- (void) moveToX:(real_t)x y:(real_t)y;
 - (int) getWidth;
 - (int) getHeight;
 - (int) getWidthInPixels;

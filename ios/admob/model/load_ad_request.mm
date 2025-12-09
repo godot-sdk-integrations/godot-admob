@@ -144,10 +144,12 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 			width = [self adaptiveWidth];
 		}
 
-		CGFloat maxHeight = 0;  // 0 means no limit (defaults to device height)
+		CGFloat maxHeight = 0;
 		if ([self hasAdaptiveMaxHeight]) {
 			maxHeight = [self adaptiveMaxHeight];
 		}
+
+		os_log_debug(admob_log, "INLINE_ADAPTIVE: width: %.0f maxHeight:%.0f", width, maxHeight);
 
 		if (maxHeight > 0) {
 			gadAdSize = GADInlineAdaptiveBannerAdSizeWithWidthAndMaxHeight(width, maxHeight);
@@ -310,6 +312,10 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 	}
 
 	return gadOptions;
+}
+
+- (Dictionary) getRawData {
+	return self.rawData;
 }
 
 @end

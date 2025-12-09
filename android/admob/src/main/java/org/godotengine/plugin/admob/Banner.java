@@ -21,17 +21,19 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.ResponseInfo;
 import com.google.android.gms.ads.LoadAdError;
 
+import org.godotengine.plugin.admob.model.AdmobAdInfo;
 import org.godotengine.plugin.admob.model.LoadAdRequest;
 
 
 interface BannerListener {
-	void onAdLoaded(String adId, ResponseInfo responseInfo, boolean isCollapsible);
-	void onAdRefreshed(String adId, ResponseInfo responseInfo, boolean isCollapsible);
-	void onAdFailedToLoad(String adId, LoadAdError loadAdError);
-	void onAdImpression(String adId);
-	void onAdClicked(String adId);
-	void onAdOpened(String adId);
-	void onAdClosed(String adId);
+	void onAdLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo);
+	void onAdRefreshed(AdmobAdInfo adInfo, ResponseInfo responseInfo);
+	void onAdFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError);
+	void onAdImpression(AdmobAdInfo adInfo);
+	void onAdSizeMeasured(AdmobAdInfo adInfo);
+	void onAdClicked(AdmobAdInfo adInfo);
+	void onAdOpened(AdmobAdInfo adInfo);
+	void onAdClosed(AdmobAdInfo adInfo);
 }
 
 
@@ -64,10 +66,12 @@ public class Banner {
 		CUSTOM
 	}
 
-	private final String adId;
-	private final LoadAdRequest loadRequest;
+	private AdmobAdInfo adInfo;
 	private final Activity activity;
 	private final FrameLayout layout;
+	private final BannerListener bannerListener;
+	private final String adId;
+	private final LoadAdRequest loadRequest;
 	private final BannerSize bannerSize;
 	private AdPosition adPosition;
 	private AdView adView; // Banner view
@@ -77,62 +81,62 @@ public class Banner {
 	private boolean firstLoad;
 
 
-	Banner(final String adId, final LoadAdRequest loadRequest, final Activity activity,
-			final FrameLayout layout, BannerListener listener) {
-		this.adId = adId;
-		this.loadRequest = loadRequest;
+	Banner(AdmobAdInfo adInfo, final Activity activity, final FrameLayout layout, final BannerListener listener) {
+		this.adInfo = adInfo;
+		this.adId = adInfo.getAdId();
+		this.loadRequest = adInfo.getLoadAdRequest();
 
-		if (loadRequest.hasAdSize()) {
-			this.bannerSize = BannerSize.valueOf(loadRequest.getAdSize());
+		this.activity = activity;
+		this.layout = layout;
+		this.bannerListener = listener;
+
+		if (this.loadRequest.hasAdSize()) {
+			this.bannerSize = BannerSize.valueOf(this.loadRequest.getAdSize());
 		}
 		else {
 			this.bannerSize = BannerSize.BANNER;
 			Log.e(LOG_TAG, "Error: Banner size is required! Defaulting to BANNER.");
 		}
 
-		this.adPosition = loadRequest.hasAdPosition() ? AdPosition.valueOf(loadRequest.getAdPosition()) : AdPosition.TOP;
-		if ("CUSTOM".equals(loadRequest.getAdPosition())) {
-			this.adPosition = AdPosition.CUSTOM;
-		}
-
-		this.activity = activity;
-		this.layout = layout;
+		this.adPosition = this.loadRequest.hasAdPosition() ? AdPosition.valueOf(this.loadRequest.getAdPosition()) : AdPosition.TOP;
 
 		firstLoad = true;
 
 		this.adListener = new AdListener() {
 			@Override
 			public void onAdLoaded() {
+				Banner.this.adInfo.setMeasuredWidth(adView.getAdSize().getWidth());
+				Banner.this.adInfo.setMeasuredHeight(adView.getAdSize().getHeight());
+				Banner.this.adInfo.setIsCollapsible(Banner.this.adView.isCollapsible());
+
 				if (Banner.this.firstLoad) {
 					Banner.this.firstLoad = false;
-					listener.onAdLoaded(Banner.this.adId, Banner.this.adView.getResponseInfo(),
-							Banner.this.adView.isCollapsible());
+					listener.onAdLoaded(Banner.this.adInfo, Banner.this.adView.getResponseInfo());
 				}
 				else {
-					listener.onAdRefreshed(Banner.this.adId, Banner.this.adView.getResponseInfo(),
-							Banner.this.adView.isCollapsible());
+					listener.onAdRefreshed(Banner.this.adInfo, Banner.this.adView.getResponseInfo());
 				}
 			}
 
 			@Override
 			public void onAdFailedToLoad(@NonNull LoadAdError error) {
-				listener.onAdFailedToLoad(Banner.this.adId, error);
+				listener.onAdFailedToLoad(Banner.this.adInfo, error);
 			}
 
 			public void onAdImpression() {
-				listener.onAdImpression(Banner.this.adId);
+				listener.onAdImpression(Banner.this.adInfo);
 			}
 
 			public void onAdClicked() {
-				listener.onAdClicked(Banner.this.adId);
+				listener.onAdClicked(Banner.this.adInfo);
 			}
 
 			public void onAdOpened() {
-				listener.onAdOpened(Banner.this.adId);
+				listener.onAdOpened(Banner.this.adInfo);
 			}
 
 			public void onAdClosed() {
-				listener.onAdClosed(Banner.this.adId);
+				listener.onAdClosed(Banner.this.adInfo);
 			}
 		};
 
@@ -161,32 +165,30 @@ public class Banner {
 
 				// Add to layout and load ad
 				layout.addView(adView, adParams);
-			});
-		}
-	}
 
-	void move(final String position) {
-		if (layout == null || adView == null || adParams == null) {
-			Log.w(LOG_TAG, "move(): Warning: banner ad not loaded.");
-		}
-		else {
-			Log.d(LOG_TAG, "banner ad moved");
+				adView.post(() -> {
+					// Convert Pixels to DP so Godot receives logical units
+					DisplayMetrics outMetrics = activity.getApplicationContext().getResources().getDisplayMetrics();
+					float density = outMetrics.density;
 
-			activity.runOnUiThread(() -> {
-				layout.removeView(adView); // Remove the old view
+					int widthDp = Math.round(adView.getMeasuredWidth() / density);
+					int heightDp = Math.round(adView.getMeasuredHeight() / density);
 
-				adPosition = AdPosition.valueOf(position);
-				addBanner(getGravity(adPosition), adView.getAdSize());
+					Banner.this.adInfo.setMeasuredWidth(widthDp);
+					Banner.this.adInfo.setMeasuredHeight(heightDp);
 
-				// Add to layout and load ad
-				layout.addView(adView, adParams);
+					Log.d(LOG_TAG, String.format("Actual size (px): [%d,%d] -> (dp): [%d, %d]",
+							adView.getMeasuredWidth(), adView.getMeasuredHeight(), widthDp, heightDp));
+					
+					Banner.this.bannerListener.onAdSizeMeasured(Banner.this.adInfo);
+				});
 			});
 		}
 	}
 
 	void resize() {
 		if (layout == null || adView == null || adParams == null) {
-			Log.w(LOG_TAG, "move(): Warning: banner ad not loaded.");
+			Log.w(LOG_TAG, "resize(): Warning: banner ad not loaded.");
 		}
 		else {
 			Log.d(LOG_TAG, String.format("resize(): %s", this.adId));
@@ -236,7 +238,11 @@ public class Banner {
 		this.adParams.topMargin = (int) y;
 		this.adParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
 		if (this.bannerSize == Banner.BannerSize.INLINE_ADAPTIVE) {
-			this.adParams.width = this.getWidthInPixels();
+			// adInfo holds DP, but LayoutParams needs Pixels. Convert back.
+			int measuredWidthDp = this.adInfo.getMeasuredWidth();
+			int measuredWidthPx = (int) (measuredWidthDp * activity.getResources().getDisplayMetrics().density);
+
+			this.adParams.width = measuredWidthDp > 0 ? measuredWidthPx : this.getWidthInPixels();
 		} else {
 			this.adParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
 		}
@@ -276,7 +282,6 @@ public class Banner {
 
 	private AdSize getAdSize(final BannerSize bannerSize) {
 		AdSize result;
-		Log.d(LOG_TAG, String.format("getAdSize(): for value '%s'.", bannerSize.name()));
 		result = switch (bannerSize) {
 			case BANNER -> AdSize.BANNER;
 			case LARGE_BANNER -> AdSize.LARGE_BANNER;
@@ -296,13 +301,12 @@ public class Banner {
 			}
 			default -> AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, getAdWidth(activity));
 		};
-		Log.d(LOG_TAG, String.format("getAdSize(): ad size [width: %d; height: %d].", result.getWidth(), result.getHeight()));
+		Log.d(LOG_TAG, String.format("getAdSize('%s'): result = [width: %d; height: %d].", bannerSize.name(), result.getWidth(), result.getHeight()));
 		return result;
 	}
 
 	private int getGravity(final AdPosition position) {
 		int result;
-		Log.d(LOG_TAG, String.format("getGravity(): for value '%s'.", position.name()));
 		result = switch (position) {
 			case TOP -> Gravity.TOP | Gravity.CENTER_HORIZONTAL;
 			case BOTTOM -> Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
@@ -315,7 +319,7 @@ public class Banner {
 			case CENTER -> Gravity.CENTER;
 			case CUSTOM -> 0;
 		};
-		Log.d(LOG_TAG, String.format("getGravity(): result = %d.", result));
+		Log.d(LOG_TAG, String.format("getGravity('%s'): result = %d.", position.name(), result));
 		return result;
 	}
 

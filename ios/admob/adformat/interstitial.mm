@@ -9,7 +9,15 @@
 #import "admob_response.h"
 #import "admob_logger.h"
 #import "admob_ad_error.h"
+#import "admob_ad_info.h"
 #import "admob_load_ad_error.h"
+
+
+@interface InterstitialAd ()
+
+@property (nonatomic, strong) AdmobAdInfo *adInfo;
+
+@end
 
 
 @implementation InterstitialAd
@@ -23,6 +31,8 @@
 }
 
 - (void) load:(LoadAdRequest*) loadAdRequest {
+	self.adInfo = [[AdmobAdInfo alloc] initWithId:self.adId request:loadAdRequest];
+
 	GADRequest* gadRequest = [loadAdRequest createGADRequest];
 
 	dispatch_async(dispatch_get_main_queue(), ^{
@@ -30,7 +40,8 @@
 			if (error) {
 				AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
 				os_log_error(admob_log, "failed to load InterstitialAd with error: %@", loadAdError.message);
-				AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
+				AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL,
+							[self.adInfo buildRawData],
 							[loadAdError buildRawData]);
 			}
 			else {
@@ -39,13 +50,15 @@
 
 				if (self.isLoaded) {
 					os_log_debug(admob_log, "InterstitialAd %@ refreshed", self.adId);
-					AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_REFRESHED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
+					AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_REFRESHED_SIGNAL,
+							[self.adInfo buildRawData],
 							[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
 				}
 				else {
 					self.isLoaded = YES;
 					os_log_debug(admob_log, "InterstitialAd %@ loaded successfully", self.adId);
-					AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_LOADED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
+					AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_LOADED_SIGNAL,
+							[self.adInfo buildRawData],
 							[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
 				}
 			}
@@ -66,24 +79,24 @@
 
 - (void) adDidRecordImpression:(nonnull id<GADFullScreenPresentingAd>) ad {
 	os_log_debug(admob_log, "InterstitialAd adDidRecordImpression");
-	AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_IMPRESSION_SIGNAL, [GAPConverter nsStringToGodotString:self.adId]);
+	AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_IMPRESSION_SIGNAL, [self.adInfo buildRawData]);
 }
 
 - (void) adDidRecordClick:(nonnull id<GADFullScreenPresentingAd>) ad {
 	os_log_debug(admob_log, "InterstitialAd adDidRecordClick");
-	AdmobPlugin::get_singleton()->emit_signal(REWARDED_INTERSTITIAL_AD_CLICKED_SIGNAL, [GAPConverter nsStringToGodotString:self.adId]);
+	AdmobPlugin::get_singleton()->emit_signal(REWARDED_INTERSTITIAL_AD_CLICKED_SIGNAL, [self.adInfo buildRawData]);
 }
 
 - (void) ad:(nonnull id<GADFullScreenPresentingAd>)ad didFailToPresentFullScreenContentWithError:(nonnull NSError *) error {
 	AdmobAdError *adError = [[AdmobAdError alloc] initWithNsError:error];
 	os_log_debug(admob_log, "InterstitialAd didFailToPresentFullScreenContentWithError: %@", adError.message);
-	AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, [GAPConverter nsStringToGodotString:self.adId],
+	AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData],
 				[adError buildRawData]);
 }
 
 - (void) adWillPresentFullScreenContent:(nonnull id<GADFullScreenPresentingAd>) ad {
 	os_log_debug(admob_log, "InterstitialAd adWillPresentFullScreenContent");
-	AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, [GAPConverter nsStringToGodotString:self.adId]);
+	AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
 
 	if (AdFormatBase.pauseOnBackground) {
 		os_log_debug(admob_log, "InterstitialAd pauseOnBackground is true");
@@ -96,7 +109,7 @@
 
 - (void) adDidDismissFullScreenContent:(nonnull id<GADFullScreenPresentingAd>) ad {
 	os_log_debug(admob_log, "InterstitialAd adDidDismissFullScreenContent");
-	AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, [GAPConverter nsStringToGodotString:self.adId]);
+	AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
 	OS_AppleEmbedded::get_singleton()->on_focus_in();
 }
 

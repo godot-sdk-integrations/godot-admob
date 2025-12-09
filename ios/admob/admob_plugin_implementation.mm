@@ -24,6 +24,7 @@ const String BANNER_AD_LOADED_SIGNAL = "banner_ad_loaded";
 const String BANNER_AD_FAILED_TO_LOAD_SIGNAL = "banner_ad_failed_to_load";
 const String BANNER_AD_REFRESHED_SIGNAL = "banner_ad_refreshed";
 const String BANNER_AD_IMPRESSION_SIGNAL = "banner_ad_impression";
+const String BANNER_AD_SIZE_MEASURED_SIGNAL = "banner_ad_size_measured";
 const String BANNER_AD_CLICKED_SIGNAL = "banner_ad_clicked";
 const String BANNER_AD_OPENED_SIGNAL = "banner_ad_opened";
 const String BANNER_AD_CLOSED_SIGNAL = "banner_ad_closed";
@@ -93,66 +94,65 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_banner_width_in_pixels"), &AdmobPlugin::get_banner_width_in_pixels);
 	ClassDB::bind_method(D_METHOD("get_banner_height_in_pixels"), &AdmobPlugin::get_banner_height_in_pixels);
 
-	ADD_SIGNAL(MethodInfo(BANNER_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info"),
-			PropertyInfo(Variant::BOOL, "is_collapsible")));
-	ADD_SIGNAL(MethodInfo(BANNER_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
-	ADD_SIGNAL(MethodInfo(BANNER_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info"),
-			PropertyInfo(Variant::BOOL, "is_collapsible")));
-	ADD_SIGNAL(MethodInfo(BANNER_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
-	ADD_SIGNAL(MethodInfo(BANNER_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
-	ADD_SIGNAL(MethodInfo(BANNER_AD_OPENED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
-	ADD_SIGNAL(MethodInfo(BANNER_AD_CLOSED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_SIZE_MEASURED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_CLICKED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_OPENED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_CLOSED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 
 	ClassDB::bind_method(D_METHOD("load_interstitial_ad"), &AdmobPlugin::load_interstitial_ad);
 	ClassDB::bind_method(D_METHOD("show_interstitial_ad"), &AdmobPlugin::show_interstitial_ad);
 	ClassDB::bind_method(D_METHOD("remove_interstitial_ad"), &AdmobPlugin::remove_interstitial_ad);
 
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_CLICKED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
 
 	ClassDB::bind_method(D_METHOD("load_rewarded_ad"), &AdmobPlugin::load_rewarded_ad);
 	ClassDB::bind_method(D_METHOD("show_rewarded_ad"), &AdmobPlugin::show_rewarded_ad);
 	ClassDB::bind_method(D_METHOD("remove_rewarded_ad"), &AdmobPlugin::remove_rewarded_ad);
 
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_USER_EARNED_REWARD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "reward_data")));
+	ADD_SIGNAL(MethodInfo(REWARDED_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
+	ADD_SIGNAL(MethodInfo(REWARDED_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_AD_CLICKED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
+	ADD_SIGNAL(MethodInfo(REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_AD_USER_EARNED_REWARD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "reward_data")));
 
 	ClassDB::bind_method(D_METHOD("load_rewarded_interstitial_ad"), &AdmobPlugin::load_rewarded_interstitial_ad);
 	ClassDB::bind_method(D_METHOD("show_rewarded_interstitial_ad"), &AdmobPlugin::show_rewarded_interstitial_ad);
 	ClassDB::bind_method(D_METHOD("remove_rewarded_interstitial_ad"), &AdmobPlugin::remove_rewarded_interstitial_ad);
 
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_id")));
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD_SIGNAL, PropertyInfo(Variant::STRING, "ad_id"), PropertyInfo(Variant::DICTIONARY, "reward_data")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_CLICKED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "reward_data")));
 
 	ClassDB::bind_method(D_METHOD("load_app_open_ad", "load_ad_request", "auto_show_on_resume"), &AdmobPlugin::load_app_open_ad, DEFVAL(Variant(false)));
 	ClassDB::bind_method(D_METHOD("show_app_open_ad"), &AdmobPlugin::show_app_open_ad);
 	ClassDB::bind_method(D_METHOD("is_app_open_ad_available"), &AdmobPlugin::is_app_open_ad_available);
 
-	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_LOADED_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id"), PropertyInfo(Variant::DICTIONARY, "response_info")));
-	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id"), PropertyInfo(Variant::DICTIONARY, "error")));
-	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));
-	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_CLICKED_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));
-	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));
-	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id"), PropertyInfo(Variant::DICTIONARY, "error")));
-	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::STRING, "ad_unit_id")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_CLICKED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "error")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 
 	ClassDB::bind_method(D_METHOD("load_consent_form"), &AdmobPlugin::load_consent_form);
 	ClassDB::bind_method(D_METHOD("show_consent_form"), &AdmobPlugin::show_consent_form);
@@ -346,10 +346,7 @@ void AdmobPlugin::move_banner_ad(String adId, real_t x, real_t y) {
 	os_log_debug(admob_log, "AdmobPlugin move_banner_ad('%s',%.2f,%.2f)", adId.utf8().get_data(), x, y);
 	BannerAd* banner = [bannerAds objectForKey:[GAPConverter toNsString:adId]];
 	if (banner) {
-		CGFloat scale = [[UIScreen mainScreen] scale];
-		CGRect frame = banner.bannerView.frame;
-		frame.origin = CGPointMake(x / scale, y / scale);
-		banner.bannerView.frame = frame;
+		[banner moveToX:x y:y];
 	}
 }
 

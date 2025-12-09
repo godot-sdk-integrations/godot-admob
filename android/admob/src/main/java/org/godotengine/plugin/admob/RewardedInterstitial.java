@@ -17,23 +17,25 @@ import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback;
 
+import org.godotengine.plugin.admob.model.AdmobAdInfo;
 import org.godotengine.plugin.admob.model.LoadAdRequest;
 
 interface RewardedInterstitialListener {
-	void onRewardedInterstitialLoaded(String adId, ResponseInfo responseInfo);
-	void onRewardedInterstitialFailedToLoad(String adId, LoadAdError loadAdError);
-	void onRewardedInterstitialOpened(String adId);
-	void onRewardedInterstitialFailedToShow(String adId, AdError adError);
-	void onRewardedInterstitialClosed(String adId);
-	void onRewardedClicked(String adId);
-	void onRewardedAdImpression(String adId);
-	void onRewarded(String adId, RewardItem reward);
+	void onRewardedInterstitialLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo);
+	void onRewardedInterstitialFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError);
+	void onRewardedInterstitialOpened(AdmobAdInfo adInfo);
+	void onRewardedInterstitialFailedToShow(AdmobAdInfo adInfo, AdError adError);
+	void onRewardedInterstitialClosed(AdmobAdInfo adInfo);
+	void onRewardedClicked(AdmobAdInfo adInfo);
+	void onRewardedAdImpression(AdmobAdInfo adInfo);
+	void onRewarded(AdmobAdInfo adInfo, RewardItem reward);
 }
 
 public class RewardedInterstitial {
 	private static final String CLASS_NAME = RewardedInterstitial.class.getSimpleName();
 	private static final String LOG_TAG = "godot::" + AdmobPlugin.CLASS_NAME + "::" + CLASS_NAME;
 
+	private AdmobAdInfo adInfo;
 	private final String adId;
 	private final LoadAdRequest loadRequest;
 	private final Activity activity;
@@ -41,9 +43,11 @@ public class RewardedInterstitial {
 
 	private RewardedInterstitialAd rewardedAd;
 
-	RewardedInterstitial(final String adId, final LoadAdRequest loadRequest, Activity activity, final RewardedInterstitialListener listener) {
-		this.adId = adId;
-		this.loadRequest = loadRequest;
+	RewardedInterstitial(AdmobAdInfo adInfo, Activity activity, final RewardedInterstitialListener listener) {
+		this.adInfo = adInfo;
+		this.adId = adInfo.getAdId();
+		this.loadRequest = adInfo.getLoadAdRequest();
+
 		this.activity = activity;
 		this.listener = listener;
 		this.rewardedAd = null;
@@ -57,7 +61,7 @@ public class RewardedInterstitial {
 					super.onAdLoaded(rewardedAd);
 					setAd(rewardedAd);
 					Log.i(LOG_TAG, "rewarded interstitial ad loaded");
-					listener.onRewardedInterstitialLoaded(RewardedInterstitial.this.adId, rewardedAd.getResponseInfo());
+					listener.onRewardedInterstitialLoaded(RewardedInterstitial.this.adInfo, rewardedAd.getResponseInfo());
 				}
 
 				@Override
@@ -66,7 +70,7 @@ public class RewardedInterstitial {
 
 					setAd(null); // safety
 					Log.e(LOG_TAG, "rewarded interstitial ad failed to load. errorCode: " + loadAdError.getCode());
-					listener.onRewardedInterstitialFailedToLoad(RewardedInterstitial.this.adId, loadAdError);
+					listener.onRewardedInterstitialFailedToLoad(RewardedInterstitial.this.adInfo, loadAdError);
 				}
 			});
 		});
@@ -77,7 +81,7 @@ public class RewardedInterstitial {
 			activity.runOnUiThread(() -> {
 				rewardedAd.show(activity, rewardItem -> {
 					Log.i(LOG_TAG, String.format("rewarded interstitial ad rewarded! currency: %s amount: %d", rewardItem.getType(), rewardItem.getAmount()));
-					listener.onRewarded(RewardedInterstitial.this.adId, rewardItem);
+					listener.onRewarded(RewardedInterstitial.this.adInfo, rewardItem);
 				});
 			});
 		}
@@ -94,35 +98,35 @@ public class RewardedInterstitial {
 					public void onAdClicked() {
 						super.onAdClicked();
 						Log.i(LOG_TAG, "rewarded interstitial ad clicked");
-						listener.onRewardedClicked(RewardedInterstitial.this.adId);
+						listener.onRewardedClicked(RewardedInterstitial.this.adInfo);
 					}
 
 					@Override
 					public void onAdDismissedFullScreenContent() {
 						super.onAdDismissedFullScreenContent();
 						Log.i(LOG_TAG, "rewarded interstitial ad dismissed full screen content");
-						listener.onRewardedInterstitialClosed(RewardedInterstitial.this.adId);
+						listener.onRewardedInterstitialClosed(RewardedInterstitial.this.adInfo);
 					}
 
 					@Override
 					public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
 						super.onAdFailedToShowFullScreenContent(adError);
 						Log.e(LOG_TAG, "rewarded interstitial ad failed to show full screen content");
-						listener.onRewardedInterstitialFailedToShow(RewardedInterstitial.this.adId, adError);
+						listener.onRewardedInterstitialFailedToShow(RewardedInterstitial.this.adInfo, adError);
 					}
 
 					@Override
 					public void onAdImpression() {
 						super.onAdImpression();
 						Log.i(LOG_TAG, "rewarded interstitial ad impression");
-						listener.onRewardedAdImpression(RewardedInterstitial.this.adId);
+						listener.onRewardedAdImpression(RewardedInterstitial.this.adInfo);
 					}
 
 					@Override
 					public void onAdShowedFullScreenContent() {
 						super.onAdShowedFullScreenContent();
 						Log.i(LOG_TAG, "rewarded interstitial ad showed full screen content");
-						listener.onRewardedInterstitialOpened(RewardedInterstitial.this.adId);
+						listener.onRewardedInterstitialOpened(RewardedInterstitial.this.adInfo);
 					}
 				});
 

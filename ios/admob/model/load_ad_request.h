@@ -39,6 +39,8 @@
 - (BOOL) hasServerSideVerificationOptions;
 - (GADServerSideVerificationOptions *) createGADServerSideVerificationOptions;
 
+- (Dictionary) getRawData;
+
 @end
 
 #endif /* load_ad_request_h */

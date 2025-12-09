@@ -21,6 +21,7 @@ extends Node
 @onready var reload_interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/ReloadInterstitialButton
 @onready var reload_rewarded_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/ReloadRewardedButton
 @onready var reload_rewarded_interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/ReloadRewardedInterstitialButton
+@onready var consent_status_label: Label = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Consent/VBoxContainer/StatusHBoxContainer/ValueLabel
 @onready var _label: RichTextLabel = $CanvasLayer/MainContainer/VBoxContainer/RichTextLabel as RichTextLabel
 @onready var _android_texture_rect: TextureRect = $CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer/AndroidTextureRect as TextureRect
 @onready var _ios_texture_rect: TextureRect = $CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer/iOSTextureRect as TextureRect
@@ -33,6 +34,11 @@ var _is_interstitial_loaded: bool = false
 var _is_rewarded_video_loaded: bool = false
 var _is_rewarded_interstitial_loaded: bool = false
 
+var _consent_status: String = UserConsent.status_to_string(UserConsent.Status.UNKNOWN):
+	set(a_value):
+		_consent_status = a_value
+		consent_status_label.text = a_value
+	
 
 func _ready() -> void:
 	if OS.has_feature("ios"):
@@ -85,7 +91,6 @@ func _load_ads() -> void:
 	else:
 		admob.load_app_open_ad()
 
-	admob.load_banner_ad()
 	admob.load_interstitial_ad()
 	admob.load_rewarded_ad()
 	admob.load_rewarded_interstitial_ad()
@@ -200,121 +205,122 @@ func _on_rewarded_interstitial_button_pressed() -> void:
 
 
 func _on_reset_consent_button_pressed() -> void:
+	_consent_status = UserConsent.status_to_string(UserConsent.Status.UNKNOWN)
 	admob.reset_consent_info()
 
 
-func _on_admob_banner_ad_loaded(ad_id: String, response_info: ResponseInfo, is_collapsible: bool) -> void:
+func _on_admob_banner_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) -> void:
 	_is_banner_loading = false
 	load_banner_button.disabled = false
-	ad_id_option_button.add_item(ad_id)
+	ad_id_option_button.add_item(ad_info.get_ad_id())
 	_update_banner_buttons()
 	_print_to_screen("%sbanner ad loaded by %s network (%s) id: %s" %
-			["collapsible " if is_collapsible else "", response_info.get_network_tag(),
-			response_info.get_adapter_class_name(), ad_id])
+			["collapsible " if ad_info.get_is_collapsible() else "", response_info.get_network_tag(),
+			response_info.get_adapter_class_name(), ad_info.get_ad_id()])
 
 
-func _on_admob_banner_ad_refreshed(ad_id: String, response_info: ResponseInfo, is_collapsible: bool) -> void:
+func _on_admob_banner_ad_refreshed(ad_info: AdInfo, response_info: ResponseInfo) -> void:
 	_print_to_screen("%sbanner refreshed by %s network (%s) ad id: %s" %
-			["collapsible " if is_collapsible else "", response_info.get_network_tag(),
-			response_info.get_adapter_class_name(), ad_id])
+			["collapsible " if ad_info.get_is_collapsible() else "", response_info.get_network_tag(),
+			response_info.get_adapter_class_name(), ad_info.get_ad_id()])
 
 
-func _on_admob_banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError) -> void:
+func _on_admob_banner_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError) -> void:
 	_print_to_screen("banner %s failed to load. error: %d, message: %s" %
-				[ad_id, error_data.get_code(), error_data.get_message()], true)
+				[ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()], true)
 	_is_banner_loading = false
 	load_banner_button.disabled = false
 
 
-func _on_admob_interstitial_ad_loaded(ad_id: String, response_info: ResponseInfo) -> void:
+func _on_admob_interstitial_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) -> void:
 	_is_interstitial_loaded = true
 	interstitial_button.disabled = false
 	_print_to_screen("interstitial ad loaded by %s network (%s) id: %s" %
-			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_id])
+			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()])
 
 
-func _on_admob_interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError) -> void:
+func _on_admob_interstitial_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError) -> void:
 	_print_to_screen("interstitial %s failed to load. error: %d, message: %s" %
-				[ad_id, error_data.get_code(), error_data.get_message()], true)
+				[ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()], true)
 	reload_interstitial_button.disabled = false
 
 
-func _on_admob_interstitial_ad_refreshed(ad_id: String, response_info: ResponseInfo) -> void:
+func _on_admob_interstitial_ad_refreshed(ad_info: AdInfo, response_info: ResponseInfo) -> void:
 	_print_to_screen("interstitial refreshed by %s network (%s) ad id: %s" %
-			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_id])
+			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()])
 
 
-func _on_admob_interstitial_ad_dismissed_full_screen_content(ad_id: String) -> void:
-	_print_to_screen("interstitial closed: %s" % ad_id)
+func _on_admob_interstitial_ad_dismissed_full_screen_content(ad_info: AdInfo) -> void:
+	_print_to_screen("interstitial closed: %s" % ad_info.get_ad_id())
 
 
-func _on_admob_rewarded_ad_loaded(ad_id: String, response_info: ResponseInfo) -> void:
+func _on_admob_rewarded_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) -> void:
 	_is_rewarded_video_loaded = true
 	rewarded_button.disabled = false
 	_print_to_screen("rewarded video ad loaded by %s network (%s) id: %s" %
-			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_id])
+			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()])
 
 
-func _on_admob_rewarded_ad_failed_to_load(ad_id: String, error_data: LoadAdError) -> void:
+func _on_admob_rewarded_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError) -> void:
 	_print_to_screen("rewarded video %s failed to load. error: %d, message: %s" %
-				[ad_id, error_data.get_code(), error_data.get_message()], true)
+				[ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()], true)
 	reload_rewarded_button.disabled = true
 
 
-func _on_admob_rewarded_ad_user_earned_reward(ad_id: String, reward_data: RewardItem) -> void:
+func _on_admob_rewarded_ad_user_earned_reward(ad_info: AdInfo, reward_data: RewardItem) -> void:
 	_print_to_screen("user rewarded for rewarded ad '%s' with %d %s" %
-				[ad_id, reward_data.get_amount(), reward_data.get_type()])
+				[ad_info.get_ad_id(), reward_data.get_amount(), reward_data.get_type()])
 
 
-func _on_admob_rewarded_interstitial_ad_loaded(ad_id: String, response_info: ResponseInfo) -> void:
+func _on_admob_rewarded_interstitial_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) -> void:
 	_is_rewarded_interstitial_loaded = true
 	rewarded_interstitial_button.disabled = false
 	_print_to_screen("rewarded interstitial ad loaded by %s network (%s) id: %s" %
-			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_id])
+			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()])
 
 
-func _on_admob_rewarded_interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError) -> void:
+func _on_admob_rewarded_interstitial_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError) -> void:
 	_print_to_screen("rewarded interstitial %s failed to load. error: %d, message: %s" %
-				[ad_id, error_data.get_code(), error_data.get_message()], true)
+				[ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()], true)
 	reload_rewarded_interstitial_button.disabled = false
 
 
-func _on_admob_rewarded_interstitial_ad_user_earned_reward(ad_id: String, reward_data: RewardItem) -> void:
+func _on_admob_rewarded_interstitial_ad_user_earned_reward(ad_info: AdInfo, reward_data: RewardItem) -> void:
 	_print_to_screen("user rewarded for rewarded interstitial ad '%s' with %d %s" %
-				[ad_id, reward_data.get_amount(), reward_data.get_type()])
+				[ad_info.get_ad_id(), reward_data.get_amount(), reward_data.get_type()])
 
 
-func _on_admob_app_open_ad_loaded(ad_id: String, response_info: ResponseInfo) -> void:
+func _on_admob_app_open_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) -> void:
 	_print_to_screen("app open ad loaded by %s network (%s) id: %s" %
-			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_id])
+			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()])
 	if not _is_app_open_ad_displayed_at_startup:
 		admob.show_app_open_ad()
 
 
-func _on_admob_app_open_ad_failed_to_load(ad_id: String, error_data: LoadAdError) -> void:
+func _on_admob_app_open_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError) -> void:
 	_print_to_screen("app open ad %s failed to load. error: %d, message: %s" %
-				[ad_id, error_data.get_code(), error_data.get_message()], true)
+				[ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()], true)
 
 
-func _on_admob_app_open_ad_showed_full_screen_content(ad_id: String) -> void:
-	_print_to_screen("app open showed full-screen content: %s" % ad_id)
+func _on_admob_app_open_ad_showed_full_screen_content(ad_info: AdInfo) -> void:
+	_print_to_screen("app open showed full-screen content: %s" % ad_info.get_ad_id())
 	_is_app_open_ad_displayed_at_startup = true
 
 
-func _on_admob_app_open_ad_impression(ad_id: String) -> void:
-	_print_to_screen("app open ad impression: %s" % ad_id)
+func _on_admob_app_open_ad_impression(ad_info: AdInfo) -> void:
+	_print_to_screen("app open ad impression: %s" % ad_info.get_ad_id())
 	_is_app_open_ad_displayed_at_startup = true
 
 
-func _on_admob_app_open_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError) -> void:
+func _on_admob_app_open_ad_failed_to_show_full_screen_content(ad_info: AdInfo, error_data: AdError) -> void:
 	_print_to_screen("app open ad %s failed to show. error: %d, message: %s" %
-				[ad_id, error_data.get_code(), error_data.get_message()], true)
+				[ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()], true)
 	_is_app_open_ad_displayed_at_startup = true
 	admob.load_app_open_ad()
 
 
-func _on_admob_app_open_ad_dismissed_full_screen_content(ad_id: String) -> void:
-	_print_to_screen("app open dismissed: %s" % ad_id)
+func _on_admob_app_open_ad_dismissed_full_screen_content(ad_info: AdInfo) -> void:
+	_print_to_screen("app open dismissed: %s" % ad_info.get_ad_id())
 	admob.load_app_open_ad()
 
 
@@ -327,19 +333,20 @@ func _on_admob_consent_info_update_failed(a_error_data: FormError) -> void:
 	_print_to_screen("consent info failed to update: %s" % a_error_data.get_message())
 
 
-func _process_consent_status(a_consent_status: String) -> void:
-	_print_to_screen("_process_consent_status(): consent status = %s" % a_consent_status)
-	match a_consent_status:
-		ConsentInformation.ConsentStatus.UNKNOWN:
+func _process_consent_status(a_consent_status: UserConsent) -> void:
+	_consent_status = a_consent_status.to_status_string()
+	_print_to_screen("_process_consent_status(): consent status = %s" % _consent_status)
+	match a_consent_status.status:
+		UserConsent.Status.UNKNOWN:
 			_print_to_screen("consent status is unknown")
 			admob.update_consent_info()
-		ConsentInformation.ConsentStatus.NOT_REQUIRED:
+		UserConsent.Status.NOT_REQUIRED:
 			_print_to_screen("consent is not required")
 			_load_ads()
-		ConsentInformation.ConsentStatus.REQUIRED:
+		UserConsent.Status.REQUIRED:
 			_print_to_screen("consent is required")
 			admob.load_consent_form()
-		ConsentInformation.ConsentStatus.OBTAINED:
+		UserConsent.Status.OBTAINED:
 			_print_to_screen("consent has been obtained")
 			admob.set_mediation_privacy_settings(NetworkPrivacySettings.new()
 					.set_has_gdpr_consent(true)
