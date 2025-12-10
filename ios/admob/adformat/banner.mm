@@ -41,9 +41,13 @@
 
 	[self addBanner];
 
+	// Create the request on the current thread (Game Thread) to safely access Godot data
+	GADRequest *request = [loadAdRequest createGADRequest];
+
 	dispatch_async(dispatch_get_main_queue(), ^{
-		[self.bannerView loadRequest:[loadAdRequest createGADRequest]];
-    });
+		// Pass the pre-created request to the Main Thread
+		[self.bannerView loadRequest:request];
+	});
 }
 
 - (void) destroy {
@@ -58,7 +62,7 @@
 
 		[self.bannerView removeFromSuperview];
 		self.bannerView = nil;
-    });
+	});
 }
 
 - (void) hide {
