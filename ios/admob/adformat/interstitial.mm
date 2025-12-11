@@ -35,42 +35,38 @@
 
 	GADRequest* gadRequest = [loadAdRequest createGADRequest];
 
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[GADInterstitialAd loadWithAdUnitID:[loadAdRequest adUnitId] request:gadRequest completionHandler:^(GADInterstitialAd* ad, NSError* error) {
-			if (error) {
-				AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
-				os_log_error(admob_log, "failed to load InterstitialAd with error: %@", loadAdError.message);
-				AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL,
-							[self.adInfo buildRawData],
-							[loadAdError buildRawData]);
+	[GADInterstitialAd loadWithAdUnitID:[loadAdRequest adUnitId] request:gadRequest completionHandler:^(GADInterstitialAd* ad, NSError* error) {
+		if (error) {
+			AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
+			os_log_error(admob_log, "failed to load InterstitialAd with error: %@", loadAdError.message);
+			AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL,
+						[self.adInfo buildRawData],
+						[loadAdError buildRawData]);
+		}
+		else {
+			self.interstitial = ad;
+			self.interstitial.fullScreenContentDelegate = self;
+
+			if (self.isLoaded) {
+				os_log_debug(admob_log, "InterstitialAd %@ refreshed", self.adId);
+				AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_REFRESHED_SIGNAL,
+						[self.adInfo buildRawData],
+						[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
 			}
 			else {
-				self.interstitial = ad;
-				self.interstitial.fullScreenContentDelegate = self;
-
-				if (self.isLoaded) {
-					os_log_debug(admob_log, "InterstitialAd %@ refreshed", self.adId);
-					AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_REFRESHED_SIGNAL,
-							[self.adInfo buildRawData],
-							[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
-				}
-				else {
-					self.isLoaded = YES;
-					os_log_debug(admob_log, "InterstitialAd %@ loaded successfully", self.adId);
-					AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_LOADED_SIGNAL,
-							[self.adInfo buildRawData],
-							[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
-				}
+				self.isLoaded = YES;
+				os_log_debug(admob_log, "InterstitialAd %@ loaded successfully", self.adId);
+				AdmobPlugin::get_singleton()->emit_signal(INTERSTITIAL_AD_LOADED_SIGNAL,
+						[self.adInfo buildRawData],
+						[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
 			}
-		}];
-    });
+		}
+	}];
 }
 
 - (void) show {
 	if (self.interstitial) {
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self.interstitial presentFromRootViewController:[GDTAppDelegateService viewController]];
-		});
+		[self.interstitial presentFromRootViewController:[GDTAppDelegateService viewController]];
 	}
 	else {
 		os_log_debug(admob_log, "InterstitialAd show: ad not set");

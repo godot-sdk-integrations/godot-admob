@@ -299,14 +299,16 @@ Error AdmobPlugin::load_banner_ad(Dictionary adData) {
 		return FAILED;
 	}
 
-	LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: adData];
-	NSString* adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++bannerAdSequence];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: adData];
+		NSString* adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++bannerAdSequence];
 
-	BannerAd* ad = [[BannerAd alloc] initWithID:adId];
+		BannerAd* ad = [[BannerAd alloc] initWithID:adId];
 
-	bannerAds[adId] = ad;
+		bannerAds[adId] = ad;
 
-	[ad load: loadAdRequest];
+		[ad load: loadAdRequest];
+    });
 
 	return OK;
 }
@@ -314,59 +316,79 @@ Error AdmobPlugin::load_banner_ad(Dictionary adData) {
 void AdmobPlugin::show_banner_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin show_banner_ad %s", adId.utf8().get_data());
 
-	BannerAd* ad = (BannerAd*) bannerAds[[GAPConverter toNsString:adId]];
-	if (ad) {
-		[ad show];
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		BannerAd* ad = (BannerAd*) bannerAds[[GAPConverter toNsString:adId]];
+		if (ad) {
+			[ad show];
+		} else {
+			os_log_error(admob_log, "AdmobPlugin show_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		}
+    });
 }
 
 void AdmobPlugin::hide_banner_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin hide_banner_ad %s", adId.utf8().get_data());
 
-	BannerAd* ad = (BannerAd*) bannerAds[[GAPConverter toNsString:adId]];
-	if (ad) {
-		[ad hide];
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		BannerAd* ad = (BannerAd*) bannerAds[[GAPConverter toNsString:adId]];
+		if (ad) {
+			[ad hide];
+		} else {
+			os_log_error(admob_log, "AdmobPlugin hide_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		}
+    });
 }
 
 void AdmobPlugin::remove_banner_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin remove_banner_ad %s", adId.utf8().get_data());
 
-	NSString* key = [GAPConverter toNsString:adId];
-	if (bannerAds[key]) {
-		[bannerAds[key] destroy];
-		[bannerAds removeObjectForKey:key];
-	}
-	else {
-		os_log_error(admob_log, "AdmobPlugin remove_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		NSString* key = [GAPConverter toNsString:adId];
+		if (bannerAds[key]) {
+			[bannerAds[key] destroy];
+			[bannerAds removeObjectForKey:key];
+		} else {
+			os_log_error(admob_log, "AdmobPlugin remove_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		}
+    });
 }
 
 void AdmobPlugin::move_banner_ad(String adId, real_t x, real_t y) {
 	os_log_debug(admob_log, "AdmobPlugin move_banner_ad('%s',%.2f,%.2f)", adId.utf8().get_data(), x, y);
-	BannerAd* banner = [bannerAds objectForKey:[GAPConverter toNsString:adId]];
-	if (banner) {
-		[banner moveToX:x y:y];
-	}
+
+	dispatch_async(dispatch_get_main_queue(), ^{
+		BannerAd* banner = [bannerAds objectForKey:[GAPConverter toNsString:adId]];
+		if (banner) {
+			[banner moveToX:x y:y];
+		} else {
+			os_log_error(admob_log, "AdmobPlugin remove_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		}
+    });
 }
 
 int AdmobPlugin::get_banner_width(String adId) {
-	os_log_debug(admob_log, "AdmobPlugin get_width %s", adId.utf8().get_data());
+	os_log_debug(admob_log, "AdmobPlugin get_banner_width %s", adId.utf8().get_data());
 
 	BannerAd* ad = (BannerAd*) bannerAds[[GAPConverter toNsString:adId]];
 	if (ad) {
 		return [ad getWidth];
+	} else {
+		os_log_error(admob_log, "AdmobPlugin get_banner_width: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 	}
+
 	return -1;
 }
 
 int AdmobPlugin::get_banner_height(String adId) {
-	os_log_debug(admob_log, "AdmobPlugin get_height %s", adId.utf8().get_data());
+	os_log_debug(admob_log, "AdmobPlugin get_banner_height %s", adId.utf8().get_data());
 
 	BannerAd* ad = (BannerAd*) bannerAds[[GAPConverter toNsString:adId]];
 	if (ad) {
 		return [ad getHeight];
+	} else {
+		os_log_error(admob_log, "AdmobPlugin get_banner_height: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 	}
+
 	return -1;
 }
 
@@ -376,7 +398,10 @@ int AdmobPlugin::get_banner_width_in_pixels(String adId) {
 	BannerAd* ad = (BannerAd*) bannerAds[[GAPConverter toNsString:adId]];
 	if (ad) {
 		return [ad getWidthInPixels];
+	} else {
+		os_log_error(admob_log, "AdmobPlugin get_width_in_pixels: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 	}
+
 	return -1;
 }
 
@@ -386,7 +411,10 @@ int AdmobPlugin::get_banner_height_in_pixels(String adId) {
 	BannerAd* ad = (BannerAd*) bannerAds[[GAPConverter toNsString:adId]];
 	if (ad) {
 		return [ad getHeightInPixels];
+	} else {
+		os_log_error(admob_log, "AdmobPlugin get_width_in_pixels: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 	}
+
 	return -1;
 }
 
@@ -398,14 +426,16 @@ Error AdmobPlugin::load_interstitial_ad(Dictionary adData) {
 		return FAILED;
 	}
 
-	LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: adData];
-	NSString* adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++interstitialAdSequence];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: adData];
+		NSString* adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++interstitialAdSequence];
 
-	InterstitialAd *ad = [[InterstitialAd alloc] initWithID:adId];
+		InterstitialAd *ad = [[InterstitialAd alloc] initWithID:adId];
 
-	interstitialAds[adId] = ad;
+		interstitialAds[adId] = ad;
 
-	[ad load: loadAdRequest];
+		[ad load: loadAdRequest];
+    });
 
 	return OK;
 }
@@ -413,25 +443,27 @@ Error AdmobPlugin::load_interstitial_ad(Dictionary adData) {
 void AdmobPlugin::show_interstitial_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin show_interstitial_ad %s", adId.utf8().get_data());
 
-	InterstitialAd* ad = (InterstitialAd*) interstitialAds[[GAPConverter toNsString:adId]];
-	if (ad) {
-		[ad show];
-	}
-	else {
-		os_log_error(admob_log, "AdmobPlugin show_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		InterstitialAd* ad = (InterstitialAd*) interstitialAds[[GAPConverter toNsString:adId]];
+		if (ad) {
+			[ad show];
+		} else {
+			os_log_error(admob_log, "AdmobPlugin show_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		}
+    });
 }
 
 void AdmobPlugin::remove_interstitial_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin remove_interstitial_ad %s", adId.utf8().get_data());
 
-	NSString* key = [GAPConverter toNsString:adId];
-	if (interstitialAds[key]) {
-		[interstitialAds removeObjectForKey:key];
-	}
-	else {
-		os_log_error(admob_log, "AdmobPlugin remove_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		NSString* key = [GAPConverter toNsString:adId];
+		if (interstitialAds[key]) {
+			[interstitialAds removeObjectForKey:key];
+		} else {
+			os_log_error(admob_log, "AdmobPlugin remove_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		}
+    });
 }
 
 Error AdmobPlugin::load_rewarded_ad(Dictionary adData) {
@@ -442,14 +474,16 @@ Error AdmobPlugin::load_rewarded_ad(Dictionary adData) {
 		return FAILED;
 	}
 
-	LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: adData];
-	NSString* adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++rewardedAdSequence];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: adData];
+		NSString* adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++rewardedAdSequence];
 
-	RewardedAd *ad = [[RewardedAd alloc] initWithID:adId];
+		RewardedAd *ad = [[RewardedAd alloc] initWithID:adId];
 
-	rewardedAds[adId] = ad;
+		rewardedAds[adId] = ad;
 
-	[ad load: loadAdRequest];
+		[ad load: loadAdRequest];
+    });
 
 	return OK;
 }
@@ -457,25 +491,27 @@ Error AdmobPlugin::load_rewarded_ad(Dictionary adData) {
 void AdmobPlugin::show_rewarded_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin show_rewarded_ad %s", adId.utf8().get_data());
 
-	RewardedAd* ad = (RewardedAd*) rewardedAds[[GAPConverter toNsString:adId]];
-	if (ad) {
-		[ad show];
-	}
-	else {
-		os_log_error(admob_log, "AdmobPlugin show_rewarded_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		RewardedAd* ad = (RewardedAd*) rewardedAds[[GAPConverter toNsString:adId]];
+		if (ad) {
+			[ad show];
+		} else {
+			os_log_error(admob_log, "AdmobPlugin show_rewarded_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		}
+    });
 }
 
 void AdmobPlugin::remove_rewarded_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin remove_rewarded_ad %s", adId.utf8().get_data());
 
-	NSString* key = [GAPConverter toNsString:adId];
-	if (rewardedAds[key]) {
-		[rewardedAds removeObjectForKey:key];
-	}
-	else {
-		os_log_error(admob_log, "AdmobPlugin remove_rewarded_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		NSString* key = [GAPConverter toNsString:adId];
+		if (rewardedAds[key]) {
+			[rewardedAds removeObjectForKey:key];
+		} else {
+			os_log_error(admob_log, "AdmobPlugin remove_rewarded_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		}
+    });
 }
 
 Error AdmobPlugin::load_rewarded_interstitial_ad(Dictionary adData) {
@@ -486,14 +522,16 @@ Error AdmobPlugin::load_rewarded_interstitial_ad(Dictionary adData) {
 		return FAILED;
 	}
 
-	LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: adData];
-	NSString* adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++rewardedInterstitialAdSequence];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: adData];
+		NSString* adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++rewardedInterstitialAdSequence];
 
-	RewardedInterstitialAd *ad = [[RewardedInterstitialAd alloc] initWithID:adId];
+		RewardedInterstitialAd *ad = [[RewardedInterstitialAd alloc] initWithID:adId];
 
-	rewardedInterstitialAds[adId] = ad;
+		rewardedInterstitialAds[adId] = ad;
 
-	[ad load: loadAdRequest];
+		[ad load: loadAdRequest];
+    });
 
 	return OK;
 }
@@ -501,55 +539,75 @@ Error AdmobPlugin::load_rewarded_interstitial_ad(Dictionary adData) {
 void AdmobPlugin::show_rewarded_interstitial_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin show_rewarded_interstitial_ad %s", adId.utf8().get_data());
 
-	RewardedInterstitialAd* ad = (RewardedInterstitialAd*) rewardedInterstitialAds[[GAPConverter toNsString:adId]];
-	if (ad) {
-		[ad show];
-	}
-	else {
-		os_log_error(admob_log, "AdmobPlugin show_rewarded_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		RewardedInterstitialAd* ad = (RewardedInterstitialAd*) rewardedInterstitialAds[[GAPConverter toNsString:adId]];
+		if (ad) {
+			[ad show];
+		} else {
+			os_log_error(admob_log, "AdmobPlugin show_rewarded_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		}
+    });
 }
 
 void AdmobPlugin::remove_rewarded_interstitial_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin remove_rewarded_interstitial_ad %s", adId.utf8().get_data());
 
-	NSString* key = [GAPConverter toNsString:adId];
-	if (rewardedInterstitialAds[key]) {
-		[rewardedInterstitialAds removeObjectForKey:key];
-	}
-	else {
-		os_log_error(admob_log, "AdmobPlugin remove_rewarded_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
-	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		NSString* key = [GAPConverter toNsString:adId];
+		if (rewardedInterstitialAds[key]) {
+			[rewardedInterstitialAds removeObjectForKey:key];
+		}
+		else {
+			os_log_error(admob_log, "AdmobPlugin remove_rewarded_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		}
+    });
 }
 
-void AdmobPlugin::load_app_open_ad(Dictionary requestDict, bool autoShowOnResume) {
-	LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: requestDict];
-	NSString* nsAdUnitId = [loadAdRequest adUnitId];
-	os_log_debug(admob_log, "%@ load_app_open_ad: %@", kLogTag, nsAdUnitId);
-	if (this->appOpenAd == nil) {
-		this->appOpenAd = [[AppOpenAd alloc] initWithPlugin:this];
+Error AdmobPlugin::load_app_open_ad(Dictionary requestDict, bool autoShowOnResume) {
+	os_log_debug(admob_log, "AdmobPlugin load_app_open_ad");
+
+	if (initialized == false) {
+		os_log_error(admob_log, "AdmobPlugin has not been initialized");
+		return FAILED;
 	}
-	[this->appOpenAd loadWithRequest:loadAdRequest autoShowOnResume:autoShowOnResume];
+
+	dispatch_async(dispatch_get_main_queue(), ^{
+		LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: requestDict];
+		NSString* nsAdUnitId = [loadAdRequest adUnitId];
+		os_log_debug(admob_log, "%@ load_app_open_ad: %@", kLogTag, nsAdUnitId);
+		if (this->appOpenAd == nil) {
+			this->appOpenAd = [[AppOpenAd alloc] initWithPlugin:this];
+		}
+		[this->appOpenAd loadWithRequest:loadAdRequest autoShowOnResume:autoShowOnResume];
+    });
+
+	return OK;
 }
 
 void AdmobPlugin::show_app_open_ad() {
 	os_log_debug(admob_log, "%@ show_app_open_ad", kLogTag);
-	if (this->appOpenAd == nil) {
-		os_log_debug(admob_log, "%@ Cannot show app open ad: ad instance is nil", kLogTag);
-	} else {
-		[this->appOpenAd show];
-	}
+
+	dispatch_async(dispatch_get_main_queue(), ^{
+		if (this->appOpenAd == nil) {
+			os_log_debug(admob_log, "%@ Cannot show app open ad: ad instance is nil", kLogTag);
+		} else {
+			[this->appOpenAd show];
+		}
+    });
 }
 
 bool AdmobPlugin::is_app_open_ad_available() {
-	bool isAvailable;
 	os_log_debug(admob_log, "%@ is_app_open_ad_available", kLogTag);
+
+	bool isAvailable;
+
 	if (this->appOpenAd == nil) {
 		os_log_debug(admob_log, "%@ Cannot show app open ad: ad instance is nil", kLogTag);
 		isAvailable = false;
 	} else {
 		isAvailable = [this->appOpenAd isAvailable];
 	}
+
 	return isAvailable;
 }
 

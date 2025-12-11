@@ -94,9 +94,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 		} else {
 			self.isShowing = YES;
 
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[self.loadedAd presentFromRootViewController:rootVC];
-			});
+			[self.loadedAd presentFromRootViewController:rootVC];
 		}
 	}
 }

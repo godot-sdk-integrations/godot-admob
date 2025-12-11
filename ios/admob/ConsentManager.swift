@@ -9,9 +9,21 @@ import UIKit
 
 @objc public class ConsentManager: NSObject {
 
-	private static let logger = Logger(subsystem: "org.godotengine.plugin.admob", category: "AdmobPlugin")
+	private static let logger = Logger(
+		subsystem: "org.godotengine.plugin.admob",
+		category: "AdmobPlugin"
+	)
 
 	private var umpForm: ConsentForm?
+
+	// Utility: Always run work on the main thread
+	private func runOnMain(_ block: @escaping () -> Void) {
+		if Thread.isMainThread {
+			block()
+		} else {
+			DispatchQueue.main.async(execute: block)
+		}
+	}
 
 	@objc public func getConsentStatusString() -> String {
 		let status = ConsentInformation.shared.consentStatus
@@ -38,41 +50,57 @@ import UIKit
 		ConsentInformation.shared.reset()
 	}
 
-	@objc public func requestConsentInfoUpdate(with parameters: RequestParameters, completion: @escaping (NSError?) -> Void) {
+	@objc public func requestConsentInfoUpdate(
+		with parameters: RequestParameters,
+		completion: @escaping (NSError?) -> Void
+	) {
 		ConsentInformation.shared.requestConsentInfoUpdate(with: parameters) { error in
 			completion(error as NSError?)
 		}
 	}
 
 	@objc public func loadForm(completion: @escaping (NSError?) -> Void) {
-		ConsentForm.load { [weak self] form, error in
-			if let error = error {
-				completion(error as NSError)
-				return
+		runOnMain { [weak self] in
+			ConsentForm.load { form, error in
+				if let error = error {
+					completion(error as NSError)
+					return
+				}
+				self?.umpForm = form
+				completion(nil)
 			}
-			self?.umpForm = form
-			completion(nil)
 		}
 	}
 
-	@objc public func showForm(from viewController: UIViewController, completion: @escaping (NSError?) -> Void) {
-		guard let form = umpForm else {
-			let error = NSError(domain: "org.godotengine.plugin.admob", code: -1, userInfo: [NSLocalizedDescriptionKey: "Consent form not loaded"])
-			completion(error)
-			return
+	@objc public func showForm(
+		from viewController: UIViewController,
+		completion: @escaping (NSError?) -> Void
+	) {
+		runOnMain { [weak self] in
+			guard let self = self else { return }
+
+			guard let form = self.umpForm else {
+				let error = NSError(
+					domain: "org.godotengine.plugin.admob",
+					code: -1,
+					userInfo: [NSLocalizedDescriptionKey: "Consent form not loaded"]
+				)
+				completion(error)
+				return
+			}
+
+			let wrapper = ConsentWrapperViewController()
+			wrapper.wrappedForm = form
+			wrapper.presentationCompletion = completion
+			wrapper.modalPresentationStyle = .fullScreen
+
+			viewController.present(wrapper, animated: true, completion: nil)
 		}
-
-		let wrapper = ConsentWrapperViewController()
-		wrapper.wrappedForm = form
-		wrapper.presentationCompletion = completion
-		wrapper.modalPresentationStyle = .fullScreen
-
-		viewController.present(wrapper, animated: true, completion: nil)
 	}
 }
 
-
 class ConsentWrapperViewController: UIViewController {
+
 	var wrappedForm: ConsentForm?
 	var presentationCompletion: ((NSError?) -> Void)?
 
@@ -87,12 +115,13 @@ class ConsentWrapperViewController: UIViewController {
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 
-		if let form = wrappedForm {
-			form.present(from: self) { [weak self] error in
-				self?.presentationCompletion?(error as NSError?)
-				self?.dismiss(animated: false, completion: nil)
-			}
-			self.wrappedForm = nil
+		guard let form = wrappedForm else { return }
+
+		form.present(from: self) { [weak self] error in
+			self?.presentationCompletion?(error as NSError?)
+			self?.dismiss(animated: false, completion: nil)
 		}
+
+		wrappedForm = nil
 	}
 }
