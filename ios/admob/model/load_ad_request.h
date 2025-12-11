@@ -25,6 +25,7 @@
 - (NSString*) adPosition;
 - (BOOL) hasCollapsiblePosition;
 - (NSString*) collapsiblePosition;
+- (BOOL) anchorToSafeArea;
 - (NSArray*) keywords;
 - (BOOL) hasUserId;
 - (NSString*) userId;

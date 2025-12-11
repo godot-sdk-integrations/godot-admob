@@ -18,6 +18,7 @@ const String ADAPTIVE_WIDTH_PROPERTY = "adaptive_width";
 const String ADAPTIVE_MAX_HEIGHT_PROPERTY = "adaptive_max_height";
 const String AD_POSITION_PROPERTY = "ad_position";
 const String COLLAPSIBLE_POSITION_PROPERTY = "collapsible_position";
+const String ANCHOR_TO_SAFE_AREA_PROPERTY  = "anchor_to_safe_area";
 const String KEYWORDS_PROPERTY = "keywords";
 const String USER_ID_PROPERTY = "user_id";
 const String CUSTOM_DATA_PROPERTY = "custom_data";
@@ -88,6 +89,10 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 
 - (NSString*) collapsiblePosition {
 	return self.rawData.has(COLLAPSIBLE_POSITION_PROPERTY) ? [GAPConverter toNsString: (String) self.rawData[COLLAPSIBLE_POSITION_PROPERTY]] : @"";
+}
+
+- (BOOL) anchorToSafeArea {
+	return self.rawData.has(ANCHOR_TO_SAFE_AREA_PROPERTY) ? (BOOL) self.rawData[ANCHOR_TO_SAFE_AREA_PROPERTY] : NO;
 }
 
 - (NSArray*) keywords {

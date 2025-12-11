@@ -111,6 +111,19 @@ text = "Collapsible Position:"
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="AnchorHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/AnchorHBoxContainer"]
+layout_mode = 2
+text = "Anchor At Safe Area:"
+
+[node name="CheckBox" type="CheckBox" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/AnchorHBoxContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="LoadButtonHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner"]
 layout_mode = 2
 size_flags_horizontal = 4

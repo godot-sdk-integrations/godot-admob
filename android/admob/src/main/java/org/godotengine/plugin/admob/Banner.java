@@ -14,6 +14,9 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.graphics.Insets;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdSize;
@@ -77,6 +80,7 @@ public class Banner {
 	private AdView adView; // Banner view
 	private FrameLayout.LayoutParams adParams;
 	private AdListener adListener;
+	private boolean anchorToSafeArea;
 
 	private boolean firstLoad;
 
@@ -99,6 +103,7 @@ public class Banner {
 		}
 
 		this.adPosition = this.loadRequest.hasAdPosition() ? AdPosition.valueOf(this.loadRequest.getAdPosition()) : AdPosition.TOP;
+		this.anchorToSafeArea = this.loadRequest.doAnchorToSafeArea();
 
 		firstLoad = true;
 
@@ -166,6 +171,19 @@ public class Banner {
 				// Add to layout and load ad
 				layout.addView(adView, adParams);
 
+				if (anchorToSafeArea && adPosition != AdPosition.CUSTOM) {
+					ViewCompat.requestApplyInsets(adView);
+
+					// Force manual application using parent's insets
+					WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(layout);
+					if (rootInsets != null) {
+						Log.d(LOG_TAG, "Banner.show: Manually applying insets from parent layout.");
+						applyInsets(adView, rootInsets);
+					} else {
+						Log.w(LOG_TAG, "Banner.show: Parent insets are null, relying on listener (which might not fire).");
+					}
+				}
+
 				adView.post(() -> {
 					// Convert Pixels to DP so Godot receives logical units
 					DisplayMetrics outMetrics = activity.getApplicationContext().getResources().getDisplayMetrics();
@@ -229,8 +247,79 @@ public class Banner {
 		adView.setVisibility(View.GONE);
 		adView.pause();
 
+		if (anchorToSafeArea && adPosition != AdPosition.CUSTOM) {
+			// Set the listener to handle updates (like rotation) if the system dispatches them later
+			ViewCompat.setOnApplyWindowInsetsListener(adView, (view, insets) -> {
+				applyInsets(view, insets);
+				return insets;
+			});
+		}
+
 		// Request
 		adView.loadAd(loadRequest.createAdRequest());
+	}
+
+	/**
+	 * Helper method to calculate and apply safe area insets to the Banner margins.
+	 */
+	private void applyInsets(View view, WindowInsetsCompat insets) {
+		// Get insets for System Bars (Status/Nav Bar)
+		Insets systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+		int topInset = systemBarInsets.top;
+		int bottomInset = systemBarInsets.bottom;
+		int leftInset = systemBarInsets.left;
+		int rightInset = systemBarInsets.right;
+
+		// This section primarily addresses device cutouts (like notches/camera holes)
+		Insets cutoutInsets = insets.getInsets(WindowInsetsCompat.Type.displayCutout());
+
+		// Combine the insets (take the max to include both system bars and cutouts)
+		topInset = Math.max(topInset, cutoutInsets.top);
+		bottomInset = Math.max(bottomInset, cutoutInsets.bottom);
+		leftInset = Math.max(leftInset, cutoutInsets.left);
+		rightInset = Math.max(rightInset, cutoutInsets.right);
+
+		Log.d(LOG_TAG, String.format("Anchor to Safe Area: Insets (T, B, L, R) in Pixels: %d, %d, %d, %d",
+				topInset, bottomInset, leftInset, rightInset));
+
+		FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
+		// Reset margins
+		params.topMargin = 0;
+		params.bottomMargin = 0;
+		params.leftMargin = 0;
+		params.rightMargin = 0;
+
+		switch (adPosition) {
+			case TOP:
+				params.topMargin = topInset;
+				break;
+			case BOTTOM:
+				params.bottomMargin = bottomInset;
+				break;
+			case LEFT:
+				params.leftMargin = leftInset;
+				break;
+			case RIGHT:
+				params.rightMargin = rightInset;
+				break;
+			case TOP_LEFT:
+				params.topMargin = topInset;
+				params.leftMargin = leftInset;
+				break;
+			case TOP_RIGHT:
+				params.topMargin = topInset;
+				params.rightMargin = rightInset;
+				break;
+			case BOTTOM_LEFT:
+				params.bottomMargin = bottomInset;
+				params.leftMargin = leftInset;
+				break;
+			case BOTTOM_RIGHT:
+				params.bottomMargin = bottomInset;
+				params.rightMargin = rightInset;
+				break;
+		}
+		view.setLayoutParams(params);
 	}
 
 	public void move(final float x, final float y) {
