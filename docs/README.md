@@ -296,7 +296,7 @@ The following ad types are supported:
 
 ### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> LoadAdRequest
 - Encapsulates data that defines a request for an ad.
-- Properties: `ad_unit_id`, `request_agent`, `ad_size`, `ad_position`, `keywords`, `user_id`, `collapsible_position`, `custom_data`, `network_extras`
+- Properties: `ad_unit_id`, `request_agent`, `ad_size`, `ad_position`, `keywords`, `user_id`, `collapsible_position`, `anchor_to_safe_area`, `custom_data`, `network_extras`
 
 ### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> MediationNetwork
 - Encapsulates data that defines an ad mediation network.
@@ -361,6 +361,8 @@ Banner position can be set to the following values:
 - BOTTOM-LEFT
 - BOTTOM-RIGHT
 - CENTER
+
+_Note: Use `LoadAdRequest`'s `set_anchor_to_safe_area` method to position banner ads within the device’s safe area, leaving space at the top or bottom to avoid UI elements such as notches, rounded corners, and home indicator bars. When set to `false`, the banner will be anchored directly to the top or bottom edge of the screen, ignoring safe area insets._
 
 ### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="18"> Banner Size
 - The following methods return the size of a Banner ad:

@@ -15,6 +15,7 @@ extends Node
 @onready var banner_position_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/PositionHBoxContainer/OptionButton
 @onready var banner_size_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeHBoxContainer/OptionButton
 @onready var banner_collapsible_pos_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer/OptionButton
+@onready var banner_anchor_at_safe_area_check_box: CheckBox = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/AnchorHBoxContainer/CheckBox
 @onready var interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/InterstitialButton
 @onready var rewarded_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/RewardedButton
 @onready var rewarded_interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/RewardedInterstitialButton
@@ -116,9 +117,12 @@ func _update_banner_buttons() -> void:
 
 
 func _on_load_banner_button_pressed() -> void:
+	load_banner_button.disabled = true
+
 	admob.banner_position = LoadAdRequest.AdPosition[banner_position_option_button.get_item_text(banner_position_option_button.selected)]
 	admob.banner_size = LoadAdRequest.RequestedAdSize[banner_size_option_button.get_item_text(banner_size_option_button.selected)]
 	admob.banner_collapsible_position = LoadAdRequest.CollapsiblePosition[banner_collapsible_pos_option_button.get_item_text(banner_collapsible_pos_option_button.selected)]
+
 	print(" --- Load banner button PRESSED --- pos: %s --- size: %s --- collapsible pos: %s" % [
 		LoadAdRequest.AdPosition.keys()[admob.banner_position],
 		LoadAdRequest.RequestedAdSize.keys()[admob.banner_size],
@@ -127,9 +131,9 @@ func _on_load_banner_button_pressed() -> void:
 
 	var __request: LoadAdRequest = admob.create_banner_ad_request()
 	__request.set_ad_unit_id(_get_banner_ad_unit_id(admob.banner_collapsible_position != LoadAdRequest.CollapsiblePosition.DISABLED))
+	__request.set_anchor_to_safe_area(banner_anchor_at_safe_area_check_box.button_pressed)
 	_is_banner_loading = true
-	load_banner_button.disabled = true
-	admob.load_banner_ad()
+	admob.load_banner_ad(__request)
 
 
 func _on_size_button_pressed() -> void:

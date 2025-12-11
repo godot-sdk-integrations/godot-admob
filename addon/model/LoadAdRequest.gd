@@ -47,6 +47,7 @@ const DATA_KEY_ADAPTIVE_WIDTH = "adaptive_width"
 const DATA_KEY_ADAPTIVE_MAX_HEIGHT = "adaptive_max_height"
 const DATA_KEY_AD_POSITION = "ad_position"
 const DATA_KEY_COLLAPSIBLE_POSITION = "collapsible_position"
+const DATA_KEY_ANCHOR_TO_SAFE_AREA = "anchor_to_safe_area"
 const DATA_KEY_KEYWORDS = "keywords"
 const DATA_KEY_USER_ID = "user_id"
 const DATA_KEY_CUSTOM_DATA = "custom_data"
@@ -126,6 +127,15 @@ func set_collapsible_position(a_value: CollapsiblePosition) -> LoadAdRequest:
 
 func get_collapsible_position() -> CollapsiblePosition:
 	return CollapsiblePosition[_data[DATA_KEY_COLLAPSIBLE_POSITION]] if _data.has(DATA_KEY_COLLAPSIBLE_POSITION) else CollapsiblePosition.DISABLED
+
+
+func set_anchor_to_safe_area(a_value: bool) -> LoadAdRequest:
+	_data[DATA_KEY_ANCHOR_TO_SAFE_AREA] = a_value
+	return self
+
+
+func get_anchor_to_safe_area() -> bool:
+	return _data[DATA_KEY_ANCHOR_TO_SAFE_AREA] if _data.has(DATA_KEY_ANCHOR_TO_SAFE_AREA) else false
 
 
 func set_keywords(a_value: Array) -> LoadAdRequest:

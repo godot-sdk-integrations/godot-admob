@@ -17,6 +17,8 @@
 @property (nonatomic, strong) NSMutableArray<NSLayoutConstraint *> *activeConstraints;
 
 @property (nonatomic, strong) AdmobAdInfo *adInfo;
+
+@property (nonatomic) BOOL anchorToSafeArea;
 @end
 
 
@@ -38,6 +40,7 @@
 	self.gadAdSize = [loadAdRequest getGADAdSize];
 	self.adPosition = [loadAdRequest getAdPosition];
 	self.adUnitId = [loadAdRequest adUnitId];
+	self.anchorToSafeArea = [loadAdRequest anchorToSafeArea];
 
 	[self addBanner];
 
@@ -162,42 +165,80 @@
 	switch (adPosition) {
 		case AdPositionTop:
 			[self addBannerConstraint:NSLayoutAttributeCenterX toView:GDTAppDelegateService.viewController.view];
-			[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			if (self.anchorToSafeArea) {
+				[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			} else {
+				[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view];
+			}
 			break;
 
 		case AdPositionBottom:
 			[self addBannerConstraint:NSLayoutAttributeCenterX toView:GDTAppDelegateService.viewController.view];
-			[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			if (self.anchorToSafeArea) {
+				[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			} else {
+				[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view];
+			}
 			break;
 
 		case AdPositionLeft:
-			[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-			[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			if (self.anchorToSafeArea) {
+				[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+				[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			} else {
+				[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view];
+				[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view];
+			}
 			break;
 
 		case AdPositionRight:
-			[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-			[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			if (self.anchorToSafeArea) {
+				[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+				[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			} else {
+				[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view];
+				[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view];
+			}
 			break;
 
 		case AdPositionTopLeft:
-			[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-			[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			if (self.anchorToSafeArea) {
+				[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+				[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			} else {
+				[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view];
+				[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view];
+			}
 			break;
 
 		case AdPositionTopRight:
-			[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-			[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			if (self.anchorToSafeArea) {
+				[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+				[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			} else {
+				[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view];
+				[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view];
+			}
 			break;
 
 		case AdPositionBottomLeft:
-			[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-			[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			if (self.anchorToSafeArea) {
+				[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+				[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			} else {
+				[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view];
+				[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view];
+			}
 			break;
 
 		case AdPositionBottomRight:
-			[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-			[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			if (self.anchorToSafeArea) {
+				[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+				[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			} else {
+				[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view];
+				[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view];
+			}
 			break;
 
 		case AdPositionCenter:
