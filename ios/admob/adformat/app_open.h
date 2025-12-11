@@ -20,7 +20,7 @@
 @property (nonatomic, strong) GADAppOpenAd* loadedAd;
 
 - (instancetype)initWithPlugin:(class AdmobPlugin*)plugin;
-- (void) loadWithRequest:(LoadAdRequest*) loadRequest autoShowOnResume:(BOOL) autoShow;
+- (Error) loadWithRequest:(LoadAdRequest*) loadRequest autoShowOnResume:(BOOL) autoShow;
 - (void) show;
 - (BOOL) isAvailable;
 

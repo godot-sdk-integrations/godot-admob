@@ -117,7 +117,7 @@ private:
 	void show_rewarded_interstitial_ad(String adId);
 	void remove_rewarded_interstitial_ad(String adId);
 
-	void load_app_open_ad(Dictionary requestDict, bool autoShowOnResume);
+	Error load_app_open_ad(Dictionary requestDict, bool autoShowOnResume);
 	void show_app_open_ad();
 	bool is_app_open_ad_available();
 

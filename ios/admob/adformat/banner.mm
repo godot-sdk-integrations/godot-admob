@@ -44,55 +44,45 @@
 	// Create the request on the current thread (Game Thread) to safely access Godot data
 	GADRequest *request = [loadAdRequest createGADRequest];
 
-	dispatch_async(dispatch_get_main_queue(), ^{
-		// Pass the pre-created request to the Main Thread
-		[self.bannerView loadRequest:request];
-	});
+	// Pass the pre-created request to the Main Thread
+	[self.bannerView loadRequest:request];
 }
 
 - (void) destroy {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[self.bannerView setHidden:YES];
-		
-		// Clean up constraints explicitly
-		if (self.activeConstraints.count > 0) {
-			[GDTAppDelegateService.viewController.view removeConstraints:self.activeConstraints];
-			[self.activeConstraints removeAllObjects];
-		}
+	[self.bannerView setHidden:YES];
+	
+	// Clean up constraints explicitly
+	if (self.activeConstraints.count > 0) {
+		[GDTAppDelegateService.viewController.view removeConstraints:self.activeConstraints];
+		[self.activeConstraints removeAllObjects];
+	}
 
-		[self.bannerView removeFromSuperview];
-		self.bannerView = nil;
-	});
+	[self.bannerView removeFromSuperview];
+	self.bannerView = nil;
 }
 
 - (void) hide {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[self.bannerView setHidden:YES];
-    });
+	[self.bannerView setHidden:YES];
 }
 
 - (void) show {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[self.bannerView setHidden:NO];
+	[self.bannerView setHidden:NO];
 
-		CGFloat width = self.bannerView.bounds.size.width;
-		CGFloat height = self.bannerView.bounds.size.height;
+	CGFloat width = self.bannerView.bounds.size.width;
+	CGFloat height = self.bannerView.bounds.size.height;
 
-		os_log_debug(admob_log, "INLINE_ADAPTIVE actual size = %.0fx%.0f", width, height);
+	os_log_debug(admob_log, "INLINE_ADAPTIVE actual size = %.0fx%.0f", width, height);
 
-		self.adInfo.measuredWidth = roundf(width);
-		self.adInfo.measuredHeight = roundf(height);
-		AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_SIZE_MEASURED_SIGNAL, [self.adInfo buildRawData]);
-    });
+	self.adInfo.measuredWidth = roundf(width);
+	self.adInfo.measuredHeight = roundf(height);
+	AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_SIZE_MEASURED_SIGNAL, [self.adInfo buildRawData]);
 }
 
 - (void) moveToX:(real_t)x y:(real_t)y {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		CGFloat scale = [[UIScreen mainScreen] scale];
-		CGRect frame = self.bannerView.frame;
-		frame.origin = CGPointMake(x / scale, y / scale);
-		self.bannerView.frame = frame;
-    });
+	CGFloat scale = [[UIScreen mainScreen] scale];
+	CGRect frame = self.bannerView.frame;
+	frame.origin = CGPointMake(x / scale, y / scale);
+	self.bannerView.frame = frame;
 }
 
 - (int) getWidth {
@@ -114,26 +104,24 @@
 }
 
 - (void) addBanner {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		self.bannerView = [[GADBannerView alloc] initWithAdSize:self.gadAdSize];
-		self.bannerView.adUnitID = self.adUnitId;
-		self.bannerView.delegate = self;
-		self.bannerView.rootViewController = self;
-		[self.bannerView setHidden:YES];
+	self.bannerView = [[GADBannerView alloc] initWithAdSize:self.gadAdSize];
+	self.bannerView.adUnitID = self.adUnitId;
+	self.bannerView.delegate = self;
+	self.bannerView.rootViewController = self;
+	[self.bannerView setHidden:YES];
 
-		if (self.adPosition == AdPositionCustom) {
-			// Use Frame-based layout for Custom position
-			self.bannerView.translatesAutoresizingMaskIntoConstraints = YES;
-			[GDTAppDelegateService.viewController.view addSubview:self.bannerView];
-			
-			// The position will be updated later via move_banner_ad()
-		} else {
-			// Use Auto Layout for standard positions (Top, Bottom, etc.)
-			self.bannerView.translatesAutoresizingMaskIntoConstraints = NO;
-			[GDTAppDelegateService.viewController.view addSubview:self.bannerView];
-			[self updateBannerPosition:static_cast<AdPosition>(self.adPosition)];
-		}
-	});
+	if (self.adPosition == AdPositionCustom) {
+		// Use Frame-based layout for Custom position
+		self.bannerView.translatesAutoresizingMaskIntoConstraints = YES;
+		[GDTAppDelegateService.viewController.view addSubview:self.bannerView];
+		
+		// The position will be updated later via move_banner_ad()
+	} else {
+		// Use Auto Layout for standard positions (Top, Bottom, etc.)
+		self.bannerView.translatesAutoresizingMaskIntoConstraints = NO;
+		[GDTAppDelegateService.viewController.view addSubview:self.bannerView];
+		[self updateBannerPosition:static_cast<AdPosition>(self.adPosition)];
+	}
 }
 
 - (void) addBannerConstraint:(NSLayoutAttribute)attribute toView:(id)toView {
@@ -164,68 +152,65 @@
 
 - (void) updateBannerPosition:(AdPosition) adPosition {
 	os_log_debug(admob_log, "BannerAd updateBannerPosition: position=%lu", (unsigned long) adPosition);
-
-	dispatch_async(dispatch_get_main_queue(), ^{
 		
-		// Remove only the active positioning constraints
-		if (self.activeConstraints.count > 0) {
-			[GDTAppDelegateService.viewController.view removeConstraints:self.activeConstraints];
-			[self.activeConstraints removeAllObjects];
-		}
+	// Remove only the active positioning constraints
+	if (self.activeConstraints.count > 0) {
+		[GDTAppDelegateService.viewController.view removeConstraints:self.activeConstraints];
+		[self.activeConstraints removeAllObjects];
+	}
 
-		switch (adPosition) {
-			case AdPositionTop:
-				[self addBannerConstraint:NSLayoutAttributeCenterX toView:GDTAppDelegateService.viewController.view];
-				[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-				break;
+	switch (adPosition) {
+		case AdPositionTop:
+			[self addBannerConstraint:NSLayoutAttributeCenterX toView:GDTAppDelegateService.viewController.view];
+			[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			break;
 
-			case AdPositionBottom:
-				[self addBannerConstraint:NSLayoutAttributeCenterX toView:GDTAppDelegateService.viewController.view];
-				[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-				break;
+		case AdPositionBottom:
+			[self addBannerConstraint:NSLayoutAttributeCenterX toView:GDTAppDelegateService.viewController.view];
+			[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			break;
 
-			case AdPositionLeft:
-				[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-				[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-				break;
+		case AdPositionLeft:
+			[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			break;
 
-			case AdPositionRight:
-				[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-				[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-				break;
+		case AdPositionRight:
+			[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			break;
 
-			case AdPositionTopLeft:
-				[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-				[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-				break;
+		case AdPositionTopLeft:
+			[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			break;
 
-			case AdPositionTopRight:
-				[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-				[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-				break;
+		case AdPositionTopRight:
+			[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			[self addBannerConstraint:NSLayoutAttributeTop toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			break;
 
-			case AdPositionBottomLeft:
-				[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-				[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-				break;
+		case AdPositionBottomLeft:
+			[self addBannerConstraint:NSLayoutAttributeLeft toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			break;
 
-			case AdPositionBottomRight:
-				[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-				[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
-				break;
+		case AdPositionBottomRight:
+			[self addBannerConstraint:NSLayoutAttributeRight toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			[self addBannerConstraint:NSLayoutAttributeBottom toView:GDTAppDelegateService.viewController.view.safeAreaLayoutGuide];
+			break;
 
-			case AdPositionCenter:
-				[self addBannerConstraint:NSLayoutAttributeCenterX toView:GDTAppDelegateService.viewController.view];
-				[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view];
-				break;
+		case AdPositionCenter:
+			[self addBannerConstraint:NSLayoutAttributeCenterX toView:GDTAppDelegateService.viewController.view];
+			[self addBannerConstraint:NSLayoutAttributeCenterY toView:GDTAppDelegateService.viewController.view];
+			break;
 
-			case AdPositionCustom:
-				// Do nothing, position set externally
-				break;
-		}
+		case AdPositionCustom:
+			// Do nothing, position set externally
+			break;
+	}
 
-		[GDTAppDelegateService.viewController.view layoutIfNeeded];
-    });
+	[GDTAppDelegateService.viewController.view layoutIfNeeded];
 }
 
 - (void)bannerViewDidReceiveAd:(GADBannerView *)bannerView {
