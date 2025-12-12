@@ -131,16 +131,16 @@ The following ad types are supported:
 	- `load_rewarded_interstitial_ad(ad_request: LoadAdRequest)`
 	- `load_app_open_ad(ad_request: LoadAdRequest, auto_show_on_resume: boolean)`
 - the `Admob` node will emit the following signals once ads have been loaded or failed to load:
-	- `banner_ad_loaded(ad_id: String)`
-	- `banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
-	- `interstitial_ad_loaded(ad_id: String)`
-	- `interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
-	- `rewarded_ad_loaded(ad_id: String)`
-	- `rewarded_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
-	- `rewarded_interstitial_ad_loaded(ad_id: String)`
-	- `rewarded_interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
-	- `app_open_ad_loaded(ad_unit_id: String)`
-	- `app_open_ad_failed_to_load(ad_unit_id: String, error_data: LoadAdError)`
+	- `banner_ad_loaded(ad_info: AdInfo)`
+	- `banner_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)`
+	- `interstitial_ad_loaded(ad_info: AdInfo)`
+	- `interstitial_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)`
+	- `rewarded_ad_loaded(ad_info: AdInfo)`
+	- `rewarded_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)`
+	- `rewarded_interstitial_ad_loaded(ad_info: AdInfo)`
+	- `rewarded_interstitial_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)`
+	- `app_open_ad_loaded(ad_info: AdInfo)`
+	- `app_open_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)`
 - once ads have been loaded, call corresponding `show_*()` method from the `Admob` node with the `ad_id` received:
 	- `show_banner_ad(ad_id: String)`
 	- `show_interstitial_ad(ad_id: String)`
@@ -155,44 +155,44 @@ The following ad types are supported:
 ## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Signals
 - register listeners for one or more of the following signals of the `Admob` node:
 	- `initialization_completed(status_data: InitializationStatus)`
-	- `banner_ad_loaded(ad_id: String, response_info: ResponseInfo)`
-	- `banner_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
-	- `banner_ad_refreshed(ad_id: String, response_info: ResponseInfo)`
-	- `banner_ad_clicked(ad_id: String)`
-	- `banner_ad_impression(ad_id: String)`
-	- `banner_ad_opened(ad_id: String)`
-	- `banner_ad_closed(ad_id: String)`
-	- `interstitial_ad_loaded(ad_id: String, response_info: ResponseInfo)`
-	- `interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
-	- `interstitial_ad_refreshed(ad_id: String, response_info: ResponseInfo)`
-	- `interstitial_ad_impression(ad_id: String)`
-	- `interstitial_ad_clicked(ad_id: String)`
-	- `interstitial_ad_showed_full_screen_content(ad_id: String)`
-	- `interstitial_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)`
-	- `interstitial_ad_dismissed_full_screen_content(ad_id: String)`
-	- `rewarded_ad_loaded(ad_id: String, response_info: ResponseInfo)`
-	- `rewarded_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
-	- `rewarded_ad_impression(ad_id: String)`
-	- `rewarded_ad_clicked(ad_id: String)`
-	- `rewarded_ad_showed_full_screen_content(ad_id: String)`
-	- `rewarded_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)`
-	- `rewarded_ad_dismissed_full_screen_content(ad_id: String)`
-	- `rewarded_ad_user_earned_reward(ad_id: String, reward_data: RewardItem)`
-	- `rewarded_interstitial_ad_loaded(ad_id: String, response_info: ResponseInfo)`
-	- `rewarded_interstitial_ad_failed_to_load(ad_id: String, error_data: LoadAdError)`
-	- `rewarded_interstitial_ad_impression(ad_id: String)`
-	- `rewarded_interstitial_ad_clicked(ad_id: String)`
-	- `rewarded_interstitial_ad_showed_full_screen_content(ad_id: String)`
-	- `rewarded_interstitial_ad_failed_to_show_full_screen_content(ad_id: String, error_data: AdError)`
-	- `rewarded_interstitial_ad_dismissed_full_screen_content(ad_id: String)`
-	- `rewarded_interstitial_ad_user_earned_reward(ad_id: String, reward_data: RewardItem)`
-	- `app_open_ad_loaded(ad_unit_id: String, response_info: ResponseInfo)`
-	- `app_open_ad_failed_to_load(ad_unit_id: String, error_data: LoadAdError)`
-	- `app_open_ad_impression(ad_unit_id: String)`
-	- `app_open_ad_clicked(ad_unit_id: String)`
-	- `app_open_ad_showed_full_screen_content(ad_unit_id: String)`
-	- `app_open_ad_failed_to_show_full_screen_content(ad_unit_id: String, error_data: AdError)`
-	- `app_open_ad_dismissed_full_screen_content(ad_unit_id: String)`
+	- `banner_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo)`
+	- `banner_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)`
+	- `banner_ad_refreshed(ad_info: AdInfo, response_info: ResponseInfo)`
+	- `banner_ad_clicked(ad_info: AdInfo)`
+	- `banner_ad_impression(ad_info: AdInfo)`
+	- `banner_ad_opened(ad_info: AdInfo)`
+	- `banner_ad_closed(ad_info: AdInfo)`
+	- `interstitial_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo)`
+	- `interstitial_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)`
+	- `interstitial_ad_refreshed(ad_info: AdInfo, response_info: ResponseInfo)`
+	- `interstitial_ad_impression(ad_info: AdInfo)`
+	- `interstitial_ad_clicked(ad_info: AdInfo)`
+	- `interstitial_ad_showed_full_screen_content(ad_info: AdInfo)`
+	- `interstitial_ad_failed_to_show_full_screen_content(ad_info: AdInfo, error_data: AdError)`
+	- `interstitial_ad_dismissed_full_screen_content(ad_info: AdInfo)`
+	- `rewarded_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo)`
+	- `rewarded_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)`
+	- `rewarded_ad_impression(ad_info: AdInfo)`
+	- `rewarded_ad_clicked(ad_info: AdInfo)`
+	- `rewarded_ad_showed_full_screen_content(ad_info: AdInfo)`
+	- `rewarded_ad_failed_to_show_full_screen_content(ad_info: AdInfo, error_data: AdError)`
+	- `rewarded_ad_dismissed_full_screen_content(ad_info: AdInfo)`
+	- `rewarded_ad_user_earned_reward(ad_info: AdInfo, reward_data: RewardItem)`
+	- `rewarded_interstitial_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo)`
+	- `rewarded_interstitial_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)`
+	- `rewarded_interstitial_ad_impression(ad_info: AdInfo)`
+	- `rewarded_interstitial_ad_clicked(ad_info: AdInfo)`
+	- `rewarded_interstitial_ad_showed_full_screen_content(ad_info: AdInfo)`
+	- `rewarded_interstitial_ad_failed_to_show_full_screen_content(ad_info: AdInfo, error_data: AdError)`
+	- `rewarded_interstitial_ad_dismissed_full_screen_content(ad_info: AdInfo)`
+	- `rewarded_interstitial_ad_user_earned_reward(ad_info: AdInfo, reward_data: RewardItem)`
+	- `app_open_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo)`
+	- `app_open_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)`
+	- `app_open_ad_impression(ad_info: AdInfo)`
+	- `app_open_ad_clicked(ad_info: AdInfo)`
+	- `app_open_ad_showed_full_screen_content(ad_info: AdInfo)`
+	- `app_open_ad_failed_to_show_full_screen_content(ad_info: AdInfo, error_data: AdError)`
+	- `app_open_ad_dismissed_full_screen_content(ad_info: AdInfo)`
 	- `consent_form_loaded`
 	- `consent_form_dismissed(error_data: FormError)`
 	- `consent_form_failed_to_load(error_data: FormError)`
@@ -207,34 +207,32 @@ The following ad types are supported:
 - `initialize()` - initialize plugin
 - `set_request_configuration(AdmobConfig)` - set general configuration that is applied to all ad requests
 - `get_initialization_status()` - get initialization status of enabled mediation networks
-- `get_current_adaptive_banner_size()` - get an AdSize with the given width and a Google-optimized height to create a banner ad
-- `get_portrait_adaptive_banner_size()`
-- `get_landscape_adaptive_banner_size()`
-- `load_banner_ad(LoadAdRequest)` - load a banner ad that matches the request parameters
-- `show_banner_ad(String)` - show the banner ad with given ID
-- `hide_banner_ad(String)` - hide the banner ad with given ID
-- `remove_banner_ad(String)` - remove the banner ad with given ID
-- `get_banner_width(String)`
-- `get_banner_height(String)`
-- `get_banner_width_in_pixels(String)`
-- `get_banner_height_in_pixels(String)`
-- `load_interstitial_ad(LoadAdRequest)` - load an interstitial ad that matches the request parameters
-- `show_interstitial_ad(String)` - show the interstitial ad with given ID
-- `remove_interstitial_ad(String)` - remove the interstitial ad with given ID
-- `load_rewarded_ad(LoadAdRequest)` - load a rewarded video ad that matches the request parameters
-- `show_rewarded_ad(String)` - show the rewarded ad with given ID
-- `remove_rewarded_ad(String)` - remove the rewarded ad with given ID
+- `get_current_adaptive_banner_size()` - get an AdSize with the given width and a Google-optimized height to create a banner ad in current orientation
+- `get_portrait_adaptive_banner_size()` - get an AdSize with the given width and a Google-optimized height to create a banner ad in portrait orientation
+- `get_landscape_adaptive_banner_size()` - get an AdSize with the given width and a Google-optimized height to create a banner ad in landscape orientation
+- `load_banner_ad(ad_request: LoadAdRequest)` - load a banner ad that matches the request parameters
+- `show_banner_ad(ad_id: String)` - show the banner ad with given ID
+- `hide_banner_ad(ad_id: String)` - hide the banner ad with given ID
+- `remove_banner_ad(ad_id: String)` - remove the banner ad with given ID
+- `get_banner_dimension(ad_id: String) -> Vector2` - get the size of the banner ad in points
+- `get_banner_dimension_in_pixels(ad_id: String) -> Vector2` - get the size of the banner ad in pixels
+- `load_interstitial_ad(ad_request: LoadAdRequest)` - load an interstitial ad that matches the request parameters
+- `show_interstitial_ad(ad_id: String)` - show the interstitial ad with given ID
+- `remove_interstitial_ad(ad_id: String)` - remove the interstitial ad with given ID
+- `load_rewarded_ad(ad_request: LoadAdRequest)` - load a rewarded video ad that matches the request parameters
+- `show_rewarded_ad(ad_id: String)` - show the rewarded ad with given ID
+- `remove_rewarded_ad(ad_id: String)` - remove the rewarded ad with given ID
 - `load_rewarded_interstitial_ad()` - load a rewarded interstitial ad that matches the request parameters
-- `show_rewarded_interstitial_ad(String)` - show the rewarded interstitial ad with given ID
-- `remove_rewarded_interstitial_ad(String)` - remove the rewarded interstitial ad with given ID
-- `load_app_open_ad(LoadAdRequest, bool)` - load an app open ad that matches the request parameters
+- `show_rewarded_interstitial_ad(ad_id: String)` - show the rewarded interstitial ad with given ID
+- `remove_rewarded_interstitial_ad(ad_id: String)` - remove the rewarded interstitial ad with given ID
+- `load_app_open_ad(ad_request: LoadAdRequest, bool)` - load an app open ad that matches the request parameters
 - `show_app_open_ad()` - show loaded app open ad
 - `is_app_open_ad_available()` - true if a loaded app open ad exists in cache
 - `load_consent_form()` - load the configured user data privacy consent form
 - `show_consent_form()` - show loaded user data privacy consent form
-- `get_consent_status()` - get the status of user's privacy consent
+- `get_consent_status() -> UserConsent` - get the status of user's privacy consent
 - `is_consent_form_available()` - true if the user consent form has been loaded
-- `update_consent_info(ConsentRequestParameters)` - update user consent parameters
+- `update_consent_info(a_parameters: ConsentRequestParameters)` - update user consent parameters
 - `reset_consent_info()` - reset the user's privacy consent status
 - `set_mediation_privacy_settings(NetworkPrivacySettings)` - set privacy settings for enabled ad mediation networks
 - `open_app_settings()` - open the system dialog for app-specific settings
@@ -244,11 +242,11 @@ The following ad types are supported:
 - `set_app_pause_on_background()` - set the configurable option (default: disabled) that controls whether the Godot engine should simulate an "app lost focus" state when full-screen ads are displayed
 
 ### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> Helper Methods
-- `create_request_configuration()` - creates a `AdmobConfig` object populated with the ad configuration from the `Admob` node.
-- `create_banner_ad_request()` - creates a `LoadAdRequest` object populated with the banner ad configuration from the `Admob` node.
-- `create_interstitial_ad_request()` - creates a `LoadAdRequest` object populated with the insterstitial ad configuration from the `Admob` node.
-- `create_rewarded_ad_request()` - creates a `LoadAdRequest` object populated with the rewarded ad configuration from the `Admob` node.
-- `create_rewarded_interstitial_ad_request()` - creates a `LoadAdRequest` object populated with the rewarded interstitial ad configuration from the `Admob` node.
+- `create_request_configuration() -> AdmobConfig` - creates a `AdmobConfig` object populated with the ad configuration from the `Admob` node.
+- `create_banner_ad_request() -> LoadAdRequest` - creates a `LoadAdRequest` object populated with the banner ad configuration from the `Admob` node.
+- `create_interstitial_ad_request() -> LoadAdRequest` - creates a `LoadAdRequest` object populated with the insterstitial ad configuration from the `Admob` node.
+- `create_rewarded_ad_request() -> LoadAdRequest` - creates a `LoadAdRequest` object populated with the rewarded ad configuration from the `Admob` node.
+- `create_rewarded_interstitial_ad_request() -> LoadAdRequest` - creates a `LoadAdRequest` object populated with the rewarded interstitial ad configuration from the `Admob` node.
 
 ---
 
