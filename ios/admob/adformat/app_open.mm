@@ -40,46 +40,52 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	return self;
 }
 
-- (void) loadWithRequest:(LoadAdRequest *)loadAdRequest autoShowOnResume:(BOOL)autoShow {
+- (Error) loadWithRequest:(LoadAdRequest *)loadAdRequest autoShowOnResume:(BOOL)autoShow {
 	if (self.isLoading) {
 		os_log_debug(admob_log, "%@ Cannot load app open ad: App open ad is already loading", kLogTag);
-	} else if ([self isAvailable]) {
-		os_log_debug(admob_log, "%@ Cannot load app open ad: App open ad is not available", kLogTag);
-	} else {
-		self.isLoading = YES;
-		self.adUnitId = [loadAdRequest adUnitId];
-		self.autoShowOnResume = autoShow;
-		self.loadTime = 0;
-		self.loadedAd = nil;
-
-		GADRequest *gadRequest = [loadAdRequest createGADRequest];
-
-		os_log_debug(admob_log, "%@ Loading app open ad: %@", kLogTag, self.adUnitId);
-
-		[GADAppOpenAd loadWithAdUnitID:self.adUnitId request:gadRequest
-					completionHandler:^(GADAppOpenAd *_Nullable ad, NSError *_Nullable error) {
-			self.isLoading = NO;
-
-			_adInfo = [[AdmobAdInfo alloc] initWithId:self.adUnitId request:loadAdRequest];
-			if (error) {
-				AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
-				os_log_error(admob_log, "%@ Failed to load: %@", kLogTag, loadAdError.message);
-
-				self.plugin->emit_signal(APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL,
-										[self.adInfo buildRawData],
-										[loadAdError buildRawData]);
-			} else {
-				self.loadedAd = ad;
-				self.loadedAd.fullScreenContentDelegate = self;
-				self.loadTime = [[NSDate date] timeIntervalSince1970];
-
-				os_log_debug(admob_log, "%@ Loaded %@ successfully", kLogTag, self.adUnitId);
-				self.plugin->emit_signal(APP_OPEN_AD_LOADED_SIGNAL,
-										[self.adInfo buildRawData],
-										[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
-			}
-		}];
+		return ERR_ALREADY_IN_USE;
 	}
+
+	if ([self isAvailable]) {
+		os_log_debug(admob_log, "%@ Cannot load app open ad: App open ad is already available", kLogTag);
+		return ERR_ALREADY_EXISTS;
+	}
+
+	self.isLoading = YES;
+	self.adUnitId = [loadAdRequest adUnitId];
+	self.autoShowOnResume = autoShow;
+	self.loadTime = 0;
+	self.loadedAd = nil;
+
+	GADRequest *gadRequest = [loadAdRequest createGADRequest];
+
+	os_log_debug(admob_log, "%@ Loading app open ad: %@", kLogTag, self.adUnitId);
+
+	[GADAppOpenAd loadWithAdUnitID:self.adUnitId request:gadRequest
+				completionHandler:^(GADAppOpenAd *_Nullable ad, NSError *_Nullable error) {
+		self.isLoading = NO;
+
+		self.adInfo = [[AdmobAdInfo alloc] initWithId:self.adUnitId request:loadAdRequest];
+		if (error) {
+			AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
+			os_log_error(admob_log, "%@ Failed to load: %@", kLogTag, loadAdError.message);
+
+			self.plugin->emit_signal(APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL,
+									[self.adInfo buildRawData],
+									[loadAdError buildRawData]);
+		} else {
+			self.loadedAd = ad;
+			self.loadedAd.fullScreenContentDelegate = self;
+			self.loadTime = [[NSDate date] timeIntervalSince1970];
+
+			os_log_debug(admob_log, "%@ Loaded %@ successfully", kLogTag, self.adUnitId);
+			self.plugin->emit_signal(APP_OPEN_AD_LOADED_SIGNAL,
+									[self.adInfo buildRawData],
+									[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
+		}
+	}];
+
+	return OK;
 }
 
 - (void) show {
