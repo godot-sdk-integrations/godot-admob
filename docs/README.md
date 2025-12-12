@@ -531,9 +531,14 @@ The `is_real` and `app_id` configuration items are mandatory and if not found in
 ### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="18"> Node-based Export Configuration
 If `<platform>_export.cfg` file is not found for the target platform or file-based configuration fails, then the plugin will attempt to load node-based configuration.
 
-During export, the plugin searches for an `Admob` node in the scene that is open in the Godot Editor. If not found, then the plugin searches for an `Admob` node in the project's main scene. Therefore;
-- Make sure that the scene that contains the `Admob` node is selected in the Godot Editor when building and exporting, or
-- Make sure that your Godot project's main scene contains an `Admob` node
+During export, the plugin searches for an `Admob` node in the following order:
+1. Search the selected scene that is open in the Godot Editor
+2. If not found, then search for an `Admob` node in the scene that is configured as the project's main scene in the `Project Settings`
+3. If still not found, then the plugin searches all scenes within the project.
+
+If an `Admob` node is not found, then the app will fail due to missing AdMob application identifier.
+
+Therefore; make sure that at least one `Admob` node is present in any one of the scenes in your Godot project.
 
 ---
 
