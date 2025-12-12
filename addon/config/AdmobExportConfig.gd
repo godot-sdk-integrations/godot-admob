@@ -83,11 +83,52 @@ func load_export_config_from_node() -> Error:
 
 	var __result = Error.OK
 
-	var __admob_node: Admob = get_plugin_node(EditorInterface.get_edited_scene_root())
-	if not __admob_node:
-		var main_scene = load(ProjectSettings.get_setting("application/run/main_scene")).instantiate()
-		__admob_node = get_plugin_node(main_scene)
+	var __admob_node: Admob
 
+	Admob.log_info("Searching edited scene for %s node..." % PLUGIN_NODE_TYPE_NAME)
+	var __edited_scene_root: Node = EditorInterface.get_edited_scene_root()
+	if __edited_scene_root:
+		__admob_node = get_plugin_node(__edited_scene_root)
+	else:
+		Admob.log_info("No edited scene found")
+
+	if not __admob_node:
+		Admob.log_info("Searching main scene for %s node..." % PLUGIN_NODE_TYPE_NAME)
+		var __main_scene_path: String = ProjectSettings.get_setting("application/run/main_scene")
+		if __main_scene_path and __main_scene_path != "":
+			var __packed_main: PackedScene = load(__main_scene_path)
+			if __packed_main:
+				var __main_scene = __packed_main.instantiate()
+				__admob_node = get_plugin_node(__main_scene)
+		else:
+			Admob.log_info("Main scene path not defined in the project settings")
+
+	if not __admob_node:
+		Admob.log_info("Searching all project scenes for %s node..." % PLUGIN_NODE_TYPE_NAME)
+
+		var collect_scene_paths: Callable = func (a_dir_path: String, a_collected_paths: Array[String],
+				a_recursive_func: Callable) -> void:
+			for __file in DirAccess.get_files_at(a_dir_path):
+				if __file.ends_with(".tscn") or __file.ends_with(".scn"):
+					a_collected_paths.append(a_dir_path.path_join(__file))
+
+			for __dir in DirAccess.get_directories_at(a_dir_path):
+				a_recursive_func.call(a_dir_path.path_join(__dir), a_collected_paths, a_recursive_func)
+
+		var __scene_paths: Array[String] = []
+		collect_scene_paths.call("res://", __scene_paths, collect_scene_paths)
+
+		for __scene_path in __scene_paths:
+			var packed: PackedScene = load(__scene_path)
+			if packed:
+				var __instance = packed.instantiate()
+				var __found_node: Admob = get_plugin_node(__instance)
+				if __found_node:
+					Admob.log_info("Found %s node in scene: %s" % [PLUGIN_NODE_TYPE_NAME, __scene_path])
+					__admob_node = __found_node
+					break
+
+	# Load configuration if node found
 	if __admob_node:
 		is_real = __admob_node.is_real
 		enabled_mediation_networks = MediationNetwork.get_all_enabled(__admob_node.enabled_networks)
