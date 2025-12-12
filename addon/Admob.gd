@@ -108,6 +108,11 @@ const MAXIMUM_CACHE_SIZE: int = 1000
 ## If not set to disabled, then specifies the direction towards which the banner ad will collapse.
 @export var banner_collapsible_position: LoadAdRequest.CollapsiblePosition = LoadAdRequest.CollapsiblePosition.DISABLED: set = set_banner_collapsible_position
 
+## When enabled, the banner ad will be positioned within the device’s safe area, leaving space at the top or bottom to avoid UI elements
+## such as notches, rounded corners, and home indicator bars. When disabled, the banner will be anchored directly to the top or bottom edge
+## of the screen, ignoring safe area insets.
+@export var banner_anchor_to_safe_area: bool = false
+
 
 @export_group("App Open")
 ## Specifies whether app open ad will be displayed when users return the app to the foreground state.
@@ -558,7 +563,8 @@ func create_banner_ad_request() -> LoadAdRequest:
 			.set_ad_unit_id(_banner_id)
 			.set_ad_position(banner_position)
 			.set_ad_size(banner_size)
-			.set_collapsible_position(banner_collapsible_position))
+			.set_collapsible_position(banner_collapsible_position)
+			.set_anchor_to_safe_area(banner_anchor_to_safe_area))
 
 
 func load_banner_ad(a_request: LoadAdRequest = null) -> void:
