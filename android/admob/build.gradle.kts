@@ -226,13 +226,20 @@ tasks {
 	}
 
 	register<Zip>("packageDistribution") {
-		archiveFileName.set("${project.extra["pluginArchive"]}")
+		archiveFileName.set(project.extra["pluginArchive"] as String)
 		destinationDirectory.set(layout.buildDirectory.dir("dist"))
+
 		exclude("**/*.uid")
 		exclude("**/*.import")
+
 		from("${project.extra["demoAddOnsDirectory"]}/${project.extra["pluginName"]}") {
-			into("addons/${project.extra["pluginName"]}")
+			includeEmptyDirs = false
+
+			eachFile {
+				path = "addons/${project.extra["pluginName"]}/$path"
+			}
 		}
+
 		doLast {
 			println("Zip archive created at: ${archiveFile.get().asFile.path}")
 		}

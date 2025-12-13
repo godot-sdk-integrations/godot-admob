@@ -322,7 +322,7 @@ auto_show_on_resume = true
 android_debug_application_id = "ca-app-pub-3940256099942544~3347511713"
 ios_debug_application_id = "ca-app-pub-3940256099942544~1458002511"
 debug_geography = 1
-test_device_hashed_ids = Array[String](["91C505D5-7ACF-4EE8-9A1D-CD8DCDD21A1B"])
+test_device_hashed_ids = Array[String](["91C505D5-7ACF-4EE8-9A1D-CD8DCDD21A1B", "58D72D52-9B7D-47F8-A38E-FDF2918C669A"])
 
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/LoadButtonHBoxContainer/LoadBannerButton" to="." method="_on_load_banner_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ShowBannerButton" to="." method="_on_show_banner_button_pressed"]
