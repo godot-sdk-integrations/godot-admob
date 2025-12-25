@@ -4,7 +4,7 @@
 
 #import "app_open.h"
 
-#import "admob_plugin_implementation.h"
+#import "admob_plugin.h"
 #import "admob_response.h"
 #import "admob_logger.h"
 #import "admob_ad_error.h"
@@ -70,7 +70,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 			AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
 			os_log_error(admob_log, "%@ Failed to load: %@", kLogTag, loadAdError.message);
 
-			self.plugin->emit_signal(APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL,
+			self.plugin->call_deferred("emit_signal", APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL,
 									[self.adInfo buildRawData],
 									[loadAdError buildRawData]);
 		} else {
@@ -79,7 +79,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 			self.loadTime = [[NSDate date] timeIntervalSince1970];
 
 			os_log_debug(admob_log, "%@ Loaded %@ successfully", kLogTag, self.adUnitId);
-			self.plugin->emit_signal(APP_OPEN_AD_LOADED_SIGNAL,
+			self.plugin->call_deferred("emit_signal", APP_OPEN_AD_LOADED_SIGNAL,
 									[self.adInfo buildRawData],
 									[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
 		}
@@ -116,7 +116,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	self.isShowing = YES;
 
 	if (self.plugin) {
-		self.plugin->emit_signal(APP_OPEN_AD_IMPRESSION_SIGNAL, [self.adInfo buildRawData]);
+		self.plugin->call_deferred("emit_signal", APP_OPEN_AD_IMPRESSION_SIGNAL, [self.adInfo buildRawData]);
 	}
 }
 
@@ -124,7 +124,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	os_log_debug(admob_log, "%@ Clicked", kLogTag);
 
 	if (self.plugin) {
-		self.plugin->emit_signal(APP_OPEN_AD_CLICKED_SIGNAL, [self.adInfo buildRawData]);
+		self.plugin->call_deferred("emit_signal", APP_OPEN_AD_CLICKED_SIGNAL, [self.adInfo buildRawData]);
 	}
 }
 
@@ -139,7 +139,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	os_log_debug(admob_log, "%@ Will present full screen", kLogTag);
 
 	if (self.plugin) {
-		self.plugin->emit_signal(APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
+		self.plugin->call_deferred("emit_signal", APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
 	}
 }
 
@@ -152,7 +152,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	self.loadTime = 0;
 
 	if (self.plugin) {
-		self.plugin->emit_signal(APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL,
+		self.plugin->call_deferred("emit_signal", APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL,
 								[self.adInfo buildRawData],
 								[adError buildRawData]);
 	}
@@ -165,7 +165,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	self.loadTime = 0;
 
 	if (self.plugin) {
-		self.plugin->emit_signal(APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
+		self.plugin->call_deferred("emit_signal", APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
 	}
 }
 

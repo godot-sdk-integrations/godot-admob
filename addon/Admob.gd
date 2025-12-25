@@ -1050,10 +1050,7 @@ func _on_interstitial_ad_clicked(a_ad_data: Dictionary) -> void:
 
 
 func _on_interstitial_ad_showed_full_screen_content(a_ad_data: Dictionary) -> void:
-	var __ad_info: AdInfo = AdInfo.new(a_ad_data)
-	if remove_interstitial_ads_after_displayed:
-		remove_interstitial_ad(__ad_info.get_ad_id())
-	interstitial_ad_showed_full_screen_content.emit(__ad_info)
+	interstitial_ad_showed_full_screen_content.emit(AdInfo.new(a_ad_data))
 
 
 func _on_interstitial_ad_failed_to_show_full_screen_content(a_ad_data: Dictionary, error_data: Dictionary) -> void:
@@ -1061,7 +1058,10 @@ func _on_interstitial_ad_failed_to_show_full_screen_content(a_ad_data: Dictionar
 
 
 func _on_interstitial_ad_dismissed_full_screen_content(a_ad_data: Dictionary) -> void:
-	interstitial_ad_dismissed_full_screen_content.emit(AdInfo.new(a_ad_data))
+	var __ad_info: AdInfo = AdInfo.new(a_ad_data)
+	if remove_interstitial_ads_after_displayed:
+		remove_interstitial_ad(__ad_info.get_ad_id())
+	interstitial_ad_dismissed_full_screen_content.emit(__ad_info)
 
 
 func _on_rewarded_ad_loaded(a_ad_data: Dictionary, a_response_info: Dictionary) -> void:
@@ -1084,10 +1084,7 @@ func _on_rewarded_ad_clicked(a_ad_data: Dictionary) -> void:
 
 
 func _on_rewarded_ad_showed_full_screen_content(a_ad_data: Dictionary) -> void:
-	var __ad_info: AdInfo = AdInfo.new(a_ad_data)
-	if remove_rewarded_ads_after_displayed:
-		remove_rewarded_ad(__ad_info.get_ad_id())
-	rewarded_ad_showed_full_screen_content.emit(__ad_info)
+	rewarded_ad_showed_full_screen_content.emit(AdInfo.new(a_ad_data))
 
 
 func _on_rewarded_ad_failed_to_show_full_screen_content(a_ad_data: Dictionary, error_data: Dictionary) -> void:
@@ -1095,7 +1092,10 @@ func _on_rewarded_ad_failed_to_show_full_screen_content(a_ad_data: Dictionary, e
 
 
 func _on_rewarded_ad_dismissed_full_screen_content(a_ad_data: Dictionary) -> void:
-	rewarded_ad_dismissed_full_screen_content.emit(AdInfo.new(a_ad_data))
+	var __ad_info: AdInfo = AdInfo.new(a_ad_data)
+	if remove_rewarded_ads_after_displayed:
+		remove_rewarded_ad(__ad_info.get_ad_id())
+	rewarded_ad_dismissed_full_screen_content.emit(__ad_info)
 
 
 func _on_rewarded_ad_user_earned_reward(a_ad_data: Dictionary, reward_data: Dictionary) -> void:
@@ -1122,10 +1122,7 @@ func _on_rewarded_interstitial_ad_clicked(a_ad_data: Dictionary) -> void:
 
 
 func _on_rewarded_interstitial_ad_showed_full_screen_content(a_ad_data: Dictionary) -> void:
-	var __ad_info: AdInfo = AdInfo.new(a_ad_data)
-	if remove_rewarded_interstitial_ads_after_displayed:
-		remove_rewarded_interstitial_ad(__ad_info.get_ad_id())
-	rewarded_interstitial_ad_showed_full_screen_content.emit(__ad_info)
+	rewarded_interstitial_ad_showed_full_screen_content.emit(AdInfo.new(a_ad_data))
 
 
 func _on_rewarded_interstitial_ad_failed_to_show_full_screen_content(a_ad_data: Dictionary, error_data: Dictionary) -> void:
@@ -1133,7 +1130,10 @@ func _on_rewarded_interstitial_ad_failed_to_show_full_screen_content(a_ad_data: 
 
 
 func _on_rewarded_interstitial_ad_dismissed_full_screen_content(a_ad_data: Dictionary) -> void:
-	rewarded_interstitial_ad_dismissed_full_screen_content.emit(AdInfo.new(a_ad_data))
+	var __ad_info: AdInfo = AdInfo.new(a_ad_data)
+	if remove_rewarded_interstitial_ads_after_displayed:
+		remove_rewarded_interstitial_ad(__ad_info.get_ad_id())
+	rewarded_interstitial_ad_dismissed_full_screen_content.emit(__ad_info)
 
 
 func _on_rewarded_interstitial_ad_user_earned_reward(a_ad_data: Dictionary, reward_data: Dictionary) -> void:

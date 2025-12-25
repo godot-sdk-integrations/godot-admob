@@ -5,7 +5,7 @@
 #import "rewarded.h"
 
 #import "os_ios.h"
-#import "admob_plugin_implementation.h"
+#import "admob_plugin.h"
 #import "admob_response.h"
 #import "admob_logger.h"
 #import "admob_ad_error.h"
@@ -38,7 +38,7 @@
 		if (error) {
 			AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
 			os_log_error(admob_log, "failed to load RewardedAd with error: %@", loadAdError.message);
-			AdmobPlugin::get_singleton()->emit_signal(REWARDED_AD_FAILED_TO_LOAD_SIGNAL,
+			AdmobPlugin::get_singleton()->call_deferred("emit_signal", REWARDED_AD_FAILED_TO_LOAD_SIGNAL,
 					[self.adInfo buildRawData],
 					[loadAdError buildRawData]);
 		}
@@ -51,7 +51,7 @@
 			}
 
 			os_log_debug(admob_log, "RewardedAd %@ loaded successfully", self.adId);
-			AdmobPlugin::get_singleton()->emit_signal(REWARDED_AD_LOADED_SIGNAL,
+			AdmobPlugin::get_singleton()->call_deferred("emit_signal", REWARDED_AD_LOADED_SIGNAL,
 					[self.adInfo buildRawData],
 					[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
 		}
@@ -62,7 +62,7 @@
 	if (self.gadAd) {
 		[self.gadAd presentFromRootViewController:[GDTAppDelegateService viewController] userDidEarnRewardHandler:^{
 			GADAdReward *reward = self.gadAd.adReward;
-			AdmobPlugin::get_singleton()->emit_signal(REWARDED_AD_USER_EARNED_REWARD_SIGNAL, [self.adInfo buildRawData],
+			AdmobPlugin::get_singleton()->call_deferred("emit_signal", REWARDED_AD_USER_EARNED_REWARD_SIGNAL, [self.adInfo buildRawData],
 						[GAPConverter adRewardToGodotDictionary:reward]);
 		}];
 	}
@@ -80,24 +80,24 @@
 
 - (void) adDidRecordImpression:(nonnull id<GADFullScreenPresentingAd>) ad {
 	os_log_debug(admob_log, "RewardedAd adDidRecordImpression");
-	AdmobPlugin::get_singleton()->emit_signal(REWARDED_AD_IMPRESSION_SIGNAL, [self.adInfo buildRawData]);
+	AdmobPlugin::get_singleton()->call_deferred("emit_signal", REWARDED_AD_IMPRESSION_SIGNAL, [self.adInfo buildRawData]);
 }
 
 - (void) adDidRecordClick:(nonnull id<GADFullScreenPresentingAd>) ad {
 	os_log_debug(admob_log, "RewardedAd adDidRecordClick");
-	AdmobPlugin::get_singleton()->emit_signal(REWARDED_AD_CLICKED_SIGNAL, [self.adInfo buildRawData]);
+	AdmobPlugin::get_singleton()->call_deferred("emit_signal", REWARDED_AD_CLICKED_SIGNAL, [self.adInfo buildRawData]);
 }
 
 - (void) ad:(nonnull id<GADFullScreenPresentingAd>) ad didFailToPresentFullScreenContentWithError:(nonnull NSError *) error {
 	AdmobAdError *adError = [[AdmobAdError alloc] initWithNsError:error];
 	os_log_debug(admob_log, "RewardedAd didFailToPresentFullScreenContentWithError: %@", adError.message);
-	AdmobPlugin::get_singleton()->emit_signal(REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData],
+	AdmobPlugin::get_singleton()->call_deferred("emit_signal", REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData],
 				[adError buildRawData]);
 }
 
 - (void) adWillPresentFullScreenContent:(nonnull id<GADFullScreenPresentingAd>) ad {
 	os_log_debug(admob_log, "RewardedAd adWillPresentFullScreenContent");
-	AdmobPlugin::get_singleton()->emit_signal(REWARDED_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
+	AdmobPlugin::get_singleton()->call_deferred("emit_signal", REWARDED_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
 
 	if (AdFormatBase.pauseOnBackground) {
 		os_log_debug(admob_log, "RewardedAd pauseOnBackground");
@@ -107,7 +107,7 @@
 
 - (void) adDidDismissFullScreenContent:(nonnull id<GADFullScreenPresentingAd>) ad {
 	os_log_debug(admob_log, "RewardedAd adDidDismissFullScreenContent");
-	AdmobPlugin::get_singleton()->emit_signal(REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
+	AdmobPlugin::get_singleton()->call_deferred("emit_signal", REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
 	OS_IOS::get_singleton()->on_focus_in();
 }
 
