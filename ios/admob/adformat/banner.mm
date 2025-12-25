@@ -4,7 +4,7 @@
 
 #import "banner.h"
 
-#import "admob_plugin_implementation.h"
+#import "admob_plugin.h"
 #import "admob_response.h"
 #import "admob_logger.h"
 #import "admob_ad_error.h"
@@ -78,7 +78,7 @@
 
 	self.adInfo.measuredWidth = roundf(width);
 	self.adInfo.measuredHeight = roundf(height);
-	AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_SIZE_MEASURED_SIGNAL, [self.adInfo buildRawData]);
+	AdmobPlugin::get_singleton()->call_deferred("emit_signal", BANNER_AD_SIZE_MEASURED_SIGNAL, [self.adInfo buildRawData]);
 }
 
 - (void) moveToX:(real_t)x y:(real_t)y {
@@ -276,14 +276,14 @@
 
             // Emit loaded events
             if (self.isLoaded) {
-                AdmobPlugin::get_singleton()->emit_signal(
+                AdmobPlugin::get_singleton()->call_deferred("emit_signal", 
                     BANNER_AD_REFRESHED_SIGNAL,
                     [self.adInfo buildRawData],
                     [[[AdmobResponse alloc] initWithResponseInfo:bannerView.responseInfo] buildRawData]
                 );
             } else {
                 self.isLoaded = YES;
-                AdmobPlugin::get_singleton()->emit_signal(
+                AdmobPlugin::get_singleton()->call_deferred("emit_signal", 
                     BANNER_AD_LOADED_SIGNAL,
                     [self.adInfo buildRawData],
                     [[[AdmobResponse alloc] initWithResponseInfo:bannerView.responseInfo] buildRawData]
@@ -298,28 +298,28 @@
 	AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
 	os_log_error(admob_log, "BannerAd bannerView:didFailToReceiveAdWithError: %@", loadAdError.message);
 
-	AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_FAILED_TO_LOAD_SIGNAL, [self.adInfo buildRawData],
+	AdmobPlugin::get_singleton()->call_deferred("emit_signal", BANNER_AD_FAILED_TO_LOAD_SIGNAL, [self.adInfo buildRawData],
 				[loadAdError buildRawData]);
 }
 
 - (void) bannerViewDidRecordClick: (GADBannerView*) bannerView {
 	os_log_debug(admob_log, "BannerAd bannerViewDidRecordClick");
-	AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_CLICKED_SIGNAL, [self.adInfo buildRawData]);
+	AdmobPlugin::get_singleton()->call_deferred("emit_signal", BANNER_AD_CLICKED_SIGNAL, [self.adInfo buildRawData]);
 }
 
 - (void) bannerViewDidRecordImpression: (GADBannerView*) bannerView {
 	os_log_debug(admob_log, "BannerAd bannerViewDidRecordImpression");
-	AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_IMPRESSION_SIGNAL, [self.adInfo buildRawData]);
+	AdmobPlugin::get_singleton()->call_deferred("emit_signal", BANNER_AD_IMPRESSION_SIGNAL, [self.adInfo buildRawData]);
 }
 
 - (void) bannerViewWillPresentScreen: (GADBannerView*) bannerView {
 	os_log_debug(admob_log, "BannerAd bannerViewWillPresentScreen");
-	AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_OPENED_SIGNAL, [self.adInfo buildRawData]);
+	AdmobPlugin::get_singleton()->call_deferred("emit_signal", BANNER_AD_OPENED_SIGNAL, [self.adInfo buildRawData]);
 }
 
 - (void) bannerViewDidDismissScreen: (GADBannerView*) bannerView {
 	os_log_debug(admob_log, "BannerAd bannerViewDidDismissScreen");
-	AdmobPlugin::get_singleton()->emit_signal(BANNER_AD_CLOSED_SIGNAL, [self.adInfo buildRawData]);
+	AdmobPlugin::get_singleton()->call_deferred("emit_signal", BANNER_AD_CLOSED_SIGNAL, [self.adInfo buildRawData]);
 }
 
 @end

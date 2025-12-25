@@ -276,6 +276,10 @@ func _on_admob_rewarded_ad_user_earned_reward(ad_info: AdInfo, reward_data: Rewa
 				[ad_info.get_ad_id(), reward_data.get_amount(), reward_data.get_type()])
 
 
+func _on_admob_rewarded_ad_dismissed_full_screen_content(ad_info: AdInfo) -> void:
+	_print_to_screen("rewarded ad dismissed: %s" % ad_info.get_ad_id())
+
+
 func _on_admob_rewarded_interstitial_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) -> void:
 	_is_rewarded_interstitial_loaded = true
 	rewarded_interstitial_button.disabled = false
@@ -292,6 +296,10 @@ func _on_admob_rewarded_interstitial_ad_failed_to_load(ad_info: AdInfo, error_da
 func _on_admob_rewarded_interstitial_ad_user_earned_reward(ad_info: AdInfo, reward_data: RewardItem) -> void:
 	_print_to_screen("user rewarded for rewarded interstitial ad '%s' with %d %s" %
 				[ad_info.get_ad_id(), reward_data.get_amount(), reward_data.get_type()])
+
+
+func _on_admob_rewarded_interstitial_ad_dismissed_full_screen_content(ad_info: AdInfo) -> void:
+	_print_to_screen("rewarded interstitial ad dismissed: %s" % ad_info.get_ad_id())
 
 
 func _on_admob_app_open_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) -> void:
