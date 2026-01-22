@@ -264,6 +264,13 @@ func _on_admob_rewarded_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) 
 	_print_to_screen("rewarded video ad loaded by %s network (%s) id: %s" %
 			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()])
 
+	# Check all responses
+	for __adapter_response in response_info.get_adapter_responses():
+		_print_to_screen("Adapter '%s' - latency %d" % [
+			__adapter_response.get_adapter_class_name(),
+			__adapter_response.get_latency()
+		])
+
 
 func _on_admob_rewarded_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError) -> void:
 	_print_to_screen("rewarded video %s failed to load. error: %d, message: %s" %

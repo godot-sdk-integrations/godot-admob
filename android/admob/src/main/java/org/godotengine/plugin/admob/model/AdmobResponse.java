@@ -7,6 +7,7 @@ package org.godotengine.plugin.admob.model;
 import com.google.android.gms.ads.AdapterResponseInfo;
 import com.google.android.gms.ads.ResponseInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.godotengine.godot.Dictionary;
@@ -32,11 +33,11 @@ public class AdmobResponse {
 		Dictionary dict = new Dictionary();
 
 		List<AdapterResponseInfo> adapterResponses = info.getAdapterResponses();
-		Dictionary[] responseDicts = new Dictionary[adapterResponses.size()];
+		List<Dictionary> responseDicts = new ArrayList<>();
 		for (int i = 0; i < adapterResponses.size(); i++) {
-			responseDicts[i] = new AdmobAdapterResponse(adapterResponses.get(i)).buildRawData();
+			responseDicts.add(new AdmobAdapterResponse(adapterResponses.get(i)).buildRawData());
 		}
-		dict.put(ADAPTER_RESPONSES_PROPERTY, responseDicts);
+		dict.put(ADAPTER_RESPONSES_PROPERTY, responseDicts.toArray());
 
 		AdapterResponseInfo adapterResponseInfo = info.getLoadedAdapterResponseInfo();
 		if (adapterResponseInfo != null)
