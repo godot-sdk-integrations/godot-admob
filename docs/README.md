@@ -207,6 +207,8 @@ The following ad types are supported:
 - `initialize()` - initialize plugin
 - `set_request_configuration(AdmobConfig)` - set general configuration that is applied to all ad requests
 - `get_initialization_status()` - get initialization status of enabled mediation networks
+- `get_global_settings() -> AdmobSettings` - get global ad settings such as ad volume level and whether ads are muted
+- `set_global_settings(AdmobSettings)` - set global ad settings such as ad volume level and whether ads are muted. The settings will only apply to ads that are loaded after this method has been called.
 - `get_current_adaptive_banner_size()` - get an AdSize with the given width and a Google-optimized height to create a banner ad in current orientation
 - `get_portrait_adaptive_banner_size()` - get an AdSize with the given width and a Google-optimized height to create a banner ad in portrait orientation
 - `get_landscape_adaptive_banner_size()` - get an AdSize with the given width and a Google-optimized height to create a banner ad in landscape orientation
@@ -273,6 +275,13 @@ The following ad types are supported:
 ### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> AdmobConfig
 - Encapsulates general configuration data that is applied to all ad requests.
 - Properties: `is_real`, `max_ad_content_rating`, `tag_for_child_directed_treatment`, `tag_for_under_age_of_consent`, `first_party_id_enabled`, `personalization_state`, `test_device_ids`
+
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> AdmobSettings
+- Encapsulates global settings that are applied to all ads loaded after the values have been set.
+- Properties:
+	- `ad_volume`: Global volume level for all ads
+	- `ads_muted`: Whether or not ads are muted
+	- `apply_at_startup`: Whether or not the global settings will be reapplied at startup
 
 ### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="16"> ConsentInformation
 - Contains consent status values.

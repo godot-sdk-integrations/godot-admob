@@ -23,6 +23,10 @@ extends Node
 @onready var reload_rewarded_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/ReloadRewardedButton
 @onready var reload_rewarded_interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/ReloadRewardedInterstitialButton
 @onready var consent_status_label: Label = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Consent/VBoxContainer/StatusHBoxContainer/ValueLabel
+@onready var volume_hslider: HSlider = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/VolumeHBC/VolumeHSlider
+@onready var volume_value_label: Label = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/VolumeHBC/ValueLabel
+@onready var muted_checkbutton: CheckButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/MuteHBC/CheckButton
+@onready var startup_checkbutton: CheckButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/StartupHBC/CheckButton
 @onready var _label: RichTextLabel = $CanvasLayer/MainContainer/VBoxContainer/RichTextLabel as RichTextLabel
 @onready var _android_texture_rect: TextureRect = $CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer/AndroidTextureRect as TextureRect
 @onready var _ios_texture_rect: TextureRect = $CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer/iOSTextureRect as TextureRect
@@ -211,6 +215,35 @@ func _on_rewarded_interstitial_button_pressed() -> void:
 func _on_reset_consent_button_pressed() -> void:
 	_consent_status = UserConsent.status_to_string(UserConsent.Status.UNKNOWN)
 	admob.reset_consent_info()
+
+
+func _on_volume_h_slider_value_changed(value: float) -> void:
+	volume_value_label.text = "%.2f" % value
+
+
+func _on_get_settings_button_pressed() -> void:
+	var __settings:= admob.get_global_settings()
+	volume_hslider.value = __settings.get_ad_volume()
+	muted_checkbutton.button_pressed = __settings.are_ads_muted()
+	startup_checkbutton.button_pressed = __settings.get_apply_at_startup()
+	_print_to_screen("Get global settings: volume=%.2f muted=%s apply_at_startup=%s" % [
+			__settings.get_ad_volume(),
+			str(__settings.are_ads_muted()),
+			str(__settings.get_apply_at_startup())
+	])
+
+
+func _on_set_settings_button_pressed() -> void:
+	var __settings:= (AdmobSettings.new()
+			.set_ad_volume(volume_hslider.value)
+			.set_ads_muted(muted_checkbutton.button_pressed)
+			.set_apply_at_startup(startup_checkbutton.button_pressed))
+	admob.set_global_settings(__settings)
+	_print_to_screen("Set global settings: volume=%.2f muted=%s apply_at_startup=%s" % [
+			__settings.get_ad_volume(),
+			str(__settings.are_ads_muted()),
+			str(__settings.get_apply_at_startup())
+	])
 
 
 func _on_admob_banner_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) -> void:
