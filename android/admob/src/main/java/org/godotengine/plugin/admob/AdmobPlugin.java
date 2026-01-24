@@ -5,7 +5,9 @@
 package org.godotengine.plugin.admob;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -48,6 +50,7 @@ import org.godotengine.plugin.admob.model.AdmobAdSize;
 import org.godotengine.plugin.admob.model.AdmobLoadAdError;
 import org.godotengine.plugin.admob.model.AdmobResponse;
 import org.godotengine.plugin.admob.model.AdmobStatus;
+import org.godotengine.plugin.admob.model.AdSettings;
 import org.godotengine.plugin.admob.model.ConsentConfiguration;
 import org.godotengine.plugin.admob.model.LoadAdRequest;
 
@@ -101,6 +104,11 @@ public class AdmobPlugin extends GodotPlugin {
 	static final String SIGNAL_CONSENT_FORM_DISMISSED = "consent_form_dismissed";
 	static final String SIGNAL_CONSENT_INFO_UPDATED = "consent_info_updated";
 	static final String SIGNAL_CONSENT_INFO_UPDATE_FAILED = "consent_info_update_failed";
+
+	private static final String PREFS_NAME = "godot_admob_settings";
+	private static final String PREF_KEY_AD_VOLUME = "ad_volume";
+	private static final String PREF_KEY_ADS_MUTED = "ads_muted";
+	private static final String PREF_KEY_APPLY_AT_STARTUP = "apply_at_startup";
 
 	Activity activity;
 
@@ -239,6 +247,18 @@ public class AdmobPlugin extends GodotPlugin {
 				MobileAds.initialize(activity, new OnInitializationCompleteListener() {
 					@Override
 					public void onInitializationComplete(InitializationStatus initializationStatus) {
+						// Load and apply settings if apply_at_startup is enabled
+						AdSettings settings = loadAdSettings();
+						if (settings.getApplyAtStartup()) {
+							Log.d(LOG_TAG, "Applying global settings at startup");
+							if (settings.hasAdVolume()) {
+								MobileAds.setAppVolume(settings.getAdVolume());
+							}
+							if (settings.hasAdsMuted()) {
+								MobileAds.setAppMuted(settings.areAdsMuted());
+							}
+						}
+						
 						isInitialized = true;
 						emitSignal(SIGNAL_INITIALIZATION_COMPLETED, new AdmobStatus(initializationStatus).buildRawData());
 					}
@@ -258,6 +278,54 @@ public class AdmobPlugin extends GodotPlugin {
 	public Dictionary get_initialization_status() {
 		Log.d(LOG_TAG, "get_initialization_status()");
 		return new AdmobStatus(MobileAds.getInitializationStatus()).buildRawData();
+	}
+
+	private SharedPreferences getAdSettingsPrefs() {
+		return getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+	}
+
+	private AdSettings loadAdSettings() {
+		SharedPreferences prefs = getAdSettingsPrefs();
+
+		AdSettings adSettings = new AdSettings();
+		adSettings.setAdVolume(prefs.getFloat(PREF_KEY_AD_VOLUME, AdSettings.DEFAULT_AD_VOLUME));
+		adSettings.setAdsMuted(prefs.getBoolean(PREF_KEY_ADS_MUTED, AdSettings.DEFAULT_ADS_MUTED));
+		adSettings.setApplyAtStartup(prefs.getBoolean(PREF_KEY_APPLY_AT_STARTUP, AdSettings.DEFAULT_APPLY_AT_STARTUP));
+
+		return adSettings;
+	}
+
+	private void saveAdSettings(AdSettings settings) {
+		SharedPreferences.Editor editor = getAdSettingsPrefs().edit();
+
+		editor.putFloat(PREF_KEY_AD_VOLUME, settings.getAdVolume());
+		editor.putBoolean(PREF_KEY_ADS_MUTED, settings.areAdsMuted());
+		editor.putBoolean(PREF_KEY_APPLY_AT_STARTUP, settings.getApplyAtStartup());
+
+		editor.apply();
+	}
+
+	@UsedByGodot
+	public Dictionary get_global_settings() {
+		Log.d(LOG_TAG, "get_global_settings()");
+		
+		return loadAdSettings().getRawData();
+	}
+
+	@UsedByGodot
+	public void set_global_settings(Dictionary settingsDict) {
+		Log.d(LOG_TAG, "set_global_settings()");
+
+		AdSettings adSettings = new AdSettings(settingsDict);
+		if (adSettings.hasAdsMuted()) {
+			MobileAds.setAppMuted(adSettings.areAdsMuted());
+		}
+
+		if (adSettings.hasAdVolume()) {
+			MobileAds.setAppVolume(adSettings.getAdVolume());
+		}
+
+		saveAdSettings(adSettings);	// Persist
 	}
 
 	@UsedByGodot

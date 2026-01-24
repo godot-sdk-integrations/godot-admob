@@ -102,12 +102,19 @@ tasks {
 	register<Copy>("copyAddonsToDemo") {
 		description = "Copies the export scripts templates to the plugin's addons directory"
 		dependsOn("cleanDemoAddons")
-		finalizedBy("copyDebugAARToDemoAddons", "copyReleaseAARToDemoAddons", "copyPngsToDemo")
+		finalizedBy(
+			"copyDebugAARToDemoAddons",
+			"copyReleaseAARToDemoAddons",
+			"copyPngsToDemo"
+		)
 
 		from(project.extra["templateDirectory"] as String)
 		into("${project.extra["demoAddOnsDirectory"]}/${project.extra["pluginName"]}")
+
 		include("**/*.gd")
 		include("**/*.cfg")
+
+		// First pass: explicit tokens
 		filter<ReplaceTokens>("tokens" to mapOf(
 			"pluginName" to (project.extra["pluginName"] as String),
 			"pluginNodeName" to (project.extra["pluginNodeName"] as String),
@@ -131,6 +138,20 @@ tasks {
 				.filter { it.isNotBlank() }
 				.joinToString(", ") { "\"$it\"" }
 		))
+
+		// Second pass: generic replacement for leftover tokens (ie. extraProperties)
+		filter { line: String ->
+			var result = line
+
+			project.extra.properties.forEach { (key, value) ->
+				val token = "@$key@"
+				if (result.contains(token)) {
+					result = result.replace(token, value.toString())
+				}
+			}
+
+			result
+		}
 	}
 
 	register("replaceMediationTokens") {

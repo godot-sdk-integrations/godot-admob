@@ -57,7 +57,7 @@
 						[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
 			}
 		}];
-    });
+	});
 }
 
 - (void) show {
@@ -68,7 +68,7 @@
 				AdmobPlugin::get_singleton()->call_deferred("emit_signal", REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD_SIGNAL, [self.adInfo buildRawData],
 							[GAPConverter adRewardToGodotDictionary:reward]);
 			}];
-    	});
+		});
 	}
 	else {
 		os_log_debug(admob_log, "RewardedInterstitialAd show: ad not set");

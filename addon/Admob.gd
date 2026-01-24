@@ -96,6 +96,17 @@ const MAXIMUM_CACHE_SIZE: int = 1000
 ## Whether the plugin should automatically apply the configuration after initialization has been completed.
 @export var auto_configure_on_initialize: bool = true
 
+@export_group("Global Settings", "global_")
+
+## Sets the ads' audio volume. Minimum value is 0.0 and maximum value is 1.0.
+@export_range(0.0, 1.0, 0.01) var global_ad_volume: float = 1.0
+
+## Whether or not the ads' audio will be muted.
+@export var global_ads_muted: bool = false
+
+## Whether or not the global settings will be reapplied at app restart.
+@export var global_apply_at_startup: bool = false
+
 
 @export_category("Ad Type-specific")
 @export_group("Banner", "banner_")
@@ -543,6 +554,29 @@ func set_request_configuration(a_config: AdmobConfig = null) -> void:
 func set_app_pause_on_background(a_pause: bool) -> void:
 	if _plugin_singleton != null:
 		_plugin_singleton.set_app_pause_on_background(a_pause)
+	else:
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+
+
+func get_global_settings() -> AdmobSettings:
+	var __settings: AdmobSettings
+
+	if _plugin_singleton != null:
+		__settings = AdmobSettings.new(_plugin_singleton.get_global_settings())
+	else:
+		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+
+	return __settings
+
+
+func set_global_settings(a_settings: AdmobSettings = null) -> void:
+	if _plugin_singleton != null:
+		if a_settings == null:
+			a_settings = (AdmobSettings.new()
+					.set_ad_volume(global_ad_volume)
+					.set_ads_muted(global_ads_muted)
+					.set_apply_at_startup(global_apply_at_startup))
+		_plugin_singleton.set_global_settings(a_settings.get_raw_data())
 	else:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
@@ -998,7 +1032,7 @@ func _on_banner_ad_loaded(a_ad_data: Dictionary, a_response_info: Dictionary) ->
 	banner_ad_loaded.emit(__ad_info, __response_info)
 
 
-func _on_banner_ad_failed_to_load(a_ad_data: Dictionary, error_data: Dictionary)  -> void:
+func _on_banner_ad_failed_to_load(a_ad_data: Dictionary, error_data: Dictionary) -> void:
 	banner_ad_failed_to_load.emit(AdInfo.new(a_ad_data), LoadAdError.new(error_data))
 
 
@@ -1033,7 +1067,7 @@ func _on_interstitial_ad_loaded(a_ad_data: Dictionary, a_response_info: Dictiona
 	interstitial_ad_loaded.emit(__ad_info, __response_info)
 
 
-func _on_interstitial_ad_failed_to_load(a_ad_data: Dictionary, error_data: Dictionary)  -> void:
+func _on_interstitial_ad_failed_to_load(a_ad_data: Dictionary, error_data: Dictionary) -> void:
 	interstitial_ad_failed_to_load.emit(AdInfo.new(a_ad_data), LoadAdError.new(error_data))
 
 
@@ -1071,7 +1105,7 @@ func _on_rewarded_ad_loaded(a_ad_data: Dictionary, a_response_info: Dictionary) 
 	rewarded_ad_loaded.emit(__ad_info, __response_info)
 
 
-func _on_rewarded_ad_failed_to_load(a_ad_data: Dictionary, error_data: Dictionary)  -> void:
+func _on_rewarded_ad_failed_to_load(a_ad_data: Dictionary, error_data: Dictionary) -> void:
 	rewarded_ad_failed_to_load.emit(AdInfo.new(a_ad_data), LoadAdError.new(error_data))
 
 
@@ -1109,7 +1143,7 @@ func _on_rewarded_interstitial_ad_loaded(a_ad_data: Dictionary, a_response_info:
 	rewarded_interstitial_ad_loaded.emit(__ad_info, __response_info)
 
 
-func _on_rewarded_interstitial_ad_failed_to_load(a_ad_data: Dictionary, error_data: Dictionary)  -> void:
+func _on_rewarded_interstitial_ad_failed_to_load(a_ad_data: Dictionary, error_data: Dictionary) -> void:
 	rewarded_interstitial_ad_failed_to_load.emit(AdInfo.new(a_ad_data), LoadAdError.new(error_data))
 
 

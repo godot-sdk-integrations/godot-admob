@@ -255,42 +255,42 @@
 }
 
 - (void)bannerViewDidReceiveAd:(GADBannerView *)bannerView {
-    os_log_debug(admob_log, "BannerAd bannerViewDidReceiveAd %@", self.adId);
+	os_log_debug(admob_log, "BannerAd bannerViewDidReceiveAd %@", self.adId);
 
-    self.adInfo.isCollapsible = bannerView.isCollapsible;
+	self.adInfo.isCollapsible = bannerView.isCollapsible;
 
-    // Wait for layout pass
-    dispatch_async(dispatch_get_main_queue(), ^{
-        // Force layout of root view
-        [GDTAppDelegateService.viewController.view layoutIfNeeded];
+	// Wait for layout pass
+	dispatch_async(dispatch_get_main_queue(), ^{
+		// Force layout of root view
+		[GDTAppDelegateService.viewController.view layoutIfNeeded];
 
-        // Wait one more runloop tick so layout has completed
-        dispatch_async(dispatch_get_main_queue(), ^{
-            CGFloat width = bannerView.bounds.size.width;
-            CGFloat height = bannerView.bounds.size.height;
+		// Wait one more runloop tick so layout has completed
+		dispatch_async(dispatch_get_main_queue(), ^{
+			CGFloat width = bannerView.bounds.size.width;
+			CGFloat height = bannerView.bounds.size.height;
 
-            os_log_debug(admob_log, "INLINE_ADAPTIVE actual size = %.0fx%.0f", width, height);
+			os_log_debug(admob_log, "INLINE_ADAPTIVE actual size = %.0fx%.0f", width, height);
 
-            self.adInfo.measuredWidth = width;
-            self.adInfo.measuredHeight = height;
+			self.adInfo.measuredWidth = width;
+			self.adInfo.measuredHeight = height;
 
-            // Emit loaded events
-            if (self.isLoaded) {
-                AdmobPlugin::get_singleton()->call_deferred("emit_signal", 
-                    BANNER_AD_REFRESHED_SIGNAL,
-                    [self.adInfo buildRawData],
-                    [[[AdmobResponse alloc] initWithResponseInfo:bannerView.responseInfo] buildRawData]
-                );
-            } else {
-                self.isLoaded = YES;
-                AdmobPlugin::get_singleton()->call_deferred("emit_signal", 
-                    BANNER_AD_LOADED_SIGNAL,
-                    [self.adInfo buildRawData],
-                    [[[AdmobResponse alloc] initWithResponseInfo:bannerView.responseInfo] buildRawData]
-                );
-            }
-        });
-    });
+			// Emit loaded events
+			if (self.isLoaded) {
+				AdmobPlugin::get_singleton()->call_deferred("emit_signal", 
+					BANNER_AD_REFRESHED_SIGNAL,
+					[self.adInfo buildRawData],
+					[[[AdmobResponse alloc] initWithResponseInfo:bannerView.responseInfo] buildRawData]
+				);
+			} else {
+				self.isLoaded = YES;
+				AdmobPlugin::get_singleton()->call_deferred("emit_signal", 
+					BANNER_AD_LOADED_SIGNAL,
+					[self.adInfo buildRawData],
+					[[[AdmobResponse alloc] initWithResponseInfo:bannerView.responseInfo] buildRawData]
+				);
+			}
+		});
+	});
 }
 
 

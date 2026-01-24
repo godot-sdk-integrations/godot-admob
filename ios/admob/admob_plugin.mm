@@ -16,6 +16,7 @@
 #import "admob_config.h"
 #import "admob_status.h"
 #import "admob_logger.h"
+#import "ad_settings_wrapper.h"
 #import "privacy_settings.h"
 
 
@@ -78,6 +79,8 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_request_configuration"), &AdmobPlugin::set_request_configuration);
 	ClassDB::bind_method(D_METHOD("get_initialization_status"), &AdmobPlugin::get_initialization_status);
 	ClassDB::bind_method(D_METHOD("set_app_pause_on_background"), &AdmobPlugin::set_app_pause_on_background);
+	ClassDB::bind_method(D_METHOD("get_global_settings"), &AdmobPlugin::get_global_settings);
+	ClassDB::bind_method(D_METHOD("set_global_settings", "settings"), &AdmobPlugin::set_global_settings);
 
 	ADD_SIGNAL(MethodInfo(INITIALIZATION_COMPLETED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "status_data")));
 
@@ -199,6 +202,13 @@ Error AdmobPlugin::initialize() {
 	os_log_debug(admob_log, "%@ Starting GADMobileAds initialization", kLogTag);
 
 	[[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *_Nonnull status) {
+		// Load and apply settings if apply_at_startup is enabled
+		AdSettings *settings = [GlobalSettings loadSettings];
+		if (settings.applyAtStartup != nil && [settings.applyAtStartup boolValue]) {
+			os_log_debug(admob_log, "%@ Applying global settings at startup", kLogTag);
+			[GlobalSettings applyToGADMobileAds:settings];
+		}
+		
 		initialized = true;
 		os_log_debug(admob_log, "%@ initialization completed for %tu adapters.", kLogTag, [status.adapterStatusesByClassName count]);
 		Dictionary dictionary = [[[AdmobStatus alloc] initWithStatus:status] buildRawData];
@@ -230,6 +240,26 @@ Dictionary AdmobPlugin::get_initialization_status() {
 
 void AdmobPlugin::set_app_pause_on_background(bool pause) {
 	[AdFormatBase setPauseOnBackground:pause];
+}
+
+Dictionary AdmobPlugin::get_global_settings() {
+	os_log_debug(admob_log, "%@ get_global_settings", kLogTag);
+	
+	AdSettingsWrapper *wrapper = [[AdSettingsWrapper alloc] initWithAdSettings:[GlobalSettings loadSettings]];
+
+	return [wrapper getRawData];
+}
+
+void AdmobPlugin::set_global_settings(Dictionary settingsDict) {
+	os_log_debug(admob_log, "%@ set_global_settings", kLogTag);
+
+	AdSettingsWrapper *wrapper = [[AdSettingsWrapper alloc] initWithData:settingsDict];
+
+	AdSettings *settings = [wrapper createAdSettings];
+
+	[GlobalSettings applyToGADMobileAds:settings];	// Apply settings
+	
+	[GlobalSettings saveSettings: settings];	// Persist settings
 }
 
 Dictionary AdmobPlugin::get_current_adaptive_banner_size(int width) {
@@ -308,7 +338,7 @@ Error AdmobPlugin::load_banner_ad(Dictionary adData) {
 		bannerAds[adId] = ad;
 
 		[ad load: loadAdRequest];
-    });
+	});
 
 	return OK;
 }
@@ -323,7 +353,7 @@ void AdmobPlugin::show_banner_ad(String adId) {
 		} else {
 			os_log_error(admob_log, "AdmobPlugin show_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 		}
-    });
+	});
 }
 
 void AdmobPlugin::hide_banner_ad(String adId) {
@@ -336,7 +366,7 @@ void AdmobPlugin::hide_banner_ad(String adId) {
 		} else {
 			os_log_error(admob_log, "AdmobPlugin hide_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 		}
-    });
+	});
 }
 
 void AdmobPlugin::remove_banner_ad(String adId) {
@@ -350,7 +380,7 @@ void AdmobPlugin::remove_banner_ad(String adId) {
 		} else {
 			os_log_error(admob_log, "AdmobPlugin remove_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 		}
-    });
+	});
 }
 
 void AdmobPlugin::move_banner_ad(String adId, real_t x, real_t y) {
@@ -363,7 +393,7 @@ void AdmobPlugin::move_banner_ad(String adId, real_t x, real_t y) {
 		} else {
 			os_log_error(admob_log, "AdmobPlugin remove_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 		}
-    });
+	});
 }
 
 int AdmobPlugin::get_banner_width(String adId) {
@@ -435,7 +465,7 @@ Error AdmobPlugin::load_interstitial_ad(Dictionary adData) {
 		interstitialAds[adId] = ad;
 
 		[ad load: loadAdRequest];
-    });
+	});
 
 	return OK;
 }
@@ -450,7 +480,7 @@ void AdmobPlugin::show_interstitial_ad(String adId) {
 		} else {
 			os_log_error(admob_log, "AdmobPlugin show_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 		}
-    });
+	});
 }
 
 void AdmobPlugin::remove_interstitial_ad(String adId) {
@@ -463,7 +493,7 @@ void AdmobPlugin::remove_interstitial_ad(String adId) {
 		} else {
 			os_log_error(admob_log, "AdmobPlugin remove_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 		}
-    });
+	});
 }
 
 Error AdmobPlugin::load_rewarded_ad(Dictionary adData) {
@@ -483,7 +513,7 @@ Error AdmobPlugin::load_rewarded_ad(Dictionary adData) {
 		rewardedAds[adId] = ad;
 
 		[ad load: loadAdRequest];
-    });
+	});
 
 	return OK;
 }
@@ -498,7 +528,7 @@ void AdmobPlugin::show_rewarded_ad(String adId) {
 		} else {
 			os_log_error(admob_log, "AdmobPlugin show_rewarded_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 		}
-    });
+	});
 }
 
 void AdmobPlugin::remove_rewarded_ad(String adId) {
@@ -511,7 +541,7 @@ void AdmobPlugin::remove_rewarded_ad(String adId) {
 		} else {
 			os_log_error(admob_log, "AdmobPlugin remove_rewarded_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 		}
-    });
+	});
 }
 
 Error AdmobPlugin::load_rewarded_interstitial_ad(Dictionary adData) {
@@ -531,7 +561,7 @@ Error AdmobPlugin::load_rewarded_interstitial_ad(Dictionary adData) {
 		rewardedInterstitialAds[adId] = ad;
 
 		[ad load: loadAdRequest];
-    });
+	});
 
 	return OK;
 }
@@ -546,7 +576,7 @@ void AdmobPlugin::show_rewarded_interstitial_ad(String adId) {
 		} else {
 			os_log_error(admob_log, "AdmobPlugin show_rewarded_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 		}
-    });
+	});
 }
 
 void AdmobPlugin::remove_rewarded_interstitial_ad(String adId) {
@@ -560,7 +590,7 @@ void AdmobPlugin::remove_rewarded_interstitial_ad(String adId) {
 		else {
 			os_log_error(admob_log, "AdmobPlugin remove_rewarded_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 		}
-    });
+	});
 }
 
 Error AdmobPlugin::load_app_open_ad(Dictionary requestDict, bool autoShowOnResume) {
@@ -579,7 +609,7 @@ Error AdmobPlugin::load_app_open_ad(Dictionary requestDict, bool autoShowOnResum
 			this->appOpenAd = [[AppOpenAd alloc] initWithPlugin:this];
 		}
 		[this->appOpenAd loadWithRequest:loadAdRequest autoShowOnResume:autoShowOnResume];
-    });
+	});
 
 	return OK;
 }
@@ -593,7 +623,7 @@ void AdmobPlugin::show_app_open_ad() {
 		} else {
 			[this->appOpenAd show];
 		}
-    });
+	});
 }
 
 bool AdmobPlugin::is_app_open_ad_available() {

@@ -45,6 +45,9 @@
 		07A9A9532EFD654F00F8335A /* admob_ad_info.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07A9A9222EFD654F00F8335A /* admob_ad_info.mm */; };
 		07A9A9542EFD654F00F8335A /* mediation_network.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07A9A90C2EFD654F00F8335A /* mediation_network.mm */; };
 		07AF2A202EDE9CFC008A870E /* ConsentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07AF2A1F2EDE9CFC008A870E /* ConsentManager.swift */; };
+		07B12A6E2F23A3710098B81A /* GlobalSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07B12A6D2F23A3710098B81A /* GlobalSettings.swift */; };
+		07CC05FE2F23B744004D4A22 /* ad_settings_wrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07CC05FC2F23B744004D4A22 /* ad_settings_wrapper.mm */; };
+		07CC05FF2F23B744004D4A22 /* AdSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07CC05FD2F23B744004D4A22 /* AdSettings.swift */; };
 		90CAAA9924E71FF10013969F /* admob_plugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 90CAAA9824E71FF10013969F /* admob_plugin.mm */; };
 		94A1B0B2910D06DA0F4D3D3C /* Pods_admob_plugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 380C444E6383B0C8ACA7CA7D /* Pods_admob_plugin.framework */; };
 /* End PBXBuildFile section */
@@ -139,6 +142,10 @@
 		07A9A92F2EFD654F00F8335A /* load_ad_request.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = load_ad_request.h; sourceTree = "<group>"; };
 		07A9A9302EFD654F00F8335A /* load_ad_request.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = load_ad_request.mm; sourceTree = "<group>"; };
 		07AF2A1F2EDE9CFC008A870E /* ConsentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentManager.swift; sourceTree = "<group>"; };
+		07B12A6D2F23A3710098B81A /* GlobalSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalSettings.swift; sourceTree = "<group>"; };
+		07CC05FB2F23B744004D4A22 /* ad_settings_wrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ad_settings_wrapper.h; sourceTree = "<group>"; };
+		07CC05FC2F23B744004D4A22 /* ad_settings_wrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ad_settings_wrapper.mm; sourceTree = "<group>"; };
+		07CC05FD2F23B744004D4A22 /* AdSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdSettings.swift; sourceTree = "<group>"; };
 		1A3D1E30D9DC57319C20B62B /* Pods-admob_plugin.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-admob_plugin.release.xcconfig"; path = "Target Support Files/Pods-admob_plugin/Pods-admob_plugin.release.xcconfig"; sourceTree = "<group>"; };
 		380C444E6383B0C8ACA7CA7D /* Pods_admob_plugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_admob_plugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		403D7C7BCFBA671DEF15AE95 /* Pods-admob_plugin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-admob_plugin.debug.xcconfig"; path = "Target Support Files/Pods-admob_plugin/Pods-admob_plugin.debug.xcconfig"; sourceTree = "<group>"; };
@@ -228,6 +235,9 @@
 		07A9A9312EFD654F00F8335A /* model */ = {
 			isa = PBXGroup;
 			children = (
+				07CC05FB2F23B744004D4A22 /* ad_settings_wrapper.h */,
+				07CC05FC2F23B744004D4A22 /* ad_settings_wrapper.mm */,
+				07CC05FD2F23B744004D4A22 /* AdSettings.swift */,
 				07A9A91E2EFD654F00F8335A /* ad_position.h */,
 				07A9A91F2EFD654F00F8335A /* admob_ad_error.h */,
 				07A9A9202EFD654F00F8335A /* admob_ad_error.mm */,
@@ -286,14 +296,15 @@
 				07A9A8F42EFD654F00F8335A /* adformat */,
 				07A9A91D2EFD654F00F8335A /* mediation */,
 				07A9A9312EFD654F00F8335A /* model */,
+				07787D0C2EDA6C22009B6F5F /* admob_logger.h */,
+				07787D0D2EDA6C22009B6F5F /* admob_logger.m */,
+				073B52C32ECF241C0063663B /* admob_plugin-Bridging-Header.h */,
 				90CAAA9724E71FF10013969F /* admob_plugin.h */,
 				90CAAA9824E71FF10013969F /* admob_plugin.mm */,
 				07A9A8F52EFD654F00F8335A /* admob_plugin_bootstrap.h */,
 				07A9A8F62EFD654F00F8335A /* admob_plugin_bootstrap.mm */,
 				07AF2A1F2EDE9CFC008A870E /* ConsentManager.swift */,
-				07787D0C2EDA6C22009B6F5F /* admob_logger.h */,
-				07787D0D2EDA6C22009B6F5F /* admob_logger.m */,
-				073B52C32ECF241C0063663B /* admob_plugin-Bridging-Header.h */,
+				07B12A6D2F23A3710098B81A /* GlobalSettings.swift */,
 				07787D0E2EDA6C22009B6F5F /* gap_converter.h */,
 				07787D0F2EDA6C22009B6F5F /* gap_converter.mm */,
 			);
@@ -402,6 +413,8 @@
 				07A9A9372EFD654F00F8335A /* google_mediation_network.mm in Sources */,
 				07A9A9382EFD654F00F8335A /* load_ad_request.mm in Sources */,
 				07A9A9392EFD654F00F8335A /* line_mediation_network.mm in Sources */,
+				07CC05FE2F23B744004D4A22 /* ad_settings_wrapper.mm in Sources */,
+				07CC05FF2F23B744004D4A22 /* AdSettings.swift in Sources */,
 				07A9A93A2EFD654F00F8335A /* inmobi_mediation_network.mm in Sources */,
 				07A9A93B2EFD654F00F8335A /* admob_plugin_bootstrap.mm in Sources */,
 				07A9A93C2EFD654F00F8335A /* imobile_mediation_network.mm in Sources */,
@@ -425,6 +438,7 @@
 				07A9A94E2EFD654F00F8335A /* rewarded_interstitial.mm in Sources */,
 				07A9A94F2EFD654F00F8335A /* interstitial.mm in Sources */,
 				07A9A9502EFD654F00F8335A /* mintegral_mediation_network.mm in Sources */,
+				07B12A6E2F23A3710098B81A /* GlobalSettings.swift in Sources */,
 				07A9A9512EFD654F00F8335A /* rewarded.mm in Sources */,
 				07A9A9522EFD654F00F8335A /* liftoff_mediation_network.mm in Sources */,
 				07A9A9532EFD654F00F8335A /* admob_ad_info.mm in Sources */,

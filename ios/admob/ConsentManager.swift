@@ -11,7 +11,7 @@ import UIKit
 
 	private static let logger = Logger(
 		subsystem: "org.godotengine.plugin.admob",
-		category: "AdmobPlugin"
+		category: "ConsentManager"
 	)
 
 	private var umpForm: ConsentForm?

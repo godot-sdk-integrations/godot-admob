@@ -30,7 +30,7 @@ public class LoadAdRequest {
 	private static final String ADAPTIVE_MAX_HEIGHT_PROPERTY = "adaptive_max_height";
 	private static final String AD_POSITION_PROPERTY = "ad_position";
 	private static final String COLLAPSIBLE_POSITION_PROPERTY = "collapsible_position";
-	private static final String ANCHOR_TO_SAFE_AREA_PROPERTY  = "anchor_to_safe_area";
+	private static final String ANCHOR_TO_SAFE_AREA_PROPERTY = "anchor_to_safe_area";
 	private static final String KEYWORDS_PROPERTY = "keywords";
 	private static final String USER_ID_PROPERTY = "user_id";
 	private static final String CUSTOM_DATA_PROPERTY = "custom_data";

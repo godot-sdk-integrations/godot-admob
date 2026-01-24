@@ -309,6 +309,76 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Reset"
 
+[node name="Settings" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 15
+metadata/_tab_index = 4
+
+[node name="ButtonsVBC" type="VBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 15
+
+[node name="GetSettingsButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/ButtonsVBC"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "Get Settings"
+
+[node name="SetSettingsButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/ButtonsVBC"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "Set Settings"
+
+[node name="SettingsVBC" type="VBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="VolumeHBC" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/VolumeHBC"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+text = "Volume:"
+
+[node name="VolumeHSlider" type="HSlider" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/VolumeHBC"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_vertical = 1
+max_value = 1.0
+step = 0.01
+tick_count = 11
+ticks_on_borders = true
+
+[node name="ValueLabel" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/VolumeHBC"]
+layout_mode = 2
+
+[node name="MuteHBC" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/MuteHBC"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+text = "Muted:"
+
+[node name="CheckButton" type="CheckButton" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/MuteHBC"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+
+[node name="StartupHBC" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/StartupHBC"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+text = "Apply at startup:"
+
+[node name="CheckButton" type="CheckButton" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/StartupHBC"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+
 [node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/MainContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 210)
 layout_mode = 2
@@ -338,6 +408,9 @@ test_device_hashed_ids = Array[String](["91C505D5-7ACF-4EE8-9A1D-CD8DCDD21A1B", 
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/ReloadRewardedInterstitialButton" to="." method="_on_reload_rewarded_interstitial_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Consent/VBoxContainer/ButtonsHBoxContainer/UpdateConsentInfoButton" to="." method="_on_update_consent_info_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Consent/VBoxContainer/ButtonsHBoxContainer/ResetConsentButton" to="." method="_on_reset_consent_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/ButtonsVBC/GetSettingsButton" to="." method="_on_get_settings_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/ButtonsVBC/SetSettingsButton" to="." method="_on_set_settings_button_pressed"]
+[connection signal="value_changed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/VolumeHBC/VolumeHSlider" to="." method="_on_volume_h_slider_value_changed"]
 [connection signal="app_open_ad_dismissed_full_screen_content" from="Admob" to="." method="_on_admob_app_open_ad_dismissed_full_screen_content"]
 [connection signal="app_open_ad_failed_to_load" from="Admob" to="." method="_on_admob_app_open_ad_failed_to_load"]
 [connection signal="app_open_ad_failed_to_show_full_screen_content" from="Admob" to="." method="_on_admob_app_open_ad_failed_to_show_full_screen_content"]
