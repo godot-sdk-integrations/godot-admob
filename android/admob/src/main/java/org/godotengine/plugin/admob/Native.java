@@ -81,6 +81,7 @@ public class Native {
 			AdLoader adLoader = new AdLoader.Builder(activity, loadRequest.getAdUnitId())
 					.forNativeAd(ad -> {
 						nativeAd = ad;
+						createView();
 						nativeListener.onAdLoaded(adInfo, ad.getResponseInfo());
 					})
 					.withNativeAdOptions(new NativeAdOptions.Builder().build())
@@ -121,40 +122,45 @@ public class Native {
 		});
 	}
 
+	private void createView() {
+		if (container != null) return;
+		LayoutInflater inflater = LayoutInflater.from(activity);
+		adView = (NativeAdView) inflater.inflate(R.layout.native_ad, layout, false);
+		bindNativeAd(adView, nativeAd);
+
+		container = new FrameLayout(activity);
+
+		layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+		container.setLayoutParams(layoutParams);
+		container.addView(adView);
+		container.setVisibility(View.GONE);
+
+		layout.addView(container);
+
+		// debug overlay just for testing...
+		container.setBackgroundColor(0x33FF0000);
+		adView.setBackgroundColor(0x3300FF00);
+
+		adView.post(() -> {
+			DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
+			float density = metrics.density;
+			int widthDp = Math.round(adView.getMeasuredWidth() / density);
+			int heightDp = Math.round(adView.getMeasuredHeight() / density);
+			adInfo.setMeasuredWidth(widthDp);
+			adInfo.setMeasuredHeight(heightDp);
+			nativeListener.onAdSizeMeasured(adInfo);
+		});
+	}
+
 	void show() {
-		if (nativeAd != null) {
-			activity.runOnUiThread(() -> {
-				LayoutInflater inflater = LayoutInflater.from(activity);
-				adView = (NativeAdView) inflater.inflate(R.layout.native_ad, layout, false);
-				bindNativeAd(adView, nativeAd);
-
-				container = new FrameLayout(activity);
-
-				layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-				layoutParams.gravity = 0;
-
-				container.setLayoutParams(layoutParams);
-				container.addView(adView);
-				// Add container to Godot layout
-				layout.addView(container);
-
-				// debug overlay
-				container.setBackgroundColor(0x33FF0000);
-				adView.setBackgroundColor(0x3300FF00);
-				
-				adView.post(() -> {
-					DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
-					float density = metrics.density;
-					int widthDp = Math.round(adView.getMeasuredWidth() / density);
-					int heightDp = Math.round(adView.getMeasuredHeight() / density);
-					adInfo.setMeasuredWidth(widthDp);
-					adInfo.setMeasuredHeight(heightDp);
-					nativeListener.onAdSizeMeasured(adInfo);
-				});
-			});
-		} else {
+		if (container == null) return;
+		if (nativeAd == null) {
 			Log.w(LOG_TAG, "show(): native ad not loaded.");
+			return;
 		}
+		activity.runOnUiThread(() -> {
+			container.setVisibility(View.VISIBLE);
+		});
 	}
 
 	public void hide() {
