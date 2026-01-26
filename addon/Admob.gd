@@ -1029,10 +1029,13 @@ func remove_native_ad(a_ad_id: String = "") -> void:
 			if _active_native_ads.is_empty():
 				Admob.log_error("Cannot remove native ad. No native ads loaded.")
 			else:
-				_plugin_singleton.remove_native_ad(_active_native_ads.erase_last())
+				var _ad_id = _active_native_ads.erase_last()
+				detach_native_ad(_ad_id)
+				_plugin_singleton.remove_native_ad(_ad_id)
 		else:
 			if _active_native_ads.has_key(a_ad_id):
 				_active_native_ads.erase(a_ad_id)
+				detach_native_ad(a_ad_id)
 				_plugin_singleton.remove_native_ad(a_ad_id)
 			else:
 				Admob.log_error("Cannot remove native ad. Ad with ID '%s' not found." % a_ad_id)
