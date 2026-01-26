@@ -16,6 +16,13 @@ extends Node
 @onready var banner_size_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeHBoxContainer/OptionButton
 @onready var banner_collapsible_pos_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer/OptionButton
 @onready var banner_anchor_at_safe_area_check_box: CheckBox = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/AnchorHBoxContainer/CheckBox
+@onready var load_native_ad_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/LoadNativeAdButton
+@onready var native_ad_id_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/IDHBoxContainer/AdIdOptionButton
+@onready var show_native_ad_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer/ShowNativeAdButton
+@onready var hide_native_ad_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer/HideNativeAdButton
+@onready var attach_native_ad_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer/AttachNativeAdButton
+@onready var remove_native_ad_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer/RemoveNativeAdButton
+
 @onready var interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/InterstitialButton
 @onready var rewarded_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/RewardedButton
 @onready var rewarded_interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/RewardedInterstitialButton
@@ -38,6 +45,7 @@ var _is_app_open_ad_displayed_at_startup: bool = false
 var _is_interstitial_loaded: bool = false
 var _is_rewarded_video_loaded: bool = false
 var _is_rewarded_interstitial_loaded: bool = false
+var _is_native_ad_loading = false
 
 var _consent_status: String = UserConsent.status_to_string(UserConsent.Status.UNKNOWN):
 	set(a_value):
@@ -478,3 +486,77 @@ func _print_to_screen(a_message: String, a_is_error: bool = false) -> void:
 		print("Demo app:: " + a_message)
 
 	_label.scroll_to_line(_label.get_line_count() - 1)
+
+
+func _is_native_ad_loaded() -> bool:
+	return native_ad_id_option_button.item_count > 0
+
+
+func _update_native_ad_buttons() -> void:
+	if _is_native_ad_loaded():
+		show_native_ad_button.disabled = false
+		hide_native_ad_button.disabled = false
+		attach_native_ad_button.disabled = false
+		remove_native_ad_button.disabled = false
+	else:
+		show_native_ad_button.disabled = true
+		hide_native_ad_button.disabled = true
+		attach_native_ad_button.disabled = true
+		remove_native_ad_button.disabled = true
+
+
+func _on_load_native_ad_button_pressed() -> void:
+	load_native_ad_button.disabled = true
+	print(" --- Load native ad button PRESSED --- ")
+	_is_native_ad_loading = true
+	admob.load_native_ad()
+
+
+func _on_show_native_ad_button_pressed() -> void:
+	if _is_native_ad_loaded():
+		var __native_ad_id: String = native_ad_id_option_button.get_item_text(native_ad_id_option_button.selected)
+		print(" --- Show native ad button PRESSED --- ad id: %s" % __native_ad_id)
+		admob.show_native_ad(__native_ad_id)
+
+
+func _on_hide_native_ad_button_pressed() -> void:
+	if _is_native_ad_loaded():
+		var __native_ad_id: String = native_ad_id_option_button.get_item_text(native_ad_id_option_button.selected)
+		print(" --- Hide native ad button PRESSED --- ad id: %s" % __native_ad_id)
+		admob.hide_native_ad(__native_ad_id)
+
+
+func _on_remove_native_ad_button_pressed() -> void:
+	if _is_native_ad_loaded():
+		var __native_ad_id: String = native_ad_id_option_button.get_item_text(native_ad_id_option_button.selected)
+		print(" --- Remove native ad button PRESSED --- ad id: %s" % __native_ad_id)
+		admob.remove_native_ad(__native_ad_id)
+		native_ad_id_option_button.remove_item(native_ad_id_option_button.selected)
+		if native_ad_id_option_button.item_count > 0:
+			native_ad_id_option_button.select(native_ad_id_option_button.item_count-1)
+		_update_native_ad_buttons()
+
+
+func _on_admob_native_ad_loaded(ad_info: AdInfo, _response_info: ResponseInfo) -> void:
+	_is_native_ad_loading = false
+	load_native_ad_button.disabled = false
+	native_ad_id_option_button.add_item(ad_info.get_ad_id())
+	_update_native_ad_buttons()
+	_print_to_screen("native ad loaded id: %s" % ad_info.get_ad_id())
+
+
+func _on_admob_native_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError) -> void:
+	_print_to_screen("native %s failed to load. error: %d, message: %s" %
+				[ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()], true)
+	_is_native_ad_loading = false
+	load_native_ad_button.disabled = false
+
+
+func _on_attach_native_ad_button_pressed() -> void:
+	var __draggable_control := Control.new()
+	__draggable_control.set_script(load("res://draggable_control.gd"))
+	__draggable_control.custom_minimum_size = Vector2(250, 280)
+	__draggable_control.top_level = true
+	$CanvasLayer.add_child(__draggable_control)
+	var __native_ad_id: String = native_ad_id_option_button.get_item_text(native_ad_id_option_button.selected)
+	admob.attach_native_ad_to_control(__native_ad_id, __draggable_control)
