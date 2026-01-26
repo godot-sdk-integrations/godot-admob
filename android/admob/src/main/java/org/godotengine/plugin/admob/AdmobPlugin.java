@@ -924,7 +924,6 @@ public class AdmobPlugin extends GodotPlugin {
 	@UsedByGodot
 	public void update_native_ad_layout(String adId, int x, int y, int width, int height, boolean visible) {
 		if (nativeAds.containsKey(adId)) {
-			Log.d(LOG_TAG, String.format("update_native_ad_layout(): %s", adId));
 			Native ad = nativeAds.get(adId);
 			ad.updateLayout(x, y, width, height, visible);
 		} else {
