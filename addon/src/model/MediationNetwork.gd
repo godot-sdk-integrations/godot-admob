@@ -30,7 +30,7 @@ const POD_PROPERTY: String = "pod"
 const POD_VERSION_PROPERTY: String = "pod_version"
 const SK_AD_NETWORK_IDS_PROPERTY: String = "sk_ad_network_ids"
 
-const GOOGLE_SK_AD_NETWORK_ID = "cstr6suwn9"
+const GOOGLE_SK_AD_NETWORK_IDS = [ @googleSkAdNetworkIds@ ]
 const SK_AD_NETWORK_ITEM_LIST_FORMAT: String = """
 	<key>SKAdNetworkItems</key>
 	<array>
@@ -263,7 +263,14 @@ static func get_all_enabled_tags(a_value: int) -> Array[String]:
 static func generate_sk_ad_network_plist(a_networks: Array[MediationNetwork]) -> String:
 	var __sk_ad_ids_plist_content: String
 
-	var __unique_sk_network_ad_ids: Dictionary = { GOOGLE_SK_AD_NETWORK_ID: null }
+	var __unique_sk_network_ad_ids: Dictionary = {}
+
+	# Add Google-required SK Ad Network IDs
+	for __network_id in GOOGLE_SK_AD_NETWORK_IDS:
+		if not __unique_sk_network_ad_ids.has(__network_id):
+			__unique_sk_network_ad_ids.set(__network_id, null)
+
+	# Add SK Ad Network IDs required by other networks
 	for __network in a_networks:
 		for __network_id in __network.sk_ad_network_ids:
 			if not __unique_sk_network_ad_ids.has(__network_id):

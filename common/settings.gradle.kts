@@ -16,10 +16,14 @@ dependencyResolutionManagement {
 		google()
 		mavenCentral()
 		flatDir {
-			dirs("${rootDir}/libs")
+			dirs("${rootDir}/../android/libs")
 		}
 	}
 }
 
 rootProject.name = "godot-admob-plugin"
-include(":admob")
+include(":android")
+include(":addon")
+
+project(":android").projectDir = file("../android")
+project(":addon").projectDir = file("../addon")

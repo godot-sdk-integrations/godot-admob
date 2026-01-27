@@ -14,10 +14,12 @@ extra.apply {
 	set("pluginNodeName", commonProperties.getProperty("pluginNodeName"))
 	set("pluginName", "${get("pluginNodeName")}Plugin")
 	set("pluginPackageName", "org.godotengine.plugin.admob")
+	set("pluginVersion", commonProperties.getProperty("pluginVersion"))
+	set("pluginArchive", "${get("pluginName")}-Android-v${get("pluginVersion")}.zip")
 
-	// Godot
-	set("godotVersion", commonProperties.getProperty("godotVersion"))
-	set("releaseType", commonProperties.getProperty("godotReleaseType"))
-	set("godotAarUrl", "https://github.com/godotengine/godot-builds/releases/download/${get("godotVersion")}-${get("releaseType")}/godot-lib.${get("godotVersion")}.${get("releaseType")}.template_release.aar")
-	set("godotAarFile", "godot-lib-${get("godotVersion")}.${get("releaseType")}.aar")
+	set("pluginDir", "${rootDir}/build/plugin")
+	set("archiveDir", "${rootDir}/build/archive")
+
+	// Demo
+	set("demoAddonsDir", "${rootDir}/../demo/addons")
 }

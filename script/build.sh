@@ -7,19 +7,19 @@ set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 ROOT_DIR=$(realpath $SCRIPT_DIR/..)
-ANDROID_DIR=$ROOT_DIR/android
+COMMON_DIR=$ROOT_DIR/common
 IOS_DIR=$ROOT_DIR/ios
 DEST_DIR=$ROOT_DIR/release
 DEMO_DIR=$ROOT_DIR/demo
 
-COMMON_CONFIG_FILE=$ROOT_DIR/common/config.properties
+COMMON_CONFIG_FILE=$COMMON_DIR/config/config.properties
 
 PLUGIN_NODE_NAME=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE pluginNodeName)
 PLUGIN_NAME="${PLUGIN_NODE_NAME}Plugin"
 PLUGIN_VERSION=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE pluginVersion)
 PLUGIN_MODULE_NAME=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE pluginModuleName)
 
-ANDROID_ARCHIVE="$ANDROID_DIR/$PLUGIN_MODULE_NAME/build/dist/$PLUGIN_NAME-Android-v$PLUGIN_VERSION.zip"
+ANDROID_ARCHIVE="$COMMON_DIR/build/archive/$PLUGIN_NAME-Android-v$PLUGIN_VERSION.zip"
 IOS_ARCHIVE="$IOS_DIR/build/release/$PLUGIN_NAME-iOS-v$PLUGIN_VERSION.zip"
 MULTI_PLATFORM_ARCHIVE="$DEST_DIR/$PLUGIN_NAME-Multi-v$PLUGIN_VERSION.zip"
 
@@ -27,7 +27,7 @@ do_clean_android=false
 do_clean_all=false
 do_build_android=false
 do_build_ios=false
-gradle_build_task="assembleDebug"
+gradle_build_task="buildDebug"
 do_create_android_archive=false
 do_create_multiplatform_archive=false
 do_uninstall=false
@@ -83,7 +83,7 @@ function display_help()
 	echo_yellow "		$> $0 -cai -- -ca"
 	echo
 	echo_yellow "	* create multi-platform release archive."
-	echo_yellow "	  (Requires both Android and iOS archives to have already been created)"
+	echo_yellow "	(Requires both Android and iOS archives to have already been created)"
 	echo_yellow "		$> $0 -Z"
 	echo
 }
@@ -132,15 +132,11 @@ function display_warning()
 }
 
 
-function run_android_gradle_task()
+function run_gradle_task()
 {
 	local gradle_task="$1"
 
-	display_step "Running gradle task $gradle_task"
-
-	pushd $ANDROID_DIR
-	$ANDROID_DIR/gradlew $gradle_task
-	popd
+	$SCRIPT_DIR/run_gradle_task.sh "$gradle_task"
 }
 
 
@@ -197,7 +193,10 @@ merge_zips() {
 
 function uninstall_plugin_from_demo()
 {
-	display_status "Uninstalling plugin from demo app"
+	display_status "Uninstalling Android plugin from demo app"
+	run_gradle_task "cleanDemoAddons"
+
+	display_status "Uninstalling iOS plugin from demo app"
 	if [[ -d "$DEMO_DIR/addons/$PLUGIN_NAME" ]]; then
 		echo_yellow "Removing $DEMO_DIR/addons/$PLUGIN_NAME"
 		rm -rf $DEMO_DIR/addons/$PLUGIN_NAME
@@ -222,11 +221,14 @@ function uninstall_plugin_from_demo()
 
 function install_plugin_to_demo()
 {
-	display_status "Installing plugin to demo app"
+	display_status "Installing Android plugin to demo app"
+	run_gradle_task "installToDemo"
+
+	display_status "Installing iOS plugin to demo app"
 	if [[ -f "$IOS_ARCHIVE" ]]; then
 		$SCRIPT_DIR/install.sh -t $DEMO_DIR -z $IOS_ARCHIVE
 	else
-		display_error "Error: Cannot install to demo. '$IOS_ARCHIVE' not found!"
+		display_error "Error: Cannot install iOS plugin to demo. '$IOS_ARCHIVE' not found!"
 	fi
 }
 
@@ -261,7 +263,7 @@ while getopts "aAcCdDhiIrRzZ" option; do
 			do_ios_release=true
 			;;
 		r)
-			gradle_build_task="assembleRelease"
+			gradle_build_task="buildRelease"
 			;;
 		R)
 			do_full_release=true
@@ -293,14 +295,14 @@ fi
 if [[ "$do_clean_android" == true ]]
 then
 	display_status "Cleaning Android build"
-	run_android_gradle_task clean
+	run_gradle_task clean
 fi
 
 if [[ "$do_clean_all" == true ]]
 then
 	display_status "Cleaning all builds and release archives"
 
-	run_android_gradle_task clean
+	run_gradle_task clean
 
 	run_ios_build -cp
 
@@ -315,13 +317,13 @@ fi
 if [[ "$do_build_android" == true ]]
 then
 	display_status "Building Android"
-	run_android_gradle_task $gradle_build_task
+	run_gradle_task $gradle_build_task
 fi
 
 if [[ "$do_create_android_archive" == true ]]
 then
 	display_status "Creating Android archive"
-	run_android_gradle_task "packageDistribution"
+	run_gradle_task "createArchive"
 fi
 
 if [[ "$do_build_ios" == true ]]
@@ -340,9 +342,7 @@ fi
 if [[ "$do_android_release" == true ]]
 then
 	display_status "Creating Android release archive"
-	run_android_gradle_task "assembleDebug"
-	run_android_gradle_task "assembleRelease"
-	run_android_gradle_task "packageDistribution"
+	run_gradle_task "createArchive"
 
 	mkdir -p $DEST_DIR
 
@@ -364,9 +364,7 @@ fi
 if [[ "$do_full_release" == true ]]
 then
 	display_status "Creating Android release archive"
-	run_android_gradle_task "assembleDebug"
-	run_android_gradle_task "assembleRelease"
-	run_android_gradle_task "packageDistribution"
+	run_gradle_task "createArchive"
 
 	display_status "Creating iOS release archive"
 	run_ios_build -cHpPbz
