@@ -3,6 +3,7 @@
 #
 
 @tool
+@icon("icon.png")
 class_name Admob extends Node
 
 signal initialization_completed(status_data: InitializationStatus)

@@ -8,8 +8,8 @@ set -euo pipefail
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 ROOT_DIR=$(realpath $SCRIPT_DIR/..)
 IOS_DIR=$ROOT_DIR/ios
-ANDROID_DIR=$ROOT_DIR/android
 ADDON_DIR=$ROOT_DIR/addon
+ADDON_OUTPUT_DIR=$ADDON_DIR/build/output
 GODOT_DIR=$IOS_DIR/godot
 IOS_CONFIG_DIR=$IOS_DIR/config
 COMMON_DIR=$ROOT_DIR/common
@@ -19,8 +19,7 @@ DEST_DIR=$BUILD_DIR/release
 FRAMEWORK_DIR=$BUILD_DIR/framework
 LIB_DIR=$BUILD_DIR/lib
 IOS_CONFIG_FILE=$IOS_CONFIG_DIR/config.properties
-COMMON_CONFIG_FILE=$COMMON_DIR/config.properties
-MEDIATION_CONFIG_FILE=$COMMON_DIR/mediation.properties
+COMMON_CONFIG_FILE=$COMMON_DIR/config/config.properties
 
 PLUGIN_NODE_NAME=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE pluginNodeName)
 PLUGIN_NAME="${PLUGIN_NODE_NAME}Plugin"
@@ -28,27 +27,8 @@ PLUGIN_VERSION=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE plugi
 PLUGIN_MODULE_NAME=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE pluginModuleName)
 IOS_INITIALIZATION_METHOD="${PLUGIN_MODULE_NAME}_plugin_init"
 IOS_DEINITIALIZATION_METHOD="${PLUGIN_MODULE_NAME}_plugin_deinit"
-IOS_PLATFORM_VERSION=$($SCRIPT_DIR/get_config_property.sh -f $IOS_CONFIG_FILE platform_version)
-PLUGIN_PACKAGE_NAME=$($SCRIPT_DIR/get_gradle_property.sh pluginPackageName $ANDROID_DIR/config.gradle.kts)
-ANDROID_DEPENDENCIES=$($SCRIPT_DIR/get_android_dependencies.sh)
 GODOT_VERSION=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE godotVersion)
 GODOT_RELEASE_TYPE=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE godotReleaseType)
-EXTRA_PROPERTIES=()
-while IFS= read -r line; do
-	EXTRA_PROPERTIES+=("$line")
-done < <($SCRIPT_DIR/get_config_property.sh -a -f $COMMON_CONFIG_FILE extraProperties)
-IOS_FRAMEWORKS=()
-while IFS= read -r line; do
-	IOS_FRAMEWORKS+=("$line")
-done < <($SCRIPT_DIR/get_config_property.sh -qa -f $IOS_CONFIG_FILE frameworks)
-IOS_EMBEDDED_FRAMEWORKS=()
-while IFS= read -r line; do
-	IOS_EMBEDDED_FRAMEWORKS+=("$line")
-done < <($SCRIPT_DIR/get_config_property.sh -qa -f $IOS_CONFIG_FILE embedded_frameworks)
-IOS_LINKER_FLAGS=()
-while IFS= read -r line; do
-	IOS_LINKER_FLAGS+=("$line")
-done < <($SCRIPT_DIR/get_config_property.sh -qa -f $IOS_CONFIG_FILE flags)
 BUILD_TIMEOUT=40	# increase this value using -t option if device is not able to generate all headers before godot build is killed
 
 do_clean=false
@@ -393,211 +373,6 @@ function merge_string_array()
 }
 
 
-function replace_extra_properties()
-{
-	local file_path="$1"
-	shift
-	local prop_array=("$@")
-
-	# Check if file exists and is not empty
-	if [[ ! -s "$file_path" ]]; then
-		display_error "File '$file_path' does not exist or is empty, skipping replacements"
-		return 0
-	fi
-
-	# Check if prop_array is empty
-	if [[ ${#prop_array[@]} -eq 0 ]]; then
-		echo_blue "No extra properties provided for replacement in file: $file_path"
-		return 0
-	fi
-
-	# Log the file being processed
-	echo_blue "Processing extra properties: ${prop_array[*]} in file: $file_path"
-
-	# Process each key:value pair
-	for prop in "${prop_array[@]}"; do
-		# Trim whitespace and skip if empty
-		prop="${prop//[[:space:]]/}"
-		if [[ -z "$prop" ]]; then
-			continue
-		fi
-
-		# Split key:value pair
-		local key="${prop%%:*}"
-		local value="${prop#*:}"
-
-		# Validate key:value pair
-		if [[ -z "$key" || -z "$value" ]]; then
-			display_error "Invalid key:value pair '$prop'"
-			exit 1
-		fi
-
-		# Create pattern with @ delimiters
-		local pattern="@${key}@"
-
-		# Escape pattern for grep/sed
-		local escaped_pattern
-		escaped_pattern=$(printf '%s' "$pattern" | sed 's/[][\\^$.*]/\\&/g' | sed 's/\./\\./g')
-
-		# Escape replacement value for sed - We escape the pipe delimiter (|) AND the dot (.)
-		local escaped_value
-		escaped_value=$(printf '%s' "$value" | sed 's/[|.]/\\&/g')
-
-		# Count occurrences of the pattern before replacement
-		local count
-		count=$(LC_ALL=C grep -o "$escaped_pattern" "$file_path" 2>grep_error.log || true | wc -l | tr -d '[:space:]')
-		local grep_status=$?
-		if [[ $grep_status -ne 0 && $grep_status -ne 1 ]]; then
-			echo_blue "Debug: grep exit status: $grep_status"
-			echo_blue "Debug: grep error output: $(cat grep_error.log)"
-			display_error "Failed to count occurrences of '$pattern' in '$file_path'"
-			exit 1
-		fi
-
-		# Debug: Check if pattern exists
-		if [[ $count -eq 0 ]]; then
-			echo_blue "No occurrences of '$pattern' found in '$file_path'"
-		else
-			echo_blue "Found $count occurrences of '$pattern' in '$file_path'"
-		fi
-
-		# Replace all occurrences in file, use empty backup extension for macOS
-		if ! LC_ALL=C sed -i '' "s|$escaped_pattern|$escaped_value|g" "$file_path" 2>sed_error.log; then
-			echo_blue "Debug: sed error output: $(cat sed_error.log)"
-			display_error "Failed to replace '$pattern' in '$file_path'"
-			exit 1
-		fi
-	done
-
-	# Clean up temporary files
-	rm -f grep_error.log sed_error.log
-}
-
-
-function replace_mediation_properties()
-{
-	local file_path="$1"
-	local mediation_config_file="$2"
-
-	# Check if mediation config file exists
-	if [[ ! -f "$mediation_config_file" ]]; then
-		display_error "Mediation config file '$mediation_config_file' not found."
-		exit 1
-	fi
-
-	# Check if file exists and is not empty
-	if [[ ! -s "$file_path" ]]; then
-		echo_blue "File '$file_path' does not exist or is empty, skipping mediation replacements"
-		return 0
-	fi
-
-	# Dynamically extract network tags from mediation.properties
-	# Ignore comments and empty lines, match lines with network.property=value
-	local networks=($(grep -v '^#' "$mediation_config_file" | grep -E '^[a-z]+(\.[a-zA-Z]+)*=.*' | sed 's/\..*//' | sort -u))
-
-	local network
-	local deps=()
-	local deps_joined=""
-	local repo
-	local adapter
-	local extras
-	local pod
-	local pod_ver
-	local skad_ids=()
-	local skad_joined=""
-	local esc_deps
-	local esc_repo
-	local esc_adapter
-	local esc_pod
-	local esc_pod_ver
-	local esc_skad_ids
-
-	for network in "${networks[@]}"; do
-		repo=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.mavenRepo")
-		android_adapter=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.androidAdapterClass")
-		ios_adapter=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.iosAdapterClass")
-		pod=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.pod")
-		pod_ver=$($SCRIPT_DIR/get_config_property.sh -f "$mediation_config_file" "${network}.podVersion")
-
-		# Check for missing required properties
-		if [[ -z "$pod" ]]; then
-			display_error "Missing required property '${network}.pod' in '$mediation_config_file'"
-			exit 1
-		fi
-		if [[ -z "$pod_ver" ]]; then
-			display_error "Missing required property '${network}.podVersion' in '$mediation_config_file'"
-			exit 1
-		fi
-
-		# Fetch Android dependencies as comma-separated array and quote each
-		deps=()
-		while IFS= read -r id; do
-			if [[ -n "$id" ]]; then
-				deps+=("$id")
-			fi
-		done < <($SCRIPT_DIR/get_config_property.sh -qa -f "$mediation_config_file" "${network}.dependencies")
-
-		# Join quoted deps with commas
-		if [[ ${#deps[@]} -gt 0 ]]; then
-			IFS=', '
-			deps_joined="${deps[*]}"
-			unset IFS
-		else
-			deps_joined=""
-		fi
-
-		# Check for missing or empty dependencies property
-		if [[ -z "$deps_joined" ]]; then
-			display_error "Missing required property '${network}.dependencies' in '$mediation_config_file' or it is empty. At least one entry is required."
-			exit 1
-		fi
-
-		# Fetch SK Ad Network IDs as comma-separated array and quote each
-		skad_ids=()
-		while IFS= read -r id; do
-			if [[ -n "$id" ]]; then
-				skad_ids+=("$id")
-			fi
-		done < <($SCRIPT_DIR/get_config_property.sh -qa -f "$mediation_config_file" "${network}.skAdNetworkIds")
-
-		# Join quoted IDs with commas
-		if [[ ${#skad_ids[@]} -gt 0 ]]; then
-			IFS=', '
-			skad_joined="${skad_ids[*]}"
-			unset IFS
-		else
-			skad_joined=""
-		fi
-
-		# Check for missing or empty SK Ad Network IDs
-		if [[ -z "$skad_joined" ]]; then
-			display_error "Missing required property '${network}.skAdNetworkIds' in '$mediation_config_file' or it is empty. At least one entry is required."
-			exit 1
-		fi
-
-		# Escape values for sed
-		esc_deps=$(printf '%s\n' "$deps_joined" | sed 's/[\/&]/\\&/g')
-		esc_repo=$(printf '%s\n' "$repo" | sed 's/[\/&]/\\&/g')
-		esc_android_adapter=$(printf '%s\n' "$android_adapter" | sed 's/[\/&]/\\&/g')
-		esc_ios_adapter=$(printf '%s\n' "$ios_adapter" | sed 's/[\/&]/\\&/g')
-		esc_pod=$(printf '%s\n' "$pod" | sed 's/[\/&]/\\&/g')
-		esc_pod_ver=$(printf '%s\n' "$pod_ver" | sed 's/[\/&]/\\&/g')
-		esc_skad_ids=$(printf '%s\n' "$skad_joined" | sed 's/[\/&]/\\&/g')
-
-		# Perform replacements with sed
-		sed "${SED_INPLACE[@]}" \
-			-e "s|@${network}Dependencies@|${esc_deps}|g" \
-			-e "s|@${network}MavenRepo@|${esc_repo}|g" \
-			-e "s|@${network}AndroidAdapterClass@|${esc_android_adapter}|g" \
-			-e "s|@${network}IosAdapterClass@|${esc_ios_adapter}|g" \
-			-e "s|@${network}Pod@|${esc_pod}|g" \
-			-e "s|@${network}PodVersion@|${esc_pod_ver}|g" \
-			-e "s|@${network}SkAdNetworkIds@|${esc_skad_ids}|g" \
-			"$file_path"
-	done
-}
-
-
 function create_zip_archive()
 {
 	local zip_file_name="$PLUGIN_NAME-iOS-v$PLUGIN_VERSION.zip"
@@ -610,12 +385,14 @@ function create_zip_archive()
 
 	local tmp_directory=$(mktemp -d)
 
+	$SCRIPT_DIR/run_gradle_task.sh "generateGDScript"
+
 	display_status "Preparing staging directory $tmp_directory"
 
-	if [[ -d "$ADDON_DIR" ]]
+	if [[ -d "$ADDON_OUTPUT_DIR" ]]
 	then
-		mkdir -p $tmp_directory/addons/$PLUGIN_NAME
-		cp -r $ADDON_DIR/* $tmp_directory/addons/$PLUGIN_NAME
+		mkdir -p $tmp_directory/addons
+		cp -r $ADDON_OUTPUT_DIR/$PLUGIN_NAME $tmp_directory/addons
 
 		mkdir -p $tmp_directory/ios/plugins
 		cp $IOS_CONFIG_DIR/*.gdip $tmp_directory/ios/plugins
@@ -629,47 +406,22 @@ function create_zip_archive()
 			SED_INPLACE=(-i)
 		fi
 
-		find "$tmp_directory" -type f \( -name '*.gd' -o -name '*.cfg' -o -name '*.gdip' \) | while IFS= read -r file; do
+		find "$tmp_directory" -type f \( -name '*.gdip' \) | while IFS= read -r file; do
 			display_progress "Editing: $file"
 
 			# Escape variables to handle special characters
 			ESCAPED_PLUGIN_NAME=$(printf '%s' "$PLUGIN_NAME" | sed 's/[\/&]/\\&/g')
-			ESCAPED_PLUGIN_VERSION=$(printf '%s' "$PLUGIN_VERSION" | sed 's/[\/&]/\\&/g')
-			ESCAPED_PLUGIN_NODE_NAME=$(printf '%s' "$PLUGIN_NODE_NAME" | sed 's/[\/&]/\\&/g')
-			ESCAPED_PLUGIN_PACKAGE_NAME=$(printf '%s' "$PLUGIN_PACKAGE_NAME" | sed 's/[\/&]/\\&/g')
-			ESCAPED_ANDROID_DEPENDENCIES=$(printf '%s' "$ANDROID_DEPENDENCIES" | sed 's/[\/&]/\\&/g')
 			ESCAPED_IOS_INITIALIZATION_METHOD=$(printf '%s' "$IOS_INITIALIZATION_METHOD" | sed 's/[\/&]/\\&/g')
 			ESCAPED_IOS_DEINITIALIZATION_METHOD=$(printf '%s' "$IOS_DEINITIALIZATION_METHOD" | sed 's/[\/&]/\\&/g')
-			ESCAPED_IOS_PLATFORM_VERSION=$(printf '%s' "$IOS_PLATFORM_VERSION" | sed 's/[\/&]/\\&/g')
-			ESCAPED_IOS_FRAMEWORKS=$(merge_string_array "${IOS_FRAMEWORKS[@]}" | sed 's/[\/&]/\\&/g')
-			ESCAPED_IOS_EMBEDDED_FRAMEWORKS=$(merge_string_array "${IOS_EMBEDDED_FRAMEWORKS[@]}" | sed 's/[\/&]/\\&/g')
-			ESCAPED_IOS_LINKER_FLAGS=$(merge_string_array "${IOS_LINKER_FLAGS[@]}" | sed 's/[\/&]/\\&/g')
 
 			sed "${SED_INPLACE[@]}" -e "
 				s|@pluginName@|$ESCAPED_PLUGIN_NAME|g;
-				s|@pluginVersion@|$ESCAPED_PLUGIN_VERSION|g;
-				s|@pluginNodeName@|$ESCAPED_PLUGIN_NODE_NAME|g;
-				s|@pluginPackage@|$ESCAPED_PLUGIN_PACKAGE_NAME|g;
-				s|@androidDependencies@|$ESCAPED_ANDROID_DEPENDENCIES|g;
 				s|@iosInitializationMethod@|$ESCAPED_IOS_INITIALIZATION_METHOD|g;
-				s|@iosDeinitializationMethod@|$ESCAPED_IOS_DEINITIALIZATION_METHOD|g;
-				s|@iosPlatformVersion@|$ESCAPED_IOS_PLATFORM_VERSION|g;
-				s|@iosFrameworks@|$ESCAPED_IOS_FRAMEWORKS|g;
-				s|@iosEmbeddedFrameworks@|$ESCAPED_IOS_EMBEDDED_FRAMEWORKS|g;
-				s|@iosLinkerFlags@|$ESCAPED_IOS_LINKER_FLAGS|g
+				s|@iosDeinitializationMethod@|$ESCAPED_IOS_DEINITIALIZATION_METHOD|g
 			" "$file"
-
-			if [[ ${#EXTRA_PROPERTIES[@]} -gt 0 ]]; then
-				replace_extra_properties "$file" "${EXTRA_PROPERTIES[@]}"
-			fi
-
-			# Mediation replacements for MediationNetwork.gd
-			if echo "$file" | grep -q "MediationNetwork.gd$"; then
-				replace_mediation_properties "$file" "$MEDIATION_CONFIG_FILE"
-			fi
 		done
 	else
-		display_error "'$ADDON_DIR' not found."
+		display_error "'$ADDON_OUTPUT_DIR' not found."
 		exit 1
 	fi
 

@@ -5,9 +5,10 @@
 # General
 *.lock
 *.log
-
-# Project-specific
 build/
+release/
+
+# Demo app
 demo/addons/*Plugin/**
 !demo/addons/*Plugin/
 !demo/addons/*Plugin/**/
@@ -20,8 +21,6 @@ demo/assets/splash_screens/*
 !demo/assets/splash_screens/*.png
 demo/assets/store_icons/*
 !demo/assets/store_icons/*.png
-ios/godot/
-release/
 
 # Godot-specific
 .import/
@@ -30,7 +29,7 @@ release/
 # Android-specific
 .gradle/
 *.jar
-!android/gradle/wrapper/gradle-wrapper.jar
+!common/gradle/wrapper/gradle-wrapper.jar
 *.aar
 local.properties
 
@@ -42,6 +41,7 @@ local.properties
 *.o
 *.dblite
 Pods/
+ios/godot/
 
 # Xcode
 xcuserdata/

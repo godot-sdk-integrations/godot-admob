@@ -2,6 +2,7 @@
 # © 2024-present https://github.com/cengiz-pz
 #
 
+@icon("icon.png")
 class_name InlineAdaptiveBanner extends Control
 
 

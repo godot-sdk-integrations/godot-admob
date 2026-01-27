@@ -10,7 +10,7 @@ podfile_dir = File.dirname(__FILE__)
 
 # Construct paths to both config files relative to the Podfile
 ios_config_path = File.join(podfile_dir, 'config', 'config.properties')
-common_config_path = File.join(podfile_dir, '..', 'common', 'config.properties')
+common_config_path = File.join(podfile_dir, '..', 'common', 'config', 'config.properties')
 
 # Initialize properties map
 properties = {}
