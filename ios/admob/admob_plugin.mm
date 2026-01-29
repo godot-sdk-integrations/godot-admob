@@ -9,8 +9,14 @@
 
 #import <UserMessagingPlatform/UserMessagingPlatform.h>
 
+#import <objc/message.h>
+
 #import "admob_plugin-Swift.h"
 
+#import "admob_plugin_native_bridge.h"
+#import "admob_ad_info.h"
+#import "admob_response.h"
+#import "load_ad_request.h"
 #import "gap_converter.h"
 #import "admob_ad_size.h"
 #import "admob_config.h"
@@ -60,6 +66,13 @@ const String APP_OPEN_AD_CLICKED_SIGNAL = "app_open_ad_clicked";
 const String APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL = "app_open_ad_showed_full_screen_content";
 const String APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL = "app_open_ad_failed_to_show_full_screen_content";
 const String APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL = "app_open_ad_dismissed_full_screen_content";
+const String NATIVE_AD_LOADED_SIGNAL = "native_ad_loaded";
+const String NATIVE_AD_FAILED_TO_LOAD_SIGNAL = "native_ad_failed_to_load";
+const String NATIVE_AD_IMPRESSION_SIGNAL = "native_ad_impression";
+const String NATIVE_AD_CLICKED_SIGNAL = "native_ad_clicked";
+const String NATIVE_AD_OPENED_SIGNAL = "native_ad_opened";
+const String NATIVE_AD_CLOSED_SIGNAL = "native_ad_closed";
+const String NATIVE_AD_SIZE_MEASURED_SIGNAL = "native_ad_size_measured";
 const String CONSENT_FORM_LOADED_SIGNAL = "consent_form_loaded";
 const String CONSENT_FORM_FAILED_TO_LOAD_SIGNAL = "consent_form_failed_to_load";
 const String CONSENT_FORM_DISMISSED_SIGNAL = "consent_form_dismissed";
@@ -157,6 +170,20 @@ void AdmobPlugin::_bind_methods() {
 	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "error")));
 	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 
+	ClassDB::bind_method(D_METHOD("load_native_ad"), &AdmobPlugin::load_native_ad);
+	ClassDB::bind_method(D_METHOD("show_native_ad"), &AdmobPlugin::show_native_ad);
+	ClassDB::bind_method(D_METHOD("hide_native_ad"), &AdmobPlugin::hide_native_ad);
+	ClassDB::bind_method(D_METHOD("remove_native_ad"), &AdmobPlugin::remove_native_ad);
+	ClassDB::bind_method(D_METHOD("update_native_ad_layout", "ad_id", "x", "y", "width", "height", "visible"), &AdmobPlugin::update_native_ad_layout);
+
+	ADD_SIGNAL(MethodInfo(NATIVE_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(NATIVE_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
+	ADD_SIGNAL(MethodInfo(NATIVE_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(NATIVE_AD_CLICKED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(NATIVE_AD_OPENED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(NATIVE_AD_CLOSED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(NATIVE_AD_SIZE_MEASURED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+
 	ClassDB::bind_method(D_METHOD("load_consent_form"), &AdmobPlugin::load_consent_form);
 	ClassDB::bind_method(D_METHOD("show_consent_form"), &AdmobPlugin::show_consent_form);
 
@@ -208,7 +235,7 @@ Error AdmobPlugin::initialize() {
 			os_log_debug(admob_log, "%@ Applying global settings at startup", kLogTag);
 			[GlobalSettings applyToGADMobileAds:settings];
 		}
-		
+
 		initialized = true;
 		os_log_debug(admob_log, "%@ initialization completed for %tu adapters.", kLogTag, [status.adapterStatusesByClassName count]);
 		Dictionary dictionary = [[[AdmobStatus alloc] initWithStatus:status] buildRawData];
@@ -244,7 +271,7 @@ void AdmobPlugin::set_app_pause_on_background(bool pause) {
 
 Dictionary AdmobPlugin::get_global_settings() {
 	os_log_debug(admob_log, "%@ get_global_settings", kLogTag);
-	
+
 	AdSettingsWrapper *wrapper = [[AdSettingsWrapper alloc] initWithAdSettings:[GlobalSettings loadSettings]];
 
 	return [wrapper getRawData];
@@ -258,7 +285,7 @@ void AdmobPlugin::set_global_settings(Dictionary settingsDict) {
 	AdSettings *settings = [wrapper createAdSettings];
 
 	[GlobalSettings applyToGADMobileAds:settings];	// Apply settings
-	
+
 	[GlobalSettings saveSettings: settings];	// Persist settings
 }
 
@@ -663,6 +690,103 @@ void AdmobPlugin::applicationDidBecomeActive() {
 	}
 }
 
+// MARK: - Native Ad Methods
+
+Error AdmobPlugin::load_native_ad(Dictionary adData) {
+	os_log_debug(admob_log, "%@ load_native_ad", kLogTag);
+
+	if (!initialized) {
+		os_log_error(admob_log, "%@ Cannot load native ad: plugin not initialized", kLogTag);
+		return FAILED;
+	}
+
+	// Create LoadAdRequest from the Dictionary
+	LoadAdRequest *loadAdRequest = [[LoadAdRequest alloc] initWithDictionary:adData];
+
+	// Create ad ID
+	NSString* adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++nativeAdSequence];
+
+	// Create AdmobAdInfo
+	AdmobAdInfo *adInfo = [[AdmobAdInfo alloc] initWithId:adId request:loadAdRequest];
+
+	// Get parent view
+	UIView *parentView = [GDTAppDelegateService viewController].view;
+	if (!parentView) {
+		os_log_error(admob_log, "%@ Cannot load native ad: parent view not found", kLogTag);
+		return FAILED;
+	}
+
+	// Create the delegate bridge
+	AdmobPluginNativeAdBridge *nativeAdBridge = [[AdmobPluginNativeAdBridge alloc] initWithPlugin:this];
+
+	// Create NativeAd instance
+	NativeAd *nativeAd = [[NativeAd alloc] initWithAdInfo:adInfo
+												adRequest:[loadAdRequest createGADRequest]
+												parentView:parentView
+												delegate:nativeAdBridge];
+
+	// Store the native ad
+	[nativeAds setObject:nativeAd forKey:adId];
+
+	// Load the ad
+	[nativeAd load];
+
+	return OK;
+}
+
+void AdmobPlugin::show_native_ad(String adId) {
+	os_log_debug(admob_log, "%@ show_native_ad: %s", kLogTag, adId.utf8().get_data());
+
+	NSString *nsAdId = [GAPConverter toNsString:adId];
+	NativeAd *nativeAd = [nativeAds objectForKey:nsAdId];
+
+	if (nativeAd) {
+		[nativeAd show];
+	} else {
+		os_log_error(admob_log, "%@ Cannot show native ad: ad not found for ID %@", kLogTag, nsAdId);
+	}
+}
+
+void AdmobPlugin::hide_native_ad(String adId) {
+	os_log_debug(admob_log, "%@ hide_native_ad: %s", kLogTag, adId.utf8().get_data());
+
+	NSString *nsAdId = [GAPConverter toNsString:adId];
+	NativeAd *nativeAd = [nativeAds objectForKey:nsAdId];
+
+	if (nativeAd) {
+		[nativeAd hide];
+	} else {
+		os_log_error(admob_log, "%@ Cannot hide native ad: ad not found for ID %@", kLogTag, nsAdId);
+	}
+}
+
+void AdmobPlugin::remove_native_ad(String adId) {
+	os_log_debug(admob_log, "%@ remove_native_ad: %s", kLogTag, adId.utf8().get_data());
+
+	NSString *nsAdId = [GAPConverter toNsString:adId];
+	NativeAd *nativeAd = [nativeAds objectForKey:nsAdId];
+
+	if (nativeAd) {
+		[nativeAd remove];
+		[nativeAds removeObjectForKey:nsAdId];
+	} else {
+		os_log_error(admob_log, "%@ Cannot remove native ad: ad not found for ID %@", kLogTag, nsAdId);
+	}
+}
+
+void AdmobPlugin::update_native_ad_layout(String adId, real_t x, real_t y, real_t width, real_t height, bool visible) {
+	NSString *nsAdId = [GAPConverter toNsString:adId];
+	NativeAd *nativeAd = [nativeAds objectForKey:nsAdId];
+
+	if (nativeAd) {
+		[nativeAd updateLayoutWithX:(CGFloat)x y:(CGFloat)y width:(CGFloat)width height:(CGFloat)height visible:visible];
+	} else {
+		os_log_error(admob_log, "%@ Cannot update native ad layout: ad not found for ID %@", kLogTag, nsAdId);
+	}
+}
+
+// MARK: - Consent Form Methods
+
 Error AdmobPlugin::load_consent_form() {
 	os_log_debug(admob_log, "AdmobPlugin load_consent_form");
 
@@ -787,10 +911,12 @@ AdmobPlugin::AdmobPlugin() {
 	interstitialAdSequence = 0;
 	rewardedAdSequence = 0;
 	rewardedInterstitialAdSequence = 0;
+	nativeAdSequence = 0;
 	bannerAds = [[NSMutableDictionary alloc] init];
 	interstitialAds = [[NSMutableDictionary alloc] init];
 	rewardedAds = [[NSMutableDictionary alloc] init];
 	rewardedInterstitialAds = [[NSMutableDictionary alloc] init];
+	nativeAds = [[NSMutableDictionary alloc] init];
 	appOpenAd = nil;
 	consentManager = [[ConsentManager alloc] init];
 	foregroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification

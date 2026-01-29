@@ -57,6 +57,13 @@ extern const String APP_OPEN_AD_CLICKED_SIGNAL;
 extern const String APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL;
 extern const String APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL;
 extern const String APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL;
+extern const String NATIVE_AD_LOADED_SIGNAL;
+extern const String NATIVE_AD_FAILED_TO_LOAD_SIGNAL;
+extern const String NATIVE_AD_IMPRESSION_SIGNAL;
+extern const String NATIVE_AD_CLICKED_SIGNAL;
+extern const String NATIVE_AD_OPENED_SIGNAL;
+extern const String NATIVE_AD_CLOSED_SIGNAL;
+extern const String NATIVE_AD_SIZE_MEASURED_SIGNAL;
 extern const String CONSENT_FORM_LOADED_SIGNAL;
 extern const String CONSENT_FORM_FAILED_TO_LOAD_SIGNAL;
 extern const String CONSENT_FORM_DISMISSED_SIGNAL;
@@ -76,11 +83,13 @@ private:
 	int interstitialAdSequence; // Sequence for interstitial ad IDs
 	int rewardedAdSequence; // Sequence for rewarded ad IDs
 	int rewardedInterstitialAdSequence; // Sequence for rewarded interstitial ad IDs
+	int nativeAdSequence; // Sequence for native ad IDs
 
 	NSMutableDictionary<NSString*, BannerAd*>* bannerAds;
 	NSMutableDictionary<NSString*, InterstitialAd*>* interstitialAds;
 	NSMutableDictionary<NSString*, RewardedAd*>* rewardedAds;
 	NSMutableDictionary<NSString*, RewardedInterstitialAd*>* rewardedInterstitialAds;
+	NSMutableDictionary<NSString*, NativeAd*>* nativeAds;
 
 	ConsentManager* consentManager;
 
@@ -122,6 +131,12 @@ private:
 	Error load_app_open_ad(Dictionary requestDict, bool autoShowOnResume);
 	void show_app_open_ad();
 	bool is_app_open_ad_available();
+
+	Error load_native_ad(Dictionary adData);
+	void show_native_ad(String adId);
+	void hide_native_ad(String adId);
+	void remove_native_ad(String adId);
+	void update_native_ad_layout(String adId, real_t x, real_t y, real_t width, real_t height, bool visible);
 
 	Error load_consent_form();
 	Error show_consent_form();

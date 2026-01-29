@@ -95,19 +95,19 @@ static String const kApplyAtStartupProperty = "apply_at_startup";
 	NSNumber *volume = nil;
 	NSNumber *muted = nil;
 	NSNumber *applyAtStartup = nil;
-	
+
 	if (self.data.has(kAdVolumeProperty)) {
 		volume = @((float)self.data[kAdVolumeProperty]);
 	}
-	
+
 	if (self.data.has(kAdsAreMutedProperty)) {
 		muted = @((BOOL)self.data[kAdsAreMutedProperty]);
 	}
-	
+
 	if (self.data.has(kApplyAtStartupProperty)) {
 		applyAtStartup = @((BOOL)self.data[kApplyAtStartupProperty]);
 	}
-	
+
 	return [[AdSettings alloc] initWithAdVolume:volume areAdsMuted:muted applyAtStartup:applyAtStartup];
 }
 

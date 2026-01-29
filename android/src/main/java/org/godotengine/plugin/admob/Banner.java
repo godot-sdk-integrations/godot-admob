@@ -197,7 +197,7 @@ public class Banner {
 
 					Log.d(LOG_TAG, String.format("Actual size (px): [%d,%d] -> (dp): [%d, %d]",
 							adView.getMeasuredWidth(), adView.getMeasuredHeight(), widthDp, heightDp));
-					
+
 					Banner.this.bannerListener.onAdSizeMeasured(Banner.this.adInfo);
 				});
 			});

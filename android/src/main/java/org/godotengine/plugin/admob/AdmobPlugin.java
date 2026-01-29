@@ -281,7 +281,7 @@ public class AdmobPlugin extends GodotPlugin {
 								MobileAds.setAppMuted(settings.areAdsMuted());
 							}
 						}
-						
+
 						isInitialized = true;
 						emitSignal(SIGNAL_INITIALIZATION_COMPLETED, new AdmobStatus(initializationStatus).buildRawData());
 					}
@@ -331,7 +331,7 @@ public class AdmobPlugin extends GodotPlugin {
 	@UsedByGodot
 	public Dictionary get_global_settings() {
 		Log.d(LOG_TAG, "get_global_settings()");
-		
+
 		return loadAdSettings().getRawData();
 	}
 

@@ -1,10 +1,10 @@
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="28"> Contributing
+# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="28"> Contributing
 
 Thank you for your interest in contributing to the Godot AdMob Plugin! This guide will help you understand the project structure, build processes, and development workflows.
 
 ---
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="24"> Table of Contents
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Table of Contents
 
 - [Project Structure](#-project-structure)
 - [Prerequisites](#-prerequisites)
@@ -19,7 +19,7 @@ Thank you for your interest in contributing to the Godot AdMob Plugin! This guid
 
 ---
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="24"> Project structure
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Project structure
 
 ```text
 .
@@ -81,7 +81,7 @@ Thank you for your interest in contributing to the Godot AdMob Plugin! This guid
 
 ---
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="24"> Prerequisites
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Prerequisites
 
 ### General Requirements
 - **Git** - For version control
@@ -140,9 +140,9 @@ scons --version
 
 ---
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="24"> Configuration
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Configuration
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Common Configuration
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Common Configuration
 
 The `common/config/config.properties` file contains core plugin settings:
 
@@ -169,7 +169,7 @@ gradle.another=another.gradle.kts
 - `godotVersion` - Must match your target Godot version
 - `godotReleaseType` - Determines which Godot binary to download
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Mediation Configuration
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Mediation Configuration
 
 The `common/config/mediation.properties` file defines ad mediation adapters:
 
@@ -189,7 +189,7 @@ Each adapter has:
 - `podVersion` - iOS CocoaPod version
 - `skAdNetworkIds` - iOS SKAdNetwork identifiers
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Gradle Configuration
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Gradle Configuration
 
 The `common/gradle/libs.versions.toml` defines dependency versions:
 
@@ -207,7 +207,7 @@ android-library = { id = "com.android.library", version.ref = "android-plugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ```
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Android SDK Configuration
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Android SDK Configuration
 
 Create `common/local.properties` to specify your Android SDK location:
 
@@ -224,7 +224,7 @@ sdk.dir=/usr/lib/android-sdk
 
 **Note:** This file is gitignored and must be created locally.
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> iOS Configuration
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> iOS Configuration
 
 The `ios/config/config.properties` file contains iOS-specific settings:
 
@@ -247,7 +247,7 @@ dependencies=Dependency-SDK:1.0.0
 
 ---
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="24"> Development Workflow
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Development Workflow
 
 ### Initial Setup
 
@@ -302,9 +302,9 @@ dependencies=Dependency-SDK:1.0.0
 
 ---
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="24"> Building
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Building
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Android Builds
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Android Builds
 
 #### Quick Reference
 
@@ -372,7 +372,7 @@ dependencies=Dependency-SDK:1.0.0
 
 ---
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> iOS Builds
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> iOS Builds
 
 #### Quick Reference
 
@@ -463,7 +463,7 @@ The iOS build process involves several steps:
 
 ---
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Cross-Platform Builds
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Cross-Platform Builds
 
 Use the main `build.sh` script for coordinated builds:
 
@@ -485,7 +485,7 @@ Use the main `build.sh` script for coordinated builds:
 
 ---
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="24"> Testing
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Testing
 
 ### Testing in Demo App
 
@@ -548,7 +548,7 @@ Consider adding:
 
 ---
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="24"> Creating Releases
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Creating Releases
 
 ### Full Multi-Platform Release
 
@@ -589,9 +589,9 @@ This creates:
 
 ---
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="24"> Installation
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Installation
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Installing to Demo App
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Installing to Demo App
 
 ```bash
 # Install both platforms
@@ -601,7 +601,7 @@ This creates:
 ./script/build.sh -d
 ```
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="20"> Installing to Your Project
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Installing to Your Project
 
 ```bash
 # Using install script
@@ -613,7 +613,7 @@ This creates:
 
 ---
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="24"> Troubleshooting
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Troubleshooting
 
 ### Common Build Issues
 
@@ -673,7 +673,7 @@ rm -rf ios/build/DerivedData
 
 ---
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="24"> Contributing Guidelines
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Contributing Guidelines
 
 ### Code Style
 
@@ -731,7 +731,7 @@ Include:
 
 ---
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/icon.png" width="24"> Additional Resources
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Additional Resources
 
 - [Godot Engine Documentation](https://docs.godotengine.org/)
 - [Google AdMob Documentation](https://developers.google.com/admob)

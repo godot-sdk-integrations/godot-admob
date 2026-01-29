@@ -986,7 +986,7 @@ func is_native_ad_loaded() -> bool:
 		return _active_native_ads.is_empty() == false
 	else:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
-	
+
 	return false
 
 
@@ -1065,17 +1065,17 @@ func _sync_native_ad_with_control(ad_id: String, control: Control) -> void:
 	if not is_instance_valid(control):
 		detach_native_ad(ad_id)
 		return
-	
+
 	var viewport := control.get_viewport()
 	var vp_rect := viewport.get_visible_rect()
 	var window_size := DisplayServer.window_get_size()
-	
+
 	var scale_x := window_size.x / vp_rect.size.x
 	var scale_y := window_size.y / vp_rect.size.y
-	
+
 	var canvas_pos := control.get_global_transform_with_canvas().origin
 	var canvas_size := control.get_rect().size
-	
+
 	var win_x := (canvas_pos.x - vp_rect.position.x) * scale_x
 	var win_y := (canvas_pos.y - vp_rect.position.y) * scale_y
 	var win_w := canvas_size.x * scale_x

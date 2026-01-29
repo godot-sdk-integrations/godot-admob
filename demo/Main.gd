@@ -51,7 +51,7 @@ var _consent_status: String = UserConsent.status_to_string(UserConsent.Status.UN
 	set(a_value):
 		_consent_status = a_value
 		consent_status_label.text = a_value
-	
+
 
 func _ready() -> void:
 	if OS.has_feature("ios"):
