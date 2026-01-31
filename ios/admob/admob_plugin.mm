@@ -11,9 +11,6 @@
 
 #import <objc/message.h>
 
-#import "admob_plugin-Swift.h"
-
-#import "admob_plugin_native_bridge.h"
 #import "admob_ad_info.h"
 #import "admob_response.h"
 #import "load_ad_request.h"
@@ -21,9 +18,15 @@
 #import "admob_ad_size.h"
 #import "admob_config.h"
 #import "admob_status.h"
+#import "native_ad_bridge.h"
 #import "admob_logger.h"
 #import "ad_settings_wrapper.h"
 #import "privacy_settings.h"
+
+
+@interface AdmobAdInfo (Access)
+- (instancetype) initWithId:(NSString *)adId request:(LoadAdRequest *)loadAdRequest;
+@end
 
 
 const String INITIALIZATION_COMPLETED_SIGNAL = "initialization_completed";
@@ -717,13 +720,13 @@ Error AdmobPlugin::load_native_ad(Dictionary adData) {
 	}
 
 	// Create the delegate bridge
-	AdmobPluginNativeAdBridge *nativeAdBridge = [[AdmobPluginNativeAdBridge alloc] initWithPlugin:this];
+	NativeAdBridge *nativeAdBridge = [[NativeAdBridge alloc] initWithPlugin:this];
 
-	// Create NativeAd instance
-	NativeAd *nativeAd = [[NativeAd alloc] initWithAdInfo:adInfo
-												adRequest:[loadAdRequest createGADRequest]
-												parentView:parentView
-												delegate:nativeAdBridge];
+	// Create AdmobNativeAd instance
+	AdmobNativeAd *nativeAd = [[AdmobNativeAd alloc] initWithAdInfo:adInfo
+									adRequest:[loadAdRequest createGADRequest]
+									parentView:parentView
+									delegate:nativeAdBridge];
 
 	// Store the native ad
 	[nativeAds setObject:nativeAd forKey:adId];
@@ -738,7 +741,7 @@ void AdmobPlugin::show_native_ad(String adId) {
 	os_log_debug(admob_log, "%@ show_native_ad: %s", kLogTag, adId.utf8().get_data());
 
 	NSString *nsAdId = [GAPConverter toNsString:adId];
-	NativeAd *nativeAd = [nativeAds objectForKey:nsAdId];
+	AdmobNativeAd *nativeAd = [nativeAds objectForKey:nsAdId];
 
 	if (nativeAd) {
 		[nativeAd show];
@@ -751,7 +754,7 @@ void AdmobPlugin::hide_native_ad(String adId) {
 	os_log_debug(admob_log, "%@ hide_native_ad: %s", kLogTag, adId.utf8().get_data());
 
 	NSString *nsAdId = [GAPConverter toNsString:adId];
-	NativeAd *nativeAd = [nativeAds objectForKey:nsAdId];
+	AdmobNativeAd *nativeAd = [nativeAds objectForKey:nsAdId];
 
 	if (nativeAd) {
 		[nativeAd hide];
@@ -764,7 +767,7 @@ void AdmobPlugin::remove_native_ad(String adId) {
 	os_log_debug(admob_log, "%@ remove_native_ad: %s", kLogTag, adId.utf8().get_data());
 
 	NSString *nsAdId = [GAPConverter toNsString:adId];
-	NativeAd *nativeAd = [nativeAds objectForKey:nsAdId];
+	AdmobNativeAd *nativeAd = [nativeAds objectForKey:nsAdId];
 
 	if (nativeAd) {
 		[nativeAd remove];
@@ -776,7 +779,7 @@ void AdmobPlugin::remove_native_ad(String adId) {
 
 void AdmobPlugin::update_native_ad_layout(String adId, real_t x, real_t y, real_t width, real_t height, bool visible) {
 	NSString *nsAdId = [GAPConverter toNsString:adId];
-	NativeAd *nativeAd = [nativeAds objectForKey:nsAdId];
+	AdmobNativeAd *nativeAd = [nativeAds objectForKey:nsAdId];
 
 	if (nativeAd) {
 		[nativeAd updateLayoutWithX:(CGFloat)x y:(CGFloat)y width:(CGFloat)width height:(CGFloat)height visible:visible];

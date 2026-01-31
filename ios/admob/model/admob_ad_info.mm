@@ -4,6 +4,9 @@
 
 #import "admob_ad_info.h"
 
+#import "load_ad_request.h"
+
+#include "core/object/class_db.h"
 
 static String const kAdIdProperty = "ad_id";
 static String const kMeasuredWidthProperty = "measured_width";
@@ -16,6 +19,19 @@ static String const kLoadAdRequestProperty = "load_ad_request";
 
 @property (nonatomic, strong) NSString *adId;
 @property (nonatomic, strong) LoadAdRequest *loadAdRequest;
+
+/**
+ * Initializes the ad info wrapper with the ad details
+ * @param adId The ad's internal identifier
+ * @param loadAdRequest The data that the ad was requested with
+ */
+- (instancetype) initWithId:(NSString *)adId request:(LoadAdRequest *)loadAdRequest;
+
+/**
+ * Builds a Godot-compatible Dictionary containing the ad info
+ * @return A Dictionary object with the ad info
+ */
+- (Dictionary) buildRawData;
 
 @end
 
@@ -30,6 +46,10 @@ static String const kLoadAdRequestProperty = "load_ad_request";
 		_loadAdRequest = loadAdRequest;
 	}
 	return self;
+}
+
+- (NSString*) adUnitId {
+	return [self.loadAdRequest adUnitId];
 }
 
 - (Dictionary) buildRawData {

@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "admob_plugin-Swift.h"
+
 #import "banner.h"
 #import "interstitial.h"
 #import "rewarded.h"
@@ -89,7 +91,7 @@ private:
 	NSMutableDictionary<NSString*, InterstitialAd*>* interstitialAds;
 	NSMutableDictionary<NSString*, RewardedAd*>* rewardedAds;
 	NSMutableDictionary<NSString*, RewardedInterstitialAd*>* rewardedInterstitialAds;
-	NSMutableDictionary<NSString*, NativeAd*>* nativeAds;
+	NSMutableDictionary<NSString*, AdmobNativeAd*>* nativeAds;
 
 	ConsentManager* consentManager;
 

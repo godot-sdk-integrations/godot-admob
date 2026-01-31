@@ -48,6 +48,8 @@
 		07B12A6E2F23A3710098B81A /* GlobalSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07B12A6D2F23A3710098B81A /* GlobalSettings.swift */; };
 		07CC05FE2F23B744004D4A22 /* ad_settings_wrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07CC05FC2F23B744004D4A22 /* ad_settings_wrapper.mm */; };
 		07CC05FF2F23B744004D4A22 /* AdSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07CC05FD2F23B744004D4A22 /* AdSettings.swift */; };
+		07CF4DFE2F2DBB670034A858 /* AdmobNativeAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07CF4DFD2F2DBB670034A858 /* AdmobNativeAd.swift */; };
+		07CF4E012F2DBB850034A858 /* native_ad_bridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07CF4E002F2DBB850034A858 /* native_ad_bridge.mm */; };
 		90CAAA9924E71FF10013969F /* admob_plugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 90CAAA9824E71FF10013969F /* admob_plugin.mm */; };
 		94A1B0B2910D06DA0F4D3D3C /* Pods_admob_plugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 380C444E6383B0C8ACA7CA7D /* Pods_admob_plugin.framework */; };
 /* End PBXBuildFile section */
@@ -65,6 +67,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		070492CD2F2B818600A48C68 /* NativeAdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NativeAdView.xib; sourceTree = "<group>"; };
 		073B52C32ECF241C0063663B /* admob_plugin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "admob_plugin-Bridging-Header.h"; sourceTree = "<group>"; };
 		07787D0C2EDA6C22009B6F5F /* admob_logger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = admob_logger.h; sourceTree = "<group>"; };
 		07787D0D2EDA6C22009B6F5F /* admob_logger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = admob_logger.m; sourceTree = "<group>"; };
@@ -146,6 +149,9 @@
 		07CC05FB2F23B744004D4A22 /* ad_settings_wrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ad_settings_wrapper.h; sourceTree = "<group>"; };
 		07CC05FC2F23B744004D4A22 /* ad_settings_wrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ad_settings_wrapper.mm; sourceTree = "<group>"; };
 		07CC05FD2F23B744004D4A22 /* AdSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdSettings.swift; sourceTree = "<group>"; };
+		07CF4DFD2F2DBB670034A858 /* AdmobNativeAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdmobNativeAd.swift; sourceTree = "<group>"; };
+		07CF4DFF2F2DBB850034A858 /* native_ad_bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = native_ad_bridge.h; sourceTree = "<group>"; };
+		07CF4E002F2DBB850034A858 /* native_ad_bridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = native_ad_bridge.mm; sourceTree = "<group>"; };
 		1A3D1E30D9DC57319C20B62B /* Pods-admob_plugin.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-admob_plugin.release.xcconfig"; path = "Target Support Files/Pods-admob_plugin/Pods-admob_plugin.release.xcconfig"; sourceTree = "<group>"; };
 		380C444E6383B0C8ACA7CA7D /* Pods_admob_plugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_admob_plugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		403D7C7BCFBA671DEF15AE95 /* Pods-admob_plugin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-admob_plugin.debug.xcconfig"; path = "Target Support Files/Pods-admob_plugin/Pods-admob_plugin.debug.xcconfig"; sourceTree = "<group>"; };
@@ -168,9 +174,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		070492CE2F2B818600A48C68 /* layout */ = {
+			isa = PBXGroup;
+			children = (
+				070492CD2F2B818600A48C68 /* NativeAdView.xib */,
+			);
+			path = layout;
+			sourceTree = "<group>";
+		};
 		07A9A8F42EFD654F00F8335A /* adformat */ = {
 			isa = PBXGroup;
 			children = (
+				07CF4DFD2F2DBB670034A858 /* AdmobNativeAd.swift */,
 				07A9A8E82EFD654F00F8335A /* ad_format_base.h */,
 				07A9A8E92EFD654F00F8335A /* ad_format_base.mm */,
 				07A9A8EA2EFD654F00F8335A /* app_open.h */,
@@ -293,6 +308,7 @@
 		90CAAA9624E71FF10013969F /* admob */ = {
 			isa = PBXGroup;
 			children = (
+				070492CE2F2B818600A48C68 /* layout */,
 				07A9A8F42EFD654F00F8335A /* adformat */,
 				07A9A91D2EFD654F00F8335A /* mediation */,
 				07A9A9312EFD654F00F8335A /* model */,
@@ -307,6 +323,8 @@
 				07B12A6D2F23A3710098B81A /* GlobalSettings.swift */,
 				07787D0E2EDA6C22009B6F5F /* gap_converter.h */,
 				07787D0F2EDA6C22009B6F5F /* gap_converter.mm */,
+				07CF4DFF2F2DBB850034A858 /* native_ad_bridge.h */,
+				07CF4E002F2DBB850034A858 /* native_ad_bridge.mm */,
 			);
 			path = admob;
 			sourceTree = "<group>";
@@ -419,6 +437,7 @@
 				07A9A93B2EFD654F00F8335A /* admob_plugin_bootstrap.mm in Sources */,
 				07A9A93C2EFD654F00F8335A /* imobile_mediation_network.mm in Sources */,
 				07A9A93D2EFD654F00F8335A /* banner.mm in Sources */,
+				07CF4DFE2F2DBB670034A858 /* AdmobNativeAd.swift in Sources */,
 				07A9A93E2EFD654F00F8335A /* admob_ad_error.mm in Sources */,
 				07A9A93F2EFD654F00F8335A /* admob_response.mm in Sources */,
 				07A9A9402EFD654F00F8335A /* ironsource_mediation_network.mm in Sources */,
@@ -436,6 +455,7 @@
 				07A9A94C2EFD654F00F8335A /* unity_mediation_network.mm in Sources */,
 				07A9A94D2EFD654F00F8335A /* app_open.mm in Sources */,
 				07A9A94E2EFD654F00F8335A /* rewarded_interstitial.mm in Sources */,
+				07CF4E012F2DBB850034A858 /* native_ad_bridge.mm in Sources */,
 				07A9A94F2EFD654F00F8335A /* interstitial.mm in Sources */,
 				07A9A9502EFD654F00F8335A /* mintegral_mediation_network.mm in Sources */,
 				07B12A6E2F23A3710098B81A /* GlobalSettings.swift in Sources */,

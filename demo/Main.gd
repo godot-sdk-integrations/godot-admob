@@ -82,7 +82,8 @@ func _ready() -> void:
 			banner_collapsible_pos_option_button.select(__index)
 		__index += 1
 
-	admob.initialize()
+	if not Engine.is_editor_hint():
+		admob.initialize()
 
 
 func _on_admob_initialization_completed(status_data: InitializationStatus) -> void:

@@ -12,6 +12,12 @@
 #import "admob_load_ad_error.h"
 
 
+@interface AdmobAdInfo (Access)
+- (instancetype) initWithId:(NSString *)adId request:(LoadAdRequest *)loadAdRequest;
+- (Dictionary) buildRawData;
+@end
+
+
 @interface BannerAd ()
 // Store the constraints applied to the superview so they can be removed cleanly later
 @property (nonatomic, strong) NSMutableArray<NSLayoutConstraint *> *activeConstraints;

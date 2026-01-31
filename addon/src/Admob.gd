@@ -342,6 +342,7 @@ func _init() -> void:
 			"rewarded_interstitial_ad", remove_rewarded_interstitial_ad)
 	_active_native_ads = AdCache.new(max_native_ad_cache, "native_ad", remove_native_ad)
 
+
 func _validate_property(property: Dictionary) -> void:
 	if property.name == "enabled_networks":
 		property.hint_string = ",".join(MediationNetwork.MEDIATION_NETWORK_TAGS.keys())
@@ -411,7 +412,7 @@ func _update_plugin() -> void:
 		if Engine.has_singleton(PLUGIN_SINGLETON_NAME):
 			_plugin_singleton = Engine.get_singleton(PLUGIN_SINGLETON_NAME)
 			_connect_signals()
-		elif not OS.has_feature("editor_hint"):
+		elif not Engine.is_editor_hint():
 			Admob.log_error("%s singleton not found!" % PLUGIN_SINGLETON_NAME)
 
 
