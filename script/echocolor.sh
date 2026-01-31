@@ -128,35 +128,35 @@ function printUsage {
 	$0 -Y "\n\nExamples:"
 	$0 -il -G "$0 text" -W " will print: "
 	$0 text
-	
+
 	$0 -il -G "$0 --Red RedText" -W " will print: "
 	$0 --Red RedText
-	
+
 	$0 -il -G "$0 --Green GreenText" -W " will print: "
 	$0 --Green GreenText
-	
+
 	$0 -il -G "$0 --Blue BlueText" -W " will print: "
 	$0 --Blue BlueText
-	
+
 	$0 -il -G "$0 --Red \"RedText\" --Green \" GreenText\" --Blue \" BlueText\"" -W " will print: "
 	$0 --Red RedText --Green " GreenText" --Blue " BlueText"
 
 	$0 -il -G "$0 --rainbow \"Rainbow Colored Text\"" -W " will print: "
 	$0 --rainbow "Rainbow Colored Text"
-	
+
 	$0 -il -G "$0 -rgb 100,200,30 \"Custom Color Text\"" -W " will print: "
 	$0 -rgb 200,100,30 "Custom Color Text"
 
 	$0 -il -G "$0 --hex FF88ee \"Color From Hex\"" -W " will print: "
 	$0 --hex FF88ee "Color From Hex"
-	
+
 	$0 -il -G "$0 -B G -R o -Y o -B g -G l -R e" -W " will print: "
 	$0 -B G -R o -Y o -B g -G l -R e
 
 	$0 -Y "\n\nInfo:"
 	$0 -Gy "Original Sources at: https://github.com/Gruppio/Echolor.git"
 	$0 -Gy "Created by Gruppio 2015"
-	
+
 	$0 "\n"
 	exit -1
 }
@@ -191,7 +191,7 @@ do
 		-bg|--background) 	colorBackground=1 ;;
 		-il|--in-line)		inline=1 ;;
 		-ran|--random)		color=$(($RANDOM %255)) ;;
-		-rb|--rainbow)		
+		-rb|--rainbow)	
 			color=$rainbowColor
 			rainbowColorIndex=0
 		;;

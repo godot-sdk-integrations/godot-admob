@@ -13,6 +13,12 @@
 #import "admob_load_ad_error.h"
 
 
+@interface AdmobAdInfo (Access)
+- (instancetype) initWithId:(NSString *)adId request:(LoadAdRequest *)loadAdRequest;
+- (Dictionary) buildRawData;
+@end
+
+
 @interface RewardedInterstitialAd ()
 
 @property (nonatomic, strong) AdmobAdInfo *adInfo;

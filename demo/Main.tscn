@@ -184,23 +184,23 @@ layout_mode = 2
 disabled = true
 text = "Remove"
 
-[node name="InlineBanner" type="ScrollContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer"]
+[node name="Inline" type="ScrollContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer"]
 visible = false
 custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
 horizontal_scroll_mode = 0
 metadata/_tab_index = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/InlineBanner"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Inline"]
 layout_mode = 2
 
-[node name="TopLabel" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/InlineBanner/VBoxContainer"]
+[node name="TopLabel" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Inline/VBoxContainer"]
 custom_minimum_size = Vector2(350, 0)
 layout_mode = 2
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 autowrap_mode = 3
 
-[node name="InlineAdaptiveBanner" type="Control" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/InlineBanner/VBoxContainer"]
+[node name="InlineAdaptiveBanner" type="Control" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Inline/VBoxContainer"]
 custom_minimum_size = Vector2(350, 0)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -210,17 +210,71 @@ max_ad_height = 200
 admob_path = NodePath("../../../../../../../../Admob")
 auto_load = true
 
-[node name="BottomLabel" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/InlineBanner/VBoxContainer"]
+[node name="BottomLabel" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Inline/VBoxContainer"]
 custom_minimum_size = Vector2(350, 0)
 layout_mode = 2
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 autowrap_mode = 3
 
+[node name="Native" type="VBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 10
+metadata/_tab_index = 2
+
+[node name="LoadNativeAdButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "Load Native Ad"
+
+[node name="IDHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/IDHBoxContainer"]
+layout_mode = 2
+text = "ID:"
+
+[node name="AdIdOptionButton" type="OptionButton" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/IDHBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+fit_to_longest_item = false
+
+[node name="ButtonsHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native"]
+layout_mode = 2
+theme_override_constants/separation = 5
+alignment = 1
+
+[node name="ShowNativeAdButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+disabled = true
+text = "Show"
+
+[node name="HideNativeAdButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+disabled = true
+text = "Hide"
+
+[node name="AttachNativeAdButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+disabled = true
+text = "Attach to a node"
+
+[node name="RemoveNativeAdButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+disabled = true
+text = "Remove"
+
 [node name="Other" type="VBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer"]
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 15
-metadata/_tab_index = 2
+metadata/_tab_index = 3
 
 [node name="InterstitialHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other"]
 layout_mode = 2
@@ -271,7 +325,7 @@ text = "Reload"
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 10
-metadata/_tab_index = 3
+metadata/_tab_index = 4
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Consent"]
 layout_mode = 2
@@ -313,7 +367,7 @@ text = "Reset"
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 15
-metadata/_tab_index = 4
+metadata/_tab_index = 5
 
 [node name="ButtonsVBC" type="VBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings"]
 layout_mode = 2
@@ -388,7 +442,6 @@ scroll_following = true
 
 [node name="Admob" type="Node" parent="."]
 script = ExtResource("2_4x6et")
-auto_show_on_resume = true
 android_debug_application_id = "ca-app-pub-3940256099942544~3347511713"
 ios_debug_application_id = "ca-app-pub-3940256099942544~1458002511"
 debug_geography = 1
@@ -400,6 +453,11 @@ test_device_hashed_ids = Array[String](["91C505D5-7ACF-4EE8-9A1D-CD8DCDD21A1B", 
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/SizeButton" to="." method="_on_size_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/PixelSizeButton" to="." method="_on_pixel_size_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/RemoveBannerButton" to="." method="_on_remove_banner_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/LoadNativeAdButton" to="." method="_on_load_native_ad_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer/ShowNativeAdButton" to="." method="_on_show_native_ad_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer/HideNativeAdButton" to="." method="_on_hide_native_ad_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer/AttachNativeAdButton" to="." method="_on_attach_native_ad_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer/RemoveNativeAdButton" to="." method="_on_remove_native_ad_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/InterstitialButton" to="." method="_on_interstitial_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/ReloadInterstitialButton" to="." method="_on_reload_interstitial_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/RewardedButton" to="." method="_on_rewarded_video_button_pressed"]
@@ -430,6 +488,8 @@ test_device_hashed_ids = Array[String](["91C505D5-7ACF-4EE8-9A1D-CD8DCDD21A1B", 
 [connection signal="interstitial_ad_failed_to_load" from="Admob" to="." method="_on_admob_interstitial_ad_failed_to_load"]
 [connection signal="interstitial_ad_loaded" from="Admob" to="." method="_on_admob_interstitial_ad_loaded"]
 [connection signal="interstitial_ad_refreshed" from="Admob" to="." method="_on_admob_interstitial_ad_refreshed"]
+[connection signal="native_ad_failed_to_load" from="Admob" to="." method="_on_admob_native_ad_failed_to_load"]
+[connection signal="native_ad_loaded" from="Admob" to="." method="_on_admob_native_ad_loaded"]
 [connection signal="rewarded_ad_dismissed_full_screen_content" from="Admob" to="." method="_on_admob_rewarded_ad_dismissed_full_screen_content"]
 [connection signal="rewarded_ad_failed_to_load" from="Admob" to="." method="_on_admob_rewarded_ad_failed_to_load"]
 [connection signal="rewarded_ad_loaded" from="Admob" to="." method="_on_admob_rewarded_ad_loaded"]

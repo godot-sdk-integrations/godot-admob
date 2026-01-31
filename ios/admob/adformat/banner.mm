@@ -12,6 +12,12 @@
 #import "admob_load_ad_error.h"
 
 
+@interface AdmobAdInfo (Access)
+- (instancetype) initWithId:(NSString *)adId request:(LoadAdRequest *)loadAdRequest;
+- (Dictionary) buildRawData;
+@end
+
+
 @interface BannerAd ()
 // Store the constraints applied to the superview so they can be removed cleanly later
 @property (nonatomic, strong) NSMutableArray<NSLayoutConstraint *> *activeConstraints;
@@ -53,7 +59,7 @@
 
 - (void) destroy {
 	[self.bannerView setHidden:YES];
-	
+
 	// Clean up constraints explicitly
 	if (self.activeConstraints.count > 0) {
 		[GDTAppDelegateService.viewController.view removeConstraints:self.activeConstraints];
@@ -117,7 +123,7 @@
 		// Use Frame-based layout for Custom position
 		self.bannerView.translatesAutoresizingMaskIntoConstraints = YES;
 		[GDTAppDelegateService.viewController.view addSubview:self.bannerView];
-		
+
 		// The position will be updated later via move_banner_ad()
 	} else {
 		// Use Auto Layout for standard positions (Top, Bottom, etc.)
@@ -135,7 +141,7 @@
 																attribute:attribute 
 																multiplier:1 
 																constant:0];
-	
+
 	[GDTAppDelegateService.viewController.view addConstraint:constraint];
 	[self.activeConstraints addObject:constraint]; // Track this constraint
 }
@@ -148,14 +154,14 @@
 																attribute:attribute 
 																multiplier:1 
 																constant:constant];
-	
+
 	[GDTAppDelegateService.viewController.view addConstraint:constraint];
 	[self.activeConstraints addObject:constraint]; // Track this constraint
 }
 
 - (void) updateBannerPosition:(AdPosition) adPosition {
 	os_log_debug(admob_log, "BannerAd updateBannerPosition: position=%lu", (unsigned long) adPosition);
-		
+
 	// Remove only the active positioning constraints
 	if (self.activeConstraints.count > 0) {
 		[GDTAppDelegateService.viewController.view removeConstraints:self.activeConstraints];

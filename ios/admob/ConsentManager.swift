@@ -3,9 +3,9 @@
 //
 
 import Foundation
+import UIKit
 import OSLog
 import UserMessagingPlatform
-import UIKit
 
 @objc public class ConsentManager: NSObject {
 

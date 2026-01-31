@@ -99,6 +99,16 @@ public class AdmobPlugin extends GodotPlugin {
 	static final String SIGNAL_APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT = "app_open_ad_showed_full_screen_content";
 	static final String SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT = "app_open_ad_failed_to_show_full_screen_content";
 	static final String SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT = "app_open_ad_dismissed_full_screen_content";
+
+	public static final String SIGNAL_NATIVE_AD_LOADED = "native_ad_loaded";
+	public static final String SIGNAL_NATIVE_AD_FAILED_TO_LOAD = "native_ad_failed_to_load";
+	public static final String SIGNAL_NATIVE_AD_IMPRESSION = "native_ad_impression";
+	public static final String SIGNAL_NATIVE_AD_CLICKED = "native_ad_clicked";
+	public static final String SIGNAL_NATIVE_AD_OPENED = "native_ad_opened";
+	public static final String SIGNAL_NATIVE_AD_CLOSED = "native_ad_closed";
+	public static final String SIGNAL_NATIVE_AD_SWIPE_GESTURE_CLICKED = "native_ad_swipe_gesture_clicked";
+	public static final String SIGNAL_NATIVE_AD_SIZE_MEASURED = "native_ad_size_measured";
+
 	static final String SIGNAL_CONSENT_FORM_LOADED = "consent_form_loaded";
 	static final String SIGNAL_CONSENT_FORM_FAILED_TO_LOAD = "consent_form_failed_to_load";
 	static final String SIGNAL_CONSENT_FORM_DISMISSED = "consent_form_dismissed";
@@ -130,6 +140,7 @@ public class AdmobPlugin extends GodotPlugin {
 	private FrameLayout layout = null;
 
 	private int bannerAdIdSequence;
+	private int nativeAdIdSequence;
 	private int interstitialAdIdSequence;
 	private int rewardedAdIdSequence;
 	private int rewardedInterstitialAdIdSequence;
@@ -137,6 +148,7 @@ public class AdmobPlugin extends GodotPlugin {
 	private boolean isInitialized;
 
 	private Map<String, Banner> bannerAds;
+	private Map<String, Native> nativeAds;
 	private Map<String, Interstitial> interstitialAds;
 	private Map<String, RewardedVideo> rewardedAds;
 	private Map<String, RewardedInterstitial> rewardedInterstitialAds;
@@ -150,6 +162,7 @@ public class AdmobPlugin extends GodotPlugin {
 		super(godot);
 
 		bannerAds = new HashMap<>();
+		nativeAds = new HashMap<>();
 		interstitialAds = new HashMap<>();
 		rewardedAds = new HashMap<>();
 		rewardedInterstitialAds = new HashMap<>();
@@ -214,6 +227,15 @@ public class AdmobPlugin extends GodotPlugin {
 		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, Dictionary.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT, Dictionary.class));
 
+		signals.add(new SignalInfo(SIGNAL_NATIVE_AD_LOADED, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_NATIVE_AD_FAILED_TO_LOAD, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_NATIVE_AD_IMPRESSION, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_NATIVE_AD_SIZE_MEASURED, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_NATIVE_AD_CLICKED, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_NATIVE_AD_SWIPE_GESTURE_CLICKED, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_NATIVE_AD_OPENED, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_NATIVE_AD_CLOSED, Dictionary.class));
+
 		signals.add(new SignalInfo(SIGNAL_CONSENT_FORM_LOADED));
 		signals.add(new SignalInfo(SIGNAL_CONSENT_FORM_FAILED_TO_LOAD, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_CONSENT_FORM_DISMISSED, Dictionary.class));
@@ -229,6 +251,7 @@ public class AdmobPlugin extends GodotPlugin {
 		Log.d(LOG_TAG, "initialize()");
 
 		bannerAdIdSequence = 0;
+		nativeAdIdSequence = 0;
 		interstitialAdIdSequence = 0;
 		rewardedAdIdSequence = 0;
 		rewardedInterstitialAdIdSequence = 0;
@@ -258,7 +281,7 @@ public class AdmobPlugin extends GodotPlugin {
 								MobileAds.setAppMuted(settings.areAdsMuted());
 							}
 						}
-						
+
 						isInitialized = true;
 						emitSignal(SIGNAL_INITIALIZATION_COMPLETED, new AdmobStatus(initializationStatus).buildRawData());
 					}
@@ -308,7 +331,7 @@ public class AdmobPlugin extends GodotPlugin {
 	@UsedByGodot
 	public Dictionary get_global_settings() {
 		Log.d(LOG_TAG, "get_global_settings()");
-		
+
 		return loadAdSettings().getRawData();
 	}
 
@@ -801,6 +824,111 @@ public class AdmobPlugin extends GodotPlugin {
 	@UsedByGodot
 	public boolean is_app_open_ad_available() {
 		return appOpenAdManager.isAdAvailable();
+	}
+
+	@UsedByGodot
+	public void load_native_ad(Dictionary adData) {
+		if (isInitialized) {
+			Log.d(LOG_TAG, "load_native_ad()");
+
+			LoadAdRequest loadAdRequest = new LoadAdRequest(adData);
+			if (loadAdRequest.isValid()) {
+				String adId = loadAdRequest.generateAdId(++nativeAdIdSequence);
+
+				AdmobAdInfo adInfo = new AdmobAdInfo(adId, loadAdRequest);
+				Native ad = new Native(adInfo, activity, layout, new NativeListener() {
+					@Override
+					public void onAdLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
+						emitSignal(SIGNAL_NATIVE_AD_LOADED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
+					}
+
+					@Override
+					public void onAdFailedToLoad(AdmobAdInfo adInfo, LoadAdError error) {
+						emitSignal(SIGNAL_NATIVE_AD_FAILED_TO_LOAD, adInfo.buildRawData(), new AdmobLoadAdError(error).buildRawData());
+					}
+
+					@Override
+					public void onAdImpression(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_NATIVE_AD_IMPRESSION, adInfo.buildRawData());
+					}
+
+					@Override
+					public void onAdClicked(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_NATIVE_AD_CLICKED, adInfo.buildRawData());
+					}
+
+					@Override
+					public void onAdOpened(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_NATIVE_AD_OPENED, adInfo.buildRawData());
+					}
+
+					@Override
+					public void onAdClosed(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_NATIVE_AD_CLOSED, adInfo.buildRawData());
+					}
+
+					@Override
+					public void onAdSwipeGestureClicked(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_NATIVE_AD_SWIPE_GESTURE_CLICKED, adInfo.buildRawData());
+					}
+
+					@Override
+					public void onAdSizeMeasured(AdmobAdInfo adInfo) {
+						emitSignal(SIGNAL_NATIVE_AD_SIZE_MEASURED, adInfo.buildRawData());
+					}
+				});
+				nativeAds.put(adId, ad);
+				Log.d(LOG_TAG, String.format("load_native_ad(): %s", adId));
+				ad.load();
+			} else {
+				Log.e(LOG_TAG, "load_native_ad(): Error: Ad request data is invalid.");
+			}
+		} else {
+			Log.e(LOG_TAG, "load_native_ad(): Error: Plugin is not initialized!");
+		}
+	}
+
+	@UsedByGodot
+	public void show_native_ad(String adId) {
+		if (nativeAds.containsKey(adId)) {
+			Log.d(LOG_TAG, String.format("show_native_ad(): %s", adId));
+			Native ad = nativeAds.get(adId);
+			ad.show();
+		} else {
+			Log.e(LOG_TAG, String.format("show_native_ad(): Error: native ad %s not found", adId));
+		}
+	}
+
+	@UsedByGodot
+	public void hide_native_ad(String adId) {
+		if (nativeAds.containsKey(adId)) {
+			Log.d(LOG_TAG, String.format("hide_native_ad(): %s", adId));
+			Native ad = nativeAds.get(adId);
+			ad.hide();
+		} else {
+			Log.e(LOG_TAG, String.format("hide_native_ad(): Error: native ad %s not found", adId));
+		}
+	}
+
+	@UsedByGodot
+	public void remove_native_ad(String adId) {
+		if (nativeAds.containsKey(adId)) {
+			Log.d(LOG_TAG, String.format("remove_native_ad(): %s", adId));
+			Native ad = nativeAds.remove(adId);
+			ad.remove();
+		} else {
+			Log.e(LOG_TAG, String.format("remove_native_ad(): Error: native ad %s not found", adId));
+		}
+	}
+
+	@UsedByGodot
+	public void update_native_ad_layout(String adId, int x, int y, int width, int height, boolean visible) {
+		if (nativeAds.containsKey(adId)) {
+			Native ad = nativeAds.get(adId);
+			ad.updateLayout(x, y, width, height, visible);
+		} else {
+			Log.e(LOG_TAG, String.format("update_native_ad_layout(): Error: native ad %s not found", adId));
+		}
 	}
 
 	@UsedByGodot

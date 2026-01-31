@@ -13,6 +13,12 @@
 #import "gap_converter.h"
 
 
+@interface AdmobAdInfo (Access)
+- (instancetype) initWithId:(NSString *)adId request:(LoadAdRequest *)loadAdRequest;
+- (Dictionary) buildRawData;
+@end
+
+
 @interface AppOpenAd ()
 
 @property (nonatomic, strong) AdmobAdInfo *adInfo;
