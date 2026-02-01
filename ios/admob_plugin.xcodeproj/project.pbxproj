@@ -67,7 +67,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		070492CD2F2B818600A48C68 /* NativeAdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NativeAdView.xib; sourceTree = "<group>"; };
 		073B52C32ECF241C0063663B /* admob_plugin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "admob_plugin-Bridging-Header.h"; sourceTree = "<group>"; };
 		07787D0C2EDA6C22009B6F5F /* admob_logger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = admob_logger.h; sourceTree = "<group>"; };
 		07787D0D2EDA6C22009B6F5F /* admob_logger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = admob_logger.m; sourceTree = "<group>"; };
@@ -158,8 +157,6 @@
 		90CAAA9424E71FF10013969F /* libadmob_plugin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libadmob_plugin.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		90CAAA9724E71FF10013969F /* admob_plugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = admob_plugin.h; sourceTree = "<group>"; };
 		90CAAA9824E71FF10013969F /* admob_plugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = admob_plugin.mm; sourceTree = "<group>"; };
-		AAE936A0178A8EA9BB753CEA /* Pods-admob_plugin_implementation.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-admob_plugin_implementation.debug.xcconfig"; path = "Target Support Files/Pods-inapp_review_plugin/Pods-admob_plugin_implementation.debug.xcconfig"; sourceTree = "<group>"; };
-		D5F7A9D28867FD798F31BF3B /* Pods-admob_plugin_implementation.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-admob_plugin_implementation.release.xcconfig"; path = "Target Support Files/Pods-inapp_review_plugin/Pods-admob_plugin_implementation.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,14 +171,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		070492CE2F2B818600A48C68 /* layout */ = {
-			isa = PBXGroup;
-			children = (
-				070492CD2F2B818600A48C68 /* NativeAdView.xib */,
-			);
-			path = layout;
-			sourceTree = "<group>";
-		};
 		07A9A8F42EFD654F00F8335A /* adformat */ = {
 			isa = PBXGroup;
 			children = (
@@ -281,8 +270,6 @@
 			children = (
 				403D7C7BCFBA671DEF15AE95 /* Pods-admob_plugin.debug.xcconfig */,
 				1A3D1E30D9DC57319C20B62B /* Pods-admob_plugin.release.xcconfig */,
-				AAE936A0178A8EA9BB753CEA /* Pods-admob_plugin_implementation.debug.xcconfig */,
-				D5F7A9D28867FD798F31BF3B /* Pods-admob_plugin_implementation.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -290,7 +277,7 @@
 		90CAAA8B24E71FF10013969F = {
 			isa = PBXGroup;
 			children = (
-				90CAAA9624E71FF10013969F /* admob */,
+				90CAAA9624E71FF10013969F /* src */,
 				90CAAA9524E71FF10013969F /* Products */,
 				90CAAAA824E72A8A0013969F /* Frameworks */,
 				66EA7AD27171A8F93A267403 /* Pods */,
@@ -305,10 +292,9 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		90CAAA9624E71FF10013969F /* admob */ = {
+		90CAAA9624E71FF10013969F /* src */ = {
 			isa = PBXGroup;
 			children = (
-				070492CE2F2B818600A48C68 /* layout */,
 				07A9A8F42EFD654F00F8335A /* adformat */,
 				07A9A91D2EFD654F00F8335A /* mediation */,
 				07A9A9312EFD654F00F8335A /* model */,
@@ -326,7 +312,7 @@
 				07CF4DFF2F2DBB850034A858 /* native_ad_bridge.h */,
 				07CF4E002F2DBB850034A858 /* native_ad_bridge.mm */,
 			);
-			path = admob;
+			path = src;
 			sourceTree = "<group>";
 		};
 		90CAAAA824E72A8A0013969F /* Frameworks */ = {
@@ -664,7 +650,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "admob/admob_plugin-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "src/admob_plugin-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -745,7 +731,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "admob/admob_plugin-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "src/admob_plugin-Bridging-Header.h";
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
