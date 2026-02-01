@@ -59,7 +59,7 @@ Thank you for your interest in contributing to the Godot AdMob Plugin! This guid
 │   └── *.gd                           # Demo app scripts
 │
 ├── ios/                                # iOS platform module
-│   ├── admob/                         # iOS platform code
+│   ├── src/                           # iOS platform code
 │   ├── admob_plugin.xcodeproj/        # Xcode project
 │   ├── build/                         # iOS build outputs
 │   ├── config/
@@ -278,7 +278,7 @@ dependencies=Dependency-SDK:1.0.0
 
 1. **Edit source code:**
    - Android: `android/src/main/`
-   - iOS: `ios/admob/`
+   - iOS: `ios/src/`
    - GDScript templates: `addon/src/`
 
 2. **Build and test:**

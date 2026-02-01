@@ -6,7 +6,7 @@
 #define ad_format_base_h
 
 #import "gap_converter.h"
-#import "view_controller.h"
+#import "godot_view_controller.h"
 #import "app_delegate_service.h"
 
 @import GoogleMobileAds;
