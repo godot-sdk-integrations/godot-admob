@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# © 2024-present https://github.com/cengiz-pz
+# © 2026-present https://github.com/cengiz-pz
 #
 
 set -euo pipefail

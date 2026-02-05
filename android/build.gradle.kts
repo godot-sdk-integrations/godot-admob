@@ -51,15 +51,20 @@ android {
 	}
 }
 
-val androidDependencies = arrayOf(
-	libs.androidx.appcompat.get(),
-	libs.androidx.lifecycle.get(),
-	libs.play.services.ads.get()
-)
+// Access the library catalog by name ("libs")
+val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
+
+// Map all library aliases to their actual dependency provider
+val androidDependencies = catalog.libraryAliases.map { alias ->
+    catalog.findLibrary(alias).get().get()
+}
 
 dependencies {
 	implementation("godot:godot-lib:${project.extra["godotVersion"]}.${project.extra["releaseType"]}@aar")
-	androidDependencies.forEach { implementation(it) }
+	androidDependencies.forEach { 
+        println("[DEBUG] Adding Android dependency: $it")
+        implementation(it)
+    }
 }
 
 tasks {
@@ -73,15 +78,15 @@ tasks {
 		onlyIf {
 			val exists = destFile.exists() && destFile.length() > 0
 			if (exists) {
-				println("[godot-lib] File already exists and is non-empty: ${destFile.absolutePath} (${destFile.length()} bytes)")
-				println("[godot-lib] Skipping download.")
+				println("[GODOT-LIB] File already exists and is non-empty: ${destFile.absolutePath} (${destFile.length()} bytes)")
+				println("[GODOT-LIB] Skipping download.")
 			} else {
 				if (destFile.exists()) {
-					println("[godot-lib] File exists but is empty: ${destFile.absolutePath}")
+					println("[GODOT-LIB] File exists but is empty: ${destFile.absolutePath}")
 				} else {
-					println("[godot-lib] File not found: ${destFile.absolutePath}")
+					println("[GODOT-LIB] File not found: ${destFile.absolutePath}")
 				}
-				println("[godot-lib] Proceeding with download...")
+				println("[GODOT-LIB] Proceeding with download...")
 			}
 			!exists // run task only if file does NOT exist or is empty
 		}

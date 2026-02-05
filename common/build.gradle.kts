@@ -31,7 +31,7 @@ tasks {
 			from("${rootDir}/../addon/build/output/")
 		}
 
-		into("${project.extra["pluginName"]}/bin/debug") {
+		into("addons/${project.extra["pluginName"]}/bin/debug") {
 			from("${rootDir}/../android/build/outputs/aar")
 			include("${project.extra["pluginName"]}-debug.aar")
 		}
@@ -49,7 +49,7 @@ tasks {
 			from("${rootDir}/../addon/build/output/")
 		}
 
-		into("${project.extra["pluginName"]}/bin/release") {
+		into("addons/${project.extra["pluginName"]}/bin/release") {
 			from("${rootDir}/../android/build/outputs/aar")
 			include("${project.extra["pluginName"]}-release.aar")
 		}
@@ -65,7 +65,7 @@ tasks {
 		description = "Copies the assembled plugin to demo application's addons directory"
 		dependsOn("buildDebug")
 
-        destinationDir = file("${project.extra["demoAddonsDir"]}")
+        destinationDir = file("${project.extra["demoDir"]}")
 
 		into(".") {
 			from("${project.extra["pluginDir"]}")
@@ -74,7 +74,7 @@ tasks {
 
 	register<Delete>("cleanDemoAddons") {
 		// Keep the directory itself and delete everything inside except for .uid and .import files
-		delete(fileTree("${project.extra["demoAddonsDir"]}/${project.extra["pluginName"]}").apply {
+		delete(fileTree("${project.extra["demoDir"]}/addons/${project.extra["pluginName"]}").apply {
 			include("**/*")
 			exclude("**/*.uid")
 			exclude("**/*.import")
@@ -89,18 +89,17 @@ tasks {
 	}
 
 	register<Zip>("createArchive") {
-		dependsOn("buildDebug")
-		dependsOn("buildRelease")
+		dependsOn("buildDebug", "buildRelease")
 
-		archiveFileName.set(project.extra["pluginArchive"] as String)
-		destinationDirectory.set(file("${project.extra["archiveDir"] as String}"))
+		val archiveName = project.extra["pluginArchive"] as String
+		val outputDir = project.extra["archiveDir"] as String
+		val sourceDir = project.extra["pluginDir"] as String
 
-		from("${project.extra["pluginDir"]}/${project.extra["pluginName"]}") {
+		archiveFileName.set(archiveName)
+		destinationDirectory.set(layout.projectDirectory.dir(outputDir))
+
+		from(layout.projectDirectory.dir(sourceDir)) {
 			includeEmptyDirs = false
-
-			eachFile {
-				path = "addons/${project.extra["pluginName"]}/$path"
-			}
 		}
 
 		doLast {

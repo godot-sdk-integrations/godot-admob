@@ -6,16 +6,18 @@ body:
 - type: checkboxes
   attributes:
     label: Is there an existing issue for this?
-    description: Please search to see if an issue already exists for the bug you encountered.
+    description: Please search to see if an issue already exists for this feature.
     options:
-    - label: I have searched the existing issues
+    - label: I have searched the existing open and closed issues
+      required: true
+    - label: I have searched the existing discussions
       required: true
 - type: textarea
   attributes:
     label: Current Behavior
     description: Is your feature request related to a problem? Please describe.
   validations:
-    required: true
+    required: false
 - type: textarea
   attributes:
     label: Proposed Behavior
@@ -31,39 +33,6 @@ body:
   validations:
     required: false
 - type: dropdown
-  id: godot_version
-  attributes:
-    label: Godot Version
-    description: What version of Godot are you running?
-    options:
-      - 4.5.stable
-      - 4.5.1.stable
-      - 4.6.stable
-      - 4.x
-      - Other
-    default: 2
-  validations:
-    required: true
-- type: dropdown
-  id: godot_os
-  attributes:
-    label: OS Godot Is Running On
-    description: What operating system is the Godot Editor running on?
-    options:
-      - Windows 11
-      - Windows (other)
-      - macOS 15
-      - macOS 26
-      - macOS (other)
-      - Android 14
-      - Android 15
-      - Android 16
-      - Android (other)
-      - Other OS
-    default: 0
-  validations:
-    required: true
-- type: dropdown
   id: plugin_version
   attributes:
     label: Plugin Version
@@ -76,23 +45,6 @@ body:
       - "6.0"
       - Other
     default: 4
-  validations:
-    required: true
-- type: dropdown
-  id: plugin_os
-  attributes:
-    label: OS Plugin Is Running On
-    description: What operating system is the plugin (and your app) running on?
-    options:
-      - Android 13
-      - Android 14
-      - Android 15
-      - Android 16
-      - Android (other)
-      - iOS 18.x
-      - iOS 26.x
-      - iOS (other)
-    default: 3
   validations:
     required: true
 - type: textarea

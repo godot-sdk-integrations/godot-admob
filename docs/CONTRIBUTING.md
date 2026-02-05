@@ -26,6 +26,8 @@ Thank you for your interest in contributing to the Godot AdMob Plugin! This guid
 ├── addon/                              # GDScript addon module
 │   ├── build.gradle.kts               # Gradle build configuration
 │   ├── config.gradle.kts              # Gradle configuration
+│   ├── ?.gradle.kts                   # Any extra Gradle configuration (configured in
+│   │                                  # common/config/config.properties) for the plugin goes here
 │   ├── build/
 │   │   └── output/                    # Generated GDScript code
 │   └── src/                           # GDScript templates
@@ -51,7 +53,7 @@ Thank you for your interest in contributing to the Godot AdMob Plugin! This guid
 │   │   ├── config.properties          # Common plugin configuration
 │   │   └── mediation.properties       # Ad mediation configuration
 │   └── gradle/                        # Gradle wrapper and version catalogs
-│       └── libs.versions.toml         # Dependency versions
+│       └── libs.versions.toml         # Dependencies and versions
 │
 ├── demo/                               # Demo application
 │   ├── addons/                        # Installed plugin files
@@ -96,6 +98,7 @@ Thank you for your interest in contributing to the Godot AdMob Plugin! This guid
   - Android NDK (if building native code)
 
 Your Android SDK directory should contain:
+
 ```text
 android-sdk/
 ├── build-tools/
@@ -109,12 +112,12 @@ android-sdk/
 
 - Create `local.properties` file inside `./common` directory that locates the Android SDK installation directory
 
-Sample `localtion.properties` on Windows:
+Sample `local.properties` on Windows:
 ```properties
 sdk.dir=C\:\\Users\\YourUsername\\AppData\\Local\\Android\\Sdk
 ```
 
-Sample `localtion.properties` on Unix-like command-line:
+Sample `local.properties` on Unix-like command-line:
 ```properties
 sdk.dir=/usr/lib/android-sdk
 ```
@@ -142,6 +145,26 @@ scons --version
 
 ## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Configuration
 
+The build files are largely static and shared across all GMP plugins. Any plugin-specific build customization is handled through the following configuration files:
+
+```text
+.
+├── addon/
+│   └── ?.gradle.kts                   # Any extra Gradle configuration (configured in
+│                                      # common/config/config.properties) for the plugin goes here
+│
+├── common/
+│   ├── config/
+│   │   └── config.properties          # Common plugin configuration
+│   │
+│   └── gradle/
+│       └── libs.versions.toml         # Android dependencies and versions
+│
+└── ios/
+    └── config/
+        └── config.properties          # iOS configuration
+```
+
 ### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Common Configuration
 
 The `common/config/config.properties` file contains core plugin settings:
@@ -153,13 +176,13 @@ pluginModuleName=...              # Module name for native code
 pluginVersion=1.0                 # Plugin version
 
 # Godot configuration
-godotVersion=4.5.1                 # Target Godot version
-godotReleaseType=stable            # Release type: stable, dev6, beta3, rc1, etc.
+godotVersion=4.6                  # Target Godot version
+godotReleaseType=stable           # Release type: stable, dev6, beta3, rc1, etc.
 
 # Extra properties configured in the following format
-extra.anotherProperty=...
+extra.anotherProperty=property value
 
-# Extra configuration files in the following format
+# Extra gradle configuration files in the following format
 gradle.another=another.gradle.kts
 ```
 
@@ -235,7 +258,7 @@ platform_version=14.3
 # iOS system framework dependencies
 frameworks=Foundation.framework,...
 
-# EmbeddedniOS external framework dependencies
+# Embedded iOS external framework dependencies
 embedded_frameworks=res://ios/framework/*.xcframework,...
 
 # Linker flags
@@ -522,7 +545,7 @@ Use the main `build.sh` script for coordinated builds:
 adb install demo/export/android/demo.apk
 
 # View logs
-adb logcat | grep -i admob
+adb logcat | grep -i AdmobPlugin
 ```
 
 ### iOS Testing (macOS only)
@@ -578,6 +601,7 @@ This creates:
 ### Release Checklist
 
 - [ ] Update version in `common/config/config.properties`
+- [ ] Update versions in issue templates (`.github/ISSUE_TEMPLATE`)
 - [ ] Test on both platforms
 - [ ] Build release archives
 - [ ] Create GitHub release

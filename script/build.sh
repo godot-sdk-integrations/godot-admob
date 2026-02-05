@@ -121,13 +121,13 @@ function display_step()
 
 function display_error()
 {
-	$SCRIPT_DIR/echocolor.sh -r "$1"
+	$SCRIPT_DIR/echocolor.sh -r "Error: $1"
 }
 
 
 function display_warning()
 {
-	echo_yellow "* $1"
+	echo_yellow "Warning:  $1"
 	echo
 }
 
@@ -157,17 +157,17 @@ merge_zips() {
 
 	# Check if all arguments are provided
 	if [[ -z "$primary_zip" || -z "$secondary_zip" || -z "$output_zip" ]]; then
-		display_error "Error: Usage: merge_zips <primary.zip> <secondary.zip> <output.zip>"
+		display_error "Usage: merge_zips <primary.zip> <secondary.zip> <output.zip>"
 		return 1
 	fi
 
 	# Check if input files exist
 	if [[ ! -f "$primary_zip" ]]; then
-		display_error "Error: Primary zip file '$primary_zip' not found."
+		display_error "Primary zip file '$primary_zip' not found."
 		return 1
 	fi
 	if [[ ! -f "$secondary_zip" ]]; then
-		display_error "Error: Secondary zip file '$secondary_zip' not found."
+		display_error "Secondary zip file '$secondary_zip' not found."
 		return 1
 	fi
 
@@ -228,7 +228,7 @@ function install_plugin_to_demo()
 	if [[ -f "$IOS_ARCHIVE" ]]; then
 		$SCRIPT_DIR/install.sh -t $DEMO_DIR -z $IOS_ARCHIVE
 	else
-		display_error "Error: Cannot install iOS plugin to demo. '$IOS_ARCHIVE' not found!"
+		display_warning "Cannot install iOS plugin to demo app. '$IOS_ARCHIVE' not found!"
 	fi
 }
 
@@ -275,7 +275,7 @@ while getopts "aAcCdDhiIrRzZ" option; do
 			do_create_multiplatform_archive=true
 			;;
 		\?)
-			display_error "Error: invalid option"
+			display_error "Invalid option $option"
 			echo
 			display_help
 			exit;;

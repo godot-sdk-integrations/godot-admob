@@ -6,12 +6,13 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 apply(from = "${projectDir}/config.gradle.kts")
 
-// Define androidDependencies for token replacement
-val androidDependencies = arrayOf(
-	libs.androidx.appcompat.get(),
-	libs.androidx.lifecycle.get(),
-	libs.play.services.ads.get()
-)
+// Access the library catalog by name ("libs")
+val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
+
+// Map all library aliases to their actual dependency provider
+val androidDependencies = catalog.libraryAliases.map { alias ->
+    catalog.findLibrary(alias).get().get()
+}
 
 tasks {
 	register<Delete>("cleanOutput") {
@@ -26,7 +27,7 @@ tasks {
 	register<Copy>("copyAssets") {
 		description = "Copies plugin assets such as PNG images to the output directory"
 		from(project.extra["templateDirectory"] as String)
-		into("${project.extra["outputDir"]}/${project.extra["pluginName"]}")
+		into("${project.extra["outputDir"]}/addons/${project.extra["pluginName"]}")
 		include("**/*.png")
 	}
 
@@ -36,7 +37,7 @@ tasks {
 		finalizedBy("copyAssets")
 
 		from(project.extra["templateDirectory"] as String)
-		into("${project.extra["outputDir"]}/${project.extra["pluginName"]}")
+		into("${project.extra["outputDir"]}/addons/${project.extra["pluginName"]}")
 
 		include("**/*.gd")
 		include("**/*.cfg")

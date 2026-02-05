@@ -258,6 +258,35 @@ function generate_godot_headers()
 }
 
 
+function validate_godot_version()
+{
+	if [[ ! -f "$GODOT_DIR/GODOT_VERSION" ]]; then
+		display_error "GODOT_VERSION file not found in $GODOT_DIR"
+		exit 1
+	fi
+
+	local downloaded_version=$(cat "$GODOT_DIR/GODOT_VERSION" | tr -d '[:space:]')
+	local expected_version="$GODOT_VERSION"
+
+	display_status "Validating Godot version..."
+	echo_blue "Expected version (from config): $expected_version"
+	echo_blue "Downloaded version (from GODOT_VERSION file): $downloaded_version"
+
+	if [[ "$downloaded_version" != "$expected_version" ]]; then
+		display_error "Godot version mismatch!"
+		$SCRIPT_DIR/echocolor.sh -r "  Expected: $expected_version"
+		$SCRIPT_DIR/echocolor.sh -r "  Found:    $downloaded_version"
+		echo
+		$SCRIPT_DIR/echocolor.sh -r "The Godot version in $GODOT_DIR/GODOT_VERSION does not match"
+		$SCRIPT_DIR/echocolor.sh -r "the godotVersion property in $COMMON_CONFIG_FILE"
+		echo
+		exit 1
+	fi
+
+	display_progress "Godot version validation passed: $expected_version"
+}
+
+
 function install_pods()
 {
 	display_status "Installing pods..."
@@ -282,6 +311,9 @@ function build_plugin()
 		display_error "godot wasn't downloaded properly. Can't build plugin."
 		exit 1
 	fi
+
+	# Validate that the Godot version matches the configured version
+	validate_godot_version
 
 	SCHEME=${1:-${PLUGIN_MODULE_NAME}_plugin}
 	PROJECT=${2:-${PLUGIN_MODULE_NAME}_plugin.xcodeproj}
@@ -363,16 +395,6 @@ function build_plugin()
 }
 
 
-function merge_string_array()
-{
-	local arr=("$@")	# Accept array as input
-	printf "%s" "${arr[0]}"
-	for ((i=1; i<${#arr[@]}; i++)); do
-		printf ", %s" "${arr[i]}"
-	done
-}
-
-
 function create_zip_archive()
 {
 	local zip_file_name="$PLUGIN_NAME-iOS-v$PLUGIN_VERSION.zip"
@@ -391,8 +413,7 @@ function create_zip_archive()
 
 	if [[ -d "$ADDON_OUTPUT_DIR" ]]
 	then
-		mkdir -p $tmp_directory/addons
-		cp -r $ADDON_OUTPUT_DIR/$PLUGIN_NAME $tmp_directory/addons
+		cp -r $ADDON_OUTPUT_DIR/* $tmp_directory
 
 		mkdir -p $tmp_directory/ios/plugins
 		cp $IOS_CONFIG_DIR/*.gdip $tmp_directory/ios/plugins

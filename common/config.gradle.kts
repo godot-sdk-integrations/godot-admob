@@ -13,7 +13,7 @@ extra.apply {
 	// Plugin details
 	set("pluginNodeName", commonProperties.getProperty("pluginNodeName"))
 	set("pluginName", "${get("pluginNodeName")}Plugin")
-	set("pluginPackageName", "org.godotengine.plugin.admob")
+	set("pluginPackageName", commonProperties.getProperty("pluginPackage"))
 	set("pluginVersion", commonProperties.getProperty("pluginVersion"))
 	set("pluginArchive", "${get("pluginName")}-Android-v${get("pluginVersion")}.zip")
 
@@ -21,5 +21,5 @@ extra.apply {
 	set("archiveDir", "${rootDir}/build/archive")
 
 	// Demo
-	set("demoAddonsDir", "${rootDir}/../demo/addons")
+	set("demoDir", "${rootDir}/../demo")
 }

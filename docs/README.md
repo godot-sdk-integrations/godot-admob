@@ -24,7 +24,9 @@ A Godot plugin that provides a unified GDScript interface for integrating **Goog
 - Emits signals when ads are loaded, viewed, clicked, dismissed, rewards received, & more
 - Allows configuration of all settings on a node
 - Works with Google AdMob ad network by default
-- Allows enabling of 15 additional ad networks
+- Allows enabling of up to 15 additional ad mediation networks
+- Supports global ad settings
+- Supports UMP consent flows
 - Provides two export configuration options:
 	- Node-based
 	- File-based
@@ -665,9 +667,7 @@ AdMob is not available everywhere. A list of restricted countries and regions ca
 
 Developed by [Cengiz](https://github.com/cengiz-pz)
 
-Android part is based on [Shin-NiL](https://github.com/Shin-NiL)'s [Godot Admob Plugin](https://github.com/Shin-NiL/Godot-Android-Admob-Plugin)
-
-iOS part is based on [Godot iOS Plugin Template](https://github.com/cengiz-pz/godot-ios-plugin-template)
+Based on [Godot Mobile Plugin Template](https://github.com/godot-mobile-plugins/godot-plugin-template)
 
 Original repository: [Godot Admob Plugin](https://github.com/godot-sdk-integrations/godot-admob)
 
