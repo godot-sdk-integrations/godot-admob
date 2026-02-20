@@ -44,8 +44,9 @@ tasks {
 				val repo = mediationProps.getProperty("${network}.mavenRepo") ?: ""
 				val andAdapter = mediationProps.getProperty("${network}.androidAdapterClass") ?: ""
 				val iosAdapter = mediationProps.getProperty("${network}.iosAdapterClass") ?: ""
-				val pod = mediationProps.getProperty("${network}.pod") ?: ""
-				val podVer = mediationProps.getProperty("${network}.podVersion") ?: ""
+				val pkg = mediationProps.getProperty("${network}.package") ?: ""
+				val pkgUrl = mediationProps.getProperty("${network}.packageUrl") ?: ""
+				val pkgVer = mediationProps.getProperty("${network}.packageVersion") ?: ""
 				val skIdsStr = mediationProps.getProperty("${network}.skAdNetworkIds") ?: ""
 				val skIds = if (skIdsStr.isNotEmpty()) {
 					skIdsStr.split(",").map { "\"${it.trim()}\"" }.joinToString(", ")
@@ -59,8 +60,9 @@ tasks {
 					.replace("@${network}MavenRepo@", repo)
 					.replace("@${network}AndroidAdapterClass@", andAdapter)
 					.replace("@${network}IosAdapterClass@", iosAdapter)
-					.replace("@${network}Pod@", pod)
-					.replace("@${network}PodVersion@", podVer)
+					.replace("@${network}Package@", pkg)
+					.replace("@${network}PackageUrl@", pkgUrl)
+					.replace("@${network}PackageVersion@", pkgVer)
 					.replace("@${network}SkAdNetworkIds@", skIds)
 			}
 

@@ -51,7 +51,6 @@
 		07CF4DFE2F2DBB670034A858 /* AdmobNativeAd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07CF4DFD2F2DBB670034A858 /* AdmobNativeAd.swift */; };
 		07CF4E012F2DBB850034A858 /* native_ad_bridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07CF4E002F2DBB850034A858 /* native_ad_bridge.mm */; };
 		90CAAA9924E71FF10013969F /* admob_plugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 90CAAA9824E71FF10013969F /* admob_plugin.mm */; };
-		94A1B0B2910D06DA0F4D3D3C /* Pods_admob_plugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 380C444E6383B0C8ACA7CA7D /* Pods_admob_plugin.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -151,9 +150,6 @@
 		07CF4DFD2F2DBB670034A858 /* AdmobNativeAd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdmobNativeAd.swift; sourceTree = "<group>"; };
 		07CF4DFF2F2DBB850034A858 /* native_ad_bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = native_ad_bridge.h; sourceTree = "<group>"; };
 		07CF4E002F2DBB850034A858 /* native_ad_bridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = native_ad_bridge.mm; sourceTree = "<group>"; };
-		1A3D1E30D9DC57319C20B62B /* Pods-admob_plugin.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-admob_plugin.release.xcconfig"; path = "Target Support Files/Pods-admob_plugin/Pods-admob_plugin.release.xcconfig"; sourceTree = "<group>"; };
-		380C444E6383B0C8ACA7CA7D /* Pods_admob_plugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_admob_plugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		403D7C7BCFBA671DEF15AE95 /* Pods-admob_plugin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-admob_plugin.debug.xcconfig"; path = "Target Support Files/Pods-admob_plugin/Pods-admob_plugin.debug.xcconfig"; sourceTree = "<group>"; };
 		90CAAA9424E71FF10013969F /* libadmob_plugin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libadmob_plugin.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		90CAAA9724E71FF10013969F /* admob_plugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = admob_plugin.h; sourceTree = "<group>"; };
 		90CAAA9824E71FF10013969F /* admob_plugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = admob_plugin.mm; sourceTree = "<group>"; };
@@ -164,7 +160,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				94A1B0B2910D06DA0F4D3D3C /* Pods_admob_plugin.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,22 +260,12 @@
 			path = model;
 			sourceTree = "<group>";
 		};
-		66EA7AD27171A8F93A267403 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				403D7C7BCFBA671DEF15AE95 /* Pods-admob_plugin.debug.xcconfig */,
-				1A3D1E30D9DC57319C20B62B /* Pods-admob_plugin.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		90CAAA8B24E71FF10013969F = {
 			isa = PBXGroup;
 			children = (
 				90CAAA9624E71FF10013969F /* src */,
 				90CAAA9524E71FF10013969F /* Products */,
 				90CAAAA824E72A8A0013969F /* Frameworks */,
-				66EA7AD27171A8F93A267403 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -318,7 +303,6 @@
 		90CAAAA824E72A8A0013969F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				380C444E6383B0C8ACA7CA7D /* Pods_admob_plugin.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -330,7 +314,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 90CAAA9D24E71FF10013969F /* Build configuration list for PBXNativeTarget "admob_plugin" */;
 			buildPhases = (
-				DD9BF3CC2255FDE9321FE7D1 /* [CP] Check Pods Manifest.lock */,
 				90CAAA9024E71FF10013969F /* Sources */,
 				90CAAA9124E71FF10013969F /* Frameworks */,
 				90CAAA9224E71FF10013969F /* CopyFiles */,
@@ -340,6 +323,9 @@
 			dependencies = (
 			);
 			name = admob_plugin;
+			packageProductDependencies = (
+				83E3E131FA04D8177E4E41D1 /* GoogleMobileAds */,
+			);
 			productName = admob_plugin;
 			productReference = 90CAAA9424E71FF10013969F /* libadmob_plugin.a */;
 			productType = "com.apple.product-type.library.static";
@@ -368,6 +354,9 @@
 				Base,
 			);
 			mainGroup = 90CAAA8B24E71FF10013969F;
+			packageReferences = (
+				66BC1B7F84DCA496E305B184 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+			);
 			productRefGroup = 90CAAA9524E71FF10013969F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -376,31 +365,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		DD9BF3CC2255FDE9321FE7D1 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-admob_plugin-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		90CAAA9024E71FF10013969F /* Sources */ = {
@@ -569,9 +533,9 @@
 		};
 		90CAAA9E24E71FF10013969F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 403D7C7BCFBA671DEF15AE95 /* Pods-admob_plugin.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				GODOT_DIR = "$(SRCROOT)/godot";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/adformat",
@@ -586,7 +550,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/godot/bin",
+					"$(GODOT_DIR)/bin",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -631,23 +595,13 @@
 					"-DCOREAUDIO_ENABLED",
 					"-DAPPLE_EMBEDDED_ENABLED",
 					"-isystem",
-					"$(SRCROOT)/godot",
+					"$(GODOT_DIR)",
 					"-isystem",
-					"$(SRCROOT)/godot/drivers/apple_embedded",
+					"$(GODOT_DIR)/drivers/apple_embedded",
 					"-isystem",
-					"$(SRCROOT)/godot/platform/ios",
+					"$(GODOT_DIR)/platform/ios",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-ObjC",
-					"-framework",
-					os,
-					"-lswiftCore",
-					"-lswiftDispatch",
-					"-lswiftObjectiveC",
-					"-lswiftUIKit",
-					"-lswiftFoundation",
-				);
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "src/admob_plugin-Bridging-Header.h";
@@ -659,9 +613,9 @@
 		};
 		90CAAA9F24E71FF10013969F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1A3D1E30D9DC57319C20B62B /* Pods-admob_plugin.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				GODOT_DIR = "$(SRCROOT)/godot";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/adformat",
@@ -676,7 +630,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/godot/bin",
+					"$(GODOT_DIR)/bin",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -712,23 +666,13 @@
 					"-DCOREAUDIO_ENABLED",
 					"-DAPPLE_EMBEDDED_ENABLED",
 					"-isystem",
-					"$(SRCROOT)/godot",
+					"$(GODOT_DIR)",
 					"-isystem",
-					"$(SRCROOT)/godot/drivers/apple_embedded",
+					"$(GODOT_DIR)/drivers/apple_embedded",
 					"-isystem",
-					"$(SRCROOT)/godot/platform/ios",
+					"$(GODOT_DIR)/platform/ios",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-ObjC",
-					"-framework",
-					os,
-					"-lswiftCore",
-					"-lswiftDispatch",
-					"-lswiftObjectiveC",
-					"-lswiftUIKit",
-					"-lswiftFoundation",
-				);
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "src/admob_plugin-Bridging-Header.h";
@@ -759,6 +703,33 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		66BC1B7F84DCA496E305B184 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.14.0;
+			};
+		};
+		9145E0D53B2C2A79EB20CAFC /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.14.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		83E3E131FA04D8177E4E41D1 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 66BC1B7F84DCA496E305B184 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 90CAAA8C24E71FF10013969F /* Project object */;
 }

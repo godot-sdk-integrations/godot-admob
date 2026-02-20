@@ -70,12 +70,12 @@ public class LoadAdRequest {
 
 
 	public int getAdaptiveWidth() {
-		return _data.containsKey(ADAPTIVE_WIDTH_PROPERTY) ? (int) _data.get(ADAPTIVE_WIDTH_PROPERTY) : -1;
+		return _data.containsKey(ADAPTIVE_WIDTH_PROPERTY) ? toInt(_data.get(ADAPTIVE_WIDTH_PROPERTY)) : -1;
 	}
 
 
 	public int getAdaptiveMaxHeight() {
-		return _data.containsKey(ADAPTIVE_MAX_HEIGHT_PROPERTY) ? (int) _data.get(ADAPTIVE_MAX_HEIGHT_PROPERTY) : -1;
+		return _data.containsKey(ADAPTIVE_MAX_HEIGHT_PROPERTY) ? toInt(_data.get(ADAPTIVE_MAX_HEIGHT_PROPERTY)) : -1;
 	}
 
 
@@ -228,5 +228,9 @@ public class LoadAdRequest {
 
 	public Dictionary getRawData() {
 		return _data;
+	}
+
+	private int toInt(Object godotInt) {
+		return ((Long) godotInt).intValue();
 	}
 }

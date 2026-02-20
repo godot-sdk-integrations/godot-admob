@@ -6,6 +6,7 @@
 AS_ARRAY=false
 QUOTE_ITEMS=false
 SINGLE_LINE_ARRAY=false
+CONFIG_FILE=""
 
 # Function to print usage information
 print_usage() {
@@ -56,7 +57,15 @@ if [[ ! -f "$CONFIG_FILE" ]]; then
 fi
 
 # Extract property value (trim surrounding whitespace)
-PROPERTY_VALUE=$(grep -E "^${PROPERTY_NAME}=" "$CONFIG_FILE" | cut -d'=' -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+# - Escape dots in property name so they match literals, not any character
+# - Exclude comment lines (lines starting with optional whitespace then #)
+# - Use tail -1 to take the last occurrence if a key appears multiple times
+ESCAPED_PROPERTY_NAME=$(printf '%s' "$PROPERTY_NAME" | sed 's/\./\\./g')
+PROPERTY_VALUE=$(grep -Ev "^[[:space:]]*#" "$CONFIG_FILE" \
+	| grep -E "^[[:space:]]*${ESCAPED_PROPERTY_NAME}[[:space:]]*=" \
+	| tail -1 \
+	| cut -d'=' -f2- \
+	| sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
 
 if [[ -z "$PROPERTY_VALUE" ]]; then
 	echo ""	# property was empty or not found in the config file

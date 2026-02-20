@@ -52,11 +52,11 @@ public class AdmobConfiguration {
 	}
 
 	public int getChildDirectedTreatment() {
-		return (int) _data.get(CHILD_DIRECTED_TREATMENT_PROPERTY);
+		return toInt(_data.get(CHILD_DIRECTED_TREATMENT_PROPERTY));
 	}
 
 	public int getUnderAgeOfConsent() {
-		return (int) _data.get(UNDER_AGE_OF_CONSENT_PROPERTY);
+		return toInt(_data.get(UNDER_AGE_OF_CONSENT_PROPERTY));
 	}
 
 	public boolean getFirstPartyIdEnabled() {
@@ -64,7 +64,7 @@ public class AdmobConfiguration {
 	}
 
 	public int getPublisherPrivacyPersonalizationState() {
-		return (int) _data.get(PERSONALIZATION_STATE_PROPERTY);
+		return toInt(_data.get(PERSONALIZATION_STATE_PROPERTY));
 	}
 
 	public String[] getTestDeviceIds() {
@@ -134,5 +134,9 @@ public class AdmobConfiguration {
 		}
 
 		return builder.build();
+	}
+
+	private int toInt(Object godotInt) {
+		return ((Long) godotInt).intValue();
 	}
 }

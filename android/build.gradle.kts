@@ -56,15 +56,15 @@ val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 // Map all library aliases to their actual dependency provider
 val androidDependencies = catalog.libraryAliases.map { alias ->
-    catalog.findLibrary(alias).get().get()
+	catalog.findLibrary(alias).get().get()
 }
 
 dependencies {
 	implementation("godot:godot-lib:${project.extra["godotVersion"]}.${project.extra["releaseType"]}@aar")
 	androidDependencies.forEach { 
-        println("[DEBUG] Adding Android dependency: $it")
-        implementation(it)
-    }
+		println("[DEBUG] Adding Android dependency: $it")
+		implementation(it)
+	}
 }
 
 tasks {

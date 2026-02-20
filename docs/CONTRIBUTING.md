@@ -44,6 +44,7 @@ Thank you for your interest in contributing to the Godot AdMob Plugin! This guid
 │   ├── build.gradle.kts               # Root build configuration
 │   ├── config.gradle.kts              # Common configuration
 │   ├── gradle.properties              # Gradle properties
+│   ├── local.properties               # Local machine config (gitignored)
 │   ├── settings.gradle.kts            # Gradle settings
 │   ├── build/
 │   │   ├── archive/                   # Generated archives
@@ -67,8 +68,7 @@ Thank you for your interest in contributing to the Godot AdMob Plugin! This guid
 │   ├── config/
 │   │   ├── config.properties          # iOS configuration
 │   │   └── *.gdip                     # Godot iOS plugin config
-│   ├── godot/                         # Downloaded Godot source
-│   └── Pods/                          # CocoaPods dependencies
+│   └── .godot/                        # Downloaded Godot source (default location; configurable via local.properties)
 │
 ├── script/                             # Build and utility scripts
 │   ├── build.sh                       # Main build script
@@ -122,10 +122,14 @@ Sample `local.properties` on Unix-like command-line:
 sdk.dir=/usr/lib/android-sdk
 ```
 
+Optionally, set `godot.dir` to use a Godot source tree at a custom location instead of the default `ios/godot/`:
+```properties
+godot.dir=/path/to/your/shared/godot
+```
+
 ### iOS Development (macOS only)
 - **Xcode** - Latest stable version recommended
 - **Xcode Command Line Tools** - Install via: `xcode-select --install`
-- **CocoaPods** - Install via: `sudo gem install cocoapods`
 - **SCons** - Install via: `pip3 install scons` or `brew install scons`
 - **Python 3** - Required for SCons
 
@@ -137,7 +141,6 @@ java -version
 
 # macOS/iOS only
 xcodebuild -version
-pod --version
 scons --version
 ```
 
@@ -200,16 +203,16 @@ The `common/config/mediation.properties` file defines ad mediation adapters:
 # Example mediation adapter configuration
 applovin.dependencies=com.google.ads.mediation:applovin:13.4.0.1
 applovin.mavenRepo=
-applovin.pod=GoogleMobileAdsMediationAppLovin
-applovin.podVersion=13.4.0.0
+applovin.spmPackage=googleads/swift-package-manager-google-mobile-ads/GoogleMobileAdsMediationAppLovin
+applovin.spmVersion=13.4.0.0
 applovin.skAdNetworkIds=...
 ```
 
 Each adapter has:
 - `dependencies` - Android Maven dependencies
 - `mavenRepo` - Custom Maven repository URL (if needed)
-- `pod` - iOS CocoaPod name
-- `podVersion` - iOS CocoaPod version
+- `spmPackage` - iOS Swift Package Manager repository path
+- `spmVersion` - iOS SPM package version
 - `skAdNetworkIds` - iOS SKAdNetwork identifiers
 
 ### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Gradle Configuration
@@ -230,9 +233,11 @@ android-library = { id = "com.android.library", version.ref = "android-plugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ```
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Android SDK Configuration
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Local Configuration
 
-Create `common/local.properties` to specify your Android SDK location:
+Create `common/local.properties` to configure machine-specific paths. This file is gitignored and must be created locally.
+
+#### Android SDK Location
 
 ```properties
 # Windows
@@ -245,7 +250,18 @@ sdk.dir=/Users/YourUsername/Library/Android/sdk
 sdk.dir=/usr/lib/android-sdk
 ```
 
-**Note:** This file is gitignored and must be created locally.
+#### Godot Directory (iOS — optional)
+
+By default, the iOS build scripts download and use the Godot source from `ios/godot/` inside the project. If you want to use a Godot source tree located elsewhere on your machine (e.g. to share it across multiple plugin projects), set `godot.dir` in `local.properties`:
+
+```properties
+# Use a shared Godot source directory outside the project
+godot.dir=/path/to/your/shared/godot
+```
+
+When `godot.dir` is not set, the build uses the `ios/godot/` directory. The path supports `~` and environment variable expansion.
+
+**Note:** The specified directory must contain a valid `GODOT_VERSION` file matching the `godotVersion` property in `common/config/config.properties`. If you use the `-G` option to download Godot, it will be downloaded to whichever directory is configured and the `GODOT_VERSION` file will be created automatically.
 
 ### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> iOS Configuration
 
@@ -264,8 +280,8 @@ embedded_frameworks=res://ios/framework/*.xcframework,...
 # Linker flags
 flags=-ObjC,-Wl,...
 
-# Pod dependencies
-dependencies=Dependency-SDK:1.0.0
+# SPM dependencies (format: https://github.com/owner/repo.git|version|PackageName)
+dependencies=https://github.com/googleads/swift-package-manager-google-mobile-ads.git|12.14.0|GoogleMobileAds
 ```
 
 ---
@@ -285,16 +301,13 @@ dependencies=Dependency-SDK:1.0.0
    echo "sdk.dir=/path/to/your/android-sdk" > common/local.properties
    ```
 
-3. **First build (downloads Godot automatically):**
+3. **First build:**
    ```bash
    # Android only
-   ./script/build.sh -ca
+   ./script/build.sh -a -- -b
 
-   # iOS only (macOS)
+   # iOS only (macOS) - downloads Godot automatically
    ./script/build.sh -i -- -A
-
-   # Both platforms
-   ./script/build.sh -ca -i -- -A
    ```
 
 ### Making Changes
@@ -307,7 +320,7 @@ dependencies=Dependency-SDK:1.0.0
 2. **Build and test:**
    ```bash
    # Quick Android build
-   ./script/build.sh -a
+   ./script/build.sh -a -- -b
 
    # Install to demo app
    ./script/build.sh -D
@@ -319,71 +332,38 @@ dependencies=Dependency-SDK:1.0.0
 
 3. **Iterate:**
    - Make changes
-   - Rebuild with `./script/build.sh -a`
+   - Rebuild with `./script/build.sh -a -- -cb` or  `./script/build.sh -i -- -cb`
    - Test in demo app
-   - Repeat until satisfied
+   - Repeat until tests pass
 
 ---
 
 ## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Building
 
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Android Builds
+There are three main build scripts located in the `script` directory.
 
-#### Quick Reference
+- `build.sh` - the main build script
+- `build_android.sh` - build script for Android platform
+- `build_ios.sh` - build script for iOS platform
 
-```bash
-# Clean and build debug
-./script/build.sh -ca
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Cross-Platform Builds
 
-# Clean and build release
-./script/build.sh -car
-
-# Create release archive
-./script/build.sh -carz
-
-# Build specific Gradle task
-./script/run_gradle_task.sh buildDebug
-./script/run_gradle_task.sh buildRelease
-./script/run_gradle_task.sh createArchive
-```
+Cross-platform builds with the `build.sh` script.
 
 #### Build Options
 
 | Option | Description |
 |--------|-------------|
-| `-a` | Build plugin for Android platform |
-| `-A` | Build and create Android release archive |
-| `-c` | Remove existing Android build |
-| `-r` | Use release build variant |
-| `-z` | Create Android zip archive |
-
-#### Available Gradle Tasks
-
-```bash
-# Generate GDScript code only
-./script/run_gradle_task.sh generateGDScript
-
-# Copy assets
-./script/run_gradle_task.sh copyAssets
-
-# Build debug AAR
-./script/run_gradle_task.sh buildDebug
-
-# Build release AAR
-./script/run_gradle_task.sh buildRelease
-
-# Build both debug and release
-./script/run_gradle_task.sh build
-
-# Create release archive
-./script/run_gradle_task.sh createArchive
-
-# Install to demo app
-./script/run_gradle_task.sh installToDemo
-
-# Clean build
-./script/run_gradle_task.sh clean
-```
+| `-a` | Build plugin for Android platform (`-a -- -h` for all options) |
+| `-i` | Build plugin for iOS platform (`-i -- -h` for all options) |
+| `-c` | Remove existing builds |
+| `-C` | Remove existing builds and archives |
+| `-d` | Uninstall plugin from demo app |
+| `-D` | Install plugin to demo app |
+| `-A` | Create Android relese archive |
+| `-I` | Create iOS relese archive |
+| `-M` | Create multi-platform relese archive |
+| `-R` | Create all relese archives |
 
 #### Output Locations
 
@@ -391,7 +371,48 @@ dependencies=Dependency-SDK:1.0.0
 - **Debug AAR:** `android/build/outputs/aar/*-debug.aar`
 - **Release AAR:** `android/build/outputs/aar/*-release.aar`
 - **Built plugin:** `common/build/plugin/`
-- **Release archive:** `common/build/archive/AdmobPlugin-Android-v*.zip`
+- **Release archive:** `release/PluginTemplatePlugin-*-v*.zip`
+
+---
+
+### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Android Builds
+
+#### Quick Reference
+
+```bash
+# Clean and build Android debug
+./script/build.sh -a -- -cb
+
+**Note:** Options after `--` are passed to `build_android.sh`
+
+# Clean and build Android release
+./script/build.sh -a -- -cbr
+
+# Install Android plugin to demo app
+./script/build_android.sh -D
+
+# Uninstall Android plugin from demo app
+./script/build_android.sh -d
+
+# Create Android release archive
+./script/build_android.sh -R
+```
+
+#### Build Options
+
+| Option | Description |
+|--------|-------------|
+| `-b` | Build plugin for Android platform (debug build variant by default) |
+| `-c` | Clean Android build |
+| `-d` | Uninstall Android plugin from demo app |
+| `-D` | Install Android plugin to demo app |
+| `-h` | Display script usage information |
+| `-r` | Build Android plugin with release build variant |
+| `-R` | Create Android relese archive |
+
+#### Android Studio
+
+If using Android Studio, make sure to open the root Gradle project from the `common` directory.
 
 ---
 
@@ -400,6 +421,11 @@ dependencies=Dependency-SDK:1.0.0
 #### Quick Reference
 
 ```bash
+# Clean and rebuild iOS
+./script/build.sh -i -- -cb
+
+**Note:** Options after `--` are passed to `build_ios.sh`
+
 # Full build (first time - downloads Godot)
 ./script/build_ios.sh -A
 
@@ -420,7 +446,7 @@ dependencies=Dependency-SDK:1.0.0
 
 | Option | Description |
 |--------|-------------|
-| `-a` | Generate headers, install pods, and build |
+| `-a` | Generate headers, add packages, and build |
 | `-A` | Download Godot + full build |
 | `-b` | Build plugin only |
 | `-c` | Clean existing build |
@@ -428,10 +454,10 @@ dependencies=Dependency-SDK:1.0.0
 | `-G` | Download Godot |
 | `-h` | Display help |
 | `-H` | Generate Godot headers |
-| `-p` | Remove pods and pod trunk |
-| `-P` | Install CocoaPods |
+| `-p` | Remove SPM packages |
+| `-P` | Add SPM packages |
+| `-R` | Create release archive |
 | `-t <seconds>` | Set header generation timeout |
-| `-z` | Create zip archive |
 
 #### Build Process Explained
 
@@ -440,17 +466,17 @@ The iOS build process involves several steps:
 1. **Download Godot** (if needed):
    - Downloads the official Godot binary from GitHub
    - Version specified in `config.properties`
-   - Extracted to `ios/godot/`
+   - Extracted to `ios/godot/` by default, or to the path set by `godot.dir` in `common/local.properties`
 
 2. **Generate Headers**:
    - Starts a Godot build to generate C++ headers
    - Timeout prevents full Godot build (we only need headers)
    - Default timeout: 40 seconds (increase if needed)
 
-3. **Install CocoaPods**:
-   - Downloads ad network SDKs
-   - Installs mediation adapters
-   - Creates workspace for Xcode
+3. **Add Swift Packages**:
+   - Downloads ad network SDKs via Swift Package Manager
+   - Adds mediation adapters as package dependencies
+   - Resolves package dependencies for Xcode
 
 4. **Build XCFrameworks**:
    - Builds for iOS device (arm64)
@@ -459,52 +485,11 @@ The iOS build process involves several steps:
 
 #### Output Locations
 
-- **Godot source:** `ios/godot/`
+- **Godot source:** `ios/godot/` (default) or path set by `godot.dir` in `common/local.properties`
 - **Build artifacts:** `ios/build/`
 - **Frameworks:** `ios/build/framework/`
 - **Archives:** `ios/build/lib/*.xcarchive`
-- **Release archive:** `ios/build/release/AdmobPlugin-iOS-v*.zip`
-
-#### Common iOS Build Patterns
-
-```bash
-# Initial setup
-./script/build_ios.sh -A
-
-# Development cycle (reuses Godot and pods)
-./script/build_ios.sh -cb
-
-# Update dependencies
-./script/build_ios.sh -pP
-
-# Clean slate rebuild
-./script/build_ios.sh -cgpA
-
-# Create release with custom header timeout
-./script/build_ios.sh -cH -t 60 -Pbz
-```
-
----
-
-### <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Cross-Platform Builds
-
-Use the main `build.sh` script for coordinated builds:
-
-```bash
-# Build Android, then iOS
-./script/build.sh -cai -- -ca
-
-# iOS build with options (passed after --)
-./script/build.sh -i -- -cgA
-
-# Clean everything
-./script/build.sh -C
-
-# Full release (creates all archives)
-./script/build.sh -R
-```
-
-**Note:** Options after `--` are passed to `build_ios.sh`
+- **Release archive:** `release/PluginTemplatePlugin-iOS-v*.zip`
 
 ---
 
@@ -588,14 +573,17 @@ This creates:
 ### Platform-Specific Releases
 
 ```bash
-# Android only
+# Create all release archives
+./script/build.sh -R
+
+# Create only Android release archive
 ./script/build.sh -A
 
-# iOS only (assumes Godot already downloaded)
+# Create only iOS release archive
 ./script/build.sh -I
 
-# Multi-platform (combines existing archives)
-./script/build.sh -Z
+# Create only multi-platform release archive
+./script/build.sh -M
 ```
 
 ### Release Checklist
@@ -660,13 +648,10 @@ rm -rf ~/.gradle/caches/
 
 #### iOS
 
-**Problem:** CocoaPods installation fails
+**Problem:** SPM package resolution fails
 ```bash
-# Solution: Update CocoaPods
-sudo gem install cocoapods
-pod repo update
-cd ios
-pod install --repo-update
+# Solution: Clear SPM cache and re-resolve
+./script/build_ios.sh -pP
 ```
 
 **Problem:** Header generation timeout
@@ -682,9 +667,25 @@ rm -rf ios/build/DerivedData
 ./script/build_ios.sh -cb
 ```
 
+**Problem:** Godot version mismatch when using a custom `godot.dir`
+```
+# The GODOT_VERSION file in the configured directory must match
+# the godotVersion property in common/config/config.properties.
+# Solution: remove and re-download Godot into the configured directory
+./script/build_ios.sh -gG
+```
+
+**Problem:** Build cannot find Godot headers after setting `godot.dir`
+```bash
+# Verify the path is set correctly in common/local.properties:
+#   godot.dir=/your/custom/path
+# Then re-generate headers:
+./script/build_ios.sh -H
+```
+
 **Problem:** "No such module" errors
 ```bash
-# Solution: Ensure pods are installed
+# Solution: Ensure packages are added and resolved
 ./script/build_ios.sh -pP
 ```
 

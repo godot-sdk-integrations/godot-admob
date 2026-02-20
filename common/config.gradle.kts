@@ -13,12 +13,16 @@ extra.apply {
 	// Plugin details
 	set("pluginNodeName", commonProperties.getProperty("pluginNodeName"))
 	set("pluginName", "${get("pluginNodeName")}Plugin")
+	set("pluginModuleName", "${commonProperties.getProperty("pluginModuleName")}")
 	set("pluginPackageName", commonProperties.getProperty("pluginPackage"))
 	set("pluginVersion", commonProperties.getProperty("pluginVersion"))
-	set("pluginArchive", "${get("pluginName")}-Android-v${get("pluginVersion")}.zip")
+	set("pluginArchiveAndroid", "${get("pluginName")}-Android-v${get("pluginVersion")}.zip")
+	set("pluginArchiveiOS", "${get("pluginName")}-iOS-v${get("pluginVersion")}.zip")
+	set("pluginArchiveMulti", "${get("pluginName")}-Multi-v${get("pluginVersion")}.zip")
 
 	set("pluginDir", "${rootDir}/build/plugin")
-	set("archiveDir", "${rootDir}/build/archive")
+	set("archiveDir", "${rootDir}/../release")
+	set("iosDir", "${rootDir}/../ios")
 
 	// Demo
 	set("demoDir", "${rootDir}/../demo")

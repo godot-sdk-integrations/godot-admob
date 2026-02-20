@@ -176,7 +176,7 @@ import GoogleMobileAds
 		// Add container to parent view
 		container.isHidden = true
 		parentView.addSubview(container)
-		
+
 		// Constrain container to screen width with padding
 		let screenWidth = UIScreen.main.bounds.width
 		let padding: CGFloat = 16
@@ -351,20 +351,20 @@ import GoogleMobileAds
 	private func createStarRatingView() -> UIView {
 		let container = UIView()
 		container.translatesAutoresizingMaskIntoConstraints = false
-		
+
 		let stackView = UIStackView()
 		stackView.axis = .horizontal
 		stackView.spacing = 2
 		stackView.translatesAutoresizingMaskIntoConstraints = false
 		container.addSubview(stackView)
-		
+
 		NSLayoutConstraint.activate([
 			stackView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
 			stackView.topAnchor.constraint(equalTo: container.topAnchor),
 			stackView.bottomAnchor.constraint(equalTo: container.bottomAnchor),
 			container.heightAnchor.constraint(equalToConstant: 16)
 		])
-		
+
 		for _ in 0..<5 {
 			let imageView = UIImageView()
 			imageView.contentMode = .scaleAspectFit
@@ -375,7 +375,7 @@ import GoogleMobileAds
 			])
 			stackView.addArrangedSubview(imageView)
 		}
-		
+
 		return container
 	}
 
@@ -432,7 +432,7 @@ import GoogleMobileAds
 			let ratingValue = rating.doubleValue
 			let fullStars = Int(ratingValue)
 			let hasHalfStar = (ratingValue - Double(fullStars)) >= 0.5
-			
+
 			for (index, view) in stackView.arrangedSubviews.enumerated() {
 				if let imageView = view as? UIImageView {
 					if index < fullStars {
@@ -478,7 +478,7 @@ extension AdmobNativeAd: NativeAdLoaderDelegate {
 }
 
 extension AdmobNativeAd: NativeAdDelegate {
-	
+
 	public func nativeAdDidRecordImpression(_ nativeAd: NativeAd) {
 		Self.logger.debug("AdmobNativeAd: Impression recorded")
 		delegate?.nativeAdDidRecordImpression(self.adInfo)
