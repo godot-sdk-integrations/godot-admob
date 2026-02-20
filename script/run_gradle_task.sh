@@ -32,7 +32,7 @@ function display_help()
 	echo_yellow "		$> $0 generateGDScript"
 	echo
 	echo_yellow "	* generate GDScript code and Android release AAR"
-	echo_yellow "		$> $0 buildRelease"
+	echo_yellow "		$> $0 buildAndroidRelease"
 	echo
 	echo_yellow "	* generate GDScript code, Android debug & release AARs, and create Android "
 	echo_yellow "	release archive"

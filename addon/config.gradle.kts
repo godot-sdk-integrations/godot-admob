@@ -47,11 +47,12 @@ extra.apply {
 	set("pluginName", "${get("pluginNodeName")}Plugin")
 	set("pluginPackageName", commonProperties.getProperty("pluginPackage"))
 	set("pluginVersion", commonProperties.getProperty("pluginVersion"))
-	set("pluginArchive", "${get("pluginName")}-Android-v${get("pluginVersion")}.zip")
 
 	// iOS
 	set("iosPlatformVersion", iosProperties.getProperty("platform_version"))
 	set("iosFrameworks", iosProperties.getProperty("frameworks"))
 	set("iosEmbeddedFrameworks", iosProperties.getProperty("embedded_frameworks"))
 	set("iosLinkerFlags", iosProperties.getProperty("flags"))
+	set("iosInitializationMethod", "${iosProperties.getProperty("pluginModuleName")}_plugin_init")
+	set("iosDeinitializationMethod", "${iosProperties.getProperty("pluginModuleName")}_plugin_deinit")
 }

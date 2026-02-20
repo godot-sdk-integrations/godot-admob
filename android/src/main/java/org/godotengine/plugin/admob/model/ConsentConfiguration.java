@@ -56,7 +56,7 @@ public class ConsentConfiguration {
 			if (_data.containsKey(DEBUG_GEOGRAPHY_PROPERTY)) {
 				Object debugGeographyObj = _data.get(DEBUG_GEOGRAPHY_PROPERTY);
 				if (debugGeographyObj instanceof Integer) {
-					int debugGeography = (int) debugGeographyObj;
+					int debugGeography = toInt(debugGeographyObj);
 					Log.d(LOG_TAG, "Setting debug geography to: " + debugGeography);
 					debugSettingsBuilder.setDebugGeography(debugGeography);
 				} else {
@@ -131,5 +131,9 @@ public class ConsentConfiguration {
 
 	private String valueToString(String tag) {
 		return _data.containsKey(tag) ? "" + _data.get(tag) : "null";
+	}
+
+	private int toInt(Object godotInt) {
+		return ((Long) godotInt).intValue();
 	}
 }

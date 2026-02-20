@@ -162,8 +162,8 @@ class IosExportPlugin extends EditorExportPlugin:
 
 	func _install_mediation_dependencies(a_base_dir: String, a_project_name: String) -> void:
 		if _export_config.enabled_mediation_networks.size() > 0:
-			if _generate_podfile(a_base_dir, a_project_name) == Error.OK:
-				var __script_path = a_base_dir.path_join("setup_pods.sh")
+			if _generate_dependency_script(a_base_dir, a_project_name) == Error.OK:
+				var __script_path = a_base_dir.path_join("setup_packages.sh")
 				if _generate_setup_script(__script_path, a_project_name) == Error.OK:
 					if OS.has_feature("macos"):
 						Admob.log_info("Detected macOS: Auto-running pod install...")
@@ -181,79 +181,178 @@ class IosExportPlugin extends EditorExportPlugin:
 						var exec_code = OS.execute(__script_path, [], exec_output, true, false)
 
 						if exec_code == 0:
-							Admob.log_info("Pod install completed successfully!")
+							Admob.log_info("Mediation dependency packages added successfully!")
 							for line in exec_output:
-								Admob.log_info("Pods: %s" % line)
+								Admob.log_info("SPM: %s" % line)
 						else:
-							Admob.log_error("Pod install failed (exit code %d)" % exec_code)
+							Admob.log_error("Failed to add mediation dependency packages (exit code %d)" % exec_code)
 							for line in exec_output:
-								Admob.log_error("Pods: %s" % line)
-							Admob.log_warn("Check CocoaPods installation and try manually: cd %s && ./setup_pods.sh" % a_base_dir)
+								Admob.log_error("SPM: %s" % line)
+							Admob.log_warn("Try manually: cd %s && ./setup_packages.sh" % a_base_dir)
 					else:
 						# Non-macOS: Instructions only
 						Admob.log_warn("Non-macOS detected (OS: %s). Manual setup required:" % OS.get_name())
-						Admob.log_warn("1. Ensure CocoaPods is installed (run 'gem install cocoapods' on macOS/Linux).")
-						Admob.log_warn("2. In terminal: cd '%s'" % a_base_dir)
-						Admob.log_warn("3. Run: ./setup_pods.sh")
-						Admob.log_warn("4. Open '%s.xcworkspace' in Xcode." % a_project_name)
+						Admob.log_warn("1. In terminal: cd '%s'" % a_base_dir)
+						Admob.log_warn("2. Run: ./setup_packages.sh")
+						Admob.log_warn("3. Open '%s.xcodeproj' in Xcode." % a_project_name)
 			else:
-				Admob.log_error("Failed to generate podfile!")
+				Admob.log_error("Failed to generate dependency script!")
 		else:
-			Admob.log_info("No mediation enabled; skipping Podfile and setup.")
+			Admob.log_info("No mediation enabled; skipping mediation dependency setup.")
 
 
-	func _generate_podfile(a_project_dir: String, a_project_name: String) -> Error:
+	const ADD_DEPENDENCIES_RUBY_SCRIPT = """
+require 'xcodeproj'
+
+project_path = "%s.xcodeproj"
+deps = [ %s ]
+
+unless File.exist?(project_path)
+	puts "Error: Xcode project not found at #{project_path}"
+	exit 1
+end
+
+begin
+	project = Xcodeproj::Project.open(project_path)
+	target = project.targets.first
+
+	if target.nil?
+		puts "Error: No targets found in the Xcode project."
+		exit 1
+	end
+
+	# Store the target UUID for fixing scheme files later
+	target_uuid = target.uuid
+
+	# Clean up old build files to prevent duplicate/dangling references on re-exports
+	target.frameworks_build_phase.files.delete_if do |file|
+		!file.product_ref.nil? && file.product_ref.class == Xcodeproj::Project::Object::XCSwiftPackageProductDependency
+	end
+
+	project.root_object.package_references.clear
+	target.package_product_dependencies.clear
+
+	# After clearing references and dependencies, also remove orphaned object definitions
+	project.objects.each do |uuid, obj|
+		if obj.class == Xcodeproj::Project::Object::XCRemoteSwiftPackageReference ||
+				obj.class == Xcodeproj::Project::Object::XCSwiftPackageProductDependency
+			project.objects.delete(uuid)
+		end
+	end
+
+	deps.each do |dep|
+		next if dep.empty?
+		parts = dep.split('|').map(&:strip)
+
+		if parts.size == 3
+			url, version, product_name = parts
+
+			pkg = project.new(Xcodeproj::Project::Object::XCRemoteSwiftPackageReference)
+			pkg.repositoryURL = url
+
+			pkg.requirement = {
+				'kind' => 'exactVersion',
+				'version' => version
+			}
+			project.root_object.package_references << pkg
+
+			ref = project.new(Xcodeproj::Project::Object::XCSwiftPackageProductDependency)
+			ref.product_name = product_name
+			ref.package = pkg
+			target.package_product_dependencies << ref
+
+			# Link the dependency in the Frameworks Build Phase so it actually compiles
+			build_file = project.new(Xcodeproj::Project::Object::PBXBuildFile)
+			build_file.product_ref = ref
+			target.frameworks_build_phase.files << build_file
+		else
+			puts "Warning: Skipping invalid SPM dependency format: #{dep}. Expected 'URL|Version|ProductName'"
+		end
+	end
+
+	project.save
+	puts "Successfully updated SPM dependencies in #{File.basename(project_path)}"
+
+	# Fix scheme files to use the correct target UUID
+	scheme_dir = File.join(project_path, 'xcshareddata', 'xcschemes')
+	if Dir.exist?(scheme_dir)
+		Dir.glob(File.join(scheme_dir, '*.xcscheme')).each do |scheme_file|
+			content = File.read(scheme_file)
+
+			modified = content.gsub(/BlueprintIdentifier\\s*=\\s*"[A-F0-9]{24}"/) do |match|
+				"BlueprintIdentifier = \\"#{target_uuid}\\""
+			end
+
+			if modified != content
+				File.write(scheme_file, modified)
+				puts "Fixed scheme file: #{File.basename(scheme_file)}"
+			end
+		end
+	end
+
+rescue => e
+	puts "An error occurred: #{e.message}"
+	puts e.backtrace
+	exit 1
+end
+"""
+
+	func _generate_dependency_script(a_project_dir: String, a_project_name: String) -> Error:
 		var __result = Error.OK
-		var __podfile_path = a_project_dir.path_join("Podfile")
+		var __script_path = a_project_dir.path_join("add_dependencies.rb")
 
 		# Generate Podfile content
-		var __pod_content = """
-source 'https://github.com/CocoaPods/Specs.git'
-use_frameworks!
-
-project '%s.xcodeproj'
-
-target '%s' do
-	platform :ios, '%s'
-
-%s
-end
-""" % [a_project_name, a_project_name, IOS_PLATFORM_VERSION, MediationNetwork.generate_pod_list(_export_config.enabled_mediation_networks)]
+		var __script_content = ADD_DEPENDENCIES_RUBY_SCRIPT % [
+				a_project_name,
+				MediationNetwork.generate_package_list(_export_config.enabled_mediation_networks)
+			]
 
 		# Write Podfile
-		var __pod_file = FileAccess.open(__podfile_path, FileAccess.WRITE)
-		if __pod_file:
-			__pod_file.store_string(__pod_content)
-			__pod_file.close()
-			Admob.log_info("Generated %s for target '%s' with mediation: %s" % [__podfile_path, a_project_name,
+		var __script_file = FileAccess.open(__script_path, FileAccess.WRITE)
+		if __script_file:
+			__script_file.store_string(__script_content)
+			__script_file.close()
+			Admob.log_info("Generated %s for target '%s' with mediation: %s" % [__script_path, a_project_name,
 					MediationNetwork.generate_tag_list(_export_config.enabled_mediation_networks)])
-			Admob.log_info("Podfile content:\n%s" % __pod_content)
 		else:
-			Admob.log_error("Failed to write Podfile: %s" % __podfile_path)
+			Admob.log_error("Failed to write script file: %s" % __script_path)
 			__result = Error.ERR_FILE_CANT_WRITE
 
 		return __result
 
 
-	func _generate_setup_script(a_script_path: String, a_project_name: String) -> Error:
-		var __result: Error = Error.OK
-
-		var __script_content = """#!/bin/bash
+	const SETUP_BASH_SCRIPT = """
+#!/bin/bash
 set -e	# Exit on error
 
 cd "$(dirname "$0")" 	# Change to project dir
-echo "Setting up CocoaPods for mediation..."
-pod install --repo-update
 
-echo "Setup complete! Open '%s.xcworkspace' in Xcode (not .xcodeproj)."
-""" % a_project_name
+echo
+echo "Adding dependencies for mediation..."
+
+ruby "add_dependencies.rb"
+
+echo
+echo "Resolving dependencies for mediation..."
+
+xcodebuild -resolvePackageDependencies \
+			-project "%s.xcodeproj" \
+			-scheme "%s" || true
+
+echo
+echo "Setup complete!"
+"""
+
+	func _generate_setup_script(a_script_path: String, a_project_name: String) -> Error:
+		var __result: Error = Error.OK
+
+		var __script_content = SETUP_BASH_SCRIPT % [ a_project_name, a_project_name]
 
 		var __script_file = FileAccess.open(a_script_path, FileAccess.WRITE)
 		if __script_file:
 			__script_file.store_string(__script_content)
 			__script_file.close()
 			Admob.log_info("Generated setup script: %s" % a_script_path)
-			Admob.log_info("Setup script content:\n%s" % __script_content)
 		else:
 			Admob.log_error("Failed to write setup script: %s" % a_script_path)
 			__result = Error.ERR_FILE_CANT_WRITE

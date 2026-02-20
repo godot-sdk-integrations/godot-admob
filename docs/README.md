@@ -1,4 +1,16 @@
 <p align="center">
+	<a href="https://github.com/godot-sdk-integrations/godot-admob">
+	<img src="https://img.shields.io/github/stars/godot-sdk-integrations/godot-admob?style=social" />
+	</a>
+	<img src="https://img.shields.io/github/downloads/godot-sdk-integrations/godot-admob/total" />
+	<img src="https://img.shields.io/github/downloads/godot-sdk-integrations/godot-admob/latest/total" />
+	<img src="https://img.shields.io/github/v/release/godot-sdk-integrations/godot-admob" />
+	<img src="https://img.shields.io/github/last-commit/godot-sdk-integrations/godot-admob" />
+	<img src="https://img.shields.io/github/contributors/godot-sdk-integrations/godot-admob" />
+	<img src="https://img.shields.io/github/license/godot-sdk-integrations/godot-admob" />
+</p>
+
+<p align="center">
 	<img width="256" height="256" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-android.png">
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<img width="256" height="256" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-ios.png">
@@ -590,6 +602,8 @@ Therefore; make sure that at least one `Admob` node is present in any one of the
 - **Missing APP ID** crashes: make sure that you
 	- enter your Admob APP ID in the Admob node and pay attention to the [iOS Export section](#ios-export).
 	- or enter it in the `android_export.cfg` file as described in the [File-based Export](#export) section.
+- **Undefined Symbol** linking errors:
+	- ensure that `Min iOS version` export setting for your project matches the `platform_version` for the plugin. See [here](https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/ios/config/config.properties).
 - View XCode logs while running the game for troubleshooting.
 - See [Godot iOS Export Troubleshooting](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html#troubleshooting).
 - **App Tracking Transparency**, or ATT for short, is Apple's opt-in privacy framework that requires all iOS apps to ask users for permission to share their data. This is done in the form of a popup where users can either consent or deny tracking.
@@ -658,6 +672,7 @@ AdMob is not available everywhere. A list of restricted countries and regions ca
 | [Connection State](https://github.com/godot-mobile-plugins/godot-connection-state) | ✅ | ✅ | ✅ | ✅ | MIT |
 | [OAuth 2.0](https://github.com/godot-mobile-plugins/godot-oauth2) | ✅ | ✅ | ✅ | ✅ | MIT |
 | [QR](https://github.com/godot-mobile-plugins/godot-qr) | ✅ | ✅ | ✅ | ✅ | MIT |
+| [Firebase](https://github.com/godot-mobile-plugins/godot-firebase) | ✅ | ✅ | ✅ | ✅ | MIT |
 
 ---
 
@@ -678,3 +693,14 @@ Original repository: [Godot Admob Plugin](https://github.com/godot-sdk-integrati
 # <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Contributing
 
 See [our guide](https://github.com/godot-sdk-integrations/godot-admob?tab=contributing-ov-file) if you would like to contribute to this project.
+
+---
+
+# ⭐ Like This Plugin?
+
+If this plugin helps you, please consider:
+
+- ⭐ Starring the repository
+- 🐛 Reporting issues
+- 💡 Suggesting features
+- ❤️ Supporting development

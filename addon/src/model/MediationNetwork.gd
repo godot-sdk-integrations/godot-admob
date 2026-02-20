@@ -26,8 +26,9 @@ const FLAG_PROPERTY: String = "flag"
 const TAG_PROPERTY: String = "tag"
 const DEPENDENCIES_PROPERTY: String = "dependencies"
 const MAVEN_REPO_PROPERTY: String = "maven_repo"
-const POD_PROPERTY: String = "pod"
-const POD_VERSION_PROPERTY: String = "pod_version"
+const PACKAGE_PROPERTY: String = "package"
+const PACKAGE_URL_PROPERTY: String = "package_url"
+const PACKAGE_VERSION_PROPERTY: String = "package_version"
 const SK_AD_NETWORK_IDS_PROPERTY: String = "sk_ad_network_ids"
 
 const GOOGLE_SK_AD_NETWORK_IDS = [ @googleSkAdNetworkIds@ ]
@@ -50,8 +51,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "applovin",
 			DEPENDENCIES_PROPERTY: [ @applovinDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@applovinMavenRepo@",
-			POD_PROPERTY: "@applovinPod@",
-			POD_VERSION_PROPERTY: "@applovinPodVersion@",
+			PACKAGE_PROPERTY: "@applovinPackage@",
+			PACKAGE_URL_PROPERTY: "@applovinPackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@applovinPackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @applovinSkAdNetworkIds@ ]
 		},
 	Flag.CHARTBOOST: {
@@ -59,8 +61,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "chartboost",
 			DEPENDENCIES_PROPERTY: [ @chartboostDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@chartboostMavenRepo@",
-			POD_PROPERTY: "@chartboostPod@",
-			POD_VERSION_PROPERTY: "@chartboostPodVersion@",
+			PACKAGE_PROPERTY: "@chartboostPackage@",
+			PACKAGE_URL_PROPERTY: "@chartboostPackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@chartboostPackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @chartboostSkAdNetworkIds@ ]
 		},
 	Flag.DTEXCHANGE: {
@@ -68,8 +71,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "dtexchange",
 			DEPENDENCIES_PROPERTY: [ @dtexchangeDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@dtexchangeMavenRepo@",
-			POD_PROPERTY: "@dtexchangePod@",
-			POD_VERSION_PROPERTY: "@dtexchangePodVersion@",
+			PACKAGE_PROPERTY: "@dtexchangePackage@",
+			PACKAGE_URL_PROPERTY: "@dtexchangePackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@dtexchangePackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @dtexchangeSkAdNetworkIds@ ]
 		},
 	Flag.IMOBILE: {
@@ -77,8 +81,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "imobile",
 			DEPENDENCIES_PROPERTY: [ @imobileDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@imobileMavenRepo@",
-			POD_PROPERTY: "@imobilePod@",
-			POD_VERSION_PROPERTY: "@imobilePodVersion@",
+			PACKAGE_PROPERTY: "@imobilePackage@",
+			PACKAGE_URL_PROPERTY: "@imobilePackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@imobilePackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @imobileSkAdNetworkIds@ ]
 		},
 	Flag.INMOBI: {
@@ -86,8 +91,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "inmobi",
 			DEPENDENCIES_PROPERTY: [ @inmobiDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@inmobiMavenRepo@",
-			POD_PROPERTY: "@inmobiPod@",
-			POD_VERSION_PROPERTY: "@inmobiPodVersion@",
+			PACKAGE_PROPERTY: "@inmobiPackage@",
+			PACKAGE_URL_PROPERTY: "@inmobiPackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@inmobiPackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @inmobiSkAdNetworkIds@ ]
 		},
 	Flag.IRONSOURCE: {
@@ -95,8 +101,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "ironsource",
 			DEPENDENCIES_PROPERTY: [ @ironsourceDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@ironsourceMavenRepo@",
-			POD_PROPERTY: "@ironsourcePod@",
-			POD_VERSION_PROPERTY: "@ironsourcePodVersion@",
+			PACKAGE_PROPERTY: "@ironsourcePackage@",
+			PACKAGE_URL_PROPERTY: "@ironsourcePackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@ironsourcePackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @ironsourceSkAdNetworkIds@ ]
 		},
 	Flag.LIFTOFF: {
@@ -104,8 +111,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "liftoff",
 			DEPENDENCIES_PROPERTY: [ @liftoffDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@liftoffMavenRepo@",
-			POD_PROPERTY: "@liftoffPod@",
-			POD_VERSION_PROPERTY: "@liftoffPodVersion@",
+			PACKAGE_PROPERTY: "@liftoffPackage@",
+			PACKAGE_URL_PROPERTY: "@liftoffPackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@liftoffPackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @liftoffSkAdNetworkIds@ ]
 		},
 	Flag.LINE: {
@@ -113,8 +121,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "line",
 			DEPENDENCIES_PROPERTY: [ @lineDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@lineMavenRepo@",
-			POD_PROPERTY: "@linePod@",
-			POD_VERSION_PROPERTY: "@linePodVersion@",
+			PACKAGE_PROPERTY: "@linePackage@",
+			PACKAGE_URL_PROPERTY: "@linePackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@linePackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @lineSkAdNetworkIds@ ]
 		},
 	Flag.MAIO: {
@@ -122,8 +131,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "maio",
 			DEPENDENCIES_PROPERTY: [ @maioDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@maioMavenRepo@",
-			POD_PROPERTY: "@maioPod@",
-			POD_VERSION_PROPERTY: "@maioPodVersion@",
+			PACKAGE_PROPERTY: "@maioPackage@",
+			PACKAGE_URL_PROPERTY: "@maioPackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@maioPackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @maioSkAdNetworkIds@ ]
 		},
 	Flag.META: {
@@ -131,8 +141,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "meta",
 			DEPENDENCIES_PROPERTY: [ @metaDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@metaMavenRepo@",
-			POD_PROPERTY: "@metaPod@",
-			POD_VERSION_PROPERTY: "@metaPodVersion@",
+			PACKAGE_PROPERTY: "@metaPackage@",
+			PACKAGE_URL_PROPERTY: "@metaPackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@metaPackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @metaSkAdNetworkIds@ ]
 		},
 	Flag.MINTEGRAL: {
@@ -140,8 +151,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "mintegral",
 			DEPENDENCIES_PROPERTY: [ @mintegralDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@mintegralMavenRepo@",
-			POD_PROPERTY: "@mintegralPod@",
-			POD_VERSION_PROPERTY: "@mintegralPodVersion@",
+			PACKAGE_PROPERTY: "@mintegralPackage@",
+			PACKAGE_URL_PROPERTY: "@mintegralPackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@mintegralPackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @mintegralSkAdNetworkIds@ ]
 		},
 	Flag.MOLOCO: {
@@ -149,8 +161,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "moloco",
 			DEPENDENCIES_PROPERTY: [ @molocoDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@molocoMavenRepo@",
-			POD_PROPERTY: "@molocoPod@",
-			POD_VERSION_PROPERTY: "@molocoPodVersion@",
+			PACKAGE_PROPERTY: "@molocoPackage@",
+			PACKAGE_URL_PROPERTY: "@molocoPackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@molocoPackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @molocoSkAdNetworkIds@ ]
 		},
 	Flag.MYTARGET: {
@@ -158,8 +171,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "mytarget",
 			DEPENDENCIES_PROPERTY: [ @mytargetDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@mytargetMavenRepo@",
-			POD_PROPERTY: "@mytargetPod@",
-			POD_VERSION_PROPERTY: "@mytargetPodVersion@",
+			PACKAGE_PROPERTY: "@mytargetPackage@",
+			PACKAGE_URL_PROPERTY: "@mytargetPackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@mytargetPackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @mytargetSkAdNetworkIds@ ]
 		},
 	Flag.PANGLE: {
@@ -167,8 +181,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "pangle",
 			DEPENDENCIES_PROPERTY: [ @pangleDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@pangleMavenRepo@",
-			POD_PROPERTY: "@panglePod@",
-			POD_VERSION_PROPERTY: "@panglePodVersion@",
+			PACKAGE_PROPERTY: "@panglePackage@",
+			PACKAGE_URL_PROPERTY: "@panglePackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@panglePackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @pangleSkAdNetworkIds@ ]
 		},
 	Flag.UNITY: {
@@ -176,8 +191,9 @@ const MEDIATION_NETWORKS: Dictionary = {
 			TAG_PROPERTY: "unity",
 			DEPENDENCIES_PROPERTY: [ @unityDependencies@ ],
 			MAVEN_REPO_PROPERTY: "@unityMavenRepo@",
-			POD_PROPERTY: "@unityPod@",
-			POD_VERSION_PROPERTY: "@unityPodVersion@",
+			PACKAGE_PROPERTY: "@unityPackage@",
+			PACKAGE_URL_PROPERTY: "@unityPackageUrl@",
+			PACKAGE_VERSION_PROPERTY: "@unityPackageVersion@",
 			SK_AD_NETWORK_IDS_PROPERTY: [ @unitySkAdNetworkIds@ ]
 		}
 }
@@ -204,8 +220,9 @@ var flag: Flag
 var tag: String
 var android_dependencies: Array
 var android_custom_maven_repo: String
-var ios_pod: String
-var ios_pod_version: String
+var swift_package: String
+var swift_package_url: String
+var swift_package_version: String
 var sk_ad_network_ids: PackedStringArray
 
 
@@ -214,13 +231,14 @@ func _init(a_data: Dictionary) -> void:
 	tag = a_data[TAG_PROPERTY]
 	android_dependencies = a_data[DEPENDENCIES_PROPERTY]
 	android_custom_maven_repo = a_data[MAVEN_REPO_PROPERTY]
-	ios_pod = a_data[POD_PROPERTY]
-	ios_pod_version = a_data[POD_VERSION_PROPERTY]
+	swift_package = a_data[PACKAGE_PROPERTY]
+	swift_package_url = a_data[PACKAGE_URL_PROPERTY]
+	swift_package_version = a_data[PACKAGE_VERSION_PROPERTY]
 	sk_ad_network_ids = a_data[SK_AD_NETWORK_IDS_PROPERTY]
 
 
-func get_pod_string() -> String:
-	return "pod '%s', '%s'" % [ios_pod, ios_pod_version]
+func get_package_string() -> String:
+	return "%s|%s|%s" % [swift_package_url, swift_package_version, swift_package]
 
 
 static func is_flag_enabled(a_value: int, a_flag: Flag) -> bool:
@@ -282,11 +300,13 @@ static func generate_sk_ad_network_plist(a_networks: Array[MediationNetwork]) ->
 	return SK_AD_NETWORK_ITEM_LIST_FORMAT % __sk_ad_ids_plist_content
 
 
-static func generate_pod_list(a_networks: Array[MediationNetwork]) -> String:
+static func generate_package_list(a_networks: Array[MediationNetwork]) -> String:
 	var __pod_list_content: String = ""
 
 	for __network in a_networks:
-		__pod_list_content += "  " + __network.get_pod_string() + "\n"
+		if __pod_list_content != "":
+			__pod_list_content += ", "
+		__pod_list_content += "\"%s\"" % __network.get_package_string()
 
 	return __pod_list_content
 
