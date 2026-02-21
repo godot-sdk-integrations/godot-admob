@@ -1,6 +1,5 @@
-<div align="center">
+<div style="display: flex; justify-content: center; gap: 80px;">
 	<img width="128" height="128" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-android.png">
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<img width="128" height="128" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-ios.png">
 </div>
 
@@ -13,9 +12,6 @@
 	<img src="https://img.shields.io/github/downloads/godot-sdk-integrations/godot-admob/total" />
 	<img src="https://img.shields.io/github/downloads/godot-sdk-integrations/godot-admob/latest/total" />
 	<img src="https://img.shields.io/github/v/release/godot-sdk-integrations/godot-admob" />
-	<img src="https://img.shields.io/github/last-commit/godot-sdk-integrations/godot-admob" />
-	<img src="https://img.shields.io/github/contributors/godot-sdk-integrations/godot-admob" />
-	<img src="https://img.shields.io/github/license/godot-sdk-integrations/godot-admob" />
 </div>
 
 ---
