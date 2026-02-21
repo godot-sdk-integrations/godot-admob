@@ -1,5 +1,6 @@
-<div style="display: flex; justify-content: center; gap: 80px;">
+<div align="center">
 	<img width="128" height="128" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-android.png">
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<img width="128" height="128" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-ios.png">
 </div>
 
