@@ -1,20 +1,19 @@
-<p align="center">
+<div align="center">
+	<img width="128" height="128" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-android.png">
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<img width="128" height="128" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-ios.png">
+</div>
+
+---
+
+<div align="center">
 	<a href="https://github.com/godot-sdk-integrations/godot-admob">
 	<img src="https://img.shields.io/github/stars/godot-sdk-integrations/godot-admob?style=social" />
 	</a>
 	<img src="https://img.shields.io/github/downloads/godot-sdk-integrations/godot-admob/total" />
 	<img src="https://img.shields.io/github/downloads/godot-sdk-integrations/godot-admob/latest/total" />
 	<img src="https://img.shields.io/github/v/release/godot-sdk-integrations/godot-admob" />
-	<img src="https://img.shields.io/github/last-commit/godot-sdk-integrations/godot-admob" />
-	<img src="https://img.shields.io/github/contributors/godot-sdk-integrations/godot-admob" />
-	<img src="https://img.shields.io/github/license/godot-sdk-integrations/godot-admob" />
-</p>
-
-<p align="center">
-	<img width="256" height="256" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-android.png">
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<img width="256" height="256" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-ios.png">
-</p>
+</div>
 
 ---
 
@@ -696,11 +695,16 @@ See [our guide](https://github.com/godot-sdk-integrations/godot-admob?tab=contri
 
 ---
 
-# ⭐ Like This Plugin?
+# 💖 Support the Project
 
-If this plugin helps you, please consider:
+If this plugin has helped you, consider supporting its development! Every bit of support helps keep the plugin updated and bug-free.
 
-- ⭐ Starring the repository
-- 🐛 Reporting issues
-- 💡 Suggesting features
-- ❤️ Supporting development
+| | Ways to Help | How to do it |
+| :--- | :--- | :--- |
+|✨⭐| **Spread the Word** | [Star this repo](https://github.com/godot-sdk-integrations/godot-admob/stargazers) to help others find it. |
+|💡✨| **Give Feedback** | [Open an issue](https://github.com/godot-sdk-integrations/godot-admob/issues) or [suggest a feature](https://github.com/godot-sdk-integrations/godot-admob/issues/new). |
+|🧩| **Contribute** | [Submit a PR](https://github.com/godot-sdk-integrations/godot-admob?tab=contributing-ov-file) to help improve the codebase. |
+|❤️| **Buy a Coffee** | Support the maintainers on GitHub Sponsors or other platforms. |
+
+## ⭐ Star History
+[![Star History Chart](https://api.star-history.com/svg?repos=godot-sdk-integrations/godot-admob&type=Date)](https://star-history.com/#godot-sdk-integrations/godot-admob&Date)
