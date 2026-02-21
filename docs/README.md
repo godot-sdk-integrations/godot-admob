@@ -1,10 +1,12 @@
-<p align="center">
-	<img width="256" height="256" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-android.png">
+<div align="center">
+	<img width="128" height="128" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-android.png">
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<img width="256" height="256" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-ios.png">
-</p>
+	<img width="128" height="128" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-ios.png">
+</div>
 
-<p align="center">
+---
+
+<div align="center">
 	<a href="https://github.com/godot-sdk-integrations/godot-admob">
 	<img src="https://img.shields.io/github/stars/godot-sdk-integrations/godot-admob?style=social" />
 	</a>
@@ -14,7 +16,7 @@
 	<img src="https://img.shields.io/github/last-commit/godot-sdk-integrations/godot-admob" />
 	<img src="https://img.shields.io/github/contributors/godot-sdk-integrations/godot-admob" />
 	<img src="https://img.shields.io/github/license/godot-sdk-integrations/godot-admob" />
-</p>
+</div>
 
 ---
 
