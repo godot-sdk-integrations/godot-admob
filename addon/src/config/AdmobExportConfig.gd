@@ -46,7 +46,7 @@ func load_export_config_from_file() -> Error:
 
 		if __config_file.has_section(CONFIG_FILE_SECTION_MEDIATION):
 			if __config_file.has_section_key(CONFIG_FILE_SECTION_MEDIATION, CONFIG_FILE_KEY_ENABLED_NETWORKS):
-				var __network_array: Array[String] = __config_file.get_value(CONFIG_FILE_SECTION_MEDIATION, CONFIG_FILE_KEY_ENABLED_NETWORKS)
+				var __network_array := Array(__config_file.get_value(CONFIG_FILE_SECTION_MEDIATION, CONFIG_FILE_KEY_ENABLED_NETWORKS, []), TYPE_STRING, &"", null) as Array[String]
 
 				for __network in __network_array:
 					if MediationNetwork.is_valid_tag(__network):
@@ -106,7 +106,7 @@ func load_export_config_from_node() -> Error:
 	if not __admob_node:
 		Admob.log_info("Searching all project scenes for %s node..." % PLUGIN_NODE_TYPE_NAME)
 
-		var collect_scene_paths: Callable = func (a_dir_path: String, a_collected_paths: Array[String],
+		var collect_scene_paths: Callable = func(a_dir_path: String, a_collected_paths: Array[String],
 				a_recursive_func: Callable) -> void:
 			for __file in DirAccess.get_files_at(a_dir_path):
 				if __file.ends_with(".tscn") or __file.ends_with(".scn"):
