@@ -69,7 +69,8 @@ features = [
     "navigation.footer",
     "navigation.top",
     "content.action.edit",
-    "content.action.view"
+    "content.action.view",
+    "search.highlight"
 ]
 
 [[project.theme.palette]]
