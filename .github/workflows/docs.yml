@@ -7,8 +7,8 @@ on:
     paths:
       - "docs/zensical/**"
       - ".github/workflows/docs.yml"
-      - "zensical.toml"
-      
+      - "docs/zensical.toml"
+
 permissions:
   contents: read
   pages: write
@@ -25,11 +25,12 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     runs-on: ubuntu-22.04
+
     steps:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Checkout Repository
+      - name: Checkout 
         uses: actions/checkout@v6
 
       - name: Setup Python
@@ -43,12 +44,12 @@ jobs:
           pip install zensical
 
       - name: Build Documentation
-        run: zensical build --clean
+        run: zensical build --clean --config-file docs/zensical.toml
 
-      - name: Upload Pages Artifact
+      - name: Upload Pages
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ${{ github.workspace }}/site
+          path: ${{ github.workspace }}/docs/site
 
       - name: Deploy Pages
         id: deployment
