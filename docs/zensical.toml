@@ -36,7 +36,6 @@ nav = [
       { "Overview" = "mediation/overview.md" },
       { "Networks" = "mediation/networks.md" }
     ]},
-  { "Tutorials" = "tutorials.md" },
   { "Export" = "export.md" },
   { "Troubleshooting" = [
       { "General" = "troubleshooting/general.md" },
@@ -57,7 +56,6 @@ nav = [
     ]},
   { "Links" = "links.md" }
 ]
-
 [project.theme]
 language = "en"
 favicon = "images/icon.png"
