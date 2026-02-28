@@ -7,7 +7,7 @@ site_url = "https://godot-sdk-integrations.github.io/godot-admob/"
 
 docs_dir  = "docs/zensical"
 use_directory_urls = false
-edit_url = "edit/main/docs/zensical/"
+edit_uri  = "edit/main/docs/zensical/"
 
 repo_url = "https://github.com/godot-sdk-integrations/godot-admob"
 repo_name = "godot-admob"
