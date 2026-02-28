@@ -1,0 +1,104 @@
+[project]
+site_name = "godot-admob documentation"
+site_description = "A Godot plugin that provides a unified GDScript interface for integrating Google Mobile Ads SDK on Android and iOS."
+site_author = "godot-sdk-integrations"
+copyright = "Copyright © 2026 godot-sdk-integrations"
+site_url = "https://godot-sdk-integrations.github.io/godot-admob/"
+
+docs_dir  = "docs/zensical"
+use_directory_urls = false
+edit_uri = "edit/main/docs/zensical/"
+
+repo_url = "https://github.com/godot-sdk-integrations/godot-admob"
+repo_name = "godot-admob"
+
+nav = [
+  { "Home" = "index.md" },
+  { "Getting Started" = [
+      { "Installation" = "getting-started/installation.md" },
+      { "Prerequisites" = "getting-started/prerequisites.md" },
+      { "Quick Start" = "getting-started/quick-start.md" }
+    ]},
+  { "Usage" = [
+      { "Loading Ads" = "usage/loading-ads.md" },
+      { "Banner Ads" = "usage/banner-ads.md" },
+      { "App Open Ads" = "usage/app-open-ads.md" },
+      { "User Consent" = "usage/user-consent.md" },
+      { "Multi Scene" = "usage/multi-scene.md" }
+    ]},
+  { "API" = [
+      { "Signals" = "api/signals.md" },
+      { "Methods" = "api/methods.md" },
+      { "Classes" = "api/classes.md" },
+      { "Nodes" = "api/nodes.md" }
+    ]},
+  { "Mediation" = [
+      { "Overview" = "mediation/overview.md" },
+      { "Networks" = "mediation/networks.md" }
+    ]},
+  { "Tutorials" = "tutorials.md" },
+  { "Export" = "export.md" },
+  { "Troubleshooting" = [
+      { "General" = "troubleshooting/general.md" },
+      { "Android" = "troubleshooting/android.md" },
+      { "iOS" = "troubleshooting/ios.md" }
+    ]},
+  { "Contributing" = [
+      { "Project Structure" = "contributing/project-structure.md" },
+      { "Prerequisites" = "contributing/prerequisites.md" },
+      { "Configuration" = "contributing/configuration.md" },
+      { "Development Workflow" = "contributing/development-workflow.md" },
+      { "Building" = "contributing/building.md" },
+      { "Testing" = "contributing/testing.md" },
+      { "Releases" = "contributing/releases.md" },
+      { "Installation" = "contributing/installation.md" },
+      { "Troubleshooting" = "contributing/troubleshooting.md" },
+      { "Guidelines" = "contributing/guidelines.md" }
+    ]},
+  { "Links" = "links.md" },
+  { "Credits" = "credits.md" },
+  { "License" = "license.md" }
+]
+
+[project.theme]
+language = "en"
+favicon = "images/icon.png"
+logo = "https://godotengine.org/assets/press/icon_color.svg"
+features = [
+    "content.code.copy",
+    "navigation.footer",
+    "navigation.top",
+    "content.action.edit",
+    "content.action.view"
+]
+
+[[project.theme.palette]]
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+media = "(prefers-color-scheme: light)"
+
+[[project.theme.palette]]
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+media = "(prefers-color-scheme: dark)"
+
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.tables]
+[project.markdown_extensions.pymdownx.inlinehilite]
+[project.markdown_extensions.pymdownx.snippets]
+[project.markdown_extensions.pymdownx.superfences]
+[project.markdown_extensions.pymdownx.tasklist]
+
+[project.markdown_extensions.pymdownx.emoji]
+emoji_index = "zensical.extensions.emoji.twemoji"
+emoji_generator = "zensical.extensions.emoji.to_svg"
+
+[project.markdown_extensions.toc]
+toc_depth = 0
+
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+line_spans = "__span"
+pygments_lang_class = true
