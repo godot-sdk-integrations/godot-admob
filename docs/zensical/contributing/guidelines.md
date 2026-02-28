@@ -50,6 +50,7 @@ docs: update installation instructions
 ## Reporting Issues
 
 Include:
+
 - Plugin version
 - Godot version
 - Platform (Android/iOS)

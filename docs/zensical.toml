@@ -55,9 +55,7 @@ nav = [
       { "Troubleshooting" = "contributing/troubleshooting.md" },
       { "Guidelines" = "contributing/guidelines.md" }
     ]},
-  { "Links" = "links.md" },
-  { "Credits" = "credits.md" },
-  { "License" = "license.md" }
+  { "Links" = "links.md" }
 ]
 
 [project.theme]
@@ -90,7 +88,6 @@ media = "(prefers-color-scheme: dark)"
 [project.markdown_extensions.pymdownx.inlinehilite]
 [project.markdown_extensions.pymdownx.snippets]
 [project.markdown_extensions.pymdownx.superfences]
-[project.markdown_extensions.pymdownx.tasklist]
 
 [project.markdown_extensions.pymdownx.emoji]
 emoji_index = "zensical.extensions.emoji.twemoji"
@@ -103,3 +100,6 @@ toc_depth = 0
 anchor_linenums = true
 line_spans = "__span"
 pygments_lang_class = true
+
+[project.markdown_extensions.pymdownx.tasklist]
+custom_checkbox = true
