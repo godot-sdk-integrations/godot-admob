@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "docs/zensical/**"
+      - "docs/content/**"
       - ".github/workflows/docs.yml"
       - "docs/zensical.toml"
 
