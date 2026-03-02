@@ -53,6 +53,6 @@ extra.apply {
 	set("iosFrameworks", iosProperties.getProperty("frameworks"))
 	set("iosEmbeddedFrameworks", iosProperties.getProperty("embedded_frameworks"))
 	set("iosLinkerFlags", iosProperties.getProperty("flags"))
-	set("iosInitializationMethod", "${iosProperties.getProperty("pluginModuleName")}_plugin_init")
-	set("iosDeinitializationMethod", "${iosProperties.getProperty("pluginModuleName")}_plugin_deinit")
+	set("iosInitializationMethod", "${commonProperties.getProperty("pluginModuleName")}_plugin_init")
+	set("iosDeinitializationMethod", "${commonProperties.getProperty("pluginModuleName")}_plugin_deinit")
 }
