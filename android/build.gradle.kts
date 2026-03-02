@@ -69,24 +69,28 @@ dependencies {
 
 tasks {
 	register<de.undercouch.gradle.tasks.download.Download>("downloadGodotAar") {
-		val destFile = file("${rootDir}/../android/libs/${project.extra["godotAarFile"]}")
+		val destFile = file("${gradle.extra["libDir"]}/${project.extra["godotAarFile"]}")
 
-		src(project.extra["godotAarUrl"] as String)
+		val godotAarUrl = project.extra["godotAarUrl"] as String
+		inputs.property("godotAarUrl", godotAarUrl)
+		outputs.file(destFile)
+
+		src(godotAarUrl)
 		dest(destFile)
 		overwrite(false)
 
 		onlyIf {
 			val exists = destFile.exists() && destFile.length() > 0
 			if (exists) {
-				println("[GODOT-LIB] File already exists and is non-empty: ${destFile.absolutePath} (${destFile.length()} bytes)")
-				println("[GODOT-LIB] Skipping download.")
+				println("[GODOT-AAR] File already exists and is non-empty: ${destFile.absolutePath} (${destFile.length()} bytes)")
+				println("[GODOT-AAR] Skipping download.")
 			} else {
 				if (destFile.exists()) {
-					println("[GODOT-LIB] File exists but is empty: ${destFile.absolutePath}")
+					println("[GODOT-AAR] File exists but is empty: ${destFile.absolutePath}")
 				} else {
-					println("[GODOT-LIB] File not found: ${destFile.absolutePath}")
+					println("[GODOT-AAR] File not found: ${destFile.absolutePath}")
 				}
-				println("[GODOT-LIB] Proceeding with download...")
+				println("[GODOT-AAR] Proceeding with download...")
 			}
 			!exists // run task only if file does NOT exist or is empty
 		}
