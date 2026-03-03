@@ -18,6 +18,11 @@ extra.apply {
     // Godot
     set("godotVersion", commonProperties.getProperty("godotVersion"))
     set("releaseType", commonProperties.getProperty("godotReleaseType"))
-    set("godotAarUrl", "https://github.com/godotengine/godot-builds/releases/download/${get("godotVersion")}-${get("releaseType")}/godot-lib.${get("godotVersion")}.${get("releaseType")}.template_release.aar")
+    set(
+        "godotAarUrl",
+        "https://github.com/godotengine/godot-builds/releases/download/" +
+            "${get("godotVersion")}-${get("releaseType")}/" +
+            "godot-lib.${get("godotVersion")}.${get("releaseType")}.template_release.aar"
+    )
     set("godotAarFile", "godot-lib-${get("godotVersion")}.${get("releaseType")}.aar")
 }

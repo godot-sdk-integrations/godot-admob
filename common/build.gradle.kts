@@ -460,7 +460,10 @@ tasks {
     }
 
     register<Delete>("uninstalliOS") {
-        description = "Keep .uid and .import files and delete the rest inside demo app's plugin directory. Delete plugin files inside demo ios directory."
+        description = (
+            "Keep .uid and .import files and delete the rest inside demo app's plugin directory. " +
+                "Delete plugin files inside demo ios directory."
+        )
 
         delete(fileTree("${project.extra["demoDir"]}/addons/${project.extra["pluginName"]}") {
             include("**/*")

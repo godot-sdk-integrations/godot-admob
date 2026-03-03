@@ -82,7 +82,10 @@ tasks {
         onlyIf {
             val exists = destFile.exists() && destFile.length() > 0
             if (exists) {
-                println("[GODOT-AAR] File already exists and is non-empty: ${destFile.absolutePath} (${destFile.length()} bytes)")
+                println(
+                    "[GODOT-AAR] File already exists and is non-empty: " +
+                        "${destFile.absolutePath} (${destFile.length()} bytes)"
+                )
                 println("[GODOT-AAR] Skipping download.")
             } else {
                 if (destFile.exists()) {

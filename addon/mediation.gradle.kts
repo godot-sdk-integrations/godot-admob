@@ -17,7 +17,9 @@ tasks {
             }
 
             // Setup files and content
-            val gdFile = file("${project.extra["outputDir"]}/addons/${project.extra["pluginName"]}/model/MediationNetwork.gd")
+            val gdFile = file(
+                "${project.extra["outputDir"]}/addons/${project.extra["pluginName"]}/model/MediationNetwork.gd"
+            )
             if (!gdFile.exists()) {
                 println("[WARNING] MediationNetwork.gd not found at ${gdFile.absolutePath}, skipping replacement.")
                 return@doLast
