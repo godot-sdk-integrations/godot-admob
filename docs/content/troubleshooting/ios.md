@@ -2,7 +2,7 @@
 title: iOS troubleshooting
 ---
 
-# <img src="../images/icon.png" width="20"> Platform-Specific Notes
+# <img src="../images/icon.png" width="20"> Troubleshooting for iOS
 
 - Follow instructions on [Exporting for iOS](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html)
 - **Mediation**: if you have enabled mediation networks, after exporting your project to iOS, open the generated `.xcworkspace`on Xcode (not `.xcodeproj`!)

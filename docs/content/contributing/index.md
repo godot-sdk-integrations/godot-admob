@@ -1,5 +1,5 @@
 ---
-title: Project structure
+title: Overview
 ---
 
 # <img src="../images/icon.png" width="28"> Contributing
@@ -24,7 +24,7 @@ Thank you for your interest in contributing to the Godot AdMob Plugin! This guid
 │   ├── config.gradle.kts              # Android configuration
 │   ├── build/
 │   │   └── outputs/                   # Generated Android AAR files
-│   ├── libs/                          # Godot library for Android
+│   ├── libs/                          # Godot library for Android (default location; configurable via local.properties)
 │   └── src/main/                      # Android source code
 │
 ├── common/                             # Shared build configuration
@@ -55,7 +55,7 @@ Thank you for your interest in contributing to the Godot AdMob Plugin! This guid
 │   ├── config/
 │   │   ├── config.properties          # iOS configuration
 │   │   └── *.gdip                     # Godot iOS plugin config
-│   └── .godot/                        # Downloaded Godot source (default location; configurable via local.properties)
+│   └── godot/                         # Downloaded Godot source (default location; configurable via local.properties)
 │
 ├── script/                             # Build and utility scripts
 │   ├── build.sh                       # Main build script
@@ -65,5 +65,8 @@ Thank you for your interest in contributing to the Godot AdMob Plugin! This guid
 │   └── get_config_property.sh         # Configuration reader
 │
 ├── docs/                               # Documentation
+│   ├── content                        # Documentation site content
+│   └── zensical.toml                  # Documentation site configuration
+│
 └── release/                            # Final release archives
 ```
