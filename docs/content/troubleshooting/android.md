@@ -2,7 +2,7 @@
 title: Android troubleshooting
 ---
 
-# <img src="../images/icon.png" width="20"> Platform-Specific Notes
+# <img src="../images/icon.png" width="20"> Troubleshooting for Android
 
 - Download Android export template and enable gradle build from export settings
 - **Missing APP ID:**

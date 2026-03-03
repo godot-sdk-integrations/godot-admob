@@ -13,8 +13,11 @@ The build files are largely static and shared across all GMP plugins. Any plugin
 │                                      # common/config/config.properties) for the plugin goes here
 │
 ├── common/
+│   ├── local.properties               # Local machine config (gitignored)
+│   │
 │   ├── config/
-│   │   └── config.properties          # Common plugin configuration
+│   │   ├── config.properties          # Common plugin configuration
+│   │   └── mediation.properties       # Ad mediation configuration
 │   │
 │   └── gradle/
 │       └── libs.versions.toml         # Android dependencies and versions
@@ -116,6 +119,17 @@ godot.dir=/path/to/your/shared/godot
 ```
 
 When `godot.dir` is not set, the build uses the `ios/godot/` directory. The path supports `~` and environment variable expansion.
+
+### Godot Android Library (AAR — optional)
+
+By default, the Godot Android AAR libary file is expected to be placed inside `android/libs/` directory inside the project. If you want to use a location elsewhere on your machine (e.g. to share it across multiple plugin projects), set `lib.dir` in `local.properties`:
+
+```properties
+# Use a shared Godot AAR library directory outside the project
+lib.dir=/path/to/your/shared/aar
+```
+
+When `lib.dir` is not set, the build uses the `android/libs/` directory. The path supports `~` and environment variable expansion.
 
 !!! note
     The specified directory must contain a valid `GODOT_VERSION` file matching the `godotVersion` property in `common/config/config.properties`. If you use the `-G` option to download Godot, it will be downloaded to whichever directory is configured and the `GODOT_VERSION` file will be created automatically.

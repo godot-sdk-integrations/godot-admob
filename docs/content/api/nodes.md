@@ -4,9 +4,9 @@ title: Nodes
 
 # <img src="../images/icon.png" width="20"> Nodes
 
-## <img src="../images/icon.png" width="16"> InlıneAdaptiveBanner
+## <img src="../images/icon.png" width="16"> InlineAdaptiveBanner
 
-`InlıneAdaptiveBanner` is a custom Godot node that provides support for loading and showing AdMob inline adaptive banners. Place it inside a Godot Container node such as the `ScrollContainer` and set its `ad_unit_id` and `custom_minimum_size.x` properties.
+`InlineAdaptiveBanner` is a custom Godot node that provides support for loading and showing AdMob inline adaptive banners. Place it inside a Godot Container node such as the `ScrollContainer` and set its `ad_unit_id` and `custom_minimum_size.x` properties.
 
 **Properties:**
 

@@ -43,7 +43,7 @@ nav = [
       { "iOS" = "troubleshooting/ios.md" }
     ]},
   { "Contributing" = [
-      { "Project Structure" = "contributing/project-structure.md" },
+      { "Overview" = "contributing/index.md" },
       { "Prerequisites" = "contributing/prerequisites.md" },
       { "Configuration" = "contributing/configuration.md" },
       { "Development Workflow" = "contributing/development-workflow.md" },

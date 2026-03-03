@@ -72,7 +72,7 @@ title: Classes
 - Encapsulates data that facilitates setting of extra properties required by an ad mediation network.
 - Properties: `network_tag`, `extras`
 
-### <img src="../images/icon.png" width="16"> NetworkPrivacySettings
+## <img src="../images/icon.png" width="16"> NetworkPrivacySettings
 - Encapsulates data that represents a user's privacy settings.
 - Properties: `has_gdpr_consent`, `is_age_restricted_user`, `has_ccpa_sale_consent`, `enabled_networks`
 
