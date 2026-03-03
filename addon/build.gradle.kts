@@ -10,10 +10,11 @@ apply(from = "$projectDir/config.gradle.kts")
 val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 // Map all library aliases to their actual dependency provider
-val androidDependencies = catalog.libraryAliases
-    .map { alias ->
-        catalog.findLibrary(alias).get().get()
-    }
+val androidDependencies =
+    catalog.libraryAliases
+        .map { alias ->
+            catalog.findLibrary(alias).get().get()
+        }
 
 tasks {
     register<Delete>("cleanOutput") {
@@ -23,7 +24,7 @@ tasks {
                 include("**/*.gd")
                 include("**/*.cfg")
                 include("**/*.png")
-            }
+            },
         )
     }
 
@@ -45,33 +46,37 @@ tasks {
         include("**/*.cfg")
 
         // Explicit tokens map
-        val explicitTokens = mapOf(
-            "pluginName" to (project.extra["pluginName"] as String),
-            "pluginNodeName" to (project.extra["pluginNodeName"] as String),
-            "pluginVersion" to (project.extra["pluginVersion"] as String),
-            "pluginPackage" to (project.extra["pluginPackageName"] as String),
-            "androidDependencies" to androidDependencies.joinToString(", ") { "\"$it\"" },
-            "iosPlatformVersion" to (project.extra["iosPlatformVersion"] as String),
-            "iosFrameworks" to (project.extra["iosFrameworks"] as String)
-                .split(",")
-                .map { it.trim() }
-                .filter { it.isNotBlank() }
-                .joinToString(", ") { "\"$it\"" },
-            "iosEmbeddedFrameworks" to (project.extra["iosEmbeddedFrameworks"] as String)
-                .split(",")
-                .map { it.trim() }
-                .filter { it.isNotBlank() }
-                .joinToString(", ") { "\"$it\"" },
-            "iosLinkerFlags" to (project.extra["iosLinkerFlags"] as String)
-                .split(",")
-                .map { it.trim() }
-                .filter { it.isNotBlank() }
-                .joinToString(", ") { "\"$it\"" },
-        )
+        val explicitTokens =
+            mapOf(
+                "pluginName" to (project.extra["pluginName"] as String),
+                "pluginNodeName" to (project.extra["pluginNodeName"] as String),
+                "pluginVersion" to (project.extra["pluginVersion"] as String),
+                "pluginPackage" to (project.extra["pluginPackageName"] as String),
+                "androidDependencies" to androidDependencies.joinToString(", ") { "\"$it\"" },
+                "iosPlatformVersion" to (project.extra["iosPlatformVersion"] as String),
+                "iosFrameworks" to
+                    (project.extra["iosFrameworks"] as String)
+                        .split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotBlank() }
+                        .joinToString(", ") { "\"$it\"" },
+                "iosEmbeddedFrameworks" to
+                    (project.extra["iosEmbeddedFrameworks"] as String)
+                        .split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotBlank() }
+                        .joinToString(", ") { "\"$it\"" },
+                "iosLinkerFlags" to
+                    (project.extra["iosLinkerFlags"] as String)
+                        .split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotBlank() }
+                        .joinToString(", ") { "\"$it\"" },
+            )
 
         // Print file name before processing
         eachFile {
-            println("[DEBUG] Processing file: ${relativePath}")
+            println("[DEBUG] Processing file: $relativePath")
         }
 
         // First pass: replacement for explicit tokens
@@ -97,14 +102,16 @@ tasks {
                 val token = "@$key@"
                 if (result.contains(token)) {
                     val valueString = value.toString()
-                    val replacedValue = if (valueString.contains(",")) {
-                        valueString.split(",")
-                            .map { it.trim() }
-                            .filter { it.isNotBlank() }
-                            .joinToString(", ") { "\"$it\"" }
-                    } else {
-                        valueString
-                    }
+                    val replacedValue =
+                        if (valueString.contains(",")) {
+                            valueString
+                                .split(",")
+                                .map { it.trim() }
+                                .filter { it.isNotBlank() }
+                                .joinToString(", ") { "\"$it\"" }
+                        } else {
+                            valueString
+                        }
 
                     println("	[DEBUG] Replacing token $token with: $replacedValue")
                     result = result.replace(token, replacedValue)
@@ -143,14 +150,15 @@ tasks {
         include("**/*.gdip")
 
         // Explicit tokens map
-        val explicitTokens = mapOf(
-            "pluginName" to (project.extra["pluginName"] as String),
-            "iosInitializationMethod" to (project.extra["iosInitializationMethod"] as String),
-            "iosDeinitializationMethod" to (project.extra["iosDeinitializationMethod"] as String),
-        )
+        val explicitTokens =
+            mapOf(
+                "pluginName" to (project.extra["pluginName"] as String),
+                "iosInitializationMethod" to (project.extra["iosInitializationMethod"] as String),
+                "iosDeinitializationMethod" to (project.extra["iosDeinitializationMethod"] as String),
+            )
 
         eachFile {
-            println("[DEBUG] Processing file: ${relativePath}")
+            println("[DEBUG] Processing file: $relativePath")
         }
 
         filter { line: String ->

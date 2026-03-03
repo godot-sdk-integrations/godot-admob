@@ -5,13 +5,15 @@
 import java.io.FileInputStream
 import java.util.Properties
 
-val commonProperties = Properties().apply {
-    load(FileInputStream("$rootDir/config/config.properties"))
-}
+val commonProperties =
+    Properties().apply {
+        load(FileInputStream("$rootDir/config/config.properties"))
+    }
 
-val iosProperties = Properties().apply {
-    load(FileInputStream("$rootDir/../ios/config/config.properties"))
-}
+val iosProperties =
+    Properties().apply {
+        load(FileInputStream("$rootDir/../ios/config/config.properties"))
+    }
 
 // Apply extra gradle build files that are configured to be applied
 commonProperties.forEach { entry ->

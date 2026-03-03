@@ -14,14 +14,18 @@ apply(from = "$projectDir/config.gradle.kts")
 
 android {
     namespace = project.extra["pluginPackageName"] as String
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk = libs.versions.compileSdk
+        .get()
+        .toInt()
 
     buildFeatures {
         buildConfig = true
     }
 
     defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
+        minSdk = libs.versions.minSdk
+            .get()
+            .toInt()
 
         manifestPlaceholders["godotPluginName"] = project.extra["pluginName"] as String
         manifestPlaceholders["godotPluginPackageName"] = project.extra["pluginPackageName"] as String
@@ -55,9 +59,10 @@ android {
 val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 // Map all library aliases to their actual dependency provider
-val androidDependencies = catalog.libraryAliases.map { alias ->
-    catalog.findLibrary(alias).get().get()
-}
+val androidDependencies = catalog.libraryAliases
+    .map { alias ->
+        catalog.findLibrary(alias).get().get()
+    }
 
 dependencies {
     implementation("godot:godot-lib:${project.extra["godotVersion"]}.${project.extra["releaseType"]}@aar")

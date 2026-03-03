@@ -12,14 +12,16 @@ tasks {
 
         doLast {
             // Load properties file
-            val mediationProps = Properties().apply {
-                load(FileInputStream(file("$rootDir/config/mediation.properties")))
-            }
+            val mediationProps =
+                Properties().apply {
+                    load(FileInputStream(file("$rootDir/config/mediation.properties")))
+                }
 
             // Setup files and content
-            val gdFile = file(
-                "${project.extra["outputDir"]}/addons/${project.extra["pluginName"]}/model/MediationNetwork.gd"
-            )
+            val gdFile =
+                file(
+                    "${project.extra["outputDir"]}/addons/${project.extra["pluginName"]}/model/MediationNetwork.gd",
+                )
             if (!gdFile.exists()) {
                 println("[WARNING] MediationNetwork.gd not found at ${gdFile.absolutePath}, skipping replacement.")
                 return@doLast
@@ -29,43 +31,48 @@ tasks {
             val content = gdFile.readText()
             var newContent = content
 
-            val networks = mediationProps.stringPropertyNames()
-                .filter { it.contains(".") }
-                .map { it.substringBefore(".") }
-                .distinct()
-                .sorted()
+            val networks =
+                mediationProps
+                    .stringPropertyNames()
+                    .filter { it.contains(".") }
+                    .map { it.substringBefore(".") }
+                    .distinct()
+                    .sorted()
 
             for (network in networks) {
                 // Prepare replacements
-                val depsStr = mediationProps.getProperty("${network}.dependencies") ?: ""
-                val deps = if (depsStr.isNotEmpty()) {
-                    depsStr.split(",").map { "\"${it.trim()}\"" }.joinToString(", ")
-                } else {
-                    ""
-                }
-                val repo = mediationProps.getProperty("${network}.mavenRepo") ?: ""
-                val andAdapter = mediationProps.getProperty("${network}.androidAdapterClass") ?: ""
-                val iosAdapter = mediationProps.getProperty("${network}.iosAdapterClass") ?: ""
-                val pkg = mediationProps.getProperty("${network}.package") ?: ""
-                val pkgUrl = mediationProps.getProperty("${network}.packageUrl") ?: ""
-                val pkgVer = mediationProps.getProperty("${network}.packageVersion") ?: ""
-                val skIdsStr = mediationProps.getProperty("${network}.skAdNetworkIds") ?: ""
-                val skIds = if (skIdsStr.isNotEmpty()) {
-                    skIdsStr.split(",").map { "\"${it.trim()}\"" }.joinToString(", ")
-                } else {
-                    ""
-                }
+                val depsStr = mediationProps.getProperty("$network.dependencies") ?: ""
+                val deps =
+                    if (depsStr.isNotEmpty()) {
+                        depsStr.split(",").map { "\"${it.trim()}\"" }.joinToString(", ")
+                    } else {
+                        ""
+                    }
+                val repo = mediationProps.getProperty("$network.mavenRepo") ?: ""
+                val andAdapter = mediationProps.getProperty("$network.androidAdapterClass") ?: ""
+                val iosAdapter = mediationProps.getProperty("$network.iosAdapterClass") ?: ""
+                val pkg = mediationProps.getProperty("$network.package") ?: ""
+                val pkgUrl = mediationProps.getProperty("$network.packageUrl") ?: ""
+                val pkgVer = mediationProps.getProperty("$network.packageVersion") ?: ""
+                val skIdsStr = mediationProps.getProperty("$network.skAdNetworkIds") ?: ""
+                val skIds =
+                    if (skIdsStr.isNotEmpty()) {
+                        skIdsStr.split(",").map { "\"${it.trim()}\"" }.joinToString(", ")
+                    } else {
+                        ""
+                    }
 
                 // Replace tokens
-                newContent = newContent
-                    .replace("@${network}Dependencies@", deps)
-                    .replace("@${network}MavenRepo@", repo)
-                    .replace("@${network}AndroidAdapterClass@", andAdapter)
-                    .replace("@${network}IosAdapterClass@", iosAdapter)
-                    .replace("@${network}Package@", pkg)
-                    .replace("@${network}PackageUrl@", pkgUrl)
-                    .replace("@${network}PackageVersion@", pkgVer)
-                    .replace("@${network}SkAdNetworkIds@", skIds)
+                newContent =
+                    newContent
+                        .replace("@${network}Dependencies@", deps)
+                        .replace("@${network}MavenRepo@", repo)
+                        .replace("@${network}AndroidAdapterClass@", andAdapter)
+                        .replace("@${network}IosAdapterClass@", iosAdapter)
+                        .replace("@${network}Package@", pkg)
+                        .replace("@${network}PackageUrl@", pkgUrl)
+                        .replace("@${network}PackageVersion@", pkgVer)
+                        .replace("@${network}SkAdNetworkIds@", skIds)
             }
 
             // Write updated content with tokens replaced
