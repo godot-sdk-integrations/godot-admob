@@ -6,15 +6,11 @@ title: signals
 
 Register listeners for one or more signals of the `Admob` node. Signals are grouped below by ad type.
 
----
-
 ## Initialization
 
 | Signal | Description |
 |---|---|
 | `initialization_completed(status_data: InitializationStatus)` | Emitted when the AdMob SDK has finished initializing. Check `status_data` for per-adapter readiness before loading ads. |
-
----
 
 ## Banner Ads
 
@@ -27,8 +23,6 @@ Register listeners for one or more signals of the `Admob` node. Signals are grou
 | `banner_ad_clicked(ad_info: AdInfo)` | The user tapped the banner ad. |
 | `banner_ad_opened(ad_info: AdInfo)` | The banner ad opened an overlay or external browser in response to a tap. |
 | `banner_ad_closed(ad_info: AdInfo)` | The overlay or browser opened by the banner ad was closed, and the user has returned to the app. |
-
----
 
 ## Interstitial Ads
 
@@ -43,8 +37,6 @@ Register listeners for one or more signals of the `Admob` node. Signals are grou
 | `interstitial_ad_failed_to_show_full_screen_content(ad_info: AdInfo, error_data: AdError)` | The interstitial ad failed to display. Inspect `error_data` for the reason. |
 | `interstitial_ad_dismissed_full_screen_content(ad_info: AdInfo)` | The user dismissed the interstitial ad and has returned to the app. |
 
----
-
 ## Rewarded Ads
 
 | Signal | Description |
@@ -57,8 +49,6 @@ Register listeners for one or more signals of the `Admob` node. Signals are grou
 | `rewarded_ad_failed_to_show_full_screen_content(ad_info: AdInfo, error_data: AdError)` | The rewarded ad failed to display. Inspect `error_data` for the reason. |
 | `rewarded_ad_dismissed_full_screen_content(ad_info: AdInfo)` | The user dismissed the rewarded ad and has returned to the app. |
 | `rewarded_ad_user_earned_reward(ad_info: AdInfo, reward_data: RewardItem)` | The user completed the reward condition. Use `reward_data` to retrieve the reward type and amount. Always grant the reward when this signal fires, regardless of whether the ad was dismissed. |
-
----
 
 ## Rewarded Interstitial Ads
 
@@ -73,8 +63,6 @@ Register listeners for one or more signals of the `Admob` node. Signals are grou
 | `rewarded_interstitial_ad_dismissed_full_screen_content(ad_info: AdInfo)` | The user dismissed the rewarded interstitial ad and has returned to the app. |
 | `rewarded_interstitial_ad_user_earned_reward(ad_info: AdInfo, reward_data: RewardItem)` | The user completed the reward condition. Use `reward_data` to retrieve the reward type and amount. Always grant the reward when this signal fires, regardless of whether the ad was dismissed. |
 
----
-
 ## App Open Ads
 
 | Signal | Description |
@@ -86,8 +74,6 @@ Register listeners for one or more signals of the `Admob` node. Signals are grou
 | `app_open_ad_showed_full_screen_content(ad_info: AdInfo)` | The app open ad was displayed and is covering the full screen. |
 | `app_open_ad_failed_to_show_full_screen_content(ad_info: AdInfo, error_data: AdError)` | The app open ad failed to display. Inspect `error_data` for the reason. |
 | `app_open_ad_dismissed_full_screen_content(ad_info: AdInfo)` | The user dismissed the app open ad and has returned to the app. |
-
----
 
 ## Native Ads
 
@@ -101,8 +87,6 @@ Register listeners for one or more signals of the `Admob` node. Signals are grou
 | `native_ad_swipe_gesture_clicked(ad_info: AdInfo)` | The user interacted with the native ad via a swipe gesture. |
 | `native_ad_opened(ad_info: AdInfo)` | The native ad opened an overlay or external browser in response to user interaction. |
 | `native_ad_closed(ad_info: AdInfo)` | The overlay or browser opened by the native ad was closed, and the user has returned to the app. |
-
----
 
 ## Consent (UMP)
 

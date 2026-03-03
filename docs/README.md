@@ -32,20 +32,6 @@ A Godot plugin that provides a unified GDScript interface for integrating **Goog
 - **Flexible export configuration** — configure your AdMob app IDs via Inspector node or config files
 - **Debug/production mode** — separate debug and real ad unit IDs; toggle with a single `is_real` flag
 
----
-
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Table of Contents
-
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Documentation](#documentation)
-- [Video Tutorials](#video-tutorials)
-- [All Plugins](#all-plugins)
-- [Credits](#credits)
-- [Contributing](#contributing)
-
----
-
 <a name="installation"></a>
 
 ## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Installation
@@ -62,8 +48,6 @@ A Godot plugin that provides a unified GDScript interface for integrating **Goog
 **Manually**
 1. Download the release archive from [GitHub](https://github.com/godot-sdk-integrations/godot-admob/releases) and unzip it into your project's root directory.
 2. Enable the plugin under **Project → Project Settings → Plugins**.
-
----
 
 <a name="quick-start"></a>
 
@@ -126,10 +110,7 @@ Available show methods: `show_banner_ad(ad_id)`, `show_interstitial_ad(ad_id)`, 
 | `consent_info_updated` / `consent_form_dismissed` | UMP consent flow events |
 | `tracking_authorization_granted` / `tracking_authorization_denied` | iOS ATT result |
 
----
-
 <a name="documentation"></a>
-
 
 # <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Documentation
 
@@ -137,22 +118,14 @@ Explore the plugin documentation for a deep dive into features:
 
 - https://godot-sdk-integrations.github.io/godot-admob
 
----
-
 <a name="video-tutorials"></a>
 
 # <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Video Tutorials
 
-## **Admob Plugin on Android** -- _by [16BitDev](https://www.youtube.com/@16bitdev)_
-[![Admob Plugin on Android](https://img.youtube.com/vi/V9_Gpy0R3RE/0.jpg)](https://www.youtube.com/watch?v=V9_Gpy0R3RE)
-
-## **Consent Management with the Admob Plugin** -- _by [Code Artist](https://www.youtube.com/@codeartist1687)_
-[![Consent Management with the Admob Plugin](https://img.youtube.com/vi/MrLcPdoH-yU/0.jpg)](https://www.youtube.com/watch?v=MrLcPdoH-yU)
-
-## **Admob Plugin on Android** -- _by [Code Artist](https://www.youtube.com/@codeartist1687)_
-[![Admob Plugin on Android](https://img.youtube.com/vi/K13xFyOYySk/0.jpg)](https://www.youtube.com/watch?v=K13xFyOYySk)
-
----
+| Admob Plugin on Android | Consent Management with the Admob | Admob Plugin on Android |
+| :---: | :---: | :---: |
+| by [16BitDev](https://www.youtube.com/@16bitdev) | by [Code Artist](https://www.youtube.com/@codeartist1687) | by [Code Artist](https://www.youtube.com/@codeartist1687) |
+| [<img src="https://img.youtube.com/vi/V9_Gpy0R3RE/0.jpg" width="280" alt="Admob Plugin on Android">](https://www.youtube.com/watch?v=V9_Gpy0R3RE) | [<img src="https://img.youtube.com/vi/MrLcPdoH-yU/0.jpg" width="280" alt="Consent Management with the Admob Plugin">](https://www.youtube.com/watch?v=MrLcPdoH-yU) | [<img src="https://img.youtube.com/vi/K13xFyOYySk/0.jpg" width="280" alt="Admob Plugin on Android">](https://www.youtube.com/watch?v=K13xFyOYySk) |
 
 # <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> All Plugins
 
@@ -171,8 +144,6 @@ Explore the plugin documentation for a deep dive into features:
 | <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-qr/main/addon/src/icon.png" width="20"> | [QR](https://github.com/godot-mobile-plugins/godot-qr) | ✅ | ✅ | <a href="https://github.com/godot-mobile-plugins/godot-qr/releases"><img src="https://img.shields.io/github/v/release/godot-mobile-plugins/godot-qr?label=%20" /></a> | <img src="https://img.shields.io/github/downloads/godot-mobile-plugins/godot-qr/latest/total?label=latest" /> <img src="https://img.shields.io/github/downloads/godot-mobile-plugins/godot-qr/total?label=total" /> | <img src="https://img.shields.io/github/stars/godot-mobile-plugins/godot-qr?style=plastic&label=%20" /> |
 | <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-share/main/addon/src/icon.png" width="20"> | [Share](https://github.com/godot-mobile-plugins/godot-share) | ✅ | ✅ | <a href="https://github.com/godot-mobile-plugins/godot-share/releases"><img src="https://img.shields.io/github/v/release/godot-mobile-plugins/godot-share?label=%20" /></a> | <img src="https://img.shields.io/github/downloads/godot-mobile-plugins/godot-share/latest/total?label=latest" /> <img src="https://img.shields.io/github/downloads/godot-mobile-plugins/godot-share/total?label=total" /> | <img src="https://img.shields.io/github/stars/godot-mobile-plugins/godot-share?style=plastic&label=%20" /> |
 
----
-
 <a name="credits"></a>
 
 # <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Credits
@@ -183,15 +154,11 @@ Based on [Godot Mobile Plugin Template](https://github.com/godot-mobile-plugins/
 
 Original repository: [Godot Admob Plugin](https://github.com/godot-sdk-integrations/godot-admob)
 
----
-
 <a name="contributing"></a>
 
 # <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Contributing
 
 See [our guide](https://godot-sdk-integrations.github.io/godot-admob/contributing/) if you would like to contribute to this project.
-
----
 
 # 💖 Support the Project
 
