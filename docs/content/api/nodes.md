@@ -1,5 +1,6 @@
 ---
 title: Nodes
+icon: fontawesome/solid/circle-nodes
 ---
 
 # <img src="../images/icon.png" width="20"> Nodes

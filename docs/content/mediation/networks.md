@@ -1,5 +1,6 @@
 ---
 title: Networks
+icon: fontawesome/solid/wifi
 ---
 
 # <img src="../images/icon.png" width="16"> Network Extras

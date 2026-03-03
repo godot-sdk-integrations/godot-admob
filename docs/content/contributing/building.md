@@ -1,5 +1,6 @@
 ---
 title: Building
+icon: fontawesome/solid/hammer
 ---
 
 # <img src="../images/icon.png" width="24"> Building

@@ -1,5 +1,6 @@
 ---
 title: signals
+icon: fontawesome/solid/signal
 ---
 
 # <img src="../images/icon.png" width="20"> Signals

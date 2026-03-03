@@ -1,5 +1,6 @@
 ---
 title: Quick start
+icon: fontawesome/solid/rocket
 ---
 
 # <img src="../images/icon.png" width="20"> Quick Start

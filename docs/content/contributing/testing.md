@@ -1,5 +1,6 @@
 ---
 title: Testing
+icon: fontawesome/solid/vial
 ---
 
 # <img src="../images/icon.png" width="24"> Testing

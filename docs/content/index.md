@@ -1,5 +1,6 @@
 ---
 title: Home
+icon: fontawesome/solid/house
 ---
 
 # <img src="./images/icon.png" width="24"> Godot Admob Plugin

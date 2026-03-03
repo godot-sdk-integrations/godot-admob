@@ -1,5 +1,6 @@
 ---
 title: App open ads
+icon: fontawesome/solid/arrow-up-right-from-square
 ---
 
 # <img src="../images/icon.png" width="20"> App Open Ads

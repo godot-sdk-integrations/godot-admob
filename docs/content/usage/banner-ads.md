@@ -1,5 +1,6 @@
 ---
 title: Banner ads
+icon: fontawesome/solid/rectangle-ad
 ---
 
 ## <img src="../images/icon.png" width="20"> Banner Ads

@@ -1,5 +1,6 @@
 ---
 title: Configuration
+icon: fontawesome/solid/sliders
 ---
 
 # <img src="../images/icon.png" width="24"> Configuration

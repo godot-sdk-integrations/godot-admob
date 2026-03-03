@@ -1,5 +1,6 @@
 ---
 title: Links
+icon: fontawesome/solid/link
 ---
 
 # <img src="./images/icon.png" width="24"> Links

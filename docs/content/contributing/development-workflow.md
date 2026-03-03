@@ -1,5 +1,6 @@
 ---
 title: Development workflow
+icon: fontawesome/solid/diagram-project
 ---
 
 # <img src="../images/icon.png" width="24"> Development Workflow
