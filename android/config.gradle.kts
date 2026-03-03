@@ -2,12 +2,13 @@
 // © 2024-present https://github.com/cengiz-pz
 //
 
-import java.util.Properties
 import java.io.FileInputStream
+import java.util.Properties
 
-val commonProperties = Properties().apply {
-    load(FileInputStream("${rootDir}/config/config.properties"))
-}
+val commonProperties =
+    Properties().apply {
+        load(FileInputStream("$rootDir/config/config.properties"))
+    }
 
 extra.apply {
     // Plugin details
@@ -22,7 +23,7 @@ extra.apply {
         "godotAarUrl",
         "https://github.com/godotengine/godot-builds/releases/download/" +
             "${get("godotVersion")}-${get("releaseType")}/" +
-            "godot-lib.${get("godotVersion")}.${get("releaseType")}.template_release.aar"
+            "godot-lib.${get("godotVersion")}.${get("releaseType")}.template_release.aar",
     )
     set("godotAarFile", "godot-lib-${get("godotVersion")}.${get("releaseType")}.aar")
 }

@@ -4,24 +4,27 @@
 
 import org.apache.tools.ant.filters.ReplaceTokens
 
-apply(from = "${projectDir}/config.gradle.kts")
+apply(from = "$projectDir/config.gradle.kts")
 
 // Access the library catalog by name ("libs")
 val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 // Map all library aliases to their actual dependency provider
-val androidDependencies = catalog.libraryAliases.map { alias ->
-    catalog.findLibrary(alias).get().get()
-}
+val androidDependencies = catalog.libraryAliases
+    .map { alias ->
+        catalog.findLibrary(alias).get().get()
+    }
 
 tasks {
     register<Delete>("cleanOutput") {
         // Keep the directory itself and delete files with specified type inside
-        delete(fileTree("${project.extra["outputDir"]}/${project.extra["pluginName"]}").apply {
-            include("**/*.gd")
-            include("**/*.cfg")
-            include("**/*.png")
-        })
+        delete(
+            fileTree("${project.extra["outputDir"]}/${project.extra["pluginName"]}") {
+                include("**/*.gd")
+                include("**/*.cfg")
+                include("**/*.png")
+            }
+        )
     }
 
     register<Copy>("copyAssets") {
@@ -63,7 +66,7 @@ tasks {
                 .split(",")
                 .map { it.trim() }
                 .filter { it.isNotBlank() }
-                .joinToString(", ") { "\"$it\"" }
+                .joinToString(", ") { "\"$it\"" },
         )
 
         // Print file name before processing
@@ -86,7 +89,7 @@ tasks {
             result
         }
 
-        // Second pass: generic replacement for extra tokens (ie. extra.myProperty=...)
+        // Second pass: generic replacement for extra tokens
         filter { line: String ->
             var result = line
 
@@ -94,15 +97,14 @@ tasks {
                 val token = "@$key@"
                 if (result.contains(token)) {
                     val valueString = value.toString()
-                    val replacedValue =
-                        if (valueString.contains(",")) {
-                            valueString.split(",")
-                                .map { it.trim() }
-                                .filter { it.isNotBlank() }
-                                .joinToString(", ") { "\"$it\"" }
-                        } else {
-                            valueString
-                        }
+                    val replacedValue = if (valueString.contains(",")) {
+                        valueString.split(",")
+                            .map { it.trim() }
+                            .filter { it.isNotBlank() }
+                            .joinToString(", ") { "\"$it\"" }
+                    } else {
+                        valueString
+                    }
 
                     println("	[DEBUG] Replacing token $token with: $replacedValue")
                     result = result.replace(token, replacedValue)
@@ -115,7 +117,7 @@ tasks {
         inputs.dir(project.extra["templateDirectory"] as String)
         inputs.files(
             rootProject.file("config/config.properties"),
-            rootProject.file("../ios/config/config.properties")
+            rootProject.file("../ios/config/config.properties"),
         )
 
         // Declare every token that appears in templates
@@ -144,7 +146,7 @@ tasks {
         val explicitTokens = mapOf(
             "pluginName" to (project.extra["pluginName"] as String),
             "iosInitializationMethod" to (project.extra["iosInitializationMethod"] as String),
-            "iosDeinitializationMethod" to (project.extra["iosDeinitializationMethod"] as String)
+            "iosDeinitializationMethod" to (project.extra["iosDeinitializationMethod"] as String),
         )
 
         eachFile {
@@ -165,7 +167,7 @@ tasks {
 
         inputs.files(
             rootProject.file("config/config.properties"),
-            rootProject.file("../ios/config/config.properties")
+            rootProject.file("../ios/config/config.properties"),
         )
 
         inputs.property("pluginName", project.extra["pluginName"])
@@ -176,7 +178,6 @@ tasks {
     }
 
     // Ensure generateiOSConfig always runs after generateGDScript
-    // (token replacement order matters for the final plugin files)
     named<Copy>("generateiOSConfig") {
         mustRunAfter("generateGDScript")
     }

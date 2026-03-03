@@ -10,15 +10,17 @@ pluginManagement {
     }
 }
 
-val localProperties = java.util.Properties().also { props ->
-    rootDir.resolve("local.properties")
-        .takeIf { it.exists() }
-        ?.inputStream()
-        ?.use { props.load(it) }
-}
+val localProperties =
+    java.util.Properties().also { props ->
+        rootDir
+            .resolve("local.properties")
+            .takeIf { it.exists() }
+            ?.inputStream()
+            ?.use { props.load(it) }
+    }
 
 gradle.extra["libDir"] = localProperties.getProperty("lib.dir")
-    ?: "${rootDir}/../android/libs"
+    ?: "$rootDir/../android/libs"
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)

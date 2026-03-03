@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.undercouch.download)
 }
 
-apply(from = "${projectDir}/config.gradle.kts")
+apply(from = "$projectDir/config.gradle.kts")
 
 android {
     namespace = project.extra["pluginPackageName"] as String
@@ -61,7 +61,7 @@ val androidDependencies = catalog.libraryAliases.map { alias ->
 
 dependencies {
     implementation("godot:godot-lib:${project.extra["godotVersion"]}.${project.extra["releaseType"]}@aar")
-    androidDependencies.forEach { 
+    androidDependencies.forEach {
         println("[DEBUG] Adding Android dependency: $it")
         implementation(it)
     }
@@ -84,7 +84,7 @@ tasks {
             if (exists) {
                 println(
                     "[GODOT-AAR] File already exists and is non-empty: " +
-                        "${destFile.absolutePath} (${destFile.length()} bytes)"
+                        "${destFile.absolutePath} (${destFile.length()} bytes)",
                 )
                 println("[GODOT-AAR] Skipping download.")
             } else {

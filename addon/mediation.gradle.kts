@@ -2,8 +2,8 @@
 // © 2024-present https://github.com/cengiz-pz
 //
 
-import java.util.Properties
 import java.io.FileInputStream
+import java.util.Properties
 
 tasks {
     register("replaceMediationTokens") {
@@ -13,7 +13,7 @@ tasks {
         doLast {
             // Load properties file
             val mediationProps = Properties().apply {
-                load(FileInputStream(file("${rootDir}/config/mediation.properties")))
+                load(FileInputStream(file("$rootDir/config/mediation.properties")))
             }
 
             // Setup files and content

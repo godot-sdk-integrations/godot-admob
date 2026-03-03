@@ -2,12 +2,13 @@
 // © 2024-present https://github.com/cengiz-pz
 //
 
-import java.util.Properties
 import java.io.FileInputStream
+import java.util.Properties
 
-val commonProperties = Properties().apply {
-    load(FileInputStream("${rootDir}/config/config.properties"))
-}
+val commonProperties =
+    Properties().apply {
+        load(FileInputStream("$rootDir/config/config.properties"))
+    }
 
 extra.apply {
     // Plugin details
@@ -20,10 +21,10 @@ extra.apply {
     set("pluginArchiveiOS", "${get("pluginName")}-iOS-v${get("pluginVersion")}.zip")
     set("pluginArchiveMulti", "${get("pluginName")}-Multi-v${get("pluginVersion")}.zip")
 
-    set("pluginDir", "${rootDir}/build/plugin")
-    set("archiveDir", "${rootDir}/../release")
-    set("iosDir", "${rootDir}/../ios")
+    set("pluginDir", "$rootDir/build/plugin")
+    set("archiveDir", "$rootDir/../release")
+    set("iosDir", "$rootDir/../ios")
 
     // Demo
-    set("demoDir", "${rootDir}/../demo")
+    set("demoDir", "$rootDir/../demo")
 }

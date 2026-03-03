@@ -48,7 +48,7 @@ allprojects {
 }
 
 // Load configuration from project root
-apply(from = "${rootDir}/config.gradle.kts")
+apply(from = "$rootDir/config.gradle.kts")
 
 tasks {
     register<Copy>("buildAndroidDebug") {
@@ -60,11 +60,11 @@ tasks {
 
         into("${project.extra["pluginDir"]}/android")
 
-        from("${rootDir}/../addon/build/output") {
+        from("$rootDir/../addon/build/output") {
             include("addons/${project.extra["pluginName"]}/**")
         }
 
-        from("${rootDir}/../android/build/outputs/aar") {
+        from("$rootDir/../android/build/outputs/aar") {
             include("${project.extra["pluginName"]}-debug.aar")
             into("addons/${project.extra["pluginName"]}/bin/debug")
         }
@@ -87,11 +87,11 @@ tasks {
 
         into("${project.extra["pluginDir"]}/android")
 
-        from("${rootDir}/../addon/build/output") {
+        from("$rootDir/../addon/build/output") {
             include("addons/${project.extra["pluginName"]}/**")
         }
 
-        from("${rootDir}/../android/build/outputs/aar") {
+        from("$rootDir/../android/build/outputs/aar") {
             include("${project.extra["pluginName"]}-release.aar")
             into("addons/${project.extra["pluginName"]}/bin/release")
         }
@@ -115,7 +115,7 @@ tasks {
     register<Exec>("removeGodotDirectory") {
         description = "Removes the directory where Godot sources were downloaded"
 
-        val buildScript = file("${rootDir}/../script/build_ios.sh")
+        val buildScript = file("$rootDir/../script/build_ios.sh")
         inputs.file(buildScript)
 
         commandLine("bash", buildScript.absolutePath, "-g")
@@ -125,7 +125,7 @@ tasks {
     register<Exec>("downloadGodot") {
         description = "Downloads Godot sources into the configured directory"
 
-        val buildScript = file("${rootDir}/../script/build_ios.sh")
+        val buildScript = file("$rootDir/../script/build_ios.sh")
         inputs.file(buildScript)
 
         commandLine("bash", buildScript.absolutePath, "-G")
@@ -135,7 +135,7 @@ tasks {
     register<Exec>("generateGodotHeaders") {
         description = "Runs Godot build and terminates after Godot header files have been generated"
 
-        val buildScript = file("${rootDir}/../script/build_ios.sh")
+        val buildScript = file("$rootDir/../script/build_ios.sh")
         inputs.file(buildScript)
 
         commandLine("bash", buildScript.absolutePath, "-H")
@@ -145,15 +145,15 @@ tasks {
     register("resetSPMDependencies") {
         description = "Removes SPM dependencies from the Xcode project and cleans up all SPM artifacts"
 
-        inputs.files(fileTree("${rootDir}/../ios/config"))
+        inputs.files(fileTree("$rootDir/../ios/config"))
 
         doLast {
-            val iosConfigFile = file("${rootDir}/../ios/config/config.properties")
+            val iosConfigFile = file("$rootDir/../ios/config/config.properties")
             val deps = readSpmDependencies(iosConfigFile)
             val pluginModuleName = project.extra["pluginModuleName"] as String
-            val iosDir = file("${rootDir}/../ios")
-            val xcodeproj = "${iosDir}/${pluginModuleName}_plugin.xcodeproj"
-            val scriptDir = file("${rootDir}/../script")
+            val iosDir = file("$rootDir/../ios")
+            val xcodeproj = "$iosDir/${pluginModuleName}_plugin.xcodeproj"
+            val scriptDir = file("$rootDir/../script")
 
             if (deps.isEmpty()) {
                 println("Warning: No dependencies found for plugin. Skipping SPM dependency removal.")
@@ -162,8 +162,13 @@ tasks {
                 deps.forEach { dep ->
                     exec {
                         commandLine(
-                            "ruby", "${scriptDir}/spm_manager.rb", "-d", xcodeproj,
-                            dep["url"], dep["version"], dep["name"]
+                            "ruby",
+                            "$scriptDir/spm_manager.rb",
+                            "-d",
+                            xcodeproj,
+                            dep["url"],
+                            dep["version"],
+                            dep["name"],
                         )
                     }
                 }
@@ -173,10 +178,14 @@ tasks {
                 println("Regenerating Package.resolved after dependency removal...")
                 exec {
                     commandLine(
-                        "xcodebuild", "-resolvePackageDependencies",
-                        "-project", xcodeproj,
-                        "-scheme", "${pluginModuleName}_plugin",
-                        "-derivedDataPath", "${iosDir}/build/DerivedData"
+                        "xcodebuild",
+                        "-resolvePackageDependencies",
+                        "-project",
+                        xcodeproj,
+                        "-scheme",
+                        "${pluginModuleName}_plugin",
+                        "-derivedDataPath",
+                        "$iosDir/build/DerivedData",
                     )
                     isIgnoreExitValue = true
                 }
@@ -189,7 +198,7 @@ tasks {
                 resolvedFile.delete()
             }
 
-            val sourcePackagesDir = file("${iosDir}/build/DerivedData/SourcePackages")
+            val sourcePackagesDir = file("$iosDir/build/DerivedData/SourcePackages")
             if (sourcePackagesDir.exists()) {
                 println("Removing SPM cache directory ${sourcePackagesDir.path} ...")
                 sourcePackagesDir.deleteRecursively()
@@ -200,18 +209,18 @@ tasks {
     register("updateSPMDependencies") {
         description = "Adds SPM dependencies from ios/config/config.properties into the Xcode project"
 
-        inputs.files(fileTree("${rootDir}/../ios/config"))
-        outputs.dir("${rootDir}/../ios/${project.extra["pluginModuleName"]}_plugin.xcodeproj")
+        inputs.files(fileTree("$rootDir/../ios/config"))
+        outputs.dir("$rootDir/../ios/${project.extra["pluginModuleName"]}_plugin.xcodeproj")
 
         finalizedBy("resolveSPMDependencies")
 
         doLast {
-            val iosConfigFile = file("${rootDir}/../ios/config/config.properties")
+            val iosConfigFile = file("$rootDir/../ios/config/config.properties")
             val deps = readSpmDependencies(iosConfigFile)
             val pluginModuleName = project.extra["pluginModuleName"] as String
-            val iosDir = file("${rootDir}/../ios")
-            val xcodeproj = "${iosDir}/${pluginModuleName}_plugin.xcodeproj"
-            val scriptDir = file("${rootDir}/../script")
+            val iosDir = file("$rootDir/../ios")
+            val xcodeproj = "$iosDir/${pluginModuleName}_plugin.xcodeproj"
+            val scriptDir = file("$rootDir/../script")
 
             if (deps.isEmpty()) {
                 println("Warning: No dependencies found for plugin. Skipping SPM update.")
@@ -224,18 +233,20 @@ tasks {
             println()
 
             // Verify Ruby and the xcodeproj gem are available
-            val rubyAvailable = exec {
-                commandLine("which", "ruby")
-                isIgnoreExitValue = true
-            }.exitValue == 0
+            val rubyAvailable =
+                exec {
+                    commandLine("which", "ruby")
+                    isIgnoreExitValue = true
+                }.exitValue == 0
             if (!rubyAvailable) {
                 throw GradleException("Ruby is required to inject SPM dependencies but was not found on PATH.")
             }
 
-            val gemAvailable = exec {
-                commandLine("gem", "list", "-i", "^xcodeproj\$")
-                isIgnoreExitValue = true
-            }.exitValue == 0
+            val gemAvailable =
+                exec {
+                    commandLine("gem", "list", "-i", "^xcodeproj\$")
+                    isIgnoreExitValue = true
+                }.exitValue == 0
             if (!gemAvailable) {
                 println("Installing 'xcodeproj' Ruby gem...")
                 exec { commandLine("gem", "install", "xcodeproj", "--user-install") }
@@ -245,8 +256,13 @@ tasks {
             deps.forEach { dep ->
                 exec {
                     commandLine(
-                        "ruby", "${scriptDir}/spm_manager.rb", "-a", xcodeproj,
-                        dep["url"], dep["version"], dep["name"]
+                        "ruby",
+                        "$scriptDir/spm_manager.rb",
+                        "-a",
+                        xcodeproj,
+                        dep["url"],
+                        dep["version"],
+                        dep["name"],
                     )
                 }
             }
@@ -260,25 +276,27 @@ tasks {
 
         mustRunAfter("updateSPMDependencies")
 
-        val buildScript = file("${rootDir}/../script/build_ios.sh")
+        val buildScript = file("$rootDir/../script/build_ios.sh")
         inputs.file(buildScript)
 
         commandLine("bash", buildScript.absolutePath, "-r")
         environment("INVOKED_BY_GRADLE", "true")
 
-        val iosDir = file("${rootDir}/../ios")
+        val iosDir = file("$rootDir/../ios")
         val pluginModuleName = project.extra["pluginModuleName"] as String
-        val xcodeproj = "${iosDir}/${pluginModuleName}_plugin.xcodeproj"
+        val xcodeproj = "$iosDir/${pluginModuleName}_plugin.xcodeproj"
         val resolvedFile = file("$xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved")
 
-        inputs.file("${rootDir}/../ios/config/config.properties")
-        inputs.files(fileTree(xcodeproj) {
-            include("**/*.pbxproj", "**/project.pbxproj")
-        })
+        inputs.file("$rootDir/../ios/config/config.properties")
+        inputs.files(
+            fileTree(xcodeproj) {
+                include("**/*.pbxproj", "**/project.pbxproj")
+            },
+        )
         inputs.file(buildScript)
 
         outputs.file(resolvedFile)
-        outputs.dir("${iosDir}/build/DerivedData/SourcePackages")
+        outputs.dir("$iosDir/build/DerivedData/SourcePackages")
     }
 
     register<Exec>("buildiOSDebug") {
@@ -292,14 +310,14 @@ tasks {
         inputs.files(project(":addon").tasks.named("generateiOSConfig").map { it.outputs.files })
         inputs.files(project(":addon").tasks.named("copyAssets").map { it.outputs.files })
 
-        inputs.dir("${rootDir}/../ios/src")
-        inputs.files(fileTree("${rootDir}/config"))
-        inputs.files(fileTree("${rootDir}/../ios/config"))
+        inputs.dir("$rootDir/../ios/src")
+        inputs.files(fileTree("$rootDir/config"))
+        inputs.files(fileTree("$rootDir/../ios/config"))
 
-        val buildScript = file("${rootDir}/../script/build_ios.sh")
+        val buildScript = file("$rootDir/../script/build_ios.sh")
         inputs.file(buildScript)
 
-        outputs.dir("${rootDir}/../ios/build/framework")
+        outputs.dir("$rootDir/../ios/build/framework")
 
         finalizedBy("copyiOSBuildArtifacts")
 
@@ -324,14 +342,14 @@ tasks {
         inputs.files(project(":addon").tasks.named("generateiOSConfig").map { it.outputs.files })
         inputs.files(project(":addon").tasks.named("copyAssets").map { it.outputs.files })
 
-        inputs.dir("${rootDir}/../ios/src")
-        inputs.files(fileTree("${rootDir}/config"))
-        inputs.files(fileTree("${rootDir}/../ios/config"))
+        inputs.dir("$rootDir/../ios/src")
+        inputs.files(fileTree("$rootDir/config"))
+        inputs.files(fileTree("$rootDir/../ios/config"))
 
-        val buildScript = file("${rootDir}/../script/build_ios.sh")
+        val buildScript = file("$rootDir/../script/build_ios.sh")
         inputs.file(buildScript)
 
-        outputs.dir("${rootDir}/../ios/build/framework")
+        outputs.dir("$rootDir/../ios/build/framework")
 
         finalizedBy("copyiOSBuildArtifacts")
 
@@ -392,12 +410,12 @@ tasks {
 
         into("ios/plugins") {
             from(frameworkDir) {
-                include("${pluginName}.release.xcframework/**")
-                include("${pluginName}.debug.xcframework/**")
+                include("$pluginName.release.xcframework/**")
+                include("$pluginName.debug.xcframework/**")
             }
         }
 
-        from("${rootDir}/../addon/build/output") {
+        from("$rootDir/../addon/build/output") {
             include("addons/${project.extra["pluginName"]}/**")
             include("ios/plugins/*.gdip")
         }
@@ -452,11 +470,13 @@ tasks {
 
     register<Delete>("uninstallAndroid") {
         description = "Keep demo app's plugin directory and delete everything inside except for .uid and .import files"
-        delete(fileTree("${project.extra["demoDir"]}/addons/${project.extra["pluginName"]}").apply {
-            include("**/*")
-            exclude("**/*.uid")
-            exclude("**/*.import")
-        })
+        delete(
+            fileTree("${project.extra["demoDir"]}/addons/${project.extra["pluginName"]}").apply {
+                include("**/*")
+                exclude("**/*.uid")
+                exclude("**/*.import")
+            },
+        )
     }
 
     register<Delete>("uninstalliOS") {
@@ -465,11 +485,13 @@ tasks {
                 "Delete plugin files inside demo ios directory."
         )
 
-        delete(fileTree("${project.extra["demoDir"]}/addons/${project.extra["pluginName"]}") {
-            include("**/*")
-            exclude("**/*.uid")
-            exclude("**/*.import")
-        })
+        delete(
+            fileTree("${project.extra["demoDir"]}/addons/${project.extra["pluginName"]}") {
+                include("**/*")
+                exclude("**/*.uid")
+                exclude("**/*.import")
+            },
+        )
 
         // iOS plugins cleanup (catches .gdip + .xcframework + .framework)
         val pluginName = project.extra["pluginName"] as String
@@ -477,7 +499,7 @@ tasks {
 
         // Delete every file/folder that belongs to this plugin
         delete(
-            pluginsDir.listFiles()?.filter { it.name.startsWith("$pluginName.") }.orEmpty()
+            pluginsDir.listFiles()?.filter { it.name.startsWith("$pluginName.") }.orEmpty(),
         )
     }
 
@@ -492,9 +514,10 @@ tasks {
 
         val iosDir: String by project.extra
 
-        val iosBuildDir = provider {
-            project.file("$iosDir/build")
-        }
+        val iosBuildDir =
+            provider {
+                project.file("$iosDir/build")
+            }
 
         delete(iosBuildDir)
 

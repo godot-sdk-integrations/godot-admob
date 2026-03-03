@@ -2,15 +2,15 @@
 // © 2024-present https://github.com/cengiz-pz
 //
 
-import java.util.Properties
 import java.io.FileInputStream
+import java.util.Properties
 
 val commonProperties = Properties().apply {
-    load(FileInputStream("${rootDir}/config/config.properties"))
+    load(FileInputStream("$rootDir/config/config.properties"))
 }
 
 val iosProperties = Properties().apply {
-    load(FileInputStream("${rootDir}/../ios/config/config.properties"))
+    load(FileInputStream("$rootDir/../ios/config/config.properties"))
 }
 
 // Apply extra gradle build files that are configured to be applied
@@ -38,8 +38,8 @@ extra.apply {
         }
     }
 
-    set("templateDirectory", "${projectDir}/src")
-    set("buildDir", "${projectDir}/build")
+    set("templateDirectory", "$projectDir/src")
+    set("buildDir", "$projectDir/build")
     set("outputDir", "${get("buildDir")}/output")
 
     // Plugin details
