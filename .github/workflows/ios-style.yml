@@ -1,0 +1,37 @@
+name: iOS Code Style
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'ios/src/**/*.m'
+      - 'ios/src/**/*.mm'
+      - 'ios/src/**/*.h'
+      - 'ios/src/**/*.swift'
+
+jobs:
+  ios-style:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Install clang-format
+        run: brew install clang-format
+
+      - name: Run SwiftLint
+        run: swiftlint lint --config .github/config/swiftlint.yml --path ios/src
+
+      - name: Run clang-format check
+        run: |
+          find ios/src \( -name "*.m" -o -name "*.mm" -o -name "*.h" \) \
+          -exec clang-format --style=file:.github/config/clang-format --dry-run --Werror {} +
+
+      - name: Install editorconfig-checker
+        uses: ./.github/actions/install-ec
+
+      - name: Verify EditorConfig (Final Newline & Trailing Space)
+        run: editorconfig-checker "ios/src/**/*.m" "ios/src/**/*.mm" "ios/src/**/*.h" "ios/src/**/*.swift"

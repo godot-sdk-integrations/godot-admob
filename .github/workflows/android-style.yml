@@ -1,0 +1,56 @@
+name: Android Code Style
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'android/src/**/*.java'
+      - 'android/src/**/*.kt'
+      - 'android/src/**/*.xml'
+
+jobs:
+  android-style:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install ktlint
+        uses: ./.github/actions/install-ktlint
+
+      - name: Run ktlint
+        run: ktlint "android/src/**/*.kt"
+
+      - name: Run Checkstyle
+        run: |
+          CHECKSTYLE_VERSION="13.3.0"
+          wget "https://github.com/checkstyle/checkstyle/releases/download/checkstyle-${CHECKSTYLE_VERSION}/checkstyle-${CHECKSTYLE_VERSION}-all.jar" \
+            -O checkstyle-all.jar
+          java -jar checkstyle-all.jar -c .github/config/checkstyle.xml android/src
+
+      - name: Install xmllint
+        run: sudo apt-get install -y libxml2-utils
+
+      - name: Check XML formatting
+        run: |
+          find android/src -name "*.xml" | while read -r file; do
+            formatted="$(xmllint --format "$file")"
+            original="$(cat "$file")"
+            if [ "$formatted" != "$original" ]; then
+              echo "XML formatting mismatch: $file"
+              diff <(echo "$original") <(echo "$formatted")
+              exit 1
+            fi
+          done
+
+      - name: Install editorconfig-checker
+        uses: ./.github/actions/install-ec
+
+      - name: Verify EditorConfig (Final Newline & Trailing Space)
+        run: editorconfig-checker "android/src/**/*.java" "android/src/**/*.kt" "android/src/**/*.xml"

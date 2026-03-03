@@ -6,53 +6,53 @@ import java.util.Properties
 import java.io.FileInputStream
 
 val commonProperties = Properties().apply {
-	load(FileInputStream("${rootDir}/config/config.properties"))
+    load(FileInputStream("${rootDir}/config/config.properties"))
 }
 
 val iosProperties = Properties().apply {
-	load(FileInputStream("${rootDir}/../ios/config/config.properties"))
+    load(FileInputStream("${rootDir}/../ios/config/config.properties"))
 }
 
 // Apply extra gradle build files that are configured to be applied
 commonProperties.forEach { entry ->
-	val key = entry.key.toString()
-	if (key.startsWith("gradle.")) {
-		val fileName = entry.value.toString().trim()
-		if (fileName.isNotBlank()) {
-			val relativePath = if (fileName.startsWith("/")) fileName else "./$fileName"
-			apply(from = relativePath)
-			println("[CONFIG] Applied extra script: $fileName (from property $key)")
-		}
-	}
+    val key = entry.key.toString()
+    if (key.startsWith("gradle.")) {
+        val fileName = entry.value.toString().trim()
+        if (fileName.isNotBlank()) {
+            val relativePath = if (fileName.startsWith("/")) fileName else "./$fileName"
+            apply(from = relativePath)
+            println("[CONFIG] Applied extra script: $fileName (from property $key)")
+        }
+    }
 }
 
 extra.apply {
-	// Set extra properties from config
-	commonProperties.forEach { entry ->
-		val key = entry.key.toString()
-		if (key.startsWith("extra.")) {
-			val propertyName = key.removePrefix("extra.")
-			val propertyValue = entry.value.toString()
-			set(propertyName, propertyValue)
-			println("[CONFIG] Set extra property: $propertyName to $propertyValue")
-		}
-	}
+    // Set extra properties from config
+    commonProperties.forEach { entry ->
+        val key = entry.key.toString()
+        if (key.startsWith("extra.")) {
+            val propertyName = key.removePrefix("extra.")
+            val propertyValue = entry.value.toString()
+            set(propertyName, propertyValue)
+            println("[CONFIG] Set extra property: $propertyName to $propertyValue")
+        }
+    }
 
-	set("templateDirectory", "${projectDir}/src")
-	set("buildDir", "${projectDir}/build")
-	set("outputDir", "${get("buildDir")}/output")
+    set("templateDirectory", "${projectDir}/src")
+    set("buildDir", "${projectDir}/build")
+    set("outputDir", "${get("buildDir")}/output")
 
-	// Plugin details
-	set("pluginNodeName", commonProperties.getProperty("pluginNodeName"))
-	set("pluginName", "${get("pluginNodeName")}Plugin")
-	set("pluginPackageName", commonProperties.getProperty("pluginPackage"))
-	set("pluginVersion", commonProperties.getProperty("pluginVersion"))
+    // Plugin details
+    set("pluginNodeName", commonProperties.getProperty("pluginNodeName"))
+    set("pluginName", "${get("pluginNodeName")}Plugin")
+    set("pluginPackageName", commonProperties.getProperty("pluginPackage"))
+    set("pluginVersion", commonProperties.getProperty("pluginVersion"))
 
-	// iOS
-	set("iosPlatformVersion", iosProperties.getProperty("platform_version"))
-	set("iosFrameworks", iosProperties.getProperty("frameworks"))
-	set("iosEmbeddedFrameworks", iosProperties.getProperty("embedded_frameworks"))
-	set("iosLinkerFlags", iosProperties.getProperty("flags"))
-	set("iosInitializationMethod", "${commonProperties.getProperty("pluginModuleName")}_plugin_init")
-	set("iosDeinitializationMethod", "${commonProperties.getProperty("pluginModuleName")}_plugin_deinit")
+    // iOS
+    set("iosPlatformVersion", iosProperties.getProperty("platform_version"))
+    set("iosFrameworks", iosProperties.getProperty("frameworks"))
+    set("iosEmbeddedFrameworks", iosProperties.getProperty("embedded_frameworks"))
+    set("iosLinkerFlags", iosProperties.getProperty("flags"))
+    set("iosInitializationMethod", "${commonProperties.getProperty("pluginModuleName")}_plugin_init")
+    set("iosDeinitializationMethod", "${commonProperties.getProperty("pluginModuleName")}_plugin_deinit")
 }

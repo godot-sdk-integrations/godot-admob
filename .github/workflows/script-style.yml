@@ -1,0 +1,38 @@
+name: Script Code Style
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'script/**/*.sh'
+      - 'script/**/*.rb'
+
+jobs:
+  script-style:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install ShellCheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Run ShellCheck
+        run: shellcheck script/**/*.sh
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Install RuboCop
+        run: gem install rubocop -v 1.70.0
+
+      - name: Run RuboCop
+        run: rubocop --config .github/config/rubocop.yml script
+
+      - name: Install editorconfig-checker
+        uses: ./.github/actions/install-ec
+
+      - name: Verify EditorConfig (Final Newline & Trailing Space)
+        run: editorconfig-checker "script/**/*.sh" "script/**/*.rb"
