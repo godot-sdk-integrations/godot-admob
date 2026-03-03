@@ -1,0 +1,28 @@
+name: Gradle Kotlin DSL Style
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'addon/*.gradle.kts'
+      - 'android/*.gradle.kts'
+      - 'common/*.gradle.kts'
+
+jobs:
+  gradle-kts-style:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install ktlint
+        uses: ./.github/actions/install-ktlint
+
+      - name: Run ktlint on Gradle Kotlin DSL files
+        run: ktlint "addon/*.gradle.kts" "android/*.gradle.kts" "common/*.gradle.kts"
+
+      - name: Install editorconfig-checker
+        uses: ./.github/actions/install-ec
+
+      - name: Verify EditorConfig (Final Newline & Trailing Space)
+        run: find addon android common -maxdepth 1 -name "*.gradle.kts" | xargs editorconfig-checker

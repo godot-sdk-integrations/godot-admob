@@ -1,0 +1,46 @@
+included:
+  - ios/src
+
+excluded:
+  - ios/src/**/Generated
+  - ios/src/**/Pods
+
+opt_in_rules:
+  - empty_count
+  - explicit_init
+  - fatal_error_message
+  - first_where
+  - force_unwrapping
+  - modifier_order
+  - overridden_super_call
+  - private_action
+  - redundant_nil_coalescing
+  - sorted_imports
+
+disabled_rules:
+  - empty_parameters
+
+line_length:
+  warning: 120
+  error: 140
+  ignores_urls: true
+  ignores_comments: true
+
+type_body_length:
+  warning: 300
+  error: 400
+
+file_length:
+  warning: 500
+  error: 700
+
+identifier_name:
+  min_length: 2
+  excluded:
+    - id
+    - ad
+    - i
+    - x
+    - y
+
+reporter: "github-actions-logging"

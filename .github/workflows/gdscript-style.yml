@@ -1,0 +1,30 @@
+name: GDScript Code Style
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'addon/src/**/*.gd'
+      - 'demo/**/*.gd'
+
+jobs:
+  gdscript-style:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install GDScript Formatter
+        run: |
+          # Downloads the latest Rust-based binary
+          curl -L https://github.com/GDQuest/gdscript-formatter/releases/latest/download/gdscript-formatter-linux -o /usr/local/bin/gdscript-formatter
+          chmod +x /usr/local/bin/gdscript-formatter
+
+      - name: Verify Tabs and Formatting
+        run: gdscript-formatter --check --use-tabs addon/src demo
+
+      - name: Install editorconfig-checker
+        uses: ./.github/actions/install-ec
+
+      - name: Verify EditorConfig (Final Newline & Trailing Space)
+        run: find addon/src demo -name "*.gd" | xargs editorconfig-checker

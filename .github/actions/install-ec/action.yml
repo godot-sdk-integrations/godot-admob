@@ -1,0 +1,34 @@
+name: Install editorconfig-checker
+description: >
+  Installs a pinned version of editorconfig-checker. Handles Linux and macOS
+  runners automatically, including Apple Silicon vs Intel detection on macOS.
+
+runs:
+  using: composite
+
+  steps:
+    - name: Install editorconfig-checker (Linux)
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        EC_VERSION="3.6.1"
+        curl -O -L "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v${EC_VERSION}/ec-linux-amd64.tar.gz"
+        tar xzf ec-linux-amd64.tar.gz
+        sudo mv bin/ec-linux-amd64 /usr/local/bin/editorconfig-checker
+        rm -rf ec-linux-amd64.tar.gz bin/
+
+    - name: Install editorconfig-checker (macOS)
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        EC_VERSION="3.6.1"
+        ARCH="$(uname -m)"
+        if [ "${ARCH}" = "arm64" ]; then
+          ASSET="ec-darwin-arm64"
+        else
+          ASSET="ec-darwin-amd64"
+        fi
+        curl -O -L "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v${EC_VERSION}/${ASSET}.tar.gz"
+        tar xzf "${ASSET}.tar.gz"
+        sudo mv "bin/${ASSET}" /usr/local/bin/editorconfig-checker
+        rm -rf "${ASSET}.tar.gz" bin/

@@ -122,7 +122,7 @@ Explore the plugin documentation for a deep dive into features:
 
 # <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Video Tutorials
 
-| Admob Plugin on Android | Consent Management with the Admob | Admob Plugin on Android |
+| Admob Plugin on Android | Consent Management with the Admob Plugin | Admob Plugin on Android |
 | :---: | :---: | :---: |
 | by [16BitDev](https://www.youtube.com/@16bitdev) | by [Code Artist](https://www.youtube.com/@codeartist1687) | by [Code Artist](https://www.youtube.com/@codeartist1687) |
 | [<img src="https://img.youtube.com/vi/V9_Gpy0R3RE/0.jpg" width="280" alt="Admob Plugin on Android">](https://www.youtube.com/watch?v=V9_Gpy0R3RE) | [<img src="https://img.youtube.com/vi/MrLcPdoH-yU/0.jpg" width="280" alt="Consent Management with the Admob Plugin">](https://www.youtube.com/watch?v=MrLcPdoH-yU) | [<img src="https://img.youtube.com/vi/K13xFyOYySk/0.jpg" width="280" alt="Admob Plugin on Android">](https://www.youtube.com/watch?v=K13xFyOYySk) |

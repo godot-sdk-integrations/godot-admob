@@ -1,0 +1,21 @@
+name: Properties File Style
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'common/config/*.properties'
+      - 'ios/config/*.properties'
+
+jobs:
+  properties-style:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install editorconfig-checker
+        uses: ./.github/actions/install-ec
+
+      - name: Validate properties formatting
+        run: editorconfig-checker common/config/*.properties ios/config/*.properties
