@@ -26,7 +26,7 @@ jobs:
           ruby-version: '3.2'
 
       - name: Install RuboCop
-        run: gem install rubocop -v 1.70.0
+        run: gem install rubocop -v 1.85.0
 
       - name: Run RuboCop
         run: rubocop --config .github/config/rubocop.yml script
@@ -35,4 +35,4 @@ jobs:
         uses: ./.github/actions/install-ec
 
       - name: Verify EditorConfig (Final Newline & Trailing Space)
-        run: editorconfig-checker "script/**/*.sh" "script/**/*.rb"
+        run: find script \( -name "*.sh" -o -name "*.rb" \) | xargs editorconfig-checker

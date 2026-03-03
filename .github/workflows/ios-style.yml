@@ -34,4 +34,4 @@ jobs:
         uses: ./.github/actions/install-ec
 
       - name: Verify EditorConfig (Final Newline & Trailing Space)
-        run: editorconfig-checker "ios/src/**/*.m" "ios/src/**/*.mm" "ios/src/**/*.h" "ios/src/**/*.swift"
+        run: find ios/src \( -name "*.m" -o -name "*.mm" -o -name "*.h" -o -name "*.swift" \) | xargs editorconfig-checker

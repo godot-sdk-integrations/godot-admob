@@ -53,4 +53,4 @@ jobs:
         uses: ./.github/actions/install-ec
 
       - name: Verify EditorConfig (Final Newline & Trailing Space)
-        run: editorconfig-checker "android/src/**/*.java" "android/src/**/*.kt" "android/src/**/*.xml"
+        run: find android/src \( -name "*.java" -o -name "*.kt" -o -name "*.xml" \) | xargs editorconfig-checker

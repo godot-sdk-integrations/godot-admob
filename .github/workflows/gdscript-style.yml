@@ -27,4 +27,4 @@ jobs:
         uses: ./.github/actions/install-ec
 
       - name: Verify EditorConfig (Final Newline & Trailing Space)
-        run: editorconfig-checker "addon/src/**/*.gd" "demo/**/*.gd"
+        run: find addon/src demo -name "*.gd" | xargs editorconfig-checker

@@ -25,4 +25,4 @@ jobs:
         uses: ./.github/actions/install-ec
 
       - name: Verify EditorConfig (Final Newline & Trailing Space)
-        run: editorconfig-checker "addon/*.gradle.kts" "android/*.gradle.kts" "common/*.gradle.kts"
+        run: find addon android common -maxdepth 1 -name "*.gradle.kts" | xargs editorconfig-checker
