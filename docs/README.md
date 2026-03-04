@@ -4,8 +4,6 @@
 	<img width="128" height="128" src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-ios.png">
 </div>
 
----
-
 <div align="center">
 	<a href="https://github.com/godot-sdk-integrations/godot-admob">
 	<img src="https://img.shields.io/github/stars/godot-sdk-integrations/godot-admob?style=social" />
@@ -14,8 +12,6 @@
 	<img src="https://img.shields.io/github/downloads/godot-sdk-integrations/godot-admob/latest/total?label=Downloads" />
 	<img src="https://img.shields.io/github/downloads/godot-sdk-integrations/godot-admob/total?label=Total%20Downloads" />
 </div>
-
----
 
 # <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Godot Admob Plugin
 

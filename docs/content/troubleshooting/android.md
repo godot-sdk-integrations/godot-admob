@@ -1,5 +1,6 @@
 ---
 title: Android troubleshooting
+icon: fontawesome/brands/android
 ---
 
 # <img src="../images/icon.png" width="20"> Troubleshooting for Android

@@ -1,5 +1,6 @@
 ---
 title: User consent
+icon: fontawesome/solid/user-shield
 ---
 
 # <img src="../images/icon.png" width="20"> User Consent

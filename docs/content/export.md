@@ -1,5 +1,6 @@
 ---
 title: Export
+icon: fontawesome/solid/upload
 ---
 
 # <img src="./images/icon.png" width="20"> Export

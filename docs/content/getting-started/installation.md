@@ -1,5 +1,6 @@
 ---
 title: Installation
+icon: fontawesome/solid/download
 ---
 
 # <img src="../images/icon.png" width="20"> Installation

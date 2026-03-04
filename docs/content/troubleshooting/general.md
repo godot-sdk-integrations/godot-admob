@@ -1,5 +1,6 @@
 ---
 title: General troubleshooting
+icon: fontawesome/solid/wrench
 ---
 
 # <img src="../images/icon.png" width="24"> General Troubleshooting

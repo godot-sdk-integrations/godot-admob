@@ -1,5 +1,6 @@
 ---
 title: iOS troubleshooting
+icon: fontawesome/brands/apple
 ---
 
 # <img src="../images/icon.png" width="20"> Troubleshooting for iOS

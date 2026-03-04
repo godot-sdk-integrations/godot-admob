@@ -1,5 +1,6 @@
 ---
 title: Overview
+icon: fontawesome/solid/info
 ---
 
 # <img src="../images/icon.png" width="28"> Contributing

@@ -1,5 +1,6 @@
 ---
 title: Classes
+icon: fontawesome/solid/cubes
 ---
 
 # <img src="../images/icon.png" width="20"> Classes

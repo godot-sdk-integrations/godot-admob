@@ -1,5 +1,6 @@
 ---
 title: Multi scene
+icon: fontawesome/solid/layer-group
 ---
 
 # <img src="../images/icon.png" width="20"> Multi-scene projects

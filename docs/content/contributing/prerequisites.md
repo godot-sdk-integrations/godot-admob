@@ -1,5 +1,6 @@
 ---
 title: Prerequisites
+icon: fontawesome/solid/list-check
 ---
 
 # <img src="../images/icon.png" width="24"> Prerequisites

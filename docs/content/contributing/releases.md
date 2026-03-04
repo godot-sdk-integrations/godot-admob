@@ -1,5 +1,6 @@
 ---
 title: Releases
+icon: fontawesome/solid/tag
 ---
 
 # <img src="../images/icon.png" width="24"> Creating Releases

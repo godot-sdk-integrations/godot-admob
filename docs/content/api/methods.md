@@ -1,5 +1,6 @@
 ---
 title: Methods
+icon: fontawesome/solid/bolt
 ---
 
 # <img src="../images/icon.png" width="20"> Methods

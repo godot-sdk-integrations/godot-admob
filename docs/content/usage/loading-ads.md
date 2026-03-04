@@ -1,5 +1,6 @@
 ---
 title: Loading ads
+icon: fontawesome/solid/spinner
 ---
 
 # <img src="../images/icon.png" width="18"> Loading and displaying ads
