@@ -9,14 +9,13 @@
 
 #import "load_ad_request.h"
 
-
 @interface RewardedAd : AdFormatBase <GADFullScreenContentDelegate>
 
 @property(nonatomic, strong) GADRewardedAd *gadAd;
 
-- (instancetype) initWithID:(NSString*) adId;
-- (void) load:(LoadAdRequest*) loadAdRequest;
-- (void) show;
+- (instancetype)initWithID:(NSString *)adId;
+- (void)load:(LoadAdRequest *)loadAdRequest;
+- (void)show;
 
 @end
 

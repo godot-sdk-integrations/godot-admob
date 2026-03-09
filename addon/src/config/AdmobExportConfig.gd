@@ -1,8 +1,8 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
-class_name AdmobExportConfig extends RefCounted
+class_name AdmobExportConfig
+extends RefCounted
 
 const PLUGIN_NODE_TYPE_NAME = "@pluginNodeName@"
 const PLUGIN_NAME: String = "@pluginName@"
@@ -46,7 +46,15 @@ func load_export_config_from_file() -> Error:
 
 		if __config_file.has_section(CONFIG_FILE_SECTION_MEDIATION):
 			if __config_file.has_section_key(CONFIG_FILE_SECTION_MEDIATION, CONFIG_FILE_KEY_ENABLED_NETWORKS):
-				var __network_array := Array(__config_file.get_value(CONFIG_FILE_SECTION_MEDIATION, CONFIG_FILE_KEY_ENABLED_NETWORKS, []), TYPE_STRING, &"", null) as Array[String]
+				var __network_array := (
+					Array(
+						__config_file.get_value(CONFIG_FILE_SECTION_MEDIATION, CONFIG_FILE_KEY_ENABLED_NETWORKS, []),
+						TYPE_STRING,
+						&"",
+						null,
+					)
+					as Array[String]
+				)
 
 				for __network in __network_array:
 					if MediationNetwork.is_valid_tag(__network):
@@ -54,8 +62,15 @@ func load_export_config_from_file() -> Error:
 					else:
 						Admob.log_error("Invalid network tag '%s' in file %s!" % [__network, __config_file_path])
 			else:
-				Admob.log_error("Missing key %s in section %s of %s!" % [CONFIG_FILE_KEY_ENABLED_NETWORKS,
-						CONFIG_FILE_SECTION_MEDIATION, __config_file_path])
+				(
+					Admob
+					. log_error(
+						(
+							"Missing key %s in section %s of %s!"
+							% [CONFIG_FILE_KEY_ENABLED_NETWORKS, CONFIG_FILE_SECTION_MEDIATION, __config_file_path]
+						),
+					)
+				)
 
 		if is_real == null or debug_application_id == null or real_application_id == null:
 			__result = Error.ERR_INVALID_DATA
@@ -106,8 +121,11 @@ func load_export_config_from_node() -> Error:
 	if not __admob_node:
 		Admob.log_info("Searching all project scenes for %s node..." % PLUGIN_NODE_TYPE_NAME)
 
-		var collect_scene_paths: Callable = func(a_dir_path: String, a_collected_paths: Array[String],
-				a_recursive_func: Callable) -> void:
+		var collect_scene_paths: Callable = func(
+			a_dir_path: String,
+			a_collected_paths: Array[String],
+			a_recursive_func: Callable,
+		) -> void:
 			for __file in DirAccess.get_files_at(a_dir_path):
 				if __file.ends_with(".tscn") or __file.ends_with(".scn"):
 					a_collected_paths.append(a_dir_path.path_join(__file))
@@ -151,8 +169,8 @@ func load_platform_specific_export_config_from_node(a_node: Admob) -> Error:
 
 func print_loaded_config() -> void:
 	Admob.log_info("Loaded export configuration settings:")
-	Admob.log_info("... is_real: %s" % ("true" if is_real else "false"))
-	Admob.log_info("... enabled_mediation_networks: %s" % MediationNetwork.generate_tag_list(enabled_mediation_networks))
+	Admob.log_info("  is_real: %s" % ("true" if is_real else "false"))
+	Admob.log_info("  enabled_mediation_networks: %s" % MediationNetwork.generate_tag_list(enabled_mediation_networks))
 
 
 func get_plugin_node(a_node: Node) -> Admob:

@@ -4,7 +4,8 @@
 
 @tool
 @icon("icon.png")
-class_name Admob extends Node
+class_name Admob
+extends Node
 
 signal initialization_completed(status_data: InitializationStatus)
 signal banner_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo)
@@ -83,26 +84,38 @@ const MAXIMUM_CACHE_SIZE: int = 1000
 
 @export_category("General")
 ## The plugin will use real app and ad IDs if true; debug IDs will be used otherwise.
-@export var is_real: bool: set = set_is_real
+@export var is_real: bool:
+	set = set_is_real
 
-## Setting used by publishers in Google's advertising platforms to specify the maximum content maturity level for the ads allowed to be served in their apps.
-@export var max_ad_content_rating: AdmobConfig.ContentRating = AdmobConfig.ContentRating.G: set = set_max_ad_content_rating
+## Setting used by publishers in Google's advertising platforms to specify the maximum content maturity level for the
+## ads allowed to be served in their apps.
+@export var max_ad_content_rating: AdmobConfig.ContentRating = AdmobConfig.ContentRating.G:
+	set = set_max_ad_content_rating
 
-## TFCD is a parameter that publishers and app developers use to indicate to Google that their content should be treated as child-directed for the purposes of
-## the Children's Online Privacy Protection Act (COPPA).
-@export var child_directed: AdmobConfig.TagForChildDirectedTreatment = AdmobConfig.TagForChildDirectedTreatment.UNSPECIFIED: set = set_child_directed
+## TFCD is a parameter that publishers and app developers use to indicate to Google that their content should be
+## treated as child-directed for the purposes of the Children's Online Privacy Protection Act (COPPA).
+@export
+var child_directed: AdmobConfig.TagForChildDirectedTreatment = AdmobConfig.TagForChildDirectedTreatment.UNSPECIFIED:
+	set = set_child_directed
 
-## TFUA is a technical parameter to indicate that a user is under the digital age of consent in the European Economic Area (EEA), the UK, and Switzerland.
-@export var under_age_of_consent: AdmobConfig.TagForUnderAgeOfConsent = AdmobConfig.TagForUnderAgeOfConsent.UNSPECIFIED: set = set_under_age_of_consent
+## TFUA is a technical parameter to indicate that a user is under the digital age of consent in the European Economic
+## Area (EEA), the UK, and Switzerland.
+@export var under_age_of_consent: AdmobConfig.TagForUnderAgeOfConsent = AdmobConfig.TagForUnderAgeOfConsent.UNSPECIFIED:
+	set = set_under_age_of_consent
 
 ## A configuration option that controls the use of first-party IDs for tracking user interactions.
-@export var first_party_id_enabled: bool = true: set = set_first_party_id_enabled
+@export var first_party_id_enabled: bool = true:
+	set = set_first_party_id_enabled
 
-## A parameter used to determine whether a user can receive personalized ads, non-personalized ads, or limited ads based on their consent choices.
-@export var personalization_state: AdmobConfig.PersonalizationState = AdmobConfig.PersonalizationState.DEFAULT: set = set_personalization_state
+## A parameter used to determine whether a user can receive personalized ads, non-personalized ads, or limited ads
+## based on their consent choices.
+@export var personalization_state: AdmobConfig.PersonalizationState = AdmobConfig.PersonalizationState.DEFAULT:
+	set = set_personalization_state
 
-## A string used to identify the origin of an ad request when a third-party library or platform is used to mediate requests to the Google Mobile Ads SDK.
-@export var request_agent: String = PLUGIN_SINGLETON_NAME: set = set_request_agent
+## A string used to identify the origin of an ad request when a third-party library or platform is used to mediate
+## requests to the Google Mobile Ads SDK.
+@export var request_agent: String = PLUGIN_SINGLETON_NAME:
+	set = set_request_agent
 
 ## Whether the plugin should automatically apply the configuration after initialization has been completed.
 @export var auto_configure_on_initialize: bool = true
@@ -118,37 +131,37 @@ const MAXIMUM_CACHE_SIZE: int = 1000
 ## Whether or not the global settings will be reapplied at app restart.
 @export var global_apply_at_startup: bool = false
 
-
 @export_category("Ad Type-specific")
 @export_group("Banner", "banner_")
 ## Part of the screen where the banner ad will be anchored at.
-@export var banner_position: LoadAdRequest.AdPosition = LoadAdRequest.AdPosition.TOP: set = set_banner_position
+@export var banner_position: LoadAdRequest.AdPosition = LoadAdRequest.AdPosition.TOP:
+	set = set_banner_position
 
 ## The size of the banner ad.
-@export var banner_size: LoadAdRequest.RequestedAdSize = LoadAdRequest.RequestedAdSize.BANNER: set = set_banner_size
+@export var banner_size: LoadAdRequest.RequestedAdSize = LoadAdRequest.RequestedAdSize.BANNER:
+	set = set_banner_size
 
 ## If not set to disabled, then specifies the direction towards which the banner ad will collapse.
-@export var banner_collapsible_position: LoadAdRequest.CollapsiblePosition = LoadAdRequest.CollapsiblePosition.DISABLED: set = set_banner_collapsible_position
+@export var banner_collapsible_position: LoadAdRequest.CollapsiblePosition = LoadAdRequest.CollapsiblePosition.DISABLED:
+	set = set_banner_collapsible_position
 
-## When enabled, the banner ad will be positioned within the device’s safe area, leaving space at the top or bottom to avoid UI elements
-## such as notches, rounded corners, and home indicator bars. When disabled, the banner will be anchored directly to the top or bottom edge
-## of the screen, ignoring safe area insets.
+## When enabled, the banner ad will be positioned within the device’s safe area, leaving space at the top or bottom to
+## avoid UI elements such as notches, rounded corners, and home indicator bars. When disabled, the banner will be
+## anchored directly to the top or bottom edge of the screen, ignoring safe area insets.
 @export var banner_anchor_to_safe_area: bool = false
-
 
 @export_group("App Open")
 ## Specifies whether app open ad will be displayed when users return the app to the foreground state.
-@export var auto_show_on_resume: bool = false: set = set_auto_show_on_resume
-
+@export var auto_show_on_resume: bool = false:
+	set = set_auto_show_on_resume
 
 @export_category("Android-specific")
-@export_group("Android Application IDs","android_")
+@export_group("Android Application IDs", "android_")
 ## Specifies the AdMob application ID used when testing the app on Android.
 @export var android_debug_application_id: String = ""
 
 ## Specifies the AdMob application ID used after releasing the Android app to production.
 @export var android_real_application_id: String = ""
-
 
 @export_group("Android Debug Ad Unit IDs", "android_debug_")
 ## Specifies the AdMob banner ad ID used when testing the app on Android.
@@ -188,15 +201,13 @@ const MAXIMUM_CACHE_SIZE: int = 1000
 ## Specifies the AdMob native ad ID used after releasing the Android app to production.
 @export var android_real_native_id: String = ""
 
-
 @export_category("iOS-specific")
-@export_group("iOS Application IDs","ios_")
+@export_group("iOS Application IDs", "ios_")
 ## Specifies the AdMob application ID used when testing the app on iOS.
 @export var ios_debug_application_id: String = ""
 
 ## Specifies the AdMob application ID used after releasing the iOS app to production.
 @export var ios_real_application_id: String = ""
-
 
 @export_group("iOS Debug Ad Unit IDs", "ios_debug_")
 ## Specifies the AdMob banner ad ID used when testing the app on iOS.
@@ -217,7 +228,6 @@ const MAXIMUM_CACHE_SIZE: int = 1000
 ## Specifies the AdMob native ad ID used when testing the app on ios.
 @export var ios_debug_native_id: String = IOS_NATIVE_DEMO_AD_UNIT_ID
 
-
 @export_group("iOS Real Ad Unit IDs", "ios_real_")
 ## Specifies the AdMob banner ad ID used after releasing the iOS app to production.
 @export var ios_real_banner_id: String = ""
@@ -237,7 +247,6 @@ const MAXIMUM_CACHE_SIZE: int = 1000
 ## Specifies the AdMob native ad ID used after releasing the iOS app to production.
 @export var ios_real_native_id: String = ""
 
-
 @export_group("App Tracking Transparency")
 ## Whether the iOS-specific App Tracking Transparency (ATT) work flow is enabled for the app.
 @export var att_enabled: bool = false:
@@ -246,39 +255,44 @@ const MAXIMUM_CACHE_SIZE: int = 1000
 	set(value):
 		att_enabled = value
 
-## The iOS-specific custom message explaining why your app is requesting tracking permission, to be displayed within the App Tracking Transparency (ATT) dialog presented to the user.
-@export_multiline var att_text: String = "": set = set_att_text
-
+## The iOS-specific custom message explaining why your app is requesting tracking permission, to be displayed within
+## the App Tracking Transparency (ATT) dialog presented to the user.
+@export_multiline var att_text: String = "":
+	set = set_att_text
 
 @export_category("Mediation")
 @export_group("Networks")
 ## List of ad networks whose SDKs will be attached to the exported app.
-@export_flags(" ") var enabled_networks = 0	# Networks populated in _validate_property() function
-
+@export_flags(" ") var enabled_networks = 0  # Networks populated in _validate_property() function
 
 @export_group("Network Extras")
-## Allows passing of additional, network-specific parameters from the app to an ad network's adapter during an ad request.
+## Allows passing of additional, network-specific parameters from the app to an ad network's adapter during an ad
+## request.
 @export var network_extras: Array[NetworkExtras] = []
-
 
 @export_category("Cache")
 @export_group("Limits")
 ## Maximum number of banner ads to keep in the cache before removing old ads.
-@export_range(MINIMUM_CACHE_SIZE,MAXIMUM_CACHE_SIZE) var max_banner_ad_cache: int = 10: set = set_max_banner_ad_cache
+@export_range(MINIMUM_CACHE_SIZE, MAXIMUM_CACHE_SIZE) var max_banner_ad_cache: int = 10:
+	set = set_max_banner_ad_cache
 
 ## Maximum number of interstitial ads to keep in the cache before removing old ads.
-@export_range(MINIMUM_CACHE_SIZE,MAXIMUM_CACHE_SIZE) var max_interstitial_ad_cache: int = 3: set = set_max_interstitial_ad_cache
+@export_range(MINIMUM_CACHE_SIZE, MAXIMUM_CACHE_SIZE) var max_interstitial_ad_cache: int = 3:
+	set = set_max_interstitial_ad_cache
 
 ## Maximum number of rewarded ads to keep in the cache before removing old ads.
-@export_range(MINIMUM_CACHE_SIZE,MAXIMUM_CACHE_SIZE) var max_rewarded_ad_cache: int = 3: set = set_max_rewarded_ad_cache
+@export_range(MINIMUM_CACHE_SIZE, MAXIMUM_CACHE_SIZE) var max_rewarded_ad_cache: int = 3:
+	set = set_max_rewarded_ad_cache
 
 ## Maximum number of rewarded-interstitial ads to keep in the cache before removing old ads.
-@export_range(MINIMUM_CACHE_SIZE,MAXIMUM_CACHE_SIZE) var max_rewarded_interstitial_ad_cache: int = 3: set = set_max_rewarded_interstitial_ad_cache
+@export_range(MINIMUM_CACHE_SIZE, MAXIMUM_CACHE_SIZE) var max_rewarded_interstitial_ad_cache: int = 3:
+	set = set_max_rewarded_interstitial_ad_cache
 
 ## Maximum number of native ads to keep in the cache before removing old ads.
-@export_range(MINIMUM_CACHE_SIZE,MAXIMUM_CACHE_SIZE) var max_native_ad_cache: int = 10: set = set_max_native_ad_cache
+@export_range(MINIMUM_CACHE_SIZE, MAXIMUM_CACHE_SIZE) var max_native_ad_cache: int = 10:
+	set = set_max_native_ad_cache
 
-@export_group("Cleanup After Ad Displayed") # For single-use ad types. Banner ads are multi-use.
+@export_group("Cleanup After Ad Displayed")  # For single-use ad types. Banner ads are multi-use.
 ## Cleanup cached interstitial ads after they are displayed. Interstitial ads are single-use.
 @export var remove_interstitial_ads_after_displayed: bool = false
 
@@ -287,7 +301,6 @@ const MAXIMUM_CACHE_SIZE: int = 1000
 
 ## Cleanup cached rewarded-interstitial ads after they are displayed. Rewarded-interstitial ads are single-use.
 @export var remove_rewarded_interstitial_ads_after_displayed: bool = true
-
 
 @export_group("Cleanup After Scene Exit")
 ## Cleanup cached banner ads when the Admob node is destroyed.
@@ -302,11 +315,11 @@ const MAXIMUM_CACHE_SIZE: int = 1000
 ## Cleanup cached rewarded-interstitial ads when the Admob node is destroyed.
 @export var remove_rewarded_interstitial_ads_after_scene: bool = true
 
-
 @export_category("Debug")
 @export_group("Settings")
 ## The user location used when testing the consent management functionality.
-@export var debug_geography: ConsentRequestParameters.DebugGeography = ConsentRequestParameters.DebugGeography.NOT_SET : set = set_debug_geography
+@export var debug_geography: ConsentRequestParameters.DebugGeography = ConsentRequestParameters.DebugGeography.NOT_SET:
+	set = set_debug_geography
 
 ## A list of SHA-256–hashed device IDs that should be registered as test devices in AdMob.
 @export var test_device_hashed_ids: Array[String] = []
@@ -335,11 +348,23 @@ func _init() -> void:
 	is_initialization_completed = false
 
 	_active_banner_ads = AdCache.new(max_banner_ad_cache, "banner_ad", remove_banner_ad)
-	_active_interstitial_ads = AdCache.new(max_interstitial_ad_cache, "interstitial_ad",
-			remove_interstitial_ad)
+	_active_interstitial_ads = (
+		AdCache
+		. new(
+			max_interstitial_ad_cache,
+			"interstitial_ad",
+			remove_interstitial_ad,
+		)
+	)
 	_active_rewarded_ads = AdCache.new(max_rewarded_ad_cache, "rewarded_ad", remove_rewarded_ad)
-	_active_rewarded_interstitial_ads = AdCache.new(max_rewarded_interstitial_ad_cache,
-			"rewarded_interstitial_ad", remove_rewarded_interstitial_ad)
+	_active_rewarded_interstitial_ads = (
+		AdCache
+		. new(
+			max_rewarded_interstitial_ad_cache,
+			"rewarded_interstitial_ad",
+			remove_rewarded_interstitial_ad,
+		)
+	)
 	_active_native_ads = AdCache.new(max_native_ad_cache, "native_ad", remove_native_ad)
 
 
@@ -431,38 +456,104 @@ func _connect_signals() -> void:
 	_plugin_singleton.connect("interstitial_ad_refreshed", _on_interstitial_ad_refreshed)
 	_plugin_singleton.connect("interstitial_ad_impression", _on_interstitial_ad_impression)
 	_plugin_singleton.connect("interstitial_ad_clicked", _on_interstitial_ad_clicked)
-	_plugin_singleton.connect("interstitial_ad_showed_full_screen_content", _on_interstitial_ad_showed_full_screen_content)
-	_plugin_singleton.connect("interstitial_ad_failed_to_show_full_screen_content", _on_interstitial_ad_failed_to_show_full_screen_content)
-	_plugin_singleton.connect("interstitial_ad_dismissed_full_screen_content", _on_interstitial_ad_dismissed_full_screen_content)
+	(
+		_plugin_singleton
+		. connect(
+			"interstitial_ad_showed_full_screen_content",
+			_on_interstitial_ad_showed_full_screen_content,
+		)
+	)
+	(
+		_plugin_singleton
+		. connect(
+			"interstitial_ad_failed_to_show_full_screen_content",
+			_on_interstitial_ad_failed_to_show_full_screen_content,
+		)
+	)
+	(
+		_plugin_singleton
+		. connect(
+			"interstitial_ad_dismissed_full_screen_content",
+			_on_interstitial_ad_dismissed_full_screen_content,
+		)
+	)
 	_plugin_singleton.connect("rewarded_ad_loaded", _on_rewarded_ad_loaded)
 	_plugin_singleton.connect("rewarded_ad_failed_to_load", _on_rewarded_ad_failed_to_load)
 	_plugin_singleton.connect("rewarded_ad_impression", _on_rewarded_ad_impression)
 	_plugin_singleton.connect("rewarded_ad_clicked", _on_rewarded_ad_clicked)
 	_plugin_singleton.connect("rewarded_ad_showed_full_screen_content", _on_rewarded_ad_showed_full_screen_content)
-	_plugin_singleton.connect("rewarded_ad_failed_to_show_full_screen_content", _on_rewarded_ad_failed_to_show_full_screen_content)
-	_plugin_singleton.connect("rewarded_ad_dismissed_full_screen_content", _on_rewarded_ad_dismissed_full_screen_content)
+	(
+		_plugin_singleton
+		. connect(
+			"rewarded_ad_failed_to_show_full_screen_content",
+			_on_rewarded_ad_failed_to_show_full_screen_content,
+		)
+	)
+	(
+		_plugin_singleton
+		. connect(
+			"rewarded_ad_dismissed_full_screen_content",
+			_on_rewarded_ad_dismissed_full_screen_content,
+		)
+	)
 	_plugin_singleton.connect("rewarded_ad_user_earned_reward", _on_rewarded_ad_user_earned_reward)
 	_plugin_singleton.connect("rewarded_interstitial_ad_loaded", _on_rewarded_interstitial_ad_loaded)
 	_plugin_singleton.connect("rewarded_interstitial_ad_failed_to_load", _on_rewarded_interstitial_ad_failed_to_load)
 	_plugin_singleton.connect("rewarded_interstitial_ad_impression", _on_rewarded_interstitial_ad_impression)
 	_plugin_singleton.connect("rewarded_interstitial_ad_clicked", _on_rewarded_interstitial_ad_clicked)
-	_plugin_singleton.connect("rewarded_interstitial_ad_showed_full_screen_content", _on_rewarded_interstitial_ad_showed_full_screen_content)
-	_plugin_singleton.connect("rewarded_interstitial_ad_failed_to_show_full_screen_content", _on_rewarded_interstitial_ad_failed_to_show_full_screen_content)
-	_plugin_singleton.connect("rewarded_interstitial_ad_dismissed_full_screen_content", _on_rewarded_interstitial_ad_dismissed_full_screen_content)
-	_plugin_singleton.connect("rewarded_interstitial_ad_user_earned_reward", _on_rewarded_interstitial_ad_user_earned_reward)
+	(
+		_plugin_singleton
+		. connect(
+			"rewarded_interstitial_ad_showed_full_screen_content",
+			_on_rewarded_interstitial_ad_showed_full_screen_content,
+		)
+	)
+	(
+		_plugin_singleton
+		. connect(
+			"rewarded_interstitial_ad_failed_to_show_full_screen_content",
+			_on_rewarded_interstitial_ad_failed_to_show_full_screen_content,
+		)
+	)
+	(
+		_plugin_singleton
+		. connect(
+			"rewarded_interstitial_ad_dismissed_full_screen_content",
+			_on_rewarded_interstitial_ad_dismissed_full_screen_content,
+		)
+	)
+	(
+		_plugin_singleton
+		. connect(
+			"rewarded_interstitial_ad_user_earned_reward",
+			_on_rewarded_interstitial_ad_user_earned_reward,
+		)
+	)
 	_plugin_singleton.connect("app_open_ad_loaded", _on_app_open_ad_loaded)
 	_plugin_singleton.connect("app_open_ad_failed_to_load", _on_app_open_ad_failed_to_load)
 	_plugin_singleton.connect("app_open_ad_impression", _on_app_open_ad_impression)
 	_plugin_singleton.connect("app_open_ad_clicked", _on_app_open_ad_clicked)
 	_plugin_singleton.connect("app_open_ad_showed_full_screen_content", _on_app_open_ad_showed_full_screen_content)
-	_plugin_singleton.connect("app_open_ad_failed_to_show_full_screen_content", _on_app_open_ad_failed_to_show_full_screen_content)
-	_plugin_singleton.connect("app_open_ad_dismissed_full_screen_content", _on_app_open_ad_dismissed_full_screen_content)
+	(
+		_plugin_singleton
+		. connect(
+			"app_open_ad_failed_to_show_full_screen_content",
+			_on_app_open_ad_failed_to_show_full_screen_content,
+		)
+	)
+	(
+		_plugin_singleton
+		. connect(
+			"app_open_ad_dismissed_full_screen_content",
+			_on_app_open_ad_dismissed_full_screen_content,
+		)
+	)
 	_plugin_singleton.connect("native_ad_loaded", _on_native_ad_loaded)
 	_plugin_singleton.connect("native_ad_failed_to_load", _on_native_ad_failed_to_load)
 	_plugin_singleton.connect("native_ad_impression", _on_native_ad_impression)
 	_plugin_singleton.connect("native_ad_size_measured", _on_native_ad_size_measured)
 	_plugin_singleton.connect("native_ad_clicked", _on_native_ad_clicked)
-	_plugin_singleton.connect("native_ad_swipe_gesture_clicked", _native_ad_swipe_gesture_clicked)
+	_plugin_singleton.connect("native_ad_swipe_gesture_clicked", _on_native_ad_swipe_gesture_clicked)
 	_plugin_singleton.connect("native_ad_opened", _on_native_ad_opened)
 	_plugin_singleton.connect("native_ad_closed", _on_native_ad_closed)
 	_plugin_singleton.connect("consent_form_loaded", _on_consent_form_loaded)
@@ -557,8 +648,10 @@ func set_max_rewarded_ad_cache(a_value: int) -> void:
 func set_max_rewarded_interstitial_ad_cache(a_value: int) -> void:
 	max_rewarded_interstitial_ad_cache = clampi(a_value, MINIMUM_CACHE_SIZE, MAXIMUM_CACHE_SIZE)
 
+
 func set_max_native_ad_cache(a_value: int) -> void:
 	max_native_ad_cache = clampi(a_value, MINIMUM_CACHE_SIZE, MAXIMUM_CACHE_SIZE)
+
 
 func set_debug_geography(a_value: ConsentRequestParameters.DebugGeography) -> void:
 	debug_geography = a_value
@@ -569,25 +662,23 @@ func is_mediation_enabled() -> bool:
 
 
 func create_request_configuration() -> AdmobConfig:
-	return (AdmobConfig.new()
-			.set_is_real(is_real)
-			.set_max_ad_content_rating(max_ad_content_rating)
-			.set_child_directed_treatment(child_directed)
-			.set_under_age_of_consent(under_age_of_consent)
-			.set_first_party_id_enabled(first_party_id_enabled)
-			.set_personalization_state(personalization_state))
+	var __config := AdmobConfig.new()
+	__config.set_is_real(is_real)
+	__config.set_max_ad_content_rating(max_ad_content_rating)
+	__config.set_child_directed_treatment(child_directed)
+	__config.set_under_age_of_consent(under_age_of_consent)
+	__config.set_first_party_id_enabled(first_party_id_enabled)
+	__config.set_personalization_state(personalization_state)
+
+	return __config
 
 
 func set_request_configuration(a_config: AdmobConfig = null) -> void:
 	if _plugin_singleton != null:
 		if a_config == null:
-			a_config = (AdmobConfig.new()
-					.set_is_real(is_real)
-					.set_max_ad_content_rating(max_ad_content_rating)
-					.set_child_directed_treatment(child_directed)
-					.set_under_age_of_consent(under_age_of_consent)
-					.set_first_party_id_enabled(first_party_id_enabled)
-					.set_personalization_state(personalization_state))
+			a_config = AdmobConfig.new().set_is_real(is_real).set_max_ad_content_rating(max_ad_content_rating)
+			a_config.set_child_directed_treatment(child_directed).set_under_age_of_consent(under_age_of_consent)
+			a_config.set_first_party_id_enabled(first_party_id_enabled).set_personalization_state(personalization_state)
 
 		_plugin_singleton.set_request_configuration(a_config.get_raw_data())
 	else:
@@ -615,10 +706,9 @@ func get_global_settings() -> AdmobSettings:
 func set_global_settings(a_settings: AdmobSettings = null) -> void:
 	if _plugin_singleton != null:
 		if a_settings == null:
-			a_settings = (AdmobSettings.new()
-					.set_ad_volume(global_ad_volume)
-					.set_ads_muted(global_ads_muted)
-					.set_apply_at_startup(global_apply_at_startup))
+			a_settings = AdmobSettings.new().set_ad_volume(global_ad_volume).set_ads_muted(global_ads_muted)
+			a_settings.set_apply_at_startup(global_apply_at_startup)
+
 		_plugin_singleton.set_global_settings(a_settings.get_raw_data())
 	else:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
@@ -636,12 +726,10 @@ func create_basic_ad_request() -> LoadAdRequest:
 
 
 func create_banner_ad_request() -> LoadAdRequest:
-	return (create_basic_ad_request()
-			.set_ad_unit_id(_banner_id)
-			.set_ad_position(banner_position)
-			.set_ad_size(banner_size)
-			.set_collapsible_position(banner_collapsible_position)
-			.set_anchor_to_safe_area(banner_anchor_to_safe_area))
+	var __request: LoadAdRequest = create_basic_ad_request().set_ad_unit_id(_banner_id).set_ad_position(banner_position)
+	__request.set_ad_size(banner_size).set_collapsible_position(banner_collapsible_position)
+	__request.set_anchor_to_safe_area(banner_anchor_to_safe_area)
+	return __request
 
 
 func load_banner_ad(a_request: LoadAdRequest = null) -> void:
@@ -670,7 +758,7 @@ func show_banner_ad(a_ad_id: String = "") -> void:
 			if _active_banner_ads.is_empty():
 				Admob.log_error("Cannot show banner ad. No banner ads loaded.")
 			else:
-				_plugin_singleton.show_banner_ad(_active_banner_ads.last_key())	# show last ad to load
+				_plugin_singleton.show_banner_ad(_active_banner_ads.last_key())  # show last ad to load
 		else:
 			if _active_banner_ads.has_key(a_ad_id):
 				_plugin_singleton.show_banner_ad(a_ad_id)
@@ -686,7 +774,7 @@ func hide_banner_ad(a_ad_id: String = "") -> void:
 			if _active_banner_ads.is_empty():
 				Admob.log_error("Cannot hide banner ad. No banner ads loaded.")
 			else:
-				_plugin_singleton.hide_banner_ad(_active_banner_ads.last_key())	# hide last ad to load
+				_plugin_singleton.hide_banner_ad(_active_banner_ads.last_key())  # hide last ad to load
 		else:
 			if _active_banner_ads.has_key(a_ad_id):
 				_plugin_singleton.hide_banner_ad(a_ad_id)
@@ -702,7 +790,7 @@ func remove_banner_ad(a_ad_id: String = "") -> void:
 			if _active_banner_ads.is_empty():
 				Admob.log_error("Cannot remove banner ad. No banner ads loaded.")
 			else:
-				_plugin_singleton.remove_banner_ad(_active_banner_ads.erase_last())	# remove last ad to load
+				_plugin_singleton.remove_banner_ad(_active_banner_ads.erase_last())  # remove last ad to load
 		else:
 			if _active_banner_ads.has_key(a_ad_id):
 				_active_banner_ads.erase(a_ad_id)
@@ -727,11 +815,15 @@ func get_banner_dimension(a_ad_id: String = "") -> Vector2:
 				Admob.log_error("Cannot get banner ad dimensions. No banner ads loaded.")
 			else:
 				var last_loaded_banner_ad_id = _active_banner_ads.last_key()
-				return Vector2(_plugin_singleton.get_banner_width(last_loaded_banner_ad_id),
-							_plugin_singleton.get_banner_height(last_loaded_banner_ad_id))
+				return Vector2(
+					_plugin_singleton.get_banner_width(last_loaded_banner_ad_id),
+					_plugin_singleton.get_banner_height(last_loaded_banner_ad_id),
+				)
 		else:
-			return Vector2(_plugin_singleton.get_banner_width(a_ad_id),
-						_plugin_singleton.get_banner_height(a_ad_id))
+			return Vector2(
+				_plugin_singleton.get_banner_width(a_ad_id),
+				_plugin_singleton.get_banner_height(a_ad_id),
+			)
 
 	return Vector2.ZERO
 
@@ -745,11 +837,15 @@ func get_banner_dimension_in_pixels(a_ad_id: String = "") -> Vector2:
 				Admob.log_error("Cannot get banner ad dimensions. No banner ads loaded.")
 			else:
 				var last_loaded_banner_ad_id = _active_banner_ads.last_key()
-				return Vector2(_plugin_singleton.get_banner_width_in_pixels(last_loaded_banner_ad_id),
-							_plugin_singleton.get_banner_height_in_pixels(last_loaded_banner_ad_id))
+				return Vector2(
+					_plugin_singleton.get_banner_width_in_pixels(last_loaded_banner_ad_id),
+					_plugin_singleton.get_banner_height_in_pixels(last_loaded_banner_ad_id),
+				)
 		else:
-			return Vector2(_plugin_singleton.get_banner_width_in_pixels(a_ad_id),
-						_plugin_singleton.get_banner_height_in_pixels(a_ad_id))
+			return Vector2(
+				_plugin_singleton.get_banner_width_in_pixels(a_ad_id),
+				_plugin_singleton.get_banner_height_in_pixels(a_ad_id),
+			)
 
 	return Vector2.ZERO
 
@@ -817,7 +913,7 @@ func show_interstitial_ad(a_ad_id: String = "") -> void:
 			if _active_interstitial_ads.is_empty():
 				Admob.log_error("Cannot show interstitial ad. No interstitial ads loaded.")
 			else:
-				_plugin_singleton.show_interstitial_ad(_active_interstitial_ads.last_key())	# show last ad to load
+				_plugin_singleton.show_interstitial_ad(_active_interstitial_ads.last_key())  # show last ad to load
 		else:
 			_plugin_singleton.show_interstitial_ad(a_ad_id)
 
@@ -830,7 +926,7 @@ func remove_interstitial_ad(a_ad_id: String = "") -> void:
 			if _active_interstitial_ads.is_empty():
 				Admob.log_error("Cannot remove interstitial ad. No interstitial ads loaded.")
 			else:
-				_plugin_singleton.remove_interstitial_ad(_active_interstitial_ads.erase_last())	# remove last ad to load
+				_plugin_singleton.remove_interstitial_ad(_active_interstitial_ads.erase_last())  # remove last ad to load
 		else:
 			if _active_interstitial_ads.has_key(a_ad_id):
 				_active_interstitial_ads.erase(a_ad_id)
@@ -869,7 +965,7 @@ func show_rewarded_ad(a_ad_id: String = "") -> void:
 			if _active_rewarded_ads.is_empty():
 				Admob.log_error("Cannot show rewarded ad. No rewarded ads loaded.")
 			else:
-				_plugin_singleton.show_rewarded_ad(_active_rewarded_ads.last_key())	# show last ad to load
+				_plugin_singleton.show_rewarded_ad(_active_rewarded_ads.last_key())  # show last ad to load
 		else:
 			_plugin_singleton.show_rewarded_ad(a_ad_id)
 
@@ -882,7 +978,7 @@ func remove_rewarded_ad(a_ad_id: String = "") -> void:
 			if _active_rewarded_ads.is_empty():
 				Admob.log_error("Cannot remove rewarded ad. No rewarded ads loaded.")
 			else:
-				_plugin_singleton.remove_rewarded_ad(_active_rewarded_ads.erase_last())	# remove last ad to load
+				_plugin_singleton.remove_rewarded_ad(_active_rewarded_ads.erase_last())  # remove last ad to load
 		else:
 			if _active_rewarded_ads.has_key(a_ad_id):
 				_active_rewarded_ads.erase(a_ad_id)
@@ -921,7 +1017,8 @@ func show_rewarded_interstitial_ad(a_ad_id: String = "") -> void:
 			if _active_rewarded_interstitial_ads.is_empty():
 				Admob.log_error("Cannot show rewarded interstitial ad. No rewarded interstitial ads loaded.")
 			else:
-				_plugin_singleton.show_rewarded_interstitial_ad(_active_rewarded_interstitial_ads.last_key())		# show last ad to load
+				# show last ad to load
+				_plugin_singleton.show_rewarded_interstitial_ad(_active_rewarded_interstitial_ads.last_key())
 		else:
 			_plugin_singleton.show_rewarded_interstitial_ad(a_ad_id)
 
@@ -934,7 +1031,8 @@ func remove_rewarded_interstitial_ad(a_ad_id: String = "") -> void:
 			if _active_rewarded_interstitial_ads.is_empty():
 				Admob.log_error("Cannot remove rewarded interstitial ad. No rewarded interstitial ads loaded.")
 			else:
-				_plugin_singleton.remove_rewarded_interstitial_ad(_active_rewarded_interstitial_ads.erase_last())	# remove last ad to load
+				# remove last ad to load
+				_plugin_singleton.remove_rewarded_interstitial_ad(_active_rewarded_interstitial_ads.erase_last())
 		else:
 			if _active_rewarded_interstitial_ads.has_key(a_ad_id):
 				_active_rewarded_interstitial_ads.erase(a_ad_id)
@@ -970,7 +1068,7 @@ func is_app_open_ad_available() -> bool:
 
 
 func create_native_ad_request() -> LoadAdRequest:
-	return (create_basic_ad_request().set_ad_unit_id(_native_id))
+	return create_basic_ad_request().set_ad_unit_id(_native_id)
 
 
 func load_native_ad(a_request: LoadAdRequest = null) -> void:
@@ -1049,12 +1147,17 @@ func attach_native_ad_to_control(ad_id: String, control: Control) -> void:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if ad_id.is_empty() or control == null:
-			Admob.log_error("Cannot attach native ad to control. Either Ad with ID '%s' not found, or control is null" % ad_id)
+			(
+				Admob
+				. log_error(
+					"Cannot attach native ad to control. Either Ad with ID '%s' not found, or control is null" % ad_id,
+				)
+			)
 		else:
 			if _native_control_bindings.has(ad_id):
 				Admob.log_info("Native ad %s re-attached to new control" % ad_id)
 			_native_control_bindings[ad_id] = control
-			_sync_native_ad_with_control(ad_id, control) # Initial sync
+			_sync_native_ad_with_control(ad_id, control)  # Initial sync
 
 
 func detach_native_ad(ad_id: String) -> void:
@@ -1081,7 +1184,17 @@ func _sync_native_ad_with_control(ad_id: String, control: Control) -> void:
 	var win_y := (canvas_pos.y - vp_rect.position.y) * scale_y
 	var win_w := canvas_size.x * scale_x
 	var win_h := canvas_size.y * scale_y
-	_plugin_singleton.update_native_ad_layout(ad_id, int(win_x), int(win_y), int(win_w), int(win_h), control.is_visible_in_tree())
+	(
+		_plugin_singleton
+		. update_native_ad_layout(
+			ad_id,
+			int(win_x),
+			int(win_y),
+			int(win_w),
+			int(win_h),
+			control.is_visible_in_tree(),
+		)
+	)
 
 
 func _process(_delta):
@@ -1156,9 +1269,8 @@ func set_mediation_privacy_settings(privacySettings: NetworkPrivacySettings) -> 
 	if _plugin_singleton == null:
 		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
-		_plugin_singleton.set_mediation_privacy_settings(privacySettings
-				.set_enabled_networks(MediationNetwork.get_all_enabled_tags(enabled_networks))
-				.get_raw_data())
+		var __tags := MediationNetwork.get_all_enabled_tags(enabled_networks)
+		_plugin_singleton.set_mediation_privacy_settings(privacySettings.set_enabled_networks(__tags).get_raw_data())
 
 
 func request_tracking_authorization() -> void:
@@ -1323,7 +1435,10 @@ func _on_rewarded_interstitial_ad_showed_full_screen_content(a_ad_data: Dictiona
 	rewarded_interstitial_ad_showed_full_screen_content.emit(AdInfo.new(a_ad_data))
 
 
-func _on_rewarded_interstitial_ad_failed_to_show_full_screen_content(a_ad_data: Dictionary, error_data: Dictionary) -> void:
+func _on_rewarded_interstitial_ad_failed_to_show_full_screen_content(
+	a_ad_data: Dictionary,
+	error_data: Dictionary,
+) -> void:
 	rewarded_interstitial_ad_failed_to_show_full_screen_content.emit(AdInfo.new(a_ad_data), AdError.new(error_data))
 
 
@@ -1365,6 +1480,7 @@ func _on_app_open_ad_failed_to_show_full_screen_content(a_ad_data: Dictionary, e
 func _on_app_open_ad_dismissed_full_screen_content(a_ad_data: Dictionary) -> void:
 	app_open_ad_dismissed_full_screen_content.emit(AdInfo.new(a_ad_data))
 
+
 func _on_native_ad_loaded(a_ad_data: Dictionary, a_response_info: Dictionary) -> void:
 	var __ad_info: AdInfo = AdInfo.new(a_ad_data)
 	var __response_info: ResponseInfo = ResponseInfo.new(a_response_info)
@@ -1388,7 +1504,7 @@ func _on_native_ad_clicked(ad_data: Dictionary) -> void:
 	emit_signal("native_ad_clicked", ad_data)
 
 
-func _native_ad_swipe_gesture_clicked(ad_data: Dictionary) -> void:
+func _on_native_ad_swipe_gesture_clicked(ad_data: Dictionary) -> void:
 	emit_signal("native_ad_swipe_gesture_clicked", ad_data)
 
 

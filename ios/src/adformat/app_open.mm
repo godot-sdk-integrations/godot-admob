@@ -4,27 +4,24 @@
 
 #import "app_open.h"
 
-#import "admob_plugin.h"
-#import "admob_response.h"
-#import "admob_logger.h"
 #import "admob_ad_error.h"
 #import "admob_ad_info.h"
 #import "admob_load_ad_error.h"
+#import "admob_logger.h"
+#import "admob_plugin.h"
+#import "admob_response.h"
 #import "gap_converter.h"
 
-
 @interface AdmobAdInfo (Access)
-- (instancetype) initWithId:(NSString *)adId request:(LoadAdRequest *)loadAdRequest;
-- (Dictionary) buildRawData;
+- (instancetype)initWithId:(NSString *)adId request:(LoadAdRequest *)loadAdRequest;
+- (Dictionary)buildRawData;
 @end
-
 
 @interface AppOpenAd ()
 
-@property (nonatomic, strong) AdmobAdInfo *adInfo;
+@property(nonatomic, strong) AdmobAdInfo *adInfo;
 
 @end
-
 
 @implementation AppOpenAd
 
@@ -32,7 +29,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 
 @synthesize plugin;
 
-- (instancetype) initWithPlugin:(AdmobPlugin *)admobPlugin {
+- (instancetype)initWithPlugin:(AdmobPlugin *)admobPlugin {
 	self = [super init];
 	if (self) {
 		self.plugin = admobPlugin;
@@ -46,7 +43,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	return self;
 }
 
-- (Error) loadWithRequest:(LoadAdRequest *)loadAdRequest autoShowOnResume:(BOOL)autoShow {
+- (Error)loadWithRequest:(LoadAdRequest *)loadAdRequest autoShowOnResume:(BOOL)autoShow {
 	if (self.isLoading) {
 		os_log_debug(admob_log, "%@ Cannot load app open ad: App open ad is already loading", kLogTag);
 		return ERR_ALREADY_IN_USE;
@@ -67,34 +64,34 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 
 	os_log_debug(admob_log, "%@ Loading app open ad: %@", kLogTag, self.adUnitId);
 
-	[GADAppOpenAd loadWithAdUnitID:self.adUnitId request:gadRequest
-				completionHandler:^(GADAppOpenAd *_Nullable ad, NSError *_Nullable error) {
-		self.isLoading = NO;
+	[GADAppOpenAd
+			 loadWithAdUnitID:self.adUnitId
+					  request:gadRequest
+			completionHandler:^(GADAppOpenAd *_Nullable ad, NSError *_Nullable error) {
+				self.isLoading = NO;
 
-		self.adInfo = [[AdmobAdInfo alloc] initWithId:self.adUnitId request:loadAdRequest];
-		if (error) {
-			AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
-			os_log_error(admob_log, "%@ Failed to load: %@", kLogTag, loadAdError.message);
+				self.adInfo = [[AdmobAdInfo alloc] initWithId:self.adUnitId request:loadAdRequest];
+				if (error) {
+					AdmobLoadAdError *loadAdError = [[AdmobLoadAdError alloc] initWithNsError:error];
+					os_log_error(admob_log, "%@ Failed to load: %@", kLogTag, loadAdError.message);
 
-			self.plugin->call_deferred("emit_signal", APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL,
-									[self.adInfo buildRawData],
-									[loadAdError buildRawData]);
-		} else {
-			self.loadedAd = ad;
-			self.loadedAd.fullScreenContentDelegate = self;
-			self.loadTime = [[NSDate date] timeIntervalSince1970];
+					self.plugin->call_deferred("emit_signal", APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL,
+							[self.adInfo buildRawData], [loadAdError buildRawData]);
+				} else {
+					self.loadedAd = ad;
+					self.loadedAd.fullScreenContentDelegate = self;
+					self.loadTime = [[NSDate date] timeIntervalSince1970];
 
-			os_log_debug(admob_log, "%@ Loaded %@ successfully", kLogTag, self.adUnitId);
-			self.plugin->call_deferred("emit_signal", APP_OPEN_AD_LOADED_SIGNAL,
-									[self.adInfo buildRawData],
-									[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
-		}
-	}];
+					os_log_debug(admob_log, "%@ Loaded %@ successfully", kLogTag, self.adUnitId);
+					self.plugin->call_deferred("emit_signal", APP_OPEN_AD_LOADED_SIGNAL, [self.adInfo buildRawData],
+							[[[AdmobResponse alloc] initWithResponseInfo:ad.responseInfo] buildRawData]);
+				}
+			}];
 
 	return OK;
 }
 
-- (void) show {
+- (void)show {
 	if (self.isShowing) {
 		os_log_debug(admob_log, "%@ Cannot show app open ad: App open ad is already showing", kLogTag);
 	} else if (![self isAvailable]) {
@@ -111,13 +108,15 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	}
 }
 
-- (BOOL) isAvailable {
-	if (!self.loadedAd) return NO;
+- (BOOL)isAvailable {
+	if (!self.loadedAd) {
+		return NO;
+	}
 	NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
 	return (now - self.loadTime) < (4 * 3600); // 4-hour expiration
 }
 
-- (void) adDidRecordImpression:(nonnull id<GADFullScreenPresentingAd>)ad {
+- (void)adDidRecordImpression:(nonnull id<GADFullScreenPresentingAd>)ad {
 	os_log_debug(admob_log, "%@ Impression recorded", kLogTag);
 	self.isShowing = YES;
 
@@ -126,7 +125,7 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 	}
 }
 
-- (void) adDidRecordClick:(nonnull id<GADFullScreenPresentingAd>)ad {
+- (void)adDidRecordClick:(nonnull id<GADFullScreenPresentingAd>)ad {
 	os_log_debug(admob_log, "%@ Clicked", kLogTag);
 
 	if (self.plugin) {
@@ -135,21 +134,23 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 }
 
 /**
-* Starting with Google Mobile Ads SDK 11.0, the delegate method:
-* (void)adDidPresentFullScreenContent:(id<GADFullScreenPresentingAd>)ad
-* was officially marked as NS_UNAVAILABLE because the SDK no longer reliably calls it (it was flaky across
-* different ad networks in the mediation waterfall). Google now expects developers to treat
-* adWillPresentFullScreenContent: as the definitive "ad is now showing" signal.
-*/
-- (void) adWillPresentFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
+ * Starting with Google Mobile Ads SDK 11.0, the delegate method:
+ * (void)adDidPresentFullScreenContent:(id<GADFullScreenPresentingAd>)ad
+ * was officially marked as NS_UNAVAILABLE because the SDK no longer reliably
+ * calls it (it was flaky across different ad networks in the mediation
+ * waterfall). Google now expects developers to treat
+ * adWillPresentFullScreenContent: as the definitive "ad is now showing" signal.
+ */
+- (void)adWillPresentFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
 	os_log_debug(admob_log, "%@ Will present full screen", kLogTag);
 
 	if (self.plugin) {
-		self.plugin->call_deferred("emit_signal", APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
+		self.plugin->call_deferred(
+				"emit_signal", APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
 	}
 }
 
-- (void) ad:(nonnull id<GADFullScreenPresentingAd>)ad didFailToPresentFullScreenContentWithError:(NSError *)error {
+- (void)ad:(nonnull id<GADFullScreenPresentingAd>)ad didFailToPresentFullScreenContentWithError:(NSError *)error {
 	AdmobAdError *adError = [[AdmobAdError alloc] initWithNsError:error];
 	os_log_error(admob_log, "%@ Failed to present: %@", kLogTag, adError.message);
 
@@ -159,19 +160,19 @@ static NSString *const kLogTag = @"AdmobPlugin::AppOpenAd::";
 
 	if (self.plugin) {
 		self.plugin->call_deferred("emit_signal", APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL,
-								[self.adInfo buildRawData],
-								[adError buildRawData]);
+				[self.adInfo buildRawData], [adError buildRawData]);
 	}
 }
 
-- (void) adDidDismissFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
+- (void)adDidDismissFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
 	os_log_debug(admob_log, "%@ Dismissed", kLogTag);
 	self.isShowing = NO;
 	self.loadedAd = nil;
 	self.loadTime = 0;
 
 	if (self.plugin) {
-		self.plugin->call_deferred("emit_signal", APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
+		self.plugin->call_deferred(
+				"emit_signal", APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, [self.adInfo buildRawData]);
 	}
 }
 

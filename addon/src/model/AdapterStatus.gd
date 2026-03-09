@@ -1,8 +1,8 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
-class_name AdapterStatus extends RefCounted
+class_name AdapterStatus
+extends RefCounted
 
 const ADAPTER_CLASS_PROPERTY: String = "adapter_class"
 const LATENCY_PROPERTY: String = "latency"

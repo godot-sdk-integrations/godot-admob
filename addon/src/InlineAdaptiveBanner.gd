@@ -3,8 +3,8 @@
 #
 
 @icon("icon.png")
-class_name InlineAdaptiveBanner extends Control
-
+class_name InlineAdaptiveBanner
+extends Control
 
 const MINIMUM_VALID_WIDTH: float = 50.0
 const MINIMUM_CLIP_THRESHOLD: float = 0.05
@@ -20,7 +20,8 @@ const MAXIMUM_RESIZE_THRESHOLD: float = 500.0
 	set(a_value):
 		clip_threshold = clampf(a_value, MINIMUM_CLIP_THRESHOLD, MAXIMUM_CLIP_THRESHOLD)
 
-## Width-change threshold (in pixels) that triggers a banner reload when the ad container is resized by this amount or more.
+## Width-change threshold (in pixels) that triggers a banner reload when the ad container is resized by this amount
+## or more.
 @export_range(MINIMUM_RESIZE_THRESHOLD, MAXIMUM_RESIZE_THRESHOLD, 5.0) var resize_threshold: float = 50.0:
 	set(a_value):
 		resize_threshold = clampf(a_value, MINIMUM_RESIZE_THRESHOLD, MAXIMUM_RESIZE_THRESHOLD)
@@ -60,6 +61,7 @@ var is_position_dirty: bool = false
 var is_banner_visible: bool = false
 var do_ignore_resize: bool = false
 
+
 func _enter_tree() -> void:
 	var __admob: Admob
 	if admob_path:
@@ -70,9 +72,11 @@ func _enter_tree() -> void:
 	else:
 		push_warning("Admob node not found")
 
+
 func _exit_tree() -> void:
 	if ad_id != "":
 		remove_ad()
+
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
@@ -82,6 +86,7 @@ func _ready() -> void:
 
 	last_width = size.x
 	resized.connect(_on_resized)
+
 
 func initialize(a_admob_node: Admob) -> void:
 	admob = a_admob_node
@@ -112,13 +117,16 @@ func initialize(a_admob_node: Admob) -> void:
 			else:
 				_ad_unit_id = ad_unit_id_android_debug
 
+
 func _deferred_load_ad() -> void:
 	load_ad()
 	_mark_position_dirty()
 
+
 # --------------------------------------------------------------
 # AD MANIPULATION
 # --------------------------------------------------------------
+
 
 func load_ad() -> void:
 	if _ad_unit_id == "":
@@ -142,27 +150,33 @@ func load_ad() -> void:
 	pending_load = true
 	admob.load_banner_ad(req)
 
+
 func show_ad() -> void:
 	if not is_banner_visible:
 		admob.show_banner_ad(ad_id)
 		is_banner_visible = true
+
 
 func hide_ad() -> void:
 	if is_banner_visible:
 		admob.hide_banner_ad(ad_id)
 		is_banner_visible = false
 
+
 func move_ad(a_physical_position: Vector2) -> void:
 	admob.move_banner_ad(ad_id, a_physical_position.x, a_physical_position.y)
+
 
 func remove_ad() -> void:
 	admob.remove_banner_ad(ad_id)
 	is_banner_visible = false
 	ad_id = ""
 
+
 # --------------------------------------------------------------
 # POSITIONING
 # --------------------------------------------------------------
+
 
 func _process(_delta: float) -> void:
 	if is_position_dirty:
@@ -171,12 +185,15 @@ func _process(_delta: float) -> void:
 	else:
 		update_banner_position()
 
+
 func _mark_position_dirty() -> void:
 	is_position_dirty = true
 	call_deferred("_deferred_update_position")
 
+
 func _deferred_update_position() -> void:
 	update_banner_position()
+
 
 func update_banner_position() -> void:
 	if ad_id == "":
@@ -187,7 +204,7 @@ func update_banner_position() -> void:
 		hide_ad()
 		return
 
-	 # Smart clipping (visibility logic)
+	# Smart clipping (visibility logic)
 	var is_clipped_out: bool = false
 
 	if size.x > 1.0 and size.y > 1.0:
@@ -230,13 +247,16 @@ func update_banner_position() -> void:
 
 		move_ad(_godot_to_physical(global_position))
 
+
 # --------------------------------------------------------------
 # SIGNAL HANDLERS
 # --------------------------------------------------------------
 
+
 func _on_Admob_initialization_completed(_status: InitializationStatus) -> void:
 	if auto_load:
 		call_deferred("_deferred_load_ad")
+
 
 func _on_resized() -> void:
 	if ad_id == "":
@@ -255,12 +275,14 @@ func _on_resized() -> void:
 
 	_mark_position_dirty()
 
+
 func _on_visibility_changed() -> void:
 	if ad_id != "":
 		if is_visible_in_tree():
 			show_ad()
 		else:
 			hide_ad()
+
 
 func _on_banner_ad_loaded(loaded_ad_info: AdInfo, _response: ResponseInfo) -> void:
 	if !pending_load:
@@ -278,6 +300,7 @@ func _on_banner_ad_loaded(loaded_ad_info: AdInfo, _response: ResponseInfo) -> vo
 	_apply_loaded_size(Vector2(loaded_ad_info.get_measured_width(), loaded_ad_info.get_measured_height()))
 	_mark_position_dirty()
 
+
 func _on_banner_ad_failed_to_load(failed_ad_info: AdInfo, _err: LoadAdError) -> void:
 	if failed_ad_info.get_load_ad_request().get_ad_size() != LoadAdRequest.RequestedAdSize.INLINE_ADAPTIVE:
 		return
@@ -288,19 +311,23 @@ func _on_banner_ad_failed_to_load(failed_ad_info: AdInfo, _err: LoadAdError) -> 
 	if pending_load:
 		pending_load = false
 
+
 func _on_banner_ad_size_measured(ad_info: AdInfo) -> void:
 	if ad_info.get_ad_id().casecmp_to(ad_id) == 0:
 		_apply_loaded_size(Vector2(ad_info.get_measured_width(), ad_info.get_measured_height()))
 
+
 func _on_banner_ad_refreshed(refreshed_ad_info: AdInfo, _response: ResponseInfo) -> void:
 	if refreshed_ad_info.get_ad_id().casecmp_to(ad_id) == 0:
-		hide_ad()	# Prevent ad from briefly displaying out of position
+		hide_ad()  # Prevent ad from briefly displaying out of position
 		_apply_loaded_size(Vector2(refreshed_ad_info.get_measured_width(), refreshed_ad_info.get_measured_height()))
 		_mark_position_dirty()
+
 
 # --------------------------------------------------------------
 # UTILITY
 # --------------------------------------------------------------
+
 
 func _apply_loaded_size(a_size: Vector2) -> void:
 	do_ignore_resize = true
@@ -308,13 +335,16 @@ func _apply_loaded_size(a_size: Vector2) -> void:
 	custom_minimum_size = a_size
 	size = a_size
 
+
 func _calculate_scale_factor() -> Vector2:
 	var screen_size: Vector2 = DisplayServer.window_get_size() as Vector2
 	var virtual_size: Vector2 = get_viewport().get_visible_rect().size
 	return screen_size / virtual_size
 
+
 func _physical_to_godot(a_physical_size: Vector2) -> Vector2:
 	return a_physical_size / _calculate_scale_factor()
+
 
 func _godot_to_physical(a_godot_size: Vector2) -> Vector2:
 	return a_godot_size * _calculate_scale_factor()

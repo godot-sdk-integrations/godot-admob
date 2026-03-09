@@ -50,9 +50,9 @@ static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterFyber";
 
 	id sdk = ((id (*)(id, SEL))objc_msgSend)(sdkClass, sharedSel);
 
-	// "1---": CCPA does not apply, for example, the user is not a California resident
-	// "1YNN": User does NOT opt out, ad experience continues
-	// "1YYN": User opts out of targeted advertising
+	// "1---": CCPA does not apply, for example, the user is not a California
+	// resident "1YNN": User does NOT opt out, ad experience continues "1YYN":
+	// User opts out of targeted advertising
 	NSString *privacyString = [NSString stringWithFormat:@"1Y%@N", hasCcpaConsent ? @"N" : @"Y"];
 
 	[sdk setValue:privacyString forKey:@"CCPAString"];

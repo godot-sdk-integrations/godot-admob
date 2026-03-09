@@ -10,22 +10,21 @@
 
 #include "core/object/class_db.h"
 
-
 @interface AdmobConfig : NSObject
 
-@property (nonatomic, assign) Dictionary rawData;
+@property(nonatomic, assign) Dictionary rawData;
 
-- (instancetype) initWithDictionary:(Dictionary) rawData;
+- (instancetype)initWithDictionary:(Dictionary)rawData;
 
-- (BOOL) isReal;
-- (NSString*) maxContentRating;
-- (NSNumber*) childDirectedTreatment;
-- (NSNumber*) underAgeOfConsent;
-- (BOOL) firstPartyIdEnabled;
-- (NSNumber*) personalizationState;
-- (NSArray*) testDeviceIds;
+- (BOOL)isReal;
+- (NSString *)maxContentRating;
+- (NSNumber *)childDirectedTreatment;
+- (NSNumber *)underAgeOfConsent;
+- (BOOL)firstPartyIdEnabled;
+- (NSNumber *)personalizationState;
+- (NSArray *)testDeviceIds;
 
-- (void) applyToGADRequestConfiguration:(GADRequestConfiguration*) requestConfiguration;
+- (void)applyToGADRequestConfiguration:(GADRequestConfiguration *)requestConfiguration;
 
 @end
 

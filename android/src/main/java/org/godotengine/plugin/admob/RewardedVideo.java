@@ -23,12 +23,19 @@ import org.godotengine.plugin.admob.model.LoadAdRequest;
 
 interface RewardedVideoListener {
 	void onRewardedVideoLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo);
+
 	void onRewardedVideoFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError);
+
 	void onRewardedVideoOpened(AdmobAdInfo adInfo);
+
 	void onRewardedVideoFailedToShow(AdmobAdInfo adInfo, AdError adError);
+
 	void onRewardedVideoClosed(AdmobAdInfo adInfo);
+
 	void onRewardedClicked(AdmobAdInfo adInfo);
+
 	void onRewardedAdImpression(AdmobAdInfo adInfo);
+
 	void onRewarded(AdmobAdInfo adInfo, RewardItem reward);
 }
 
@@ -57,24 +64,25 @@ public class RewardedVideo {
 
 	void load() {
 		activity.runOnUiThread(() -> {
-			RewardedAd.load(activity, loadRequest.getAdUnitId(), loadRequest.createAdRequest(), new RewardedAdLoadCallback() {
-				@Override
-				public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
-					super.onAdLoaded(rewardedAd);
-					setAd(rewardedAd);
-					Log.i(LOG_TAG, "rewarded video ad loaded");
-					listener.onRewardedVideoLoaded(RewardedVideo.this.adInfo, rewardedAd.getResponseInfo());
-				}
+			RewardedAd.load(activity, loadRequest.getAdUnitId(), loadRequest.createAdRequest(),
+				new RewardedAdLoadCallback() {
+					@Override
+					public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
+						super.onAdLoaded(rewardedAd);
+						setAd(rewardedAd);
+						Log.i(LOG_TAG, "rewarded video ad loaded");
+						listener.onRewardedVideoLoaded(RewardedVideo.this.adInfo, rewardedAd.getResponseInfo());
+					}
 
-				@Override
-				public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-					super.onAdFailedToLoad(loadAdError);
-					// safety
-					setAd(null);
-					Log.e(LOG_TAG, "rewarded video ad failed to load. errorCode: " + loadAdError.getCode());
-					listener.onRewardedVideoFailedToLoad(RewardedVideo.this.adInfo, loadAdError);
-				}
-			});
+					@Override
+					public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+						super.onAdFailedToLoad(loadAdError);
+						// safety
+						setAd(null);
+						Log.e(LOG_TAG, "rewarded video ad failed to load. errorCode: " + loadAdError.getCode());
+						listener.onRewardedVideoFailedToLoad(RewardedVideo.this.adInfo, loadAdError);
+					}
+				});
 		});
 	}
 
@@ -82,7 +90,8 @@ public class RewardedVideo {
 		if (rewardedAd != null) {
 			activity.runOnUiThread(() -> {
 				rewardedAd.show(activity, rewardItem -> {
-					Log.i(LOG_TAG, String.format("rewarded video ad reward received! currency: %s amount: %d", rewardItem.getType(), rewardItem.getAmount()));
+					Log.i(LOG_TAG, String.format("rewarded video ad reward received! currency: %s amount: %d",
+							rewardItem.getType(), rewardItem.getAmount()));
 					listener.onRewarded(RewardedVideo.this.adInfo, rewardItem);
 				});
 			});
@@ -92,8 +101,7 @@ public class RewardedVideo {
 	private void setAd(RewardedAd rewardedAd) {
 		if (rewardedAd == this.rewardedAd) {
 			Log.w(LOG_TAG, "setAd(): rewarded already set");
-		}
-		else {
+		} else {
 			if (rewardedAd != null) {
 				rewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
 					@Override
@@ -137,8 +145,9 @@ public class RewardedVideo {
 				}
 			}
 			// Avoid memory leaks
-			if (this.rewardedAd != null)
+			if (this.rewardedAd != null) {
 				this.rewardedAd.setFullScreenContentCallback(null);
+			}
 
 			this.rewardedAd = rewardedAd;
 		}

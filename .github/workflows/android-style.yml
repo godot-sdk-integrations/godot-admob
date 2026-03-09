@@ -10,7 +10,7 @@ on:
 
 jobs:
   android-style:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v6
@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       - name: Install ktlint
         uses: ./.github/actions/install-ktlint
@@ -34,20 +34,18 @@ jobs:
             -O checkstyle-all.jar
           java -jar checkstyle-all.jar -c .github/config/checkstyle.xml android/src
 
-      - name: Install xmllint
-        run: sudo apt-get install -y libxml2-utils
+      - name: Install Node
+        uses: ./.github/actions/install-node
+
+      - name: Install Prettier and XML plugin
+        run: npm install --save-dev prettier @prettier/plugin-xml
 
       - name: Check XML formatting
         run: |
-          find android/src -name "*.xml" | while read -r file; do
-            formatted="$(xmllint --format "$file")"
-            original="$(cat "$file")"
-            if [ "$formatted" != "$original" ]; then
-              echo "XML formatting mismatch: $file"
-              diff <(echo "$original") <(echo "$formatted")
-              exit 1
-            fi
-          done
+          npx prettier \
+            --config .github/config/prettier.xml.json \
+            --parser xml \
+            --check "android/src/**/*.xml"
 
       - name: Install editorconfig-checker
         uses: ./.github/actions/install-ec

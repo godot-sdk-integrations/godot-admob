@@ -6,8 +6,6 @@ package org.godotengine.plugin.admob.mediation.network;
 
 import android.content.Context;
 
-import org.godotengine.plugin.admob.mediation.network.MediationNetwork;
-
 
 public class MaioMediationNetwork extends MediationNetwork {
 

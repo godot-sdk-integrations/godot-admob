@@ -4,16 +4,14 @@
 
 #import "admob_load_ad_error.h"
 
-
 static String const kResponseInfoProperty = "response_info";
-
 
 @implementation AdmobLoadAdError
 
-- (instancetype) initWithNsError:(NSError*) nsError {
-	self = [super initWithNsError: nsError];
+- (instancetype)initWithNsError:(NSError *)nsError {
+	self = [super initWithNsError:nsError];
 	if (self) {
-		GADResponseInfo* gadResponseInfo = nsError.userInfo[GADErrorUserInfoKeyResponseInfo];
+		GADResponseInfo *gadResponseInfo = nsError.userInfo[GADErrorUserInfoKeyResponseInfo];
 		if (gadResponseInfo) {
 			_responseInfo = [[AdmobResponse alloc] initWithResponseInfo:gadResponseInfo];
 		}
@@ -21,7 +19,7 @@ static String const kResponseInfoProperty = "response_info";
 	return self;
 }
 
-- (Dictionary) buildRawData {
+- (Dictionary)buildRawData {
 	Dictionary dict = [super buildRawData];
 
 	if (self.responseInfo) {

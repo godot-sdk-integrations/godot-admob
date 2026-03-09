@@ -3,14 +3,31 @@
 //
 
 import com.android.build.gradle.internal.api.LibraryVariantOutputImpl
+import com.github.gradle.node.npm.task.NpmTask
+import com.github.gradle.node.npm.task.NpxTask
 
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.undercouch.download)
+    alias(libs.plugins.openrewrite)
+    alias(libs.plugins.node)
 }
 
 apply(from = "$projectDir/config.gradle.kts")
+
+configure<org.openrewrite.gradle.RewriteExtension> {
+    activeRecipe(
+        "org.openrewrite.java.format.AutoFormat",
+        "org.openrewrite.java.RemoveUnusedImports",
+        "org.openrewrite.staticanalysis.NeedBraces",
+        "org.openrewrite.java.format.RemoveTrailingWhitespace",
+    )
+    activeStyle("org.godotengine.plugin.JavaStyle")
+
+    // Path to the rewrite.yml defining the named style
+    configFile = projectDir.resolve("config/rewrite.yml")
+}
 
 android {
     namespace = project.extra["pluginPackageName"] as String
@@ -57,12 +74,20 @@ android {
     }
 }
 
+node {
+    download = true
+    version =
+        libs.versions.node.env
+            .get()
+}
+
 // Access the library catalog by name ("libs")
 val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 // Map all library aliases to their actual dependency provider
 val androidDependencies =
     catalog.libraryAliases
+        .filter { it != "rewrite.static.analysis" }
         .map { alias ->
             catalog
                 .findLibrary(alias)
@@ -71,6 +96,8 @@ val androidDependencies =
         }
 
 dependencies {
+    "rewrite"(libs.rewrite.static.analysis)
+
     implementation("godot:godot-lib:${project.extra["godotVersion"]}.${project.extra["releaseType"]}@aar")
     androidDependencies.forEach {
         println("[DEBUG] Adding Android dependency: $it")
@@ -79,6 +106,40 @@ dependencies {
 }
 
 tasks {
+    register<NpmTask>("installPrettier") {
+        args.set(listOf("install", "--save-dev", "prettier", "@prettier/plugin-xml"))
+    }
+
+    register<NpxTask>("checkXmlFormat") {
+        dependsOn("installPrettier")
+        command.set("prettier")
+        args.set(
+            listOf(
+                "--config",
+                "../.github/config/prettier.xml.json",
+                "--parser",
+                "xml",
+                "--check",
+                "src/**/*.xml",
+            ),
+        )
+    }
+
+    register<NpxTask>("formatXml") {
+        dependsOn("installPrettier")
+        command.set("prettier")
+        args.set(
+            listOf(
+                "--config",
+                "../.github/config/prettier.xml.json",
+                "--parser",
+                "xml",
+                "--write",
+                "src/**/*.xml",
+            ),
+        )
+    }
+
     register<de.undercouch.gradle.tasks.download.Download>("downloadGodotAar") {
         val destFile = file("${gradle.extra["libDir"]}/${project.extra["godotAarFile"]}")
 

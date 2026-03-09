@@ -9,15 +9,13 @@
 
 #import "admob_plugin-Swift.h"
 
+#import "app_open.h"
 #import "banner.h"
 #import "interstitial.h"
 #import "rewarded.h"
 #import "rewarded_interstitial.h"
-#import "app_open.h"
-
 
 @class ConsentManager;
-
 
 extern const String INITIALIZATION_COMPLETED_SIGNAL;
 extern const String BANNER_AD_LOADED_SIGNAL;
@@ -74,28 +72,28 @@ extern const String CONSENT_INFO_UPDATE_FAILED_SIGNAL;
 extern const String TRACKING_AUTHORIZATION_GRANTED;
 extern const String TRACKING_AUTHORIZATION_DENIED;
 
-
 class AdmobPlugin : public Object {
 	GDCLASS(AdmobPlugin, Object);
 
 private:
-	static AdmobPlugin* instance; // Singleton instance
+	static AdmobPlugin *instance; // Singleton instance
 	bool initialized; // Tracks initialization status
 	int bannerAdSequence; // Sequence for banner ad IDs
 	int interstitialAdSequence; // Sequence for interstitial ad IDs
 	int rewardedAdSequence; // Sequence for rewarded ad IDs
-	int rewardedInterstitialAdSequence; // Sequence for rewarded interstitial ad IDs
+	int rewardedInterstitialAdSequence; // Sequence for rewarded interstitial ad
+										// IDs
 	int nativeAdSequence; // Sequence for native ad IDs
 
-	NSMutableDictionary<NSString*, BannerAd*>* bannerAds;
-	NSMutableDictionary<NSString*, InterstitialAd*>* interstitialAds;
-	NSMutableDictionary<NSString*, RewardedAd*>* rewardedAds;
-	NSMutableDictionary<NSString*, RewardedInterstitialAd*>* rewardedInterstitialAds;
-	NSMutableDictionary<NSString*, AdmobNativeAd*>* nativeAds;
+	NSMutableDictionary<NSString *, BannerAd *> *bannerAds;
+	NSMutableDictionary<NSString *, InterstitialAd *> *interstitialAds;
+	NSMutableDictionary<NSString *, RewardedAd *> *rewardedAds;
+	NSMutableDictionary<NSString *, RewardedInterstitialAd *> *rewardedInterstitialAds;
+	NSMutableDictionary<NSString *, AdmobNativeAd *> *nativeAds;
 
-	ConsentManager* consentManager;
+	ConsentManager *consentManager;
 
-	AppOpenAd* appOpenAd; // One app open ad per app (if enabled)
+	AppOpenAd *appOpenAd; // One app open ad per app (if enabled)
 	id<NSObject> foregroundObserver; // Notification observer token
 
 	Error initialize();
@@ -161,8 +159,7 @@ private:
 	static void _bind_methods();
 
 public:
-
-	static AdmobPlugin* get_singleton();
+	static AdmobPlugin *get_singleton();
 
 	AdmobPlugin();
 	~AdmobPlugin();

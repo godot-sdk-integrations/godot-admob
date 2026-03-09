@@ -8,7 +8,6 @@
 
 #import "gap_converter.h"
 
-
 const String IS_REAL_PROPERTY = "is_real";
 const String MAX_AD_CONTENT_RATING_PROPERTY = "max_ad_content_rating";
 const String CHILD_DIRECTED_TREATMENT_PROPERTY = "tag_for_child_directed_treatment";
@@ -17,26 +16,25 @@ const String FIRST_PARTY_ID_ENABLED_PROPERTY = "first_party_id_enabled";
 const String PERSONALIZATION_STATE_PROPERTY = "personalization_state";
 const String TEST_DEVICE_IDS_PROPERTY = "test_device_ids";
 
-
 @implementation AdmobConfig
 
-- (instancetype) initWithDictionary:(Dictionary) rawData {
+- (instancetype)initWithDictionary:(Dictionary)rawData {
 	if ((self = [super init])) {
 		self.rawData = rawData;
 	}
 	return self;
 }
 
-- (BOOL) isReal {
+- (BOOL)isReal {
 	return self.rawData[IS_REAL_PROPERTY];
 }
 
-- (NSString*) maxContentRating {
-	return [GAPConverter toNsString:(String) self.rawData[MAX_AD_CONTENT_RATING_PROPERTY]];
+- (NSString *)maxContentRating {
+	return [GAPConverter toNsString:(String)self.rawData[MAX_AD_CONTENT_RATING_PROPERTY]];
 }
 
-- (NSNumber*) childDirectedTreatment {
-	NSNumber* value;
+- (NSNumber *)childDirectedTreatment {
+	NSNumber *value;
 	if (self.rawData.has(CHILD_DIRECTED_TREATMENT_PROPERTY)) {
 		int property = self.rawData[CHILD_DIRECTED_TREATMENT_PROPERTY];
 		if (property == 1) {
@@ -44,16 +42,16 @@ const String TEST_DEVICE_IDS_PROPERTY = "test_device_ids";
 		} else if (property == 0) {
 			value = @NO;
 		} else {
-			value = nil;	// unspecified
+			value = nil; // unspecified
 		}
 	} else {
-		value = nil;	// unspecified
+		value = nil; // unspecified
 	}
 	return value;
 }
 
-- (NSNumber*) underAgeOfConsent {
-	NSNumber* value;
+- (NSNumber *)underAgeOfConsent {
+	NSNumber *value;
 	if (self.rawData.has(UNDER_AGE_OF_CONSENT_PROPERTY)) {
 		int property = self.rawData[UNDER_AGE_OF_CONSENT_PROPERTY];
 		if (property == 1) {
@@ -61,31 +59,31 @@ const String TEST_DEVICE_IDS_PROPERTY = "test_device_ids";
 		} else if (property == 0) {
 			value = @NO;
 		} else {
-			value = nil;	// unspecified
+			value = nil; // unspecified
 		}
 	} else {
-		value = nil;	// unspecified
+		value = nil; // unspecified
 	}
 	return value;
 }
 
-- (BOOL) firstPartyIdEnabled {
+- (BOOL)firstPartyIdEnabled {
 	return self.rawData[FIRST_PARTY_ID_ENABLED_PROPERTY];
 }
 
-- (NSNumber*) personalizationState {
-	return [NSNumber numberWithInt: self.rawData[PERSONALIZATION_STATE_PROPERTY]];
+- (NSNumber *)personalizationState {
+	return [NSNumber numberWithInt:self.rawData[PERSONALIZATION_STATE_PROPERTY]];
 }
 
-- (NSArray*) testDeviceIds {
+- (NSArray *)testDeviceIds {
 	if (self.rawData.has(TEST_DEVICE_IDS_PROPERTY)) {
-		return [GAPConverter toNsStringArray:(Array) self.rawData[TEST_DEVICE_IDS_PROPERTY]];
+		return [GAPConverter toNsStringArray:(Array)self.rawData[TEST_DEVICE_IDS_PROPERTY]];
 	} else {
 		return @[];
 	}
 }
 
-- (void) applyToGADRequestConfiguration:(GADRequestConfiguration *)config {
+- (void)applyToGADRequestConfiguration:(GADRequestConfiguration *)config {
 	// Content rating
 	if ([self maxContentRating]) {
 		config.maxAdContentRating = [self maxContentRating];
@@ -106,7 +104,7 @@ const String TEST_DEVICE_IDS_PROPERTY = "test_device_ids";
 
 	// Personalization state
 	config.publisherPrivacyPersonalizationState =
-		[GAPConverter intToPublisherPrivacyPersonalizationState:[self personalizationState]];
+			[GAPConverter intToPublisherPrivacyPersonalizationState:[self personalizationState]];
 
 	// --- Test Device IDs ---
 	NSMutableArray<NSString *> *testDeviceIds = [config.testDeviceIdentifiers mutableCopy] ?: [NSMutableArray array];
@@ -118,7 +116,7 @@ const String TEST_DEVICE_IDS_PROPERTY = "test_device_ids";
 
 		if (@available(iOS 14.0, *)) {
 			if ([ATTrackingManager trackingAuthorizationStatus] == ATTrackingManagerAuthorizationStatusAuthorized &&
-				![idfa.UUIDString isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
+					![idfa.UUIDString isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
 				advertisingId = idfa.UUIDString;
 			}
 		} else {

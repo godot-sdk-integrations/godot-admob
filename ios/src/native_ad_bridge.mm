@@ -4,21 +4,20 @@
 
 #import "native_ad_bridge.h"
 
-#import "admob_plugin.h"
-#import "admob_ad_info.h"
-#import "admob_response.h"
 #import "admob_ad_error.h"
+#import "admob_ad_info.h"
 #import "admob_load_ad_error.h"
 #import "admob_logger.h"
-
+#import "admob_plugin.h"
+#import "admob_response.h"
 
 @interface AdmobAdInfo (Access)
-- (Dictionary) buildRawData;
+- (Dictionary)buildRawData;
 @end
 
 @implementation NativeAdBridge
 
-- (instancetype)initWithPlugin:(AdmobPlugin*)plugin {
+- (instancetype)initWithPlugin:(AdmobPlugin *)plugin {
 	if (self = [super init]) {
 		_plugin = plugin;
 	}

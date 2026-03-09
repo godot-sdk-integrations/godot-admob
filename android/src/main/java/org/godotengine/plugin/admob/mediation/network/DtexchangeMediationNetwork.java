@@ -8,8 +8,6 @@ import android.content.Context;
 
 import java.lang.reflect.Method;
 
-import org.godotengine.plugin.admob.mediation.network.MediationNetwork;
-
 
 public class DtexchangeMediationNetwork extends MediationNetwork {
 
@@ -53,7 +51,8 @@ public class DtexchangeMediationNetwork extends MediationNetwork {
 		// "1YYN": User opts out of targeted advertising
 		String privacyString = "1Y" + (hasCcpaConsent ? "N" : "Y") + "N";
 
-		// Invoke the static method. The first argument is 'null' because the method is static, the second is the array of arguments to pass (the String value).
+		// Invoke the static method. The first argument is 'null' because the method is static, the second is the
+		// array of arguments to pass (the String value).
 		setPrivacyMethod.invoke(null, privacyString);
 	}
 }

@@ -1,8 +1,8 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
-class_name AdmobIosExportConfig extends AdmobExportConfig
+class_name AdmobIosExportConfig
+extends AdmobExportConfig
 
 const IOS_CONFIG_FILE_PATH: String = "res://addons/" + PLUGIN_NAME + "/ios_export.cfg"
 

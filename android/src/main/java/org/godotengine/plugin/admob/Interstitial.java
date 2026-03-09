@@ -29,12 +29,19 @@ import org.godotengine.plugin.admob.model.LoadAdRequest;
 
 interface InterstitialListener {
 	void onInterstitialLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo);
+
 	void onInterstitialReloaded(AdmobAdInfo adInfo, ResponseInfo responseInfo);
+
 	void onInterstitialFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError);
+
 	void onInterstitialFailedToShow(AdmobAdInfo adInfo, AdError adError);
+
 	void onInterstitialOpened(AdmobAdInfo adInfo);
+
 	void onInterstitialClosed(AdmobAdInfo adInfo);
+
 	void onInterstitialClicked(AdmobAdInfo adInfo);
+
 	void onInterstitialImpression(AdmobAdInfo adInfo);
 }
 
@@ -65,30 +72,29 @@ public class Interstitial {
 	void load() {
 		activity.runOnUiThread(() -> {
 			InterstitialAd.load(activity, loadRequest.getAdUnitId(), loadRequest.createAdRequest(),
-					new InterstitialAdLoadCallback() {
-				@Override
-				public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-					super.onAdLoaded(interstitialAd);
-					setAd(interstitialAd);
-					if (firstLoad) {
-						Log.i(LOG_TAG, "interstitial ad loaded");
-						firstLoad = false;
-						listener.onInterstitialLoaded(Interstitial.this.adInfo, interstitialAd.getResponseInfo());
+				new InterstitialAdLoadCallback() {
+					@Override
+					public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+						super.onAdLoaded(interstitialAd);
+						setAd(interstitialAd);
+						if (firstLoad) {
+							Log.i(LOG_TAG, "interstitial ad loaded");
+							firstLoad = false;
+							listener.onInterstitialLoaded(Interstitial.this.adInfo, interstitialAd.getResponseInfo());
+						} else {
+							Log.i(LOG_TAG, "interstitial ad refreshed");
+							listener.onInterstitialReloaded(Interstitial.this.adInfo, interstitialAd.getResponseInfo());
+						}
 					}
-					else {
-						Log.i(LOG_TAG, "interstitial ad refreshed");
-						listener.onInterstitialReloaded(Interstitial.this.adInfo, interstitialAd.getResponseInfo());
-					}
-				}
 
-				@Override
-				public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-					super.onAdFailedToLoad(loadAdError);
-					setAd(null);	// safety
-					Log.e(LOG_TAG, "interstitial ad failed to load - error code: " + loadAdError.getCode());
-					listener.onInterstitialFailedToLoad(Interstitial.this.adInfo, loadAdError);
-				}
-			});
+					@Override
+					public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+						super.onAdFailedToLoad(loadAdError);
+						setAd(null);	// safety
+						Log.e(LOG_TAG, "interstitial ad failed to load - error code: " + loadAdError.getCode());
+						listener.onInterstitialFailedToLoad(Interstitial.this.adInfo, loadAdError);
+					}
+				});
 		});
 	}
 
@@ -99,25 +105,28 @@ public class Interstitial {
 
 				// Force Layout No Limits prevents the system from forcing the window within safe areas (cutouts/bars)
 				window.setFlags(
-					WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-					WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+						WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+						WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 				);
 
 				// Handle Display Cutout (API 28+) - explicitly allow drawing into the cutout area.
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
 					WindowManager.LayoutParams layoutParams = window.getAttributes();
-					layoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+					layoutParams.layoutInDisplayCutoutMode =
+							WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 					window.setAttributes(layoutParams);
 				}
 
 				// Use WindowCompat for Immersive Mode (API agnostic)
 				WindowCompat.setDecorFitsSystemWindows(window, false);
-				WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(window, window.getDecorView());
+				WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(window,
+						window.getDecorView());
 				if (controller != null) {
 					// Hide system bars (status bar and navigation bar)
 					controller.hide(WindowInsetsCompat.Type.systemBars());
 					// Allow swipe to temporarily show bars
-					controller.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+					controller.setSystemBarsBehavior(
+							WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
 				}
 
 				// Post the show call to the next UI loop to give the WindowManager time to apply the attribute changes
@@ -136,8 +145,7 @@ public class Interstitial {
 	private void setAd(InterstitialAd interstitialAd) {
 		if (interstitialAd == this.interstitialAd) {
 			Log.w(LOG_TAG, "setAd(): interstitial already set");
-		}
-		else {
+		} else {
 			// Avoid memory leaks
 			if (this.interstitialAd != null) {
 				this.interstitialAd.setFullScreenContentCallback(null);

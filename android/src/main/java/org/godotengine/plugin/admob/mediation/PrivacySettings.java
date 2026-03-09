@@ -77,6 +77,7 @@ public class PrivacySettings {
 	}
 
 	Object[] getEnabledNetworks() {
-		return rawData.containsKey(ENABLED_NETWORKS_PROPERTY) ? (Object[]) rawData.get(ENABLED_NETWORKS_PROPERTY) : new String[0];
+		return rawData.containsKey(ENABLED_NETWORKS_PROPERTY) ? (Object[]) rawData.get(ENABLED_NETWORKS_PROPERTY)
+				: new String[0];
 	}
 }

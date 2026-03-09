@@ -8,8 +8,6 @@ import android.content.Context;
 
 import java.lang.reflect.Method;
 
-import org.godotengine.plugin.admob.mediation.network.MediationNetwork;
-
 
 public class MytargetMediationNetwork extends MediationNetwork {
 

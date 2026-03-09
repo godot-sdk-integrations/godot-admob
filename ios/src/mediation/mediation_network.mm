@@ -20,19 +20,27 @@ static NSString *const LOG_TAG = @"godot::AdmobPlugin::MediationNetwork";
 }
 
 - (NSString *)getAdapterClassName {
-	@throw [NSException exceptionWithName:@"UnsupportedOperationException" reason:@"Abstract method must be overridden" userInfo:nil];
+	@throw [NSException exceptionWithName:@"UnsupportedOperationException"
+								   reason:@"Abstract method must be overridden"
+								 userInfo:nil];
 }
 
 - (void)applyGDPRSettings:(BOOL)hasGdprConsent {
-	@throw [NSException exceptionWithName:@"UnsupportedOperationException" reason:@"Abstract method must be overridden" userInfo:nil];
+	@throw [NSException exceptionWithName:@"UnsupportedOperationException"
+								   reason:@"Abstract method must be overridden"
+								 userInfo:nil];
 }
 
 - (void)applyAgeRestrictedUserSettings:(BOOL)isAgeRestrictedUser {
-	@throw [NSException exceptionWithName:@"UnsupportedOperationException" reason:@"Abstract method must be overridden" userInfo:nil];
+	@throw [NSException exceptionWithName:@"UnsupportedOperationException"
+								   reason:@"Abstract method must be overridden"
+								 userInfo:nil];
 }
 
 - (void)applyCCPASettings:(BOOL)hasCcpaConsent {
-	@throw [NSException exceptionWithName:@"UnsupportedOperationException" reason:@"Abstract method must be overridden" userInfo:nil];
+	@throw [NSException exceptionWithName:@"UnsupportedOperationException"
+								   reason:@"Abstract method must be overridden"
+								 userInfo:nil];
 }
 
 - (void)applyPrivacySettings:(PrivacySettings *)settings {
@@ -44,7 +52,8 @@ static NSString *const LOG_TAG = @"godot::AdmobPlugin::MediationNetwork";
 			if ([exception.name isEqualToString:@"UnsupportedOperationException"]) {
 				NSLog(@"%@:: GDPR settings not needed by %@", LOG_TAG, self.tag);
 			} else {
-				NSLog(@"%@:: %@:: %@:: Failed to set GDPR settings for %@", LOG_TAG, exception.name, exception.reason, self.tag);
+				NSLog(@"%@:: %@:: %@:: Failed to set GDPR settings for %@", LOG_TAG, exception.name, exception.reason,
+						self.tag);
 			}
 		}
 	}
@@ -57,7 +66,8 @@ static NSString *const LOG_TAG = @"godot::AdmobPlugin::MediationNetwork";
 			if ([exception.name isEqualToString:@"UnsupportedOperationException"]) {
 				NSLog(@"%@:: Age-restricted user settings not needed by %@", LOG_TAG, self.tag);
 			} else {
-				NSLog(@"%@:: %@:: %@:: Failed to set age-restricted user settings for %@", LOG_TAG, exception.name, exception.reason, self.tag);
+				NSLog(@"%@:: %@:: %@:: Failed to set age-restricted user settings for %@", LOG_TAG, exception.name,
+						exception.reason, self.tag);
 			}
 		}
 	}
@@ -70,7 +80,8 @@ static NSString *const LOG_TAG = @"godot::AdmobPlugin::MediationNetwork";
 			if ([exception.name isEqualToString:@"UnsupportedOperationException"]) {
 				NSLog(@"%@:: CCPA settings not needed by %@", LOG_TAG, self.tag);
 			} else {
-				NSLog(@"%@:: %@:: %@:: Failed to set CCPA settings for %@", LOG_TAG, exception.name, exception.reason, self.tag);
+				NSLog(@"%@:: %@:: %@:: Failed to set CCPA settings for %@", LOG_TAG, exception.name, exception.reason,
+						self.tag);
 			}
 		}
 	}

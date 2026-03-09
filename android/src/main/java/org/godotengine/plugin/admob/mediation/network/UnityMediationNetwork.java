@@ -9,8 +9,6 @@ import android.content.Context;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-import org.godotengine.plugin.admob.mediation.network.MediationNetwork;
-
 
 public class UnityMediationNetwork extends MediationNetwork {
 
@@ -44,7 +42,8 @@ public class UnityMediationNetwork extends MediationNetwork {
 		// Create the new object instance, passing the 'context' instance.
 		Object metaDataInstance = metaDataConstructor.newInstance(context);
 
-		// Get the Method object for set(String, Object), which is used twice for the 'gdpr.consent' and 'privacy.consent' keys.
+		// Get the Method object for set(String, Object), which is used twice for the 'gdpr.consent' and
+		// 'privacy.consent' keys.
 		Method setMethod = metaDataClass.getMethod("set", String.class, Object.class);
 
 		// metaData.set("gdpr.consent", true);
@@ -80,7 +79,8 @@ public class UnityMediationNetwork extends MediationNetwork {
 		// Create the new object instance, passing the 'context' instance.
 		Object metaDataInstance = metaDataConstructor.newInstance(context);
 
-		// Get the Method object for set(String, Object), which is used twice for the 'gdpr.consent' and 'privacy.consent' keys.
+		// Get the Method object for set(String, Object), which is used twice for the 'gdpr.consent' and
+		// 'privacy.consent' keys.
 		Method setMethod = metaDataClass.getMethod("set", String.class, Object.class);
 
 		// metaData.set("privacy.consent", true);

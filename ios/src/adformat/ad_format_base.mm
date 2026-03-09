@@ -8,11 +8,11 @@
 
 static BOOL _pauseOnBackground = NO;
 
-+ (BOOL) pauseOnBackground {
++ (BOOL)pauseOnBackground {
 	return _pauseOnBackground;
 }
 
-+ (void) setPauseOnBackground:(BOOL) pause {
++ (void)setPauseOnBackground:(BOOL)pause {
 	_pauseOnBackground = pause;
 }
 

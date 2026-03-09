@@ -52,7 +52,9 @@ nav = [
       { "Releases" = "contributing/releases.md" },
       { "Installation" = "contributing/installation.md" },
       { "Troubleshooting" = "contributing/troubleshooting.md" },
-      { "Guidelines" = "contributing/guidelines.md" }
+      { "Guidelines" = "contributing/guidelines.md" },
+      { "GitHub Workflows" = "contributing/github-workflows.md" },
+      { "Gradle Formatting Tasks" = "contributing/gradle-formatting-tasks.md" },
     ]},
   { "Links" = "links.md" }
 ]

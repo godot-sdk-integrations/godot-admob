@@ -3,9 +3,9 @@
 //
 
 import Foundation
-import UIKit
-import OSLog
 import GoogleMobileAds
+import OSLog
+import UIKit
 
 @objc public protocol AdmobNativeAdDelegate: AnyObject {
 	func nativeAdDidLoad(_ adInfo: AdmobAdInfo, responseInfo: ResponseInfo)
@@ -17,7 +17,7 @@ import GoogleMobileAds
 	func nativeAdDidSizeMeasured(_ adInfo: AdmobAdInfo)
 }
 
-@objc public class AdmobNativeAd : NSObject {
+@objc public class AdmobNativeAd: NSObject {
 
 	private static let logger = Logger(
 		subsystem: "org.godotengine.plugin.admob",
@@ -73,8 +73,8 @@ import GoogleMobileAds
 				options: []
 			)
 
-			self.adLoader!.delegate = self
-			self.adLoader!.load(self.adRequest)
+			self.adLoader?.delegate = self
+			self.adLoader?.load(self.adRequest)
 		}
 	}
 
@@ -111,7 +111,6 @@ import GoogleMobileAds
 	@objc public func updateLayout(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat, visible: Bool) {
 		guard let containerView = containerView, parentView != nil else { return }
 
-		// Check if layout parameters have changed
 		if x == lastX && y == lastY && width == lastWidth && height == lastHeight && visible == lastVisible {
 			return
 		}
@@ -127,39 +126,41 @@ import GoogleMobileAds
 			frame.origin.x = x
 			frame.origin.y = y
 
-			if width > 0 {
-				frame.size.width = width
-			}
-			if height > 0 {
-				frame.size.height = height
-			}
+			if width > 0 { frame.size.width = width }
+			if height > 0 { frame.size.height = height }
 
 			containerView.frame = frame
 			containerView.isHidden = !visible
 		}
 	}
 
-	private func createNativeAdView() {
+	private func getRootViewController() -> UIViewController? {
+		if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+			let rootViewController = windowScene.windows.first?.rootViewController {
+			return rootViewController
+		}
+		return nil
+	}
+}
+
+private extension AdmobNativeAd {
+
+	func createNativeAdView() {
 		guard let parentView = parentView, let nativeAd = nativeAd else {
 			Self.logger.debug("AdmobNativeAd: Error - parent view or native ad is nil")
 			return
 		}
 
-		// Create ad view programmatically
 		let adView = NativeAdView()
 		adView.translatesAutoresizingMaskIntoConstraints = false
 		self.adView = adView
 
-		// Create container view
 		let container = UIView()
 		container.backgroundColor = .clear
 		container.translatesAutoresizingMaskIntoConstraints = false
 		containerView = container
 
-		// Add ad view to container
 		container.addSubview(adView)
-
-		// Set constraints for ad view within container
 		NSLayoutConstraint.activate([
 			adView.topAnchor.constraint(equalTo: container.topAnchor),
 			adView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
@@ -167,17 +168,12 @@ import GoogleMobileAds
 			adView.bottomAnchor.constraint(equalTo: container.bottomAnchor)
 		])
 
-		// Create UI elements programmatically
 		createAdViewElements(adView: adView, nativeAd: nativeAd)
-
-		// Bind native ad to view
 		bindNativeAd(adView: adView, nativeAd: nativeAd)
 
-		// Add container to parent view
 		container.isHidden = true
 		parentView.addSubview(container)
 
-		// Constrain container to screen width with padding
 		let screenWidth = UIScreen.main.bounds.width
 		let padding: CGFloat = 16
 		NSLayoutConstraint.activate([
@@ -186,7 +182,6 @@ import GoogleMobileAds
 			container.widthAnchor.constraint(equalToConstant: screenWidth - (padding * 2))
 		])
 
-		// Debug overlay (remove in production)
 		#if DEBUG
 		container.layer.borderColor = UIColor.red.withAlphaComponent(0.3).cgColor
 		container.layer.borderWidth = 2
@@ -194,40 +189,32 @@ import GoogleMobileAds
 		adView.layer.borderWidth = 2
 		#endif
 
-		// Measure size after layout
 		DispatchQueue.main.async { [weak self] in
 			guard let self = self else { return }
-
 			adView.setNeedsLayout()
 			adView.layoutIfNeeded()
-
 			let scale = UIScreen.main.scale
 			let widthDp = Int(round(adView.bounds.width / scale * 160))
 			let heightDp = Int(round(adView.bounds.height / scale * 160))
-
 			self.adInfo.measuredWidth = widthDp
 			self.adInfo.measuredHeight = heightDp
-
 			Self.logger.debug("AdmobNativeAd: Measured size - width: \(widthDp)dp, height: \(heightDp)dp")
 			self.delegate?.nativeAdDidSizeMeasured(self.adInfo)
 		}
 	}
 
-	private func createAdViewElements(adView: NativeAdView, nativeAd: NativeAd) {
-		// Create main container stack view
+	func createAdViewElements(adView: NativeAdView, nativeAd: NativeAd) {
 		let mainStack = UIStackView()
 		mainStack.axis = .vertical
 		mainStack.spacing = 8
 		mainStack.translatesAutoresizingMaskIntoConstraints = false
 		adView.addSubview(mainStack)
 
-		// Create header stack (icon + headline + advertiser)
 		let headerStack = UIStackView()
 		headerStack.axis = .horizontal
 		headerStack.spacing = 8
 		headerStack.alignment = .center
 
-		// Icon view
 		if nativeAd.icon != nil {
 			let iconView = UIImageView()
 			iconView.contentMode = .scaleAspectFit
@@ -240,19 +227,16 @@ import GoogleMobileAds
 			headerStack.addArrangedSubview(iconView)
 		}
 
-		// Text container (headline + advertiser)
 		let textStack = UIStackView()
 		textStack.axis = .vertical
 		textStack.spacing = 2
 
-		// Headline
 		let headlineLabel = UILabel()
 		headlineLabel.font = UIFont.boldSystemFont(ofSize: 16)
 		headlineLabel.numberOfLines = 2
 		adView.headlineView = headlineLabel
 		textStack.addArrangedSubview(headlineLabel)
 
-		// Advertiser
 		if nativeAd.advertiser != nil {
 			let advertiserLabel = UILabel()
 			advertiserLabel.font = UIFont.systemFont(ofSize: 12)
@@ -264,19 +248,15 @@ import GoogleMobileAds
 		headerStack.addArrangedSubview(textStack)
 		mainStack.addArrangedSubview(headerStack)
 
-		// Media view (if available)
 		let mediaContent = nativeAd.mediaContent
 		if mediaContent.hasVideoContent || mediaContent.mainImage != nil {
 			let mediaView = MediaView()
 			mediaView.translatesAutoresizingMaskIntoConstraints = false
-			NSLayoutConstraint.activate([
-				mediaView.heightAnchor.constraint(equalToConstant: 160)
-			])
+			NSLayoutConstraint.activate([mediaView.heightAnchor.constraint(equalToConstant: 160)])
 			adView.mediaView = mediaView
 			mainStack.addArrangedSubview(mediaView)
 		}
 
-		// Body text
 		if nativeAd.body != nil {
 			let bodyLabel = UILabel()
 			bodyLabel.font = UIFont.systemFont(ofSize: 14)
@@ -285,55 +265,19 @@ import GoogleMobileAds
 			mainStack.addArrangedSubview(bodyLabel)
 		}
 
-		// Star rating
 		if nativeAd.starRating != nil {
-			let starRatingView = createStarRatingView()
-			adView.starRatingView = starRatingView
-			mainStack.addArrangedSubview(starRatingView)
+			adView.starRatingView = createStarRatingView()
+			mainStack.addArrangedSubview(adView.starRatingView!)
 		}
 
-		// Bottom info (store + price)
 		if nativeAd.store != nil || nativeAd.price != nil {
-			let bottomStack = UIStackView()
-			bottomStack.axis = .horizontal
-			bottomStack.spacing = 8
-
-			if nativeAd.store != nil {
-				let storeLabel = UILabel()
-				storeLabel.font = UIFont.systemFont(ofSize: 12)
-				storeLabel.textColor = .gray
-				adView.storeView = storeLabel
-				bottomStack.addArrangedSubview(storeLabel)
-			}
-
-			if nativeAd.price != nil {
-				let priceLabel = UILabel()
-				priceLabel.font = UIFont.systemFont(ofSize: 12)
-				priceLabel.textColor = .gray
-				adView.priceView = priceLabel
-				bottomStack.addArrangedSubview(priceLabel)
-			}
-
-			mainStack.addArrangedSubview(bottomStack)
+			mainStack.addArrangedSubview(createBottomInfoStack(adView: adView, nativeAd: nativeAd))
 		}
 
-		// Call to action button
 		if nativeAd.callToAction != nil {
-			let ctaButton = UIButton(type: .system)
-			ctaButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
-			ctaButton.backgroundColor = UIColor.systemBlue
-			ctaButton.setTitleColor(.white, for: .normal)
-			ctaButton.layer.cornerRadius = 8
-			ctaButton.translatesAutoresizingMaskIntoConstraints = false
-			NSLayoutConstraint.activate([
-				ctaButton.heightAnchor.constraint(equalToConstant: 44)
-			])
-			ctaButton.isUserInteractionEnabled = false
-			adView.callToActionView = ctaButton
-			mainStack.addArrangedSubview(ctaButton)
+			mainStack.addArrangedSubview(createCallToActionButton(adView: adView))
 		}
 
-		// Set main stack constraints
 		NSLayoutConstraint.activate([
 			mainStack.topAnchor.constraint(equalTo: adView.topAnchor, constant: 12),
 			mainStack.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: 12),
@@ -341,14 +285,50 @@ import GoogleMobileAds
 			mainStack.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -12)
 		])
 
-		// Set background
 		adView.backgroundColor = .white
 		adView.layer.cornerRadius = 8
 		adView.layer.borderWidth = 1
 		adView.layer.borderColor = UIColor.lightGray.cgColor
 	}
 
-	private func createStarRatingView() -> UIView {
+	func createBottomInfoStack(adView: NativeAdView, nativeAd: NativeAd) -> UIStackView {
+		let bottomStack = UIStackView()
+		bottomStack.axis = .horizontal
+		bottomStack.spacing = 8
+
+		if nativeAd.store != nil {
+			let storeLabel = UILabel()
+			storeLabel.font = UIFont.systemFont(ofSize: 12)
+			storeLabel.textColor = .gray
+			adView.storeView = storeLabel
+			bottomStack.addArrangedSubview(storeLabel)
+		}
+
+		if nativeAd.price != nil {
+			let priceLabel = UILabel()
+			priceLabel.font = UIFont.systemFont(ofSize: 12)
+			priceLabel.textColor = .gray
+			adView.priceView = priceLabel
+			bottomStack.addArrangedSubview(priceLabel)
+		}
+
+		return bottomStack
+	}
+
+	func createCallToActionButton(adView: NativeAdView) -> UIButton {
+		let ctaButton = UIButton(type: .system)
+		ctaButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+		ctaButton.backgroundColor = UIColor.systemBlue
+		ctaButton.setTitleColor(.white, for: .normal)
+		ctaButton.layer.cornerRadius = 8
+		ctaButton.translatesAutoresizingMaskIntoConstraints = false
+		NSLayoutConstraint.activate([ctaButton.heightAnchor.constraint(equalToConstant: 44)])
+		ctaButton.isUserInteractionEnabled = false
+		adView.callToActionView = ctaButton
+		return ctaButton
+	}
+
+	func createStarRatingView() -> UIView {
 		let container = UIView()
 		container.translatesAutoresizingMaskIntoConstraints = false
 
@@ -379,83 +359,57 @@ import GoogleMobileAds
 		return container
 	}
 
-	private func bindNativeAd(adView: NativeAdView, nativeAd: NativeAd) {
-		// Set the native ad
+	func bindNativeAd(adView: NativeAdView, nativeAd: NativeAd) {
 		adView.nativeAd = nativeAd
 
-		// Bind headline
 		if let headlineView = adView.headlineView as? UILabel {
 			headlineView.text = nativeAd.headline
 		}
-
-		// Bind media content
 		if let mediaView = adView.mediaView {
 			mediaView.mediaContent = nativeAd.mediaContent
 		}
-
-		// Bind call to action
-		if let callToActionView = adView.callToActionView as? UIButton {
-			callToActionView.setTitle(nativeAd.callToAction, for: .normal)
+		if let ctaView = adView.callToActionView as? UIButton {
+			ctaView.setTitle(nativeAd.callToAction, for: .normal)
 		}
-
-		// Bind icon
-		if let iconView = adView.iconView as? UIImageView {
-			if let icon = nativeAd.icon {
-				iconView.image = icon.image
-			}
+		if let iconView = adView.iconView as? UIImageView, let icon = nativeAd.icon {
+			iconView.image = icon.image
 		}
-
-		// Bind body text
 		if let bodyView = adView.bodyView as? UILabel {
 			bodyView.text = nativeAd.body
 		}
-
-		// Bind advertiser
 		if let advertiserView = adView.advertiserView as? UILabel {
 			advertiserView.text = nativeAd.advertiser
 		}
-
-		// Bind store
 		if let storeView = adView.storeView as? UILabel {
 			storeView.text = nativeAd.store
 		}
-
-		// Bind price
 		if let priceView = adView.priceView as? UILabel {
 			priceView.text = nativeAd.price
 		}
 
-		// Bind star rating
-		if let starRatingContainer = adView.starRatingView,
-		   let stackView = starRatingContainer.subviews.first as? UIStackView,
-		   let rating = nativeAd.starRating {
-			let ratingValue = rating.doubleValue
-			let fullStars = Int(ratingValue)
-			let hasHalfStar = (ratingValue - Double(fullStars)) >= 0.5
-
-			for (index, view) in stackView.arrangedSubviews.enumerated() {
-				if let imageView = view as? UIImageView {
-					if index < fullStars {
-						imageView.image = UIImage(systemName: "star.fill")
-						imageView.tintColor = .systemYellow
-					} else if index == fullStars && hasHalfStar {
-						imageView.image = UIImage(systemName: "star.leadinghalf.filled")
-						imageView.tintColor = .systemYellow
-					} else {
-						imageView.image = UIImage(systemName: "star")
-						imageView.tintColor = .systemYellow
-					}
-				}
-			}
-		}
+		bindStarRating(adView: adView, nativeAd: nativeAd)
 	}
 
-	private func getRootViewController() -> UIViewController? {
-		if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-		   let rootViewController = windowScene.windows.first?.rootViewController {
-			return rootViewController
+	func bindStarRating(adView: NativeAdView, nativeAd: NativeAd) {
+		guard let starRatingContainer = adView.starRatingView,
+			let stackView = starRatingContainer.subviews.first as? UIStackView,
+			let rating = nativeAd.starRating else { return }
+
+		let ratingValue = rating.doubleValue
+		let fullStars = Int(ratingValue)
+		let hasHalfStar = (ratingValue - Double(fullStars)) >= 0.5
+
+		for (index, view) in stackView.arrangedSubviews.enumerated() {
+			guard let imageView = view as? UIImageView else { continue }
+			if index < fullStars {
+				imageView.image = UIImage(systemName: "star.fill")
+			} else if index == fullStars && hasHalfStar {
+				imageView.image = UIImage(systemName: "star.leadinghalf.filled")
+			} else {
+				imageView.image = UIImage(systemName: "star")
+			}
+			imageView.tintColor = .systemYellow
 		}
-		return nil
 	}
 }
 

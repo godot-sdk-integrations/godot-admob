@@ -3,8 +3,8 @@
 //
 
 import Foundation
-import OSLog
 import GoogleMobileAds
+import OSLog
 
 @objc public class GlobalSettings: NSObject {
 
@@ -18,7 +18,7 @@ import GoogleMobileAds
 	private static let prefKeyAdsMuted = "ads_muted"
 	private static let prefKeyApplyAtStartup = "apply_at_startup"
 
-	@objc public override init() {
+	@objc override public init() {
 		super.init()
 	}
 
@@ -27,9 +27,14 @@ import GoogleMobileAds
 
 		let volume = userDefaults.object(forKey: prefKeyAdVolume) as? Float ?? AdSettings.defaultAdVolume
 		let muted = userDefaults.object(forKey: prefKeyAdsMuted) as? Bool ?? AdSettings.defaultAdsMuted
-		let applyAtStartup = userDefaults.object(forKey: prefKeyApplyAtStartup) as? Bool ?? AdSettings.defaultApplyAtStartup
+		let applyAtStartup = userDefaults.object(forKey: prefKeyApplyAtStartup) as? Bool
+			?? AdSettings.defaultApplyAtStartup
 
-		return AdSettings(adVolume: NSNumber(value: volume), areAdsMuted: NSNumber(booleanLiteral: muted), applyAtStartup: NSNumber(booleanLiteral: applyAtStartup))
+		return AdSettings(
+			adVolume: NSNumber(value: volume),
+			areAdsMuted: NSNumber(value: muted),
+			applyAtStartup: NSNumber(value: applyAtStartup)
+		)
 	}
 
 	@objc public static func saveSettings(_ settings: AdSettings) {
@@ -51,18 +56,19 @@ import GoogleMobileAds
 	}
 
 	@objc public static func applyToGADMobileAds(_ settings: AdSettings) {
-		// Set muted state first before setting volume - the SDK may ignore volume changes if the muted state isn't properly configured
 		if let muted = settings.areAdsMuted?.boolValue {
 			MobileAds.shared.isApplicationMuted = muted
 		}
 
-		// Set the volume - this will only take effect if isApplicationMuted is false
 		if let volume = settings.adVolume?.floatValue {
-			// Clamp volume to valid range [0.0, 1.0]
 			let clampedVolume = max(0.0, min(1.0, volume))
 			MobileAds.shared.applicationVolume = clampedVolume
 
-			Self.logger.debug("AdMob Settings: Volume set to \(clampedVolume, format: .fixed(precision: 2)), Muted: \(MobileAds.shared.isApplicationMuted ? "YES" : "NO")")
+			// FIX: Extracted muted string to a local variable to bring line under 140 chars (line_length)
+			let mutedString = MobileAds.shared.isApplicationMuted ? "YES" : "NO"
+			Self.logger.debug(
+				"AdMob Settings: Volume set to \(clampedVolume, format: .fixed(precision: 2)), Muted: \(mutedString)"
+			)
 		}
 	}
 }

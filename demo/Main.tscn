@@ -76,6 +76,7 @@ theme_override_constants/separation = 4
 metadata/_tab_index = 0
 
 [node name="PositionHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner" unique_id=432812980]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 10
 
@@ -88,6 +89,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="SizeHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner" unique_id=676064342]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 10
 
@@ -100,6 +102,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="CollapsiblePosHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner" unique_id=1660047733]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 10
 
@@ -112,6 +115,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="AnchorHBoxContainer" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner" unique_id=1326952382]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 10
 
@@ -130,6 +134,7 @@ size_flags_horizontal = 4
 theme_override_constants/separation = 30
 
 [node name="LoadBannerButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/LoadButtonHBoxContainer" unique_id=1439258190]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 text = "Load Banner Ad"
@@ -142,6 +147,7 @@ layout_mode = 2
 text = "ID:"
 
 [node name="AdIdOptionButton" type="OptionButton" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/IDHBoxContainer" unique_id=1528396671]
+unique_name_in_owner = true
 clip_contents = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
@@ -153,18 +159,21 @@ layout_mode = 2
 theme_override_constants/separation = 5
 
 [node name="ShowBannerButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer" unique_id=1353026656]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 disabled = true
 text = "Show"
 
 [node name="HideBannerButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer" unique_id=1095737597]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 disabled = true
 text = "Hide"
 
 [node name="SizeButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer" unique_id=881912685]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -172,6 +181,7 @@ disabled = true
 text = "Get Size"
 
 [node name="PixelSizeButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer" unique_id=159503279]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -179,6 +189,7 @@ disabled = true
 text = "Get Size (px)"
 
 [node name="RemoveBannerButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer" unique_id=645337672]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 disabled = true
@@ -223,6 +234,7 @@ theme_override_constants/separation = 10
 metadata/_tab_index = 2
 
 [node name="LoadNativeAdButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native" unique_id=278528766]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 text = "Load Native Ad"
@@ -234,7 +246,8 @@ layout_mode = 2
 layout_mode = 2
 text = "ID:"
 
-[node name="AdIdOptionButton" type="OptionButton" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/IDHBoxContainer" unique_id=1399708497]
+[node name="NativeAdIdOptionButton" type="OptionButton" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/IDHBoxContainer" unique_id=1399708497]
+unique_name_in_owner = true
 clip_contents = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
@@ -247,24 +260,28 @@ theme_override_constants/separation = 5
 alignment = 1
 
 [node name="ShowNativeAdButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer" unique_id=2120913574]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 disabled = true
 text = "Show"
 
 [node name="HideNativeAdButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer" unique_id=237482666]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 disabled = true
 text = "Hide"
 
 [node name="AttachNativeAdButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer" unique_id=1384912029]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 disabled = true
 text = "Attach to a node"
 
 [node name="RemoveNativeAdButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer" unique_id=1788206105]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 disabled = true
@@ -281,12 +298,14 @@ layout_mode = 2
 theme_override_constants/separation = 20
 
 [node name="InterstitialButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer" unique_id=358041253]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
 text = "Show Interstitial Ad"
 
 [node name="ReloadInterstitialButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer" unique_id=1135487201]
+unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "Reload"
@@ -296,12 +315,14 @@ layout_mode = 2
 theme_override_constants/separation = 20
 
 [node name="RewardedButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer" unique_id=963896492]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
 text = "Show Rewarded Ad"
 
 [node name="ReloadRewardedButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer" unique_id=1076082725]
+unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "Reload"
@@ -311,12 +332,14 @@ layout_mode = 2
 theme_override_constants/separation = 20
 
 [node name="RewardedInterstitialButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer" unique_id=645767224]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
 text = "Show Rewarded Interstitial Ad"
 
 [node name="ReloadRewardedInterstitialButton" type="Button" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer" unique_id=206063746]
+unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "Reload"
@@ -346,7 +369,8 @@ theme_override_constants/separation = 20
 layout_mode = 2
 text = "Status:"
 
-[node name="ValueLabel" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Consent/VBoxContainer/StatusHBoxContainer" unique_id=998729903]
+[node name="ConsentStatusValueLabel" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Consent/VBoxContainer/StatusHBoxContainer" unique_id=998729903]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -398,6 +422,7 @@ layout_mode = 2
 text = "Volume:"
 
 [node name="VolumeHSlider" type="HSlider" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/VolumeHBC" unique_id=508513167]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 size_flags_vertical = 1
@@ -407,9 +432,11 @@ tick_count = 11
 ticks_on_borders = true
 
 [node name="ValueLabel" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/VolumeHBC" unique_id=138925013]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="MuteHBC" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC" unique_id=1562220288]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="Label" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/MuteHBC" unique_id=1811760134]
@@ -422,6 +449,7 @@ custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 
 [node name="StartupHBC" type="HBoxContainer" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC" unique_id=774505690]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="Label" type="Label" parent="CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/StartupHBC" unique_id=835112697]

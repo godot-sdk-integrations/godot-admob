@@ -9,7 +9,6 @@ import com.google.android.gms.ads.AdError;
 
 import org.godotengine.godot.Dictionary;
 
-import org.godotengine.plugin.admob.GodotConverter;
 import org.godotengine.plugin.admob.mediation.network.MediationNetworkFactory;
 
 
@@ -34,7 +33,9 @@ public class AdmobAdapterResponse {
 		Dictionary dict = new Dictionary();
 
 		AdError adError = info.getAdError();
-		if (adError != null) dict.put(AD_ERROR_PROPERTY, new AdmobAdError(adError).buildRawData());
+		if (adError != null) {
+			dict.put(AD_ERROR_PROPERTY, new AdmobAdError(adError).buildRawData());
+		}
 
 		dict.put(AD_SOURCE_ID_PROPERTY, info.getAdSourceId());
 		dict.put(AD_SOURCE_INSTANCE_ID_PROPERTY, info.getAdSourceInstanceId());

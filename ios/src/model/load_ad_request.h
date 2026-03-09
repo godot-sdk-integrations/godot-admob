@@ -12,35 +12,34 @@
 
 #import "ad_position.h"
 
-
 @interface LoadAdRequest : NSObject
 
-@property (nonatomic, assign) Dictionary rawData;
+@property(nonatomic, assign) Dictionary rawData;
 
-- (instancetype) initWithDictionary:(Dictionary) adData;
+- (instancetype)initWithDictionary:(Dictionary)adData;
 
-- (NSString*) adUnitId;
-- (NSString*) requestAgent;
-- (NSString*) adSize;
-- (NSString*) adPosition;
-- (BOOL) hasCollapsiblePosition;
-- (NSString*) collapsiblePosition;
-- (BOOL) anchorToSafeArea;
-- (NSArray*) keywords;
-- (BOOL) hasUserId;
-- (NSString*) userId;
-- (BOOL) hasCustomData;
-- (NSString*) customData;
-- (Array) networkExtras;
+- (NSString *)adUnitId;
+- (NSString *)requestAgent;
+- (NSString *)adSize;
+- (NSString *)adPosition;
+- (BOOL)hasCollapsiblePosition;
+- (NSString *)collapsiblePosition;
+- (BOOL)anchorToSafeArea;
+- (NSArray *)keywords;
+- (BOOL)hasUserId;
+- (NSString *)userId;
+- (BOOL)hasCustomData;
+- (NSString *)customData;
+- (Array)networkExtras;
 
-- (GADAdSize) getGADAdSize;
-- (AdPosition) getAdPosition;
-- (GADRequest*) createGADRequest;
+- (GADAdSize)getGADAdSize;
+- (AdPosition)getAdPosition;
+- (GADRequest *)createGADRequest;
 
-- (BOOL) hasServerSideVerificationOptions;
-- (GADServerSideVerificationOptions *) createGADServerSideVerificationOptions;
+- (BOOL)hasServerSideVerificationOptions;
+- (GADServerSideVerificationOptions *)createGADServerSideVerificationOptions;
 
-- (Dictionary) getRawData;
+- (Dictionary)getRawData;
 
 @end
 

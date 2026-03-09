@@ -23,11 +23,13 @@ static inline Class ClassOrThrow(NSString *className) {
 }
 
 /**
- * Returns the Objective-C SEL (selector) corresponding to the given string name.
- * Throws an NSInvalidArgumentException if the SEL is not found (i.e., is NULL).
+ * Returns the Objective-C SEL (selector) corresponding to the given string
+ * name. Throws an NSInvalidArgumentException if the SEL is not found (i.e., is
+ * NULL).
  */
 static inline SEL SelectorOrThrow(NSString *selectorName) {
-	// NSSelectorFromString returns NULL (0) if the selector is not found/registered.
+	// NSSelectorFromString returns NULL (0) if the selector is not
+	// found/registered.
 	SEL s = NSSelectorFromString(selectorName);
 	if (!s) {
 		NSString *reason = [NSString stringWithFormat:@"Required Selector '%@' not found/registered.", selectorName];
@@ -37,37 +39,34 @@ static inline SEL SelectorOrThrow(NSString *selectorName) {
 }
 
 /**
- * Retrieves the Objective-C SEL (selector) corresponding to the given string name
- * AND ensures that the provided object (or Class) responds to that selector.
- * @param selectorName The string representation of the selector (e.g., @"myMethod:").
+ * Retrieves the Objective-C SEL (selector) corresponding to the given string
+ * name AND ensures that the provided object (or Class) responds to that
+ * selector.
+ * @param selectorName The string representation of the selector (e.g.,
+ * @"myMethod:").
  * @param target A Class object or an instance object to check for the selector.
  * @return The valid SEL.
- * Throws an NSInvalidArgumentException if the SEL is invalid or the target does not respond to it.
+ * Throws an NSInvalidArgumentException if the SEL is invalid or the target does
+ * not respond to it.
  */
 static inline SEL SelectorForClassOrThrow(NSString *selectorName, id target) {
-	// 1. Check if the selector string corresponds to a registered SEL.
+	// Check if the selector string corresponds to a registered SEL.
 	// NSSelectorFromString returns NULL (0) if the selector is not found/registered.
 	SEL s = NSSelectorFromString(selectorName);
 	if (!s) {
-		NSString *reason = [NSString stringWithFormat:
-			@"Required Selector string '%@' could not be resolved to a valid SEL.",
-			selectorName
-		];
+		NSString *reason = [NSString
+				stringWithFormat:@"Required Selector string '%@' could not be resolved to a valid SEL.", selectorName];
 		@throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
 	}
 
-	// 2. Check if the target object/class responds to the selector.
+	// Check if the target object/class responds to the selector.
 	// This handles both class methods (if 'target' is a Class) and instance methods (if 'target' is an instance).
 	if (![target respondsToSelector:s]) {
-		NSString *targetDescription = [target class] == target ?
-									 NSStringFromClass((Class)target) :
-									 NSStringFromClass([target class]);
+		NSString *targetDescription =
+				[target class] == target ? NSStringFromClass((Class)target) : NSStringFromClass([target class]);
 
-		NSString *reason = [NSString stringWithFormat:
-			@"Target '%@' does not respond to the required Selector: '%@'.",
-			targetDescription,
-			selectorName
-		];
+		NSString *reason = [NSString stringWithFormat:@"Target '%@' does not respond to the required Selector: '%@'.",
+				targetDescription, selectorName];
 		@throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
 	}
 
@@ -82,26 +81,23 @@ static inline SEL SelectorForClassOrThrow(NSString *selectorName, id target) {
  * @return The retrieved non-nil id value.
  */
 static inline id ClassValueOrThrow(Class targetClass, NSString *key) {
-	// We are calling valueForKey: on the Class object itself to get a class property.
+	// We are calling valueForKey: on the Class object itself to get a class
+	// property.
 	id value = [targetClass valueForKey:key];
 
 	if (value == nil) {
-		NSString *reason = [NSString stringWithFormat:
-			@"Required value for key '%@' on Class '%@' was nil.",
-			key,
-			NSStringFromClass(targetClass)
-		];
+		NSString *reason = [NSString stringWithFormat:@"Required value for key '%@' on Class '%@' was nil.", key,
+				NSStringFromClass(targetClass)];
 		@throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
 	}
 	return value;
 }
 
-
 @class PrivacySettings;
 
 @interface MediationNetwork : NSObject
 
-@property (nonatomic, strong) NSString *tag;
+@property(nonatomic, strong) NSString *tag;
 
 - (instancetype)initWithTag:(NSString *)tag;
 

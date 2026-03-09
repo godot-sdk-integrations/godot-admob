@@ -1,8 +1,8 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
-class_name AdError extends RefCounted
+class_name AdError
+extends RefCounted
 
 const CODE_PROPERTY: String = "code"
 const DOMAIN_PROPERTY: String = "domain"

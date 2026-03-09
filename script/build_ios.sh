@@ -6,42 +6,40 @@
 set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-ROOT_DIR=$(realpath $SCRIPT_DIR/..)
+ROOT_DIR=$(realpath "$SCRIPT_DIR"/..)
 IOS_DIR=$ROOT_DIR/ios
-IOS_CONFIG_DIR=$IOS_DIR/config
 COMMON_DIR=$ROOT_DIR/common
 BUILD_DIR=$IOS_DIR/build
-DERIVED_DATA_DIR=$BUILD_DIR/DerivedData
-SOURCE_PACKAGES_DIR=$DERIVED_DATA_DIR/SourcePackages
-FRAMEWORK_DIR=$BUILD_DIR/framework
-LIB_DIR=$BUILD_DIR/lib
+DERIVED_DATA_DIR="$BUILD_DIR/DerivedData"
+FRAMEWORK_DIR="$BUILD_DIR/framework"
+LIB_DIR="$BUILD_DIR/lib"
 
-IOS_CONFIG_FILE=$IOS_CONFIG_DIR/config.properties
-COMMON_CONFIG_FILE=$COMMON_DIR/config/config.properties
-LOCAL_PROPERTIES_FILE=$COMMON_DIR/local.properties
+COMMON_CONFIG_FILE="$COMMON_DIR/config/config.properties"
+LOCAL_PROPERTIES_FILE="$COMMON_DIR/local.properties"
 
 # Resolve GODOT_DIR: use godot.dir from local.properties if set, otherwise default to $IOS_DIR/godot
 GODOT_DIR=$IOS_DIR/godot
 if [[ -f "$LOCAL_PROPERTIES_FILE" ]]; then
-	_godot_dir_prop=$($SCRIPT_DIR/get_config_property.sh -f "$LOCAL_PROPERTIES_FILE" godot.dir)
+	_godot_dir_prop=$("$SCRIPT_DIR"/get_config_property.sh -f "$LOCAL_PROPERTIES_FILE" godot.dir)
 	if [[ -n "$_godot_dir_prop" ]]; then
 		GODOT_DIR=$(eval echo "$_godot_dir_prop")
 	fi
 	unset _godot_dir_prop
 fi
 
-PLUGIN_NODE_NAME=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE pluginNodeName)
+PLUGIN_NODE_NAME=$("$SCRIPT_DIR"/get_config_property.sh -f "$COMMON_CONFIG_FILE" pluginNodeName)
 PLUGIN_NAME="${PLUGIN_NODE_NAME}Plugin"
-PLUGIN_MODULE_NAME=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE pluginModuleName)
-GODOT_VERSION=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE godotVersion)
-GODOT_RELEASE_TYPE=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE godotReleaseType)
+PLUGIN_MODULE_NAME=$("$SCRIPT_DIR"/get_config_property.sh -f "$COMMON_CONFIG_FILE" pluginModuleName)
+GODOT_VERSION=$("$SCRIPT_DIR"/get_config_property.sh -f "$COMMON_CONFIG_FILE" godotVersion)
+GODOT_RELEASE_TYPE=$("$SCRIPT_DIR"/get_config_property.sh -f "$COMMON_CONFIG_FILE" godotReleaseType)
 
 SCHEME="${PLUGIN_MODULE_NAME}_plugin"
 PROJECT="${SCHEME}.xcodeproj"
 WORKSPACE="${PROJECT}/project.xcworkspace"
 SPM_DIR=$IOS_DIR/$WORKSPACE/xcshareddata/swiftpm
 
-BUILD_TIMEOUT=40	# increase this value using -t option if device is not able to generate all headers before godot build is killed
+# increase this value using -t option if device is not able to generate all headers before godot build is killed
+BUILD_TIMEOUT=40
 
 do_clean=false
 do_reset_spm=false
@@ -60,15 +58,15 @@ do_install=false
 function display_help()
 {
 	echo
-	$SCRIPT_DIR/echocolor.sh -y "The " -Y "$0 script" -y " builds the plugin, generates library archives, and"
+	"$SCRIPT_DIR"/echocolor.sh -y "The " -Y "$0 script" -y " builds the plugin, generates library archives, and"
 	echo_yellow "creates a zip file containing all libraries and configuration."
 	echo
 	echo_yellow "If plugin version is not set with the -z option, then Godot version will be used."
 	echo
-	$SCRIPT_DIR/echocolor.sh -Y "Syntax:"
+	"$SCRIPT_DIR"/echocolor.sh -Y "Syntax:"
 	echo_yellow "	$0 [-a|A|b|B|c|d|D|g|G|h|H|p|P|r|R|t <timeout>]"
 	echo
-	$SCRIPT_DIR/echocolor.sh -Y "Options:"
+	"$SCRIPT_DIR"/echocolor.sh -Y "Options:"
 	echo_yellow "	a	generate godot headers and build plugin"
 	echo_yellow "	A	download configured godot version, generate godot headers, and"
 	echo_yellow "	 	build plugin"
@@ -87,7 +85,7 @@ function display_help()
 	echo_yellow "	R	create iOS release archive"
 	echo_yellow "	t	change timeout value for godot build"
 	echo
-	$SCRIPT_DIR/echocolor.sh -Y "Examples:"
+	"$SCRIPT_DIR"/echocolor.sh -Y "Examples:"
 	echo_yellow "	* clean existing build, remove godot, and rebuild all"
 	echo_yellow "		$> $0 -cgA"
 	echo_yellow "		$> $0 -cgpGHPb"
@@ -109,28 +107,28 @@ function display_help()
 
 function echo_yellow()
 {
-	$SCRIPT_DIR/echocolor.sh -y "$1"
+	"$SCRIPT_DIR"/echocolor.sh -y "$1"
 }
 
 
 function echo_blue()
 {
-	$SCRIPT_DIR/echocolor.sh -B "$1"
+	"$SCRIPT_DIR"/echocolor.sh -B "$1"
 }
 
 
 function echo_green()
 {
-	$SCRIPT_DIR/echocolor.sh -g "$1"
+	"$SCRIPT_DIR"/echocolor.sh -g "$1"
 }
 
 
 function display_status()
 {
 	echo
-	$SCRIPT_DIR/echocolor.sh -c "********************************************************************************"
-	$SCRIPT_DIR/echocolor.sh -c "* $1"
-	$SCRIPT_DIR/echocolor.sh -c "********************************************************************************"
+	"$SCRIPT_DIR"/echocolor.sh -c "********************************************************************************"
+	"$SCRIPT_DIR"/echocolor.sh -c "* $1"
+	"$SCRIPT_DIR"/echocolor.sh -c "********************************************************************************"
 	echo
 }
 
@@ -151,7 +149,7 @@ function display_warning()
 
 function display_error()
 {
-	$SCRIPT_DIR/echocolor.sh -r "Error: $1"
+	"$SCRIPT_DIR"/echocolor.sh -r "Error: $1"
 }
 
 
@@ -160,7 +158,7 @@ function remove_godot_directory()
 	if [[ -d "$GODOT_DIR" ]]
 	then
 		display_status "Removing '$GODOT_DIR' directory..."
-		rm -rf $GODOT_DIR
+		rm -rf "$GODOT_DIR"
 	else
 		display_warning "'$GODOT_DIR' directory not found!"
 	fi
@@ -185,9 +183,11 @@ function download_godot()
 	fi
 
 	local filename="godot-${GODOT_VERSION}-${GODOT_RELEASE_TYPE}.tar.xz"
-	local release_url="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-${GODOT_RELEASE_TYPE}/${filename}"
+	local release_url="https://github.com/godotengine/godot-builds/releases/download/\
+${GODOT_VERSION}-${GODOT_RELEASE_TYPE}/${filename}"
 	local archive_path="${GODOT_DIR}.tar.xz"
-	local temp_extract_dir=$(mktemp -d)
+	local temp_extract_dir
+	temp_extract_dir=$(mktemp -d)
 
 	display_status "Downloading Godot ${GODOT_VERSION}-${GODOT_RELEASE_TYPE} (official pre-built binary)..."
 	echo_blue "URL: $release_url"
@@ -205,7 +205,8 @@ function download_godot()
 	# Download the .tar.xz archive
 	if ! curl -L --fail --progress-bar -o "$archive_path" "$release_url"; then
 		rm -f "$archive_path"
-		display_error "Failed to download Godot binary from:\n$release_url\nPlease verify that GODOT_VERSION (${GODOT_VERSION}) and GODOT_RELEASE_TYPE (${GODOT_RELEASE_TYPE}) are correct."
+		display_error "Failed to download Godot binary from:\n$release_url\nPlease verify that GODOT_VERSION \
+(${GODOT_VERSION}) and GODOT_RELEASE_TYPE (${GODOT_RELEASE_TYPE}) are correct."
 		exit 1
 	fi
 
@@ -242,7 +243,8 @@ function generate_godot_headers()
 
 	display_status "Starting Godot build to generate Godot headers..."
 
-	$SCRIPT_DIR/run_with_timeout.sh -t $BUILD_TIMEOUT -c "scons platform=ios target=template_release" -d $GODOT_DIR || true
+	"$SCRIPT_DIR"/run_with_timeout.sh -t "$BUILD_TIMEOUT" -c "scons platform=ios target=template_release" \
+		-d "$GODOT_DIR" || true
 
 	display_status "Terminated Godot build after $BUILD_TIMEOUT seconds..."
 }
@@ -255,7 +257,8 @@ function validate_godot_version()
 		exit 1
 	fi
 
-	local downloaded_version=$(cat "$GODOT_DIR/GODOT_VERSION" | tr -d '[:space:]')
+	local downloaded_version
+	downloaded_version=$(tr -d '[:space:]' < "$GODOT_DIR/GODOT_VERSION")
 	local expected_version="$GODOT_VERSION"
 
 	display_status "Validating Godot version in $GODOT_DIR..."
@@ -264,11 +267,11 @@ function validate_godot_version()
 
 	if [[ "$downloaded_version" != "$expected_version" ]]; then
 		display_error "Godot version mismatch!"
-		$SCRIPT_DIR/echocolor.sh -r "	Expected:	$expected_version"
-		$SCRIPT_DIR/echocolor.sh -r "	Found:		$downloaded_version"
+		"$SCRIPT_DIR"/echocolor.sh -r "	Expected:	$expected_version"
+		"$SCRIPT_DIR"/echocolor.sh -r "	Found:		$downloaded_version"
 		echo
-		$SCRIPT_DIR/echocolor.sh -r "The Godot version in $GODOT_DIR/GODOT_VERSION does not match"
-		$SCRIPT_DIR/echocolor.sh -r "the godotVersion property in $COMMON_CONFIG_FILE"
+		"$SCRIPT_DIR"/echocolor.sh -r "The Godot version in $GODOT_DIR/GODOT_VERSION does not match"
+		"$SCRIPT_DIR"/echocolor.sh -r "the godotVersion property in $COMMON_CONFIG_FILE"
 		echo
 		exit 1
 	fi
@@ -294,16 +297,17 @@ function build_debug()
 	validate_godot_version
 
 	if [[ ! -d "$SPM_DIR" ]]; then
-		display_warning "Swift Package Manager directory does not exist. Run with '-P' option if project has dependencies."
+		display_warning "Swift Package Manager directory does not exist. Run with '-P' option if project has \
+dependencies."
 	fi
 
-	mkdir -p $FRAMEWORK_DIR
-	mkdir -p $LIB_DIR
+	mkdir -p "$FRAMEWORK_DIR"
+	mkdir -p "$LIB_DIR"
 
 	display_status "Building iOS debug"
 	xcodebuild archive \
 		-workspace "$IOS_DIR/$WORKSPACE" \
-		-scheme $SCHEME \
+		-scheme "$SCHEME" \
 		-archivePath "$LIB_DIR/ios_debug.xcarchive" \
 		-derivedDataPath "$DERIVED_DATA_DIR/ios_debug" \
 		-sdk iphoneos \
@@ -314,7 +318,7 @@ function build_debug()
 	display_status "Building iOS simulator debug"
 	xcodebuild archive \
 		-workspace "$IOS_DIR/$WORKSPACE" \
-		-scheme $SCHEME \
+		-scheme "$SCHEME" \
 		-archivePath "$LIB_DIR/sim_debug.xcarchive" \
 		-derivedDataPath "$DERIVED_DATA_DIR/ios_simulator_debug" \
 		-sdk iphonesimulator \
@@ -322,12 +326,14 @@ function build_debug()
 		GCC_PREPROCESSOR_DEFINITIONS="\$(inherited) DEBUG_ENABLED=1" \
 		GODOT_DIR="$GODOT_DIR"
 
-	mv $LIB_DIR/ios_debug.xcarchive/Products/usr/local/lib/lib${SCHEME}.a $LIB_DIR/ios_debug.xcarchive/Products/usr/local/lib/${PLUGIN_NAME}.a
-	mv $LIB_DIR/sim_debug.xcarchive/Products/usr/local/lib/lib${SCHEME}.a $LIB_DIR/sim_debug.xcarchive/Products/usr/local/lib/${PLUGIN_NAME}.a
+	mv "$LIB_DIR/ios_debug.xcarchive/Products/usr/local/lib/lib${SCHEME}.a" \
+		"$LIB_DIR/ios_debug.xcarchive/Products/usr/local/lib/${PLUGIN_NAME}.a"
+	mv "$LIB_DIR/sim_debug.xcarchive/Products/usr/local/lib/lib${SCHEME}.a" \
+		"$LIB_DIR/sim_debug.xcarchive/Products/usr/local/lib/${PLUGIN_NAME}.a"
 
 	if [[ -d "$FRAMEWORK_DIR/${PLUGIN_NAME}.debug.xcframework" ]]
 	then
-		rm -rf $FRAMEWORK_DIR/${PLUGIN_NAME}.debug.xcframework
+		rm -rf "$FRAMEWORK_DIR/${PLUGIN_NAME}.debug.xcframework"
 	fi
 
 	display_status "Creating debug framework"
@@ -355,16 +361,17 @@ function build_release()
 	validate_godot_version
 
 	if [[ ! -d "$SPM_DIR" ]]; then
-		display_warning "Swift Package Manager directory does not exist. Run with '-P' option if project has dependencies."
+		display_warning "Swift Package Manager directory does not exist. Run with '-P' option if project has \
+dependencies."
 	fi
 
-	mkdir -p $FRAMEWORK_DIR
-	mkdir -p $LIB_DIR
+	mkdir -p "$FRAMEWORK_DIR"
+	mkdir -p "$LIB_DIR"
 
 	display_status "Building iOS release"
 	xcodebuild archive \
 		-workspace "$IOS_DIR/$WORKSPACE" \
-		-scheme $SCHEME \
+		-scheme "$SCHEME" \
 		-archivePath "$LIB_DIR/ios_release.xcarchive" \
 		-derivedDataPath "$DERIVED_DATA_DIR/ios_release" \
 		-sdk iphoneos \
@@ -374,19 +381,21 @@ function build_release()
 	display_status "Building iOS simulator release"
 	xcodebuild archive \
 		-workspace "$IOS_DIR/$WORKSPACE" \
-		-scheme $SCHEME \
+		-scheme "$SCHEME" \
 		-archivePath "$LIB_DIR/sim_release.xcarchive" \
 		-derivedDataPath "$DERIVED_DATA_DIR/ios_simulator_release" \
 		-sdk iphonesimulator \
 		SKIP_INSTALL=NO \
 		GODOT_DIR="$GODOT_DIR"
 
-	mv $LIB_DIR/ios_release.xcarchive/Products/usr/local/lib/lib${SCHEME}.a $LIB_DIR/ios_release.xcarchive/Products/usr/local/lib/${PLUGIN_NAME}.a
-	mv $LIB_DIR/sim_release.xcarchive/Products/usr/local/lib/lib${SCHEME}.a $LIB_DIR/sim_release.xcarchive/Products/usr/local/lib/${PLUGIN_NAME}.a
+	mv "$LIB_DIR/ios_release.xcarchive/Products/usr/local/lib/lib${SCHEME}.a" \
+		"$LIB_DIR/ios_release.xcarchive/Products/usr/local/lib/${PLUGIN_NAME}.a"
+	mv "$LIB_DIR/sim_release.xcarchive/Products/usr/local/lib/lib${SCHEME}.a" \
+		"$LIB_DIR/sim_release.xcarchive/Products/usr/local/lib/${PLUGIN_NAME}.a"
 
 	if [[ -d "$FRAMEWORK_DIR/${PLUGIN_NAME}.release.xcframework" ]]
 	then
-		rm -rf $FRAMEWORK_DIR/${PLUGIN_NAME}.release.xcframework
+		rm -rf "$FRAMEWORK_DIR/${PLUGIN_NAME}.release.xcframework"
 	fi
 
 	display_status "Creating release framework"
@@ -475,17 +484,17 @@ done
 if [[ "$do_uninstall" == true ]]
 then
 	display_status "Uninstalling iOS plugin from demo app"
-	$SCRIPT_DIR/run_gradle_task.sh "uninstalliOS"
+	"$SCRIPT_DIR"/run_gradle_task.sh "uninstalliOS"
 fi
 
 if [[ "$do_clean" == true ]]
 then
-	$SCRIPT_DIR/run_gradle_task.sh "cleaniOSBuild"
+	"$SCRIPT_DIR"/run_gradle_task.sh "cleaniOSBuild"
 fi
 
 if [[ "$do_reset_spm" == true ]]
 then
-	$SCRIPT_DIR/run_gradle_task.sh "resetSPMDependencies"
+	"$SCRIPT_DIR"/run_gradle_task.sh "resetSPMDependencies"
 fi
 
 if [[ "$do_remove_godot" == true ]]
@@ -493,7 +502,7 @@ then
 	if [[ "${INVOKED_BY_GRADLE:-}" == "true" ]]; then
 		remove_godot_directory
 	else
-		$SCRIPT_DIR/run_gradle_task.sh "removeGodotDirectory"
+		"$SCRIPT_DIR"/run_gradle_task.sh "removeGodotDirectory"
 	fi
 fi
 
@@ -502,7 +511,7 @@ then
 	if [[ "${INVOKED_BY_GRADLE:-}" == "true" ]]; then
 		download_godot
 	else
-		$SCRIPT_DIR/run_gradle_task.sh "downloadGodot"
+		"$SCRIPT_DIR"/run_gradle_task.sh "downloadGodot"
 	fi
 fi
 
@@ -511,13 +520,13 @@ then
 	if [[ "${INVOKED_BY_GRADLE:-}" == "true" ]]; then
 		generate_godot_headers
 	else
-		$SCRIPT_DIR/run_gradle_task.sh "generateGodotHeaders"
+		"$SCRIPT_DIR"/run_gradle_task.sh "generateGodotHeaders"
 	fi
 fi
 
 if [[ "$do_update_spm" == true ]]
 then
-	$SCRIPT_DIR/run_gradle_task.sh "updateSPMDependencies"
+	"$SCRIPT_DIR"/run_gradle_task.sh "updateSPMDependencies"
 fi
 
 if [[ "$do_resolve_spm_dependencies" == true ]]
@@ -530,7 +539,7 @@ then
 	if [[ "${INVOKED_BY_GRADLE:-}" == "true" ]]; then
 		build_debug
 	else
-		$SCRIPT_DIR/run_gradle_task.sh "buildiOSDebug"
+		"$SCRIPT_DIR"/run_gradle_task.sh "buildiOSDebug"
 	fi
 fi
 
@@ -539,18 +548,18 @@ then
 	if [[ "${INVOKED_BY_GRADLE:-}" == "true" ]]; then
 		build_release
 	else
-		$SCRIPT_DIR/run_gradle_task.sh "buildiOSRelease"
+		"$SCRIPT_DIR"/run_gradle_task.sh "buildiOSRelease"
 	fi
 fi
 
 if [[ "$do_create_archive" == true ]]
 then
 	display_status "Creating iOS archive"
-	$SCRIPT_DIR/run_gradle_task.sh "createiOSArchive"
+	"$SCRIPT_DIR"/run_gradle_task.sh "createiOSArchive"
 fi
 
 if [[ "$do_install" == true ]]
 then
 	display_status "Installing iOS plugin to demo app"
-	$SCRIPT_DIR/run_gradle_task.sh "installToDemoiOS"
+	"$SCRIPT_DIR"/run_gradle_task.sh "installToDemoiOS"
 fi

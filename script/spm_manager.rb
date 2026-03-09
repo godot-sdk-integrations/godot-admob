@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 # © 2026-present https://github.com/cengiz-pz
 #
@@ -5,15 +7,15 @@
 require 'xcodeproj'
 
 def print_usage
-	puts "Usage: ruby spm_manager.rb -a|-d <path_to_xcodeproj> <url> <version> <product_name>"
-	puts ""
-	puts "Options:"
-	puts "  -a    Add the specified SPM dependency to the Xcode project"
-	puts "  -d    Remove the specified SPM dependency from the Xcode project"
-	puts ""
-	puts "Examples:"
-	puts "  ruby spm_manager.rb -a MyProject.xcodeproj https://github.com/URL 1.0.0 ProductName"
-	puts "  ruby spm_manager.rb -d MyProject.xcodeproj https://github.com/URL 1.0.0 ProductName"
+	puts 'Usage: ruby spm_manager.rb -a|-d <path_to_xcodeproj> <url> <version> <product_name>'
+	puts ''
+	puts 'Options:'
+	puts '  -a    Add the specified SPM dependency to the Xcode project'
+	puts '  -d    Remove the specified SPM dependency from the Xcode project'
+	puts ''
+	puts 'Examples:'
+	puts '  ruby spm_manager.rb -a MyProject.xcodeproj https://github.com/URL 1.0.0 ProductName'
+	puts '  ruby spm_manager.rb -d MyProject.xcodeproj https://github.com/URL 1.0.0 ProductName'
 end
 
 # Argument Validation
@@ -30,7 +32,7 @@ product_name = ARGV[4].strip
 
 unless ['-a', '-d'].include?(option)
 	puts "Error: Unknown option '#{option}'. Must be -a (add) or -d (remove)."
-	puts ""
+	puts ''
 	print_usage
 	exit 1
 end
@@ -41,7 +43,7 @@ unless File.exist?(project_path)
 end
 
 if url.empty? || version.empty? || product_name.empty?
-	puts "Error: url, version, and product_name must all be non-empty."
+	puts 'Error: url, version, and product_name must all be non-empty.'
 	exit 1
 end
 
@@ -51,7 +53,7 @@ begin
 	target = project.targets.first
 
 	if target.nil?
-		puts "Error: No targets found in the Xcode project."
+		puts 'Error: No targets found in the Xcode project.'
 		exit 1
 	end
 
@@ -74,10 +76,7 @@ begin
 			else
 				pkg = project.new(Xcodeproj::Project::Object::XCRemoteSwiftPackageReference)
 				pkg.repositoryURL = url
-				pkg.requirement = {
-					'kind' => 'upToNextMajorVersion',
-					'minimumVersion' => version
-				}
+				pkg.requirement = { 'kind' => 'upToNextMajorVersion', 'minimumVersion' => version }
 				project.root_object.package_references << pkg
 			end
 
@@ -87,7 +86,9 @@ begin
 			ref.package = pkg
 			target.package_product_dependencies << ref
 
-			puts "Successfully added SPM dependency '#{product_name}' (#{url} @ #{version}) to #{File.basename(project_path)}\n\n"
+			filename = File.basename(project_path)
+			puts "Successfully added SPM dependency '#{product_name}' " \
+				"(#{url} @ #{version}) to #{filename}\n\n"
 		end
 
 	elsif option == '-d'
@@ -129,8 +130,7 @@ begin
 	end
 
 	project.save
-
-rescue => e
+rescue StandardError => e
 	puts "An error occurred: #{e.message}\n\n"
 	exit 1
 end

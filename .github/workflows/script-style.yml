@@ -9,30 +9,38 @@ on:
 
 jobs:
   script-style:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v6
 
+      - name: Install Node
+        uses: ./.github/actions/install-node
+
       - name: Install ShellCheck
-        run: sudo apt-get install -y shellcheck
+        run: |
+          SHELLCHECK_VERSION=v0.10.0
+          curl -fsSL "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" \
+            | tar -xJf - --strip-components=1 shellcheck-${SHELLCHECK_VERSION}/shellcheck
+          echo "$PWD" >> "$GITHUB_PATH"
 
       - name: Run ShellCheck
-        run: shellcheck script/**/*.sh
+        run: find script -name "*.sh" -print0 | xargs -0 shellcheck
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
+          bundler-cache: true
 
       - name: Install RuboCop
         run: gem install rubocop -v 1.85.0
 
       - name: Run RuboCop
-        run: rubocop --config .github/config/rubocop.yml script
+        run: rubocop --config .github/config/.rubocop.yml script
 
       - name: Install editorconfig-checker
         uses: ./.github/actions/install-ec
 
-      - name: Verify EditorConfig (Final Newline & Trailing Space)
-        run: find script \( -name "*.sh" -o -name "*.rb" \) | xargs editorconfig-checker
+      - name: Verify EditorConfig
+        run: find script \( -name "*.sh" -o -name "*.rb" \) -print0 | xargs -0 editorconfig-checker

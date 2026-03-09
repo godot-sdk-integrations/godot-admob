@@ -12,7 +12,6 @@ import java.lang.reflect.Method;
 
 import org.godotengine.plugin.admob.AdmobPlugin;
 import org.godotengine.plugin.admob.mediation.PrivacySettings;
-import org.godotengine.plugin.admob.mediation.network.MediationNetwork;
 
 
 public class MolocoMediationNetwork extends MediationNetwork {
@@ -54,36 +53,39 @@ public class MolocoMediationNetwork extends MediationNetwork {
 			/*
 			 * PrivacySettings privacySettings = new PrivacySettings(
 			 *			/ isUserConsent /			false,
-			 			/ isAgeRestrictedUser /		false,
+			 *		/ isAgeRestrictedUser /		false,
 			 *			/ isDoNotSell /				true);
 			 * MolocoPrivacy.setPrivacy(privacySettings);
 			 */
 
 			// Get the required Classes using the fully qualified names
-			Class<?> privacySettingsClass = Class.forName("com.moloco.sdk.publisher.privacy.MolocoPrivacy$PrivacySettings");
+			Class<?> privacySettingsClass = Class.forName(
+					"com.moloco.sdk.publisher.privacy.MolocoPrivacy$PrivacySettings");
 			Class<?> molocoPrivacyClass = Class.forName("com.moloco.sdk.publisher.privacy.MolocoPrivacy");
 
 			// Instantiate PrivacySettings: new PrivacySettings(false, false, true) constructor
 			Constructor<?> settingsConstructor = privacySettingsClass.getConstructor(
-				Boolean.class,	// isUserConsent
-				Boolean.class,	// isAgeRestrictedUser
-				Boolean.class 	// isDoNotSell
+					Boolean.class,	// isUserConsent
+					Boolean.class,	// isAgeRestrictedUser
+					Boolean.class 	// isDoNotSell
 			);
 
 			// Create the new object instance, passing the argument values
 			Object privacySettingsInstance = settingsConstructor.newInstance(
-				settings.containsGdprConsentData() ? settings.hasGdprConsent() : false,
-				settings.containsAgeRestrictedUserData() ? settings.isAgeRestrictedUser() : false,
-				settings.containsCcpaSaleConsentData() ? !settings.hasCcpaSaleConsent() : true
+					settings.containsGdprConsentData() ? settings.hasGdprConsent() : false,
+					settings.containsAgeRestrictedUserData() ? settings.isAgeRestrictedUser() : false,
+					settings.containsCcpaSaleConsentData() ? !settings.hasCcpaSaleConsent() : true
 			);
 
 			// Invoke MolocoPrivacy.setPrivacy(privacySettings)
 			Method setPrivacyMethod = molocoPrivacyClass.getMethod("setPrivacy", privacySettingsClass);
 			setPrivacyMethod.invoke(null, privacySettingsInstance);
 
-			Log.d(LOG_TAG, "MolocoPrivacy.setPrivacy(new PrivacySettings(isUserConsent, isAgeRestrictedUser, isDoNotSell)) called successfully.");
+			Log.d(LOG_TAG, "MolocoPrivacy.setPrivacy(new PrivacySettings(isUserConsent, isAgeRestrictedUser, "
+					+ "isDoNotSell)) called successfully.");
 		} catch (Exception e) {
-			Log.e(LOG_TAG, e.getClass().getSimpleName() + ":: " + e.getMessage() + ":: Failed to set GDPR settings for " + tag);
+			Log.e(LOG_TAG, e.getClass().getSimpleName() + ":: " + e.getMessage() + ":: Failed to set GDPR settings for "
+					+ tag);
 		}
 	}
 }

@@ -26,7 +26,8 @@ static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterVungle";
 }
 
 - (void)applyGDPRSettings:(BOOL)hasGdprConsent {
-	// Starting in Vungle SDK version 7.4.1, Liftoff Monetize automatically reads GDPR consent set by UMP SDK.
+	// Starting in Vungle SDK version 7.4.1, Liftoff Monetize automatically reads
+	// GDPR consent set by UMP SDK.
 	@throw [NSException exceptionWithName:@"UnsupportedOperationException" reason:@"Not supported" userInfo:nil];
 }
 

@@ -37,7 +37,7 @@ static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterInMobi";
 
 	id consentDict = [[NSMutableDictionary alloc] init];
 	[consentDict setValue:(hasGdprConsent ? @"1" : @"0") forKey:@"gdpr"];
-	NSString *key = (NSString*) ClassValueOrThrow(constantsClass, @"IM_GDPR_CONSENT_AVAILABLE");
+	NSString *key = (NSString *)ClassValueOrThrow(constantsClass, @"IM_GDPR_CONSENT_AVAILABLE");
 	[consentDict setValue:@"true" forKey:key];
 
 	SEL updateSel = SelectorForClassOrThrow(@"updateGDPRConsent:", consentClass);
@@ -49,7 +49,8 @@ static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterInMobi";
 }
 
 - (void)applyCCPASettings:(BOOL)hasCcpaConsent {
-	// In version 10.5.6.0, the InMobi adapter added support to read IAB U.S. Privacy string from NSUserDefaults.
+	// In version 10.5.6.0, the InMobi adapter added support to read IAB U.S.
+	// Privacy string from NSUserDefaults.
 	@throw [NSException exceptionWithName:@"UnsupportedOperationException" reason:@"Not supported" userInfo:nil];
 }
 

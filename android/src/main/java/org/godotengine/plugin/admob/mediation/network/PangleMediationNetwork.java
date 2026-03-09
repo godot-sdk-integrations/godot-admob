@@ -9,8 +9,6 @@ import android.content.Context;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import org.godotengine.plugin.admob.mediation.network.MediationNetwork;
-
 
 public class PangleMediationNetwork extends MediationNetwork {
 
@@ -49,7 +47,9 @@ public class PangleMediationNetwork extends MediationNetwork {
 
 		// Invoke PangleMediationAdapter.setGDPRConsent(consentConstant)
 		Method setConsentMethod = adapterClass.getMethod("setGDPRConsent", int.class);
-		setConsentMethod.invoke(null, hasGdprConsent ? consentConstant : noConsentConstant); // The first argument is 'null' because the method is static.
+
+		// The first argument is 'null' because the method is static.
+		setConsentMethod.invoke(null, hasGdprConsent ? consentConstant : noConsentConstant);
 	}
 
 	@Override
@@ -80,6 +80,8 @@ public class PangleMediationNetwork extends MediationNetwork {
 
 		// Invoke PangleMediationAdapter.setPAConsent(consentConstant)
 		Method setConsentMethod = adapterClass.getMethod("setPAConsent", int.class);
-		setConsentMethod.invoke(null, hasCcpaConsent ? consentConstant : noConsentConstant); // The first argument is 'null' because the method is static.
+
+		// The first argument is 'null' because the method is static.
+		setConsentMethod.invoke(null, hasCcpaConsent ? consentConstant : noConsentConstant);
 	}
 }

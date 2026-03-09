@@ -1,8 +1,8 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
-class_name LoadAdError extends AdError
+class_name LoadAdError
+extends AdError
 
 const RESPONSE_INFO_PROPERTY: String = "response_info"
 

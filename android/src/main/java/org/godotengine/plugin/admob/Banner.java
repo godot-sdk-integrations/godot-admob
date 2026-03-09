@@ -30,12 +30,19 @@ import org.godotengine.plugin.admob.model.LoadAdRequest;
 
 interface BannerListener {
 	void onAdLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo);
+
 	void onAdRefreshed(AdmobAdInfo adInfo, ResponseInfo responseInfo);
+
 	void onAdFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError);
+
 	void onAdImpression(AdmobAdInfo adInfo);
+
 	void onAdSizeMeasured(AdmobAdInfo adInfo);
+
 	void onAdClicked(AdmobAdInfo adInfo);
+
 	void onAdOpened(AdmobAdInfo adInfo);
+
 	void onAdClosed(AdmobAdInfo adInfo);
 }
 
@@ -96,13 +103,13 @@ public class Banner {
 
 		if (this.loadRequest.hasAdSize()) {
 			this.bannerSize = BannerSize.valueOf(this.loadRequest.getAdSize());
-		}
-		else {
+		} else {
 			this.bannerSize = BannerSize.BANNER;
 			Log.e(LOG_TAG, "Error: Banner size is required! Defaulting to BANNER.");
 		}
 
-		this.adPosition = this.loadRequest.hasAdPosition() ? AdPosition.valueOf(this.loadRequest.getAdPosition()) : AdPosition.TOP;
+		this.adPosition = this.loadRequest.hasAdPosition() ? AdPosition.valueOf(this.loadRequest.getAdPosition())
+				: AdPosition.TOP;
 		this.anchorToSafeArea = this.loadRequest.doAnchorToSafeArea();
 
 		firstLoad = true;
@@ -117,8 +124,7 @@ public class Banner {
 				if (Banner.this.firstLoad) {
 					Banner.this.firstLoad = false;
 					listener.onAdLoaded(Banner.this.adInfo, Banner.this.adView.getResponseInfo());
-				}
-				else {
+				} else {
 					listener.onAdRefreshed(Banner.this.adInfo, Banner.this.adView.getResponseInfo());
 				}
 			}
@@ -158,11 +164,9 @@ public class Banner {
 	void show() {
 		if (adView == null) {
 			Log.w(LOG_TAG, "show(): Warning: banner ad not loaded.");
-		}
-		else if (adView.getVisibility() == View.VISIBLE) {
+		} else if (adView.getVisibility() == View.VISIBLE) {
 			Log.w(LOG_TAG, "show(): Warning: banner ad already visible.");
-		}
-		else {
+		} else {
 			Log.d(LOG_TAG, String.format("show(): %s", this.adId));
 			activity.runOnUiThread(() -> {
 				adView.setVisibility(View.VISIBLE);
@@ -180,7 +184,8 @@ public class Banner {
 						Log.d(LOG_TAG, "Banner.show: Manually applying insets from parent layout.");
 						applyInsets(adView, rootInsets);
 					} else {
-						Log.w(LOG_TAG, "Banner.show: Parent insets are null, relying on listener (which might not fire).");
+						Log.w(LOG_TAG,
+								"Banner.show: Parent insets are null, relying on listener (which might not fire).");
 					}
 				}
 
@@ -207,8 +212,7 @@ public class Banner {
 	void resize() {
 		if (layout == null || adView == null || adParams == null) {
 			Log.w(LOG_TAG, "resize(): Warning: banner ad not loaded.");
-		}
-		else {
+		} else {
 			Log.d(LOG_TAG, String.format("resize(): %s", this.adId));
 
 			activity.runOnUiThread(() -> {
@@ -224,8 +228,8 @@ public class Banner {
 
 	private void addBanner(final int gravity, final AdSize size) {
 		adParams = new FrameLayout.LayoutParams(
-				FrameLayout.LayoutParams.WRAP_CONTENT,
-				FrameLayout.LayoutParams.WRAP_CONTENT
+			FrameLayout.LayoutParams.WRAP_CONTENT,
+			FrameLayout.LayoutParams.WRAP_CONTENT
 		);
 		if (bannerSize == BannerSize.INLINE_ADAPTIVE) {
 			adParams.width = getWidthInPixels();
@@ -343,8 +347,7 @@ public class Banner {
 	public void remove() {
 		if (adView == null) {
 			Log.w(LOG_TAG, "remove(): Warning: adView is null.");
-		}
-		else {
+		} else {
 			activity.runOnUiThread(() -> {
 				layout.removeView(adView);
 			});
@@ -358,8 +361,7 @@ public class Banner {
 				adView.pause();
 				layout.removeView(adView);
 			});
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, "Error: can't hide banner ad. Ad is not visible.");
 		}
 	}
@@ -380,17 +382,21 @@ public class Banner {
 			case SKYSCRAPER -> AdSize.WIDE_SKYSCRAPER;
 			case FLUID -> AdSize.FLUID;
 			case ADAPTIVE -> {
-				int widthDp = loadRequest.getAdaptiveWidth() != -1 ? loadRequest.getAdaptiveWidth() : getAdWidth(activity);
+				int widthDp = loadRequest.getAdaptiveWidth() != -1 ? loadRequest.getAdaptiveWidth()
+						: getAdWidth(activity);
 				yield AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, widthDp);
 			}
 			case INLINE_ADAPTIVE -> {
-				int widthDp = loadRequest.getAdaptiveWidth() != -1 ? loadRequest.getAdaptiveWidth() : getAdWidth(activity);
-				int maxHeight = loadRequest.getAdaptiveMaxHeight() != -1 ? loadRequest.getAdaptiveMaxHeight() : AdSize.AUTO_HEIGHT;
+				int widthDp = loadRequest.getAdaptiveWidth() != -1 ? loadRequest.getAdaptiveWidth()
+						: getAdWidth(activity);
+				int maxHeight = loadRequest.getAdaptiveMaxHeight() != -1 ? loadRequest.getAdaptiveMaxHeight()
+						: AdSize.AUTO_HEIGHT;
 				yield AdSize.getInlineAdaptiveBannerAdSize(widthDp, maxHeight);
 			}
 			default -> AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, getAdWidth(activity));
 		};
-		Log.d(LOG_TAG, String.format("getAdSize('%s'): result = [width: %d; height: %d].", bannerSize.name(), result.getWidth(), result.getHeight()));
+		Log.d(LOG_TAG, String.format("getAdSize('%s'): result = [width: %d; height: %d].", bannerSize.name(),
+				result.getWidth(), result.getHeight()));
 		return result;
 	}
 

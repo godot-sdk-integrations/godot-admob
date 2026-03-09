@@ -10,8 +10,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import org.godotengine.plugin.admob.mediation.network.MediationNetwork;
-
 
 public class ChartboostMediationNetwork extends MediationNetwork {
 
@@ -40,7 +38,8 @@ public class ChartboostMediationNetwork extends MediationNetwork {
 		Class<?> dataUseConsentInterface = Class.forName("com.chartboost.sdk.privacy.model.DataUseConsent");
 
 		// Get the Method object for addDataUseConsent(Context, DataUseConsent)
-		Method addConsentMethod = chartboostClass.getMethod("addDataUseConsent", Context.class, dataUseConsentInterface);
+		Method addConsentMethod = chartboostClass.getMethod("addDataUseConsent", Context.class,
+				dataUseConsentInterface);
 
 		Class<?> gdprClass = Class.forName("com.chartboost.sdk.privacy.model.GDPR");
 		Class<?> gdprConsentClass = Class.forName("com.chartboost.sdk.privacy.model.GDPR$GDPR_CONSENT");
@@ -59,7 +58,8 @@ public class ChartboostMediationNetwork extends MediationNetwork {
 		Constructor<?> gdprConstructor = gdprClass.getConstructor(gdprConsentClass);
 
 		// Call the constructor to create the new object.
-		Object dataUseConsent = gdprConstructor.newInstance(hasGdprConsent ? behavioralConstant : nonBehavioralConstant);
+		Object dataUseConsent = gdprConstructor.newInstance(hasGdprConsent ? behavioralConstant
+				: nonBehavioralConstant);
 
 		// Invoke the static method. The first argument is 'null' because the method is static.
 		addConsentMethod.invoke(null, context, dataUseConsent);
@@ -82,7 +82,8 @@ public class ChartboostMediationNetwork extends MediationNetwork {
 		Class<?> dataUseConsentInterface = Class.forName("com.chartboost.sdk.privacy.model.DataUseConsent");
 
 		// Get the Method object for addDataUseConsent(Context, DataUseConsent)
-		Method addConsentMethod = chartboostClass.getMethod("addDataUseConsent", Context.class, dataUseConsentInterface);
+		Method addConsentMethod = chartboostClass.getMethod("addDataUseConsent", Context.class,
+				dataUseConsentInterface);
 
 		Class<?> ccpaClass = Class.forName("com.chartboost.sdk.privacy.model.CCPA");
 		Class<?> ccpaConsentClass = Class.forName("com.chartboost.sdk.privacy.model.CCPA$CCPA_CONSENT");

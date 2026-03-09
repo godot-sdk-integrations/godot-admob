@@ -40,8 +40,9 @@ public class AdmobResponse {
 		dict.put(ADAPTER_RESPONSES_PROPERTY, responseDicts.toArray());
 
 		AdapterResponseInfo adapterResponseInfo = info.getLoadedAdapterResponseInfo();
-		if (adapterResponseInfo != null)
+		if (adapterResponseInfo != null) {
 			dict.put(LOADED_ADAPTER_RESPONSE_PROPERTY, new AdmobAdapterResponse(adapterResponseInfo).buildRawData());
+		}
 
 		String className = info.getMediationAdapterClassName();
 		if (className != null) {
@@ -52,7 +53,9 @@ public class AdmobResponse {
 		}
 
 		String responseId = info.getResponseId();
-		if (responseId != null) dict.put(RESPONSE_ID_PROPERTY, responseId);
+		if (responseId != null) {
+			dict.put(RESPONSE_ID_PROPERTY, responseId);
+		}
 
 		return dict;
 	}

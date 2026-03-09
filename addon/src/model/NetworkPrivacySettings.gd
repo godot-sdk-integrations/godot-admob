@@ -1,8 +1,8 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
-class_name NetworkPrivacySettings extends RefCounted
+class_name NetworkPrivacySettings
+extends RefCounted
 
 const HAS_GDPR_CONSENT_PROPERTY = "has_gdpr_consent"
 const IS_AGE_RESTRICTED_USER_PROPERTY = "is_age_restricted_user"
@@ -14,7 +14,7 @@ var _data: Dictionary
 
 func _init() -> void:
 	_data = {
-		ENABLED_NETWORKS_PROPERTY: []
+		ENABLED_NETWORKS_PROPERTY: [],
 	}
 
 

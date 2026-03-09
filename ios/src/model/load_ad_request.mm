@@ -6,10 +6,10 @@
 
 #import <objc/message.h>
 
+#import "admob_logger.h"
+#import "gap_converter.h"
 #import "mediation_network.h"
 #import "mediation_network_factory.h"
-#import "gap_converter.h"
-#import "admob_logger.h"
 
 const String AD_UNIT_ID_PROPERTY = "ad_unit_id";
 const String REQUEST_AGENT_PROPERTY = "request_agent";
@@ -30,33 +30,35 @@ static NSString *const COLLAPSIBLE_NETWORK_EXTRAS_KEY = @"collapsible";
 
 static NSString *const METHOD_CALL_PREFIX = @"::";
 
-
 @implementation LoadAdRequest
 
-- (instancetype) initWithDictionary:(Dictionary) adData {
+- (instancetype)initWithDictionary:(Dictionary)adData {
 	if ((self = [super init])) {
 		self.rawData = adData;
 	}
 	return self;
 }
 
-- (NSString*) adUnitId {
-	return self.rawData.has(AD_UNIT_ID_PROPERTY) ? [GAPConverter toNsString: (String) self.rawData[AD_UNIT_ID_PROPERTY]] : @"";
+- (NSString *)adUnitId {
+	return self.rawData.has(AD_UNIT_ID_PROPERTY) ? [GAPConverter toNsString:(String)self.rawData[AD_UNIT_ID_PROPERTY]]
+												 : @"";
 }
 
-- (NSString*) requestAgent {
-	return self.rawData.has(REQUEST_AGENT_PROPERTY) ? [GAPConverter toNsString: (String) self.rawData[REQUEST_AGENT_PROPERTY]] : @"";
+- (NSString *)requestAgent {
+	return self.rawData.has(REQUEST_AGENT_PROPERTY)
+			? [GAPConverter toNsString:(String)self.rawData[REQUEST_AGENT_PROPERTY]]
+			: @"";
 }
 
-- (NSString*) adSize {
-	return self.rawData.has(AD_SIZE_PROPERTY) ? [GAPConverter toNsString: (String) self.rawData[AD_SIZE_PROPERTY]] : @"";
+- (NSString *)adSize {
+	return self.rawData.has(AD_SIZE_PROPERTY) ? [GAPConverter toNsString:(String)self.rawData[AD_SIZE_PROPERTY]] : @"";
 }
 
-- (BOOL) hasAdaptiveWidth {
+- (BOOL)hasAdaptiveWidth {
 	return self.rawData.has(ADAPTIVE_WIDTH_PROPERTY);
 }
 
-- (CGFloat) adaptiveWidth {
+- (CGFloat)adaptiveWidth {
 	CGFloat adaptiveWidth = 0;
 	Variant v = self.rawData[ADAPTIVE_WIDTH_PROPERTY];
 	if (v.get_type() == Variant::FLOAT || v.get_type() == Variant::INT) {
@@ -65,64 +67,71 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 	return adaptiveWidth;
 }
 
-- (BOOL) hasAdaptiveMaxHeight {
+- (BOOL)hasAdaptiveMaxHeight {
 	return self.rawData.has(ADAPTIVE_MAX_HEIGHT_PROPERTY);
 }
 
-- (CGFloat) adaptiveMaxHeight {
+- (CGFloat)adaptiveMaxHeight {
 	CGFloat adaptiveMaxHeight = 0;
 	Variant v = self.rawData[ADAPTIVE_MAX_HEIGHT_PROPERTY];
 	if (v.get_type() == Variant::FLOAT || v.get_type() == Variant::INT) {
 		double val = v.operator double();
-		if (val > 0) adaptiveMaxHeight = (CGFloat)val;
+		if (val > 0) {
+			adaptiveMaxHeight = (CGFloat)val;
+		}
 	}
 	return adaptiveMaxHeight;
 }
 
-- (NSString*) adPosition {
-	return self.rawData.has(AD_POSITION_PROPERTY) ? [GAPConverter toNsString: (String) self.rawData[AD_POSITION_PROPERTY]] : @"";
+- (NSString *)adPosition {
+	return self.rawData.has(AD_POSITION_PROPERTY) ? [GAPConverter toNsString:(String)self.rawData[AD_POSITION_PROPERTY]]
+												  : @"";
 }
 
-- (BOOL) hasCollapsiblePosition {
+- (BOOL)hasCollapsiblePosition {
 	return self.rawData.has(COLLAPSIBLE_POSITION_PROPERTY);
 }
 
-- (NSString*) collapsiblePosition {
-	return self.rawData.has(COLLAPSIBLE_POSITION_PROPERTY) ? [GAPConverter toNsString: (String) self.rawData[COLLAPSIBLE_POSITION_PROPERTY]] : @"";
+- (NSString *)collapsiblePosition {
+	return self.rawData.has(COLLAPSIBLE_POSITION_PROPERTY)
+			? [GAPConverter toNsString:(String)self.rawData[COLLAPSIBLE_POSITION_PROPERTY]]
+			: @"";
 }
 
-- (BOOL) anchorToSafeArea {
-	return self.rawData.has(ANCHOR_TO_SAFE_AREA_PROPERTY) ? (BOOL) self.rawData[ANCHOR_TO_SAFE_AREA_PROPERTY] : NO;
+- (BOOL)anchorToSafeArea {
+	return self.rawData.has(ANCHOR_TO_SAFE_AREA_PROPERTY) ? (BOOL)self.rawData[ANCHOR_TO_SAFE_AREA_PROPERTY] : NO;
 }
 
-- (NSArray*) keywords {
-	return self.rawData.has(KEYWORDS_PROPERTY) ? [GAPConverter toNsStringArray: (Array) self.rawData[KEYWORDS_PROPERTY]] : @[];
+- (NSArray *)keywords {
+	return self.rawData.has(KEYWORDS_PROPERTY) ? [GAPConverter toNsStringArray:(Array)self.rawData[KEYWORDS_PROPERTY]]
+											   : @[];
 }
 
-- (BOOL) hasUserId {
+- (BOOL)hasUserId {
 	return self.rawData.has(USER_ID_PROPERTY);
 }
 
-- (NSString*) userId {
-	return self.rawData.has(USER_ID_PROPERTY) ? [GAPConverter toNsString: (String) self.rawData[USER_ID_PROPERTY]] : @"";
+- (NSString *)userId {
+	return self.rawData.has(USER_ID_PROPERTY) ? [GAPConverter toNsString:(String)self.rawData[USER_ID_PROPERTY]] : @"";
 }
 
-- (BOOL) hasCustomData {
+- (BOOL)hasCustomData {
 	return self.rawData.has(CUSTOM_DATA_PROPERTY);
 }
 
-- (NSString*) customData {
-	return self.rawData.has(CUSTOM_DATA_PROPERTY) ? [GAPConverter toNsString: (String) self.rawData[CUSTOM_DATA_PROPERTY]] : @"";
+- (NSString *)customData {
+	return self.rawData.has(CUSTOM_DATA_PROPERTY) ? [GAPConverter toNsString:(String)self.rawData[CUSTOM_DATA_PROPERTY]]
+												  : @"";
 }
 
-- (Array) networkExtras {
-	return self.rawData.has(NETWORK_EXTRAS_PROPERTY) ? (Array) self.rawData[NETWORK_EXTRAS_PROPERTY] : Array();
+- (Array)networkExtras {
+	return self.rawData.has(NETWORK_EXTRAS_PROPERTY) ? (Array)self.rawData[NETWORK_EXTRAS_PROPERTY] : Array();
 }
 
-- (GADAdSize) getGADAdSize {
-	GADAdSize gadAdSize = GADAdSizeBanner;	// default
+- (GADAdSize)getGADAdSize {
+	GADAdSize gadAdSize = GADAdSizeBanner; // default
 
-	NSString* adSizeStr = [self adSize];
+	NSString *adSizeStr = [self adSize];
 	if ([adSizeStr isEqualToString:@"BANNER"]) {
 		gadAdSize = GADAdSizeBanner;
 	} else if ([adSizeStr isEqualToString:@"LARGE_BANNER"]) {
@@ -166,10 +175,10 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 	return gadAdSize;
 }
 
-- (AdPosition) getAdPosition {
+- (AdPosition)getAdPosition {
 	AdPosition adPosition;
 
-	NSString* adPositionStr = [self adPosition];
+	NSString *adPositionStr = [self adPosition];
 	if ([adPositionStr isEqualToString:@"TOP"]) {
 		adPosition = AdPositionTop;
 	} else if ([adPositionStr isEqualToString:@"BOTTOM"]) {
@@ -198,7 +207,7 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 	return adPosition;
 }
 
-- (GADRequest *) createGADRequest {
+- (GADRequest *)createGADRequest {
 	GADRequest *request = [GADRequest request];
 
 	if (![[self requestAgent] isEqualToString:@""]) {
@@ -210,13 +219,14 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 
 	if ([self hasCollapsiblePosition]) {
 		GADExtras *extras = [[GADExtras alloc] init];
-		extras.additionalParameters = @{COLLAPSIBLE_NETWORK_EXTRAS_KEY : [self collapsiblePosition]};
+		extras.additionalParameters = @{ COLLAPSIBLE_NETWORK_EXTRAS_KEY : [self collapsiblePosition] };
 		os_log_debug(admob_log, "Set collapsible position to: %@", [self collapsiblePosition]);
 		[request registerAdNetworkExtras:extras];
 	}
 
 	// Mediation support: AdRequest extras for specific networks
-	// Expects "network_extras" as Array of Dictionary: { "extras_class": String, "extras": Dictionary }
+	// Expects "network_extras" as Array of Dictionary: { "extras_class": String,
+	// "extras": Dictionary }
 	Array networkExtrasArray = [self networkExtras];
 	os_log_debug(admob_log, "Found %d extras to process", networkExtrasArray.size());
 	for (int i = 0; i < networkExtrasArray.size(); ++i) {
@@ -232,13 +242,13 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 					Class adapterClass = NSClassFromString(adapterClassName);
 					if (adapterClass) {
 						if ([adapterClass respondsToSelector:@selector(networkExtrasClass)]) {
-
 							// Declare the objc_msgSend signature for this selector:
 							using NetworkExtrasClassFn = Class<GADAdNetworkExtras> (*)(Class, SEL);
 							NetworkExtrasClassFn msgSendFunc = reinterpret_cast<NetworkExtrasClassFn>(objc_msgSend);
 
 							// Safely call the +networkExtrasClass method
-							Class<GADAdNetworkExtras> extrasClass = msgSendFunc(adapterClass, @selector(networkExtrasClass));
+							Class<GADAdNetworkExtras> extrasClass =
+									msgSendFunc(adapterClass, @selector(networkExtrasClass));
 
 							if (extrasClass) {
 								if ([extrasClass conformsToProtocol:@protocol(GADAdNetworkExtras)]) {
@@ -248,20 +258,24 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 										for (NSObject *keyObj in extrasParams) {
 											if ([keyObj isKindOfClass:[NSString class]]) {
 												id value = extrasParams[keyObj];
-												NSString *key = (NSString *) keyObj;
+												NSString *key = (NSString *)keyObj;
 												@try {
 													if ([key hasPrefix:METHOD_CALL_PREFIX]) {
-														os_log_debug(admob_log, "Processing method call '%@' for %@", key, adapterClassName);
-														SEL methodSel = NSSelectorFromString([key substringFromIndex:[METHOD_CALL_PREFIX length]]);
+														os_log_debug(admob_log, "Processing method call '%@' for %@",
+																key, adapterClassName);
+														SEL methodSel = NSSelectorFromString(
+																[key substringFromIndex:[METHOD_CALL_PREFIX length]]);
 														((void (*)(id, SEL, id))objc_msgSend)(extras, methodSel, value);
 													} else {
-														os_log_debug(admob_log, "Processing key-value coding '%@' for %@", key, adapterClassName);
-														[extras setValue:value forKey:(NSString*) key];
+														os_log_debug(admob_log,
+																"Processing key-value coding '%@' for %@", key,
+																adapterClassName);
+														[extras setValue:value forKey:(NSString *)key];
 													}
 													numAdded++;
-												}
-												@catch (NSException *exception) {
-													os_log_error(admob_log, "Unable to set key %@ due to %@ (%@)", key, [exception name], [exception reason]);
+												} @catch (NSException *exception) {
+													os_log_error(admob_log, "Unable to set key %@ due to %@ (%@)", key,
+															[exception name], [exception reason]);
 												}
 											} else {
 												os_log_error(admob_log, "Invalid extras key. Skipping.");
@@ -269,19 +283,26 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 										}
 										if (numAdded > 0) {
 											[request registerAdNetworkExtras:extras];
-											os_log_debug(admob_log, "Added %d extras for adapter: %@", numAdded, adapterClassName);
+											os_log_debug(admob_log, "Added %d extras for adapter: %@", numAdded,
+													adapterClassName);
 										}
 									} else {
-										os_log_error(admob_log, "Failed to init extras class: %@", NSStringFromClass(extrasClass));
+										os_log_error(admob_log, "Failed to init extras class: %@",
+												NSStringFromClass(extrasClass));
 									}
 								} else {
-									os_log_error(admob_log, "Class %@ does not conform to GADAdNetworkExtras. Skipping.", NSStringFromClass(extrasClass));
+									os_log_error(admob_log,
+											"Class %@ does not conform to "
+											"GADAdNetworkExtras. Skipping.",
+											NSStringFromClass(extrasClass));
 								}
 							} else {
-								os_log_error(admob_log, "Class %@ has no extras class defined. Skipping.", adapterClassName);
+								os_log_error(
+										admob_log, "Class %@ has no extras class defined. Skipping.", adapterClassName);
 							}
 						} else {
-							os_log_error(admob_log, "Class %@ has no networkExtrasClass method. Skipping.", adapterClassName);
+							os_log_error(admob_log, "Class %@ has no networkExtrasClass method. Skipping.",
+									adapterClassName);
 						}
 					} else {
 						os_log_error(admob_log, "Class %@ not found. Skipping.", adapterClassName);
@@ -293,19 +314,20 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 				os_log_error(admob_log, "No network found for tag '%@'. Skipping.", networkTag);
 			}
 		} else {
-			os_log_error(admob_log, "Invalid '%s' entry: Missing '%s' or '%s'. Skipping.", NETWORK_EXTRAS_PROPERTY.utf8().get_data(),
-					NETWORK_TAG_SUBPROPERTY.utf8().get_data(), EXTRAS_SUBPROPERTY.utf8().get_data());
+			os_log_error(admob_log, "Invalid '%s' entry: Missing '%s' or '%s'. Skipping.",
+					NETWORK_EXTRAS_PROPERTY.utf8().get_data(), NETWORK_TAG_SUBPROPERTY.utf8().get_data(),
+					EXTRAS_SUBPROPERTY.utf8().get_data());
 		}
 	}
 
 	return request;
 }
 
-- (BOOL) hasServerSideVerificationOptions {
+- (BOOL)hasServerSideVerificationOptions {
 	return ([self hasUserId] || [self hasCustomData]);
 }
 
-- (GADServerSideVerificationOptions *) createGADServerSideVerificationOptions {
+- (GADServerSideVerificationOptions *)createGADServerSideVerificationOptions {
 	GADServerSideVerificationOptions *gadOptions = [[GADServerSideVerificationOptions alloc] init];
 
 	if ([self hasUserId]) {
@@ -319,7 +341,7 @@ static NSString *const METHOD_CALL_PREFIX = @"::";
 	return gadOptions;
 }
 
-- (Dictionary) getRawData {
+- (Dictionary)getRawData {
 	return self.rawData;
 }
 

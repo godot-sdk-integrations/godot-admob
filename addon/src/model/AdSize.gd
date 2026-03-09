@@ -1,8 +1,8 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
-class_name AdSize extends RefCounted
+class_name AdSize
+extends RefCounted
 
 const WIDTH_PROPERTY: String = "width"
 const HEIGHT_PROPERTY: String = "height"

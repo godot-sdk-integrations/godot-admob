@@ -10,25 +10,24 @@
 
 #import "ad_position.h"
 
-
 @interface BannerAd : AdFormatBase <GADBannerViewDelegate>
 
-@property (nonatomic, strong) GADBannerView* bannerView;
-@property (nonatomic, strong) NSString* adUnitId;
-@property (nonatomic) GADAdSize gadAdSize;
-@property (nonatomic) AdPosition adPosition;
-@property (nonatomic) BOOL isLoaded;
+@property(nonatomic, strong) GADBannerView *bannerView;
+@property(nonatomic, strong) NSString *adUnitId;
+@property(nonatomic) GADAdSize gadAdSize;
+@property(nonatomic) AdPosition adPosition;
+@property(nonatomic) BOOL isLoaded;
 
-- (instancetype) initWithID:(NSString*) adId;
-- (void) load:(LoadAdRequest*) adData;
-- (void) destroy;
-- (void) hide;
-- (void) show;
-- (void) moveToX:(real_t)x y:(real_t)y;
-- (int) getWidth;
-- (int) getHeight;
-- (int) getWidthInPixels;
-- (int) getHeightInPixels;
+- (instancetype)initWithID:(NSString *)adId;
+- (void)load:(LoadAdRequest *)adData;
+- (void)destroy;
+- (void)hide;
+- (void)show;
+- (void)moveToX:(real_t)x y:(real_t)y;
+- (int)getWidth;
+- (int)getHeight;
+- (int)getWidthInPixels;
+- (int)getHeightInPixels;
 
 @end
 

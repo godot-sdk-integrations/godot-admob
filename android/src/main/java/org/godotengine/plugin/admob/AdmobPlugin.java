@@ -73,31 +73,40 @@ public class AdmobPlugin extends GodotPlugin {
 	static final String SIGNAL_INTERSTITIAL_AD_REFRESHED = "interstitial_ad_refreshed";
 	static final String SIGNAL_INTERSTITIAL_AD_IMPRESSION = "interstitial_ad_impression";
 	static final String SIGNAL_INTERSTITIAL_AD_CLICKED = "interstitial_ad_clicked";
-	static final String SIGNAL_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT = "interstitial_ad_showed_full_screen_content";
-	static final String SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT = "interstitial_ad_failed_to_show_full_screen_content";
-	static final String SIGNAL_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT = "interstitial_ad_dismissed_full_screen_content";
+	static final String SIGNAL_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT =
+			"interstitial_ad_showed_full_screen_content";
+	static final String SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT =
+			"interstitial_ad_failed_to_show_full_screen_content";
+	static final String SIGNAL_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT =
+			"interstitial_ad_dismissed_full_screen_content";
 	static final String SIGNAL_REWARDED_AD_LOADED = "rewarded_ad_loaded";
 	static final String SIGNAL_REWARDED_AD_FAILED_TO_LOAD = "rewarded_ad_failed_to_load";
 	static final String SIGNAL_REWARDED_AD_IMPRESSION = "rewarded_ad_impression";
 	static final String SIGNAL_REWARDED_AD_CLICKED = "rewarded_ad_clicked";
 	static final String SIGNAL_REWARDED_AD_SHOWED_FULL_SCREEN_CONTENT = "rewarded_ad_showed_full_screen_content";
-	static final String SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT = "rewarded_ad_failed_to_show_full_screen_content";
+	static final String SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT =
+			"rewarded_ad_failed_to_show_full_screen_content";
 	static final String SIGNAL_REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT = "rewarded_ad_dismissed_full_screen_content";
 	static final String SIGNAL_REWARDED_AD_USER_EARNED_REWARD = "rewarded_ad_user_earned_reward";
 	static final String SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED = "rewarded_interstitial_ad_loaded";
 	static final String SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD = "rewarded_interstitial_ad_failed_to_load";
 	static final String SIGNAL_REWARDED_INTERSTITIAL_AD_IMPRESSION = "rewarded_interstitial_ad_impression";
 	static final String SIGNAL_REWARDED_INTERSTITIAL_AD_CLICKED = "rewarded_interstitial_ad_clicked";
-	static final String SIGNAL_REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT = "rewarded_interstitial_ad_showed_full_screen_content";
-	static final String SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT = "rewarded_interstitial_ad_failed_to_show_full_screen_content";
-	static final String SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT = "rewarded_interstitial_ad_dismissed_full_screen_content";
-	static final String SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD = "rewarded_interstitial_ad_user_earned_reward";
+	static final String SIGNAL_REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT =
+			"rewarded_interstitial_ad_showed_full_screen_content";
+	static final String SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT =
+			"rewarded_interstitial_ad_failed_to_show_full_screen_content";
+	static final String SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT =
+			"rewarded_interstitial_ad_dismissed_full_screen_content";
+	static final String SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD =
+			"rewarded_interstitial_ad_user_earned_reward";
 	static final String SIGNAL_APP_OPEN_AD_LOADED = "app_open_ad_loaded";
 	static final String SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD = "app_open_ad_failed_to_load";
 	static final String SIGNAL_APP_OPEN_AD_IMPRESSION = "app_open_ad_impression";
 	static final String SIGNAL_APP_OPEN_AD_CLICKED = "app_open_ad_clicked";
 	static final String SIGNAL_APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT = "app_open_ad_showed_full_screen_content";
-	static final String SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT = "app_open_ad_failed_to_show_full_screen_content";
+	static final String SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT =
+			"app_open_ad_failed_to_show_full_screen_content";
 	static final String SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT = "app_open_ad_dismissed_full_screen_content";
 
 	public static final String SIGNAL_NATIVE_AD_LOADED = "native_ad_loaded";
@@ -131,7 +140,8 @@ public class AdmobPlugin extends GodotPlugin {
 	private boolean isForChildDirectedTreatment = false;
 
 	/**
-	 * Ads are personalized by default, GDPR compliance within the European Economic Area may require disabling of personalization.
+	 * Ads are personalized by default, GDPR compliance within the European Economic Area may require disabling of
+	 * personalization.
 	 */
 	private boolean isPersonalized = true;
 	private String maxAdContentRating = "";
@@ -198,7 +208,8 @@ public class AdmobPlugin extends GodotPlugin {
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_IMPRESSION, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_CLICKED, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, Dictionary.class,
+				Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, Dictionary.class));
 
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_LOADED, Dictionary.class, Dictionary.class));
@@ -206,7 +217,8 @@ public class AdmobPlugin extends GodotPlugin {
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_IMPRESSION, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_CLICKED, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_SHOWED_FULL_SCREEN_CONTENT, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, Dictionary.class,
+				Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_AD_USER_EARNED_REWARD, Dictionary.class, Dictionary.class));
 
@@ -215,16 +227,19 @@ public class AdmobPlugin extends GodotPlugin {
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_IMPRESSION, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_CLICKED, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, Dictionary.class,
+				Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD, Dictionary.class,
+				Dictionary.class));
 
 		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_LOADED, Dictionary.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, Dictionary.class, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_IMPRESSION, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_CLICKED, Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT, Dictionary.class));
-		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, Dictionary.class, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, Dictionary.class,
+				Dictionary.class));
 		signals.add(new SignalInfo(SIGNAL_APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT, Dictionary.class));
 
 		signals.add(new SignalInfo(SIGNAL_NATIVE_AD_LOADED, Dictionary.class, Dictionary.class));
@@ -283,7 +298,8 @@ public class AdmobPlugin extends GodotPlugin {
 						}
 
 						isInitialized = true;
-						emitSignal(SIGNAL_INITIALIZATION_COMPLETED, new AdmobStatus(initializationStatus).buildRawData());
+						emitSignal(SIGNAL_INITIALIZATION_COMPLETED, new AdmobStatus(initializationStatus)
+								.buildRawData());
 					}
 				});
 			}
@@ -355,7 +371,8 @@ public class AdmobPlugin extends GodotPlugin {
 	public Dictionary get_current_adaptive_banner_size(int width) {
 		Log.d(LOG_TAG, "get_current_adaptive_banner_size()");
 		int currentWidth = (width == AdSize.FULL_WIDTH) ? Banner.getAdWidth(activity) : width;
-		AdmobAdSize adSize = new AdmobAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, currentWidth));
+		AdmobAdSize adSize = new AdmobAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity,
+				currentWidth));
 		return adSize.buildRawData();
 	}
 
@@ -385,55 +402,57 @@ public class AdmobPlugin extends GodotPlugin {
 				String adId = loadAdRequest.generateAdId(++bannerAdIdSequence);
 				AdmobAdInfo adInfo = new AdmobAdInfo(adId, loadAdRequest);
 				Banner banner = new Banner(adInfo, activity, layout,
-						new BannerListener() {
-							@Override
-							public void onAdLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
-								emitSignal(SIGNAL_BANNER_AD_LOADED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
-							}
+					new BannerListener() {
+						@Override
+						public void onAdLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
+							emitSignal(SIGNAL_BANNER_AD_LOADED, adInfo.buildRawData(), new AdmobResponse(responseInfo)
+									.buildRawData());
+						}
 
-							@Override
-							public void onAdRefreshed(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
-								emitSignal(SIGNAL_BANNER_AD_REFRESHED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
-							}
+						@Override
+						public void onAdRefreshed(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
+							emitSignal(SIGNAL_BANNER_AD_REFRESHED, adInfo.buildRawData(),
+								new AdmobResponse(responseInfo).buildRawData());
+						}
 
-							@Override
-							public void onAdFailedToLoad(AdmobAdInfo adInfo, LoadAdError adError) {
-								emitSignal(SIGNAL_BANNER_AD_FAILED_TO_LOAD, adInfo.buildRawData(), new AdmobLoadAdError(adError).buildRawData());
-							}
+						@Override
+						public void onAdFailedToLoad(AdmobAdInfo adInfo, LoadAdError adError) {
+							emitSignal(SIGNAL_BANNER_AD_FAILED_TO_LOAD, adInfo.buildRawData(),
+								new AdmobLoadAdError(adError).buildRawData());
+						}
 
-							@Override
-							public void onAdImpression(AdmobAdInfo adInfo) {
-								emitSignal(SIGNAL_BANNER_AD_IMPRESSION, adInfo.buildRawData());
-							}
+						@Override
+						public void onAdImpression(AdmobAdInfo adInfo) {
+							emitSignal(SIGNAL_BANNER_AD_IMPRESSION, adInfo.buildRawData());
+						}
 
-							@Override
-							public void onAdSizeMeasured(AdmobAdInfo adInfo) {
-								emitSignal(SIGNAL_BANNER_AD_SIZE_MEASURED, adInfo.buildRawData());
-							}
+						@Override
+						public void onAdSizeMeasured(AdmobAdInfo adInfo) {
+							emitSignal(SIGNAL_BANNER_AD_SIZE_MEASURED, adInfo.buildRawData());
+						}
 
-							@Override
-							public void onAdClicked(AdmobAdInfo adInfo) {
-								emitSignal(SIGNAL_BANNER_AD_CLICKED, adInfo.buildRawData());
-							}
+						@Override
+						public void onAdClicked(AdmobAdInfo adInfo) {
+							emitSignal(SIGNAL_BANNER_AD_CLICKED, adInfo.buildRawData());
+						}
 
-							@Override
-							public void onAdOpened(AdmobAdInfo adInfo) {
-								emitSignal(SIGNAL_BANNER_AD_OPENED, adInfo.buildRawData());
-							}
+						@Override
+						public void onAdOpened(AdmobAdInfo adInfo) {
+							emitSignal(SIGNAL_BANNER_AD_OPENED, adInfo.buildRawData());
+						}
 
-							@Override
-							public void onAdClosed(AdmobAdInfo adInfo) {
-								emitSignal(SIGNAL_BANNER_AD_CLOSED, adInfo.buildRawData());
-							}
-						});
+						@Override
+						public void onAdClosed(AdmobAdInfo adInfo) {
+							emitSignal(SIGNAL_BANNER_AD_CLOSED, adInfo.buildRawData());
+						}
+					});
 				bannerAds.put(adId, banner);
 				banner.load();
 			} else {
 				Log.e(LOG_TAG, "load_banner_ad(): Error: Ad request data is invalid.");
 			}
-		}
-		else {
-				Log.e(LOG_TAG, "load_banner_ad(): Error: Plugin is not initialized!");
+		} else {
+			Log.e(LOG_TAG, "load_banner_ad(): Error: Plugin is not initialized!");
 		}
 	}
 
@@ -443,8 +462,7 @@ public class AdmobPlugin extends GodotPlugin {
 			Log.d(LOG_TAG, String.format("show_banner_ad(): %s", adId));
 			Banner bannerAd = bannerAds.get(adId);
 			bannerAd.show();
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, String.format("show_banner_ad(): Error: banner ad %s not found", adId));
 		}
 	}
@@ -455,8 +473,7 @@ public class AdmobPlugin extends GodotPlugin {
 			Log.d(LOG_TAG, String.format("hide_banner_ad(): %s", adId));
 			Banner bannerAd = bannerAds.get(adId);
 			bannerAd.hide();
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, String.format("hide_banner_ad(): Error: banner ad %s not found", adId));
 		}
 	}
@@ -467,8 +484,7 @@ public class AdmobPlugin extends GodotPlugin {
 			Log.d(LOG_TAG, String.format("remove_banner_ad(): %s", adId));
 			Banner bannerAd = bannerAds.remove(adId);
 			bannerAd.remove();
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, String.format("remove_banner_ad(): Error: banner ad %s not found", adId));
 		}
 	}
@@ -479,8 +495,7 @@ public class AdmobPlugin extends GodotPlugin {
 		Banner banner = bannerAds.get(adId);
 		if (banner != null) {
 			banner.move(x, y);
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, String.format("move_banner_ad(): Error: banner ad %s not found", adId));
 		}
 	}
@@ -493,8 +508,7 @@ public class AdmobPlugin extends GodotPlugin {
 			Log.d(LOG_TAG, String.format("get_banner_width(): %s", adId));
 			Banner bannerAd = bannerAds.get(adId);
 			result = bannerAd.getWidth();
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, String.format("get_banner_width(): Error: banner ad %s not found", adId));
 		}
 
@@ -509,8 +523,7 @@ public class AdmobPlugin extends GodotPlugin {
 			Log.d(LOG_TAG, String.format("get_banner_height(): %s", adId));
 			Banner bannerAd = bannerAds.get(adId);
 			result = bannerAd.getHeight();
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, String.format("get_banner_height(): Error: banner ad %s not found", adId));
 		}
 
@@ -525,8 +538,7 @@ public class AdmobPlugin extends GodotPlugin {
 			Banner bannerAd = bannerAds.get(adId);
 			result = bannerAd.getWidthInPixels();
 			Log.d(LOG_TAG, String.format("get_banner_width_in_pixels(): %s - %d", adId, result));
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, String.format("get_banner_width_in_pixels(): Error: banner ad %s not found", adId));
 		}
 
@@ -541,8 +553,7 @@ public class AdmobPlugin extends GodotPlugin {
 			Banner bannerAd = bannerAds.get(adId);
 			result = bannerAd.getHeightInPixels();
 			Log.d(LOG_TAG, String.format("get_banner_height_in_pixels(): %s - %d", adId, result));
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, String.format("get_banner_height_in_pixels(): Error: banner ad %s not found", adId));
 		}
 
@@ -562,22 +573,26 @@ public class AdmobPlugin extends GodotPlugin {
 				Interstitial ad = new Interstitial(adInfo, activity, new InterstitialListener() {
 					@Override
 					public void onInterstitialLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_LOADED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
+						emitSignal(SIGNAL_INTERSTITIAL_AD_LOADED, adInfo.buildRawData(),
+								new AdmobResponse(responseInfo).buildRawData());
 					}
 
 					@Override
 					public void onInterstitialReloaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_REFRESHED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
+						emitSignal(SIGNAL_INTERSTITIAL_AD_REFRESHED, adInfo.buildRawData(),
+								new AdmobResponse(responseInfo).buildRawData());
 					}
 
 					@Override
 					public void onInterstitialFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_LOAD, adInfo.buildRawData(), new AdmobLoadAdError(loadAdError).buildRawData());
+						emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_LOAD, adInfo.buildRawData(),
+								new AdmobLoadAdError(loadAdError).buildRawData());
 					}
 
 					@Override
 					public void onInterstitialFailedToShow(AdmobAdInfo adInfo, AdError adError) {
-						emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adInfo.buildRawData(), new AdmobAdError(adError).buildRawData());
+						emitSignal(SIGNAL_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adInfo.buildRawData(),
+								new AdmobAdError(adError).buildRawData());
 					}
 
 					@Override
@@ -606,8 +621,7 @@ public class AdmobPlugin extends GodotPlugin {
 			} else {
 				Log.e(LOG_TAG, "load_interstitial_ad(): Error: Ad request data is invalid.");
 			}
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, "load_interstitial_ad(): Error: Plugin is not initialized!");
 		}
 	}
@@ -619,8 +633,7 @@ public class AdmobPlugin extends GodotPlugin {
 			Interstitial ad = interstitialAds.get(adId);
 			assert ad != null;
 			ad.show();
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, String.format("show_interstitial_ad(): Error: ad %s not found", adId));
 		}
 	}
@@ -630,8 +643,7 @@ public class AdmobPlugin extends GodotPlugin {
 		if (interstitialAds.containsKey(adId)) {
 			Log.d(LOG_TAG, String.format("remove_interstitial_ad(): %s", adId));
 			interstitialAds.remove(adId);
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, String.format("remove_interstitial_ad(): Error: ad %s not found", adId));
 		}
 	}
@@ -649,12 +661,14 @@ public class AdmobPlugin extends GodotPlugin {
 				RewardedVideo ad = new RewardedVideo(adInfo, activity, new RewardedVideoListener() {
 					@Override
 					public void onRewardedVideoLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
-						emitSignal(SIGNAL_REWARDED_AD_LOADED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
+						emitSignal(SIGNAL_REWARDED_AD_LOADED, adInfo.buildRawData(),
+								new AdmobResponse(responseInfo).buildRawData());
 					}
 
 					@Override
 					public void onRewardedVideoFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError) {
-						emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_LOAD, adInfo.buildRawData(), new AdmobLoadAdError(loadAdError).buildRawData());
+						emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_LOAD, adInfo.buildRawData(),
+								new AdmobLoadAdError(loadAdError).buildRawData());
 					}
 
 					@Override
@@ -664,7 +678,8 @@ public class AdmobPlugin extends GodotPlugin {
 
 					@Override
 					public void onRewardedVideoFailedToShow(AdmobAdInfo adInfo, AdError adError) {
-						emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adInfo.buildRawData(), new AdmobAdError(adError).buildRawData());
+						emitSignal(SIGNAL_REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adInfo.buildRawData(),
+								new AdmobAdError(adError).buildRawData());
 					}
 
 					@Override
@@ -684,7 +699,8 @@ public class AdmobPlugin extends GodotPlugin {
 
 					@Override
 					public void onRewarded(AdmobAdInfo adInfo, RewardItem reward) {
-						emitSignal(SIGNAL_REWARDED_AD_USER_EARNED_REWARD, adInfo.buildRawData(), GodotConverter.convert(reward));
+						emitSignal(SIGNAL_REWARDED_AD_USER_EARNED_REWARD, adInfo.buildRawData(),
+								GodotConverter.convert(reward));
 					}
 				});
 				rewardedAds.put(adId, ad);
@@ -693,8 +709,7 @@ public class AdmobPlugin extends GodotPlugin {
 			} else {
 				Log.e(LOG_TAG, "load_rewarded_ad(): Error: Ad request data is invalid.");
 			}
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, "load_rewarded_ad(): Error: Plugin is not initialized!");
 		}
 	}
@@ -705,8 +720,7 @@ public class AdmobPlugin extends GodotPlugin {
 			Log.d(LOG_TAG, String.format("show_rewarded_ad(): %s", adId));
 			RewardedVideo ad = rewardedAds.get(adId);
 			ad.show();
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, String.format("show_rewarded_ad(): Error: ad %s not found", adId));
 		}
 	}
@@ -716,8 +730,7 @@ public class AdmobPlugin extends GodotPlugin {
 		if (rewardedAds.containsKey(adId)) {
 			Log.d(LOG_TAG, String.format("remove_rewarded_ad(): %s", adId));
 			rewardedAds.remove(adId);
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, String.format("remove_rewarded_ad(): Error: ad %s not found", adId));
 		}
 	}
@@ -732,55 +745,61 @@ public class AdmobPlugin extends GodotPlugin {
 				String adId = loadAdRequest.generateAdId(++rewardedInterstitialAdIdSequence);
 
 				AdmobAdInfo adInfo = new AdmobAdInfo(adId, loadAdRequest);
-				RewardedInterstitial ad = new RewardedInterstitial(adInfo, activity, new RewardedInterstitialListener() {
-					@Override
-					public void onRewardedInterstitialLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
-					}
+				RewardedInterstitial ad = new RewardedInterstitial(adInfo, activity,
+					new RewardedInterstitialListener() {
+						@Override
+						public void onRewardedInterstitialLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
+							emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_LOADED, adInfo.buildRawData(),
+									new AdmobResponse(responseInfo).buildRawData());
+						}
 
-					@Override
-					public void onRewardedInterstitialFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD, adInfo.buildRawData(), new AdmobLoadAdError(loadAdError).buildRawData());
-					}
+						@Override
+						public void onRewardedInterstitialFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError) {
+							emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD, adInfo.buildRawData(),
+									new AdmobLoadAdError(loadAdError).buildRawData());
+						}
 
-					@Override
-					public void onRewardedInterstitialOpened(AdmobAdInfo adInfo) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT, adInfo.buildRawData());
-					}
+						@Override
+						public void onRewardedInterstitialOpened(AdmobAdInfo adInfo) {
+							emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT,
+									adInfo.buildRawData());
+						}
 
-					@Override
-					public void onRewardedInterstitialFailedToShow(AdmobAdInfo adInfo, AdError adError) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adInfo.buildRawData(), new AdmobAdError(adError).buildRawData());
-					}
+						@Override
+						public void onRewardedInterstitialFailedToShow(AdmobAdInfo adInfo, AdError adError) {
+							emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT,
+									adInfo.buildRawData(), new AdmobAdError(adError).buildRawData());
+						}
 
-					@Override
-					public void onRewardedInterstitialClosed(AdmobAdInfo adInfo) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT, adInfo.buildRawData());
-					}
+						@Override
+						public void onRewardedInterstitialClosed(AdmobAdInfo adInfo) {
+							emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT,
+									adInfo.buildRawData());
+						}
 
-					@Override
-					public void onRewardedClicked(AdmobAdInfo adInfo) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_CLICKED, adInfo.buildRawData());
-					}
+						@Override
+						public void onRewardedClicked(AdmobAdInfo adInfo) {
+							emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_CLICKED, adInfo.buildRawData());
+						}
 
-					@Override
-					public void onRewardedAdImpression(AdmobAdInfo adInfo) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_IMPRESSION, adInfo.buildRawData());
-					}
+						@Override
+						public void onRewardedAdImpression(AdmobAdInfo adInfo) {
+							emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_IMPRESSION, adInfo.buildRawData());
+						}
 
-					@Override
-					public void onRewarded(AdmobAdInfo adInfo, RewardItem reward) {
-						emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD, adInfo.buildRawData(), GodotConverter.convert(reward));
-					}
-				});
+						@Override
+						public void onRewarded(AdmobAdInfo adInfo, RewardItem reward) {
+							emitSignal(SIGNAL_REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD, adInfo.buildRawData(),
+									GodotConverter.convert(reward));
+						}
+					});
 				rewardedInterstitialAds.put(adId, ad);
 				Log.d(LOG_TAG, String.format("load_rewarded_interstitial_ad(): %s", adId));
 				ad.load();
 			} else {
 				Log.e(LOG_TAG, "load_rewarded_interstitial_ad(): Error: Ad request data is invalid.");
 			}
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, "load_rewarded_interstitial_ad(): Error: Plugin is not initialized!");
 		}
 	}
@@ -801,8 +820,7 @@ public class AdmobPlugin extends GodotPlugin {
 		if (rewardedInterstitialAds.containsKey(adId)) {
 			Log.d(LOG_TAG, String.format("remove_rewarded_interstitial_ad(): %s", adId));
 			rewardedInterstitialAds.remove(adId);
-		}
-		else {
+		} else {
 			Log.e(LOG_TAG, String.format("remove_rewarded_interstitial_ad(): Error: ad %s not found", adId));
 		}
 	}
@@ -839,12 +857,14 @@ public class AdmobPlugin extends GodotPlugin {
 				Native ad = new Native(adInfo, activity, layout, new NativeListener() {
 					@Override
 					public void onAdLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
-						emitSignal(SIGNAL_NATIVE_AD_LOADED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
+						emitSignal(SIGNAL_NATIVE_AD_LOADED, adInfo.buildRawData(),
+							new AdmobResponse(responseInfo).buildRawData());
 					}
 
 					@Override
 					public void onAdFailedToLoad(AdmobAdInfo adInfo, LoadAdError error) {
-						emitSignal(SIGNAL_NATIVE_AD_FAILED_TO_LOAD, adInfo.buildRawData(), new AdmobLoadAdError(error).buildRawData());
+						emitSignal(SIGNAL_NATIVE_AD_FAILED_TO_LOAD, adInfo.buildRawData(),
+							new AdmobLoadAdError(error).buildRawData());
 					}
 
 					@Override
@@ -936,14 +956,14 @@ public class AdmobPlugin extends GodotPlugin {
 		Log.d(LOG_TAG, "load_consent_form()");
 		activity.runOnUiThread(() -> {
 			UserMessagingPlatform.loadConsentForm(
-				activity,
-				(UserMessagingPlatform.OnConsentFormLoadSuccessListener) loadedForm -> {
-					consentForm = loadedForm;
-					emitSignal(SIGNAL_CONSENT_FORM_LOADED);
-				},
-				(UserMessagingPlatform.OnConsentFormLoadFailureListener) formError -> {
-					emitSignal(SIGNAL_CONSENT_FORM_FAILED_TO_LOAD, GodotConverter.convert(formError));
-				}
+					activity,
+					(UserMessagingPlatform.OnConsentFormLoadSuccessListener) loadedForm -> {
+						consentForm = loadedForm;
+						emitSignal(SIGNAL_CONSENT_FORM_LOADED);
+					},
+					(UserMessagingPlatform.OnConsentFormLoadFailureListener) formError -> {
+						emitSignal(SIGNAL_CONSENT_FORM_FAILED_TO_LOAD, GodotConverter.convert(formError));
+					}
 			);
 		});
 	}
@@ -987,15 +1007,16 @@ public class AdmobPlugin extends GodotPlugin {
 		ConsentInformation consentInformation = UserMessagingPlatform.getConsentInformation(activity);
 
 		consentInformation.requestConsentInfoUpdate(
-			activity,
-			consentConfig.createConsentRequestParameters(activity),
-			(ConsentInformation.OnConsentInfoUpdateSuccessListener) () -> {
-				emitSignal(SIGNAL_CONSENT_INFO_UPDATED);
-			},
-			(ConsentInformation.OnConsentInfoUpdateFailureListener) requestConsentError -> {
-				emitSignal(SIGNAL_CONSENT_INFO_UPDATE_FAILED, GodotConverter.convert(requestConsentError));
-				Log.w(LOG_TAG, String.format("%s: %s", requestConsentError.getErrorCode(), requestConsentError.getMessage()));
-			}
+				activity,
+				consentConfig.createConsentRequestParameters(activity),
+				(ConsentInformation.OnConsentInfoUpdateSuccessListener) () -> {
+					emitSignal(SIGNAL_CONSENT_INFO_UPDATED);
+				},
+				(ConsentInformation.OnConsentInfoUpdateFailureListener) requestConsentError -> {
+					emitSignal(SIGNAL_CONSENT_INFO_UPDATE_FAILED, GodotConverter.convert(requestConsentError));
+					Log.w(LOG_TAG, String.format("%s: %s", requestConsentError.getErrorCode(),
+							requestConsentError.getMessage()));
+				}
 		);
 	}
 
@@ -1029,7 +1050,7 @@ public class AdmobPlugin extends GodotPlugin {
 			intent.setData(uri);
 			activity.startActivity(intent);
 		} catch (Exception e) {
-			Log.e(LOG_TAG, "open_app_settings():: Failed due to "+ e.getMessage());
+			Log.e(LOG_TAG, "open_app_settings():: Failed due to " + e.getMessage());
 		}
 	}
 
@@ -1040,12 +1061,14 @@ public class AdmobPlugin extends GodotPlugin {
 		appOpenAdManager = new AppOpenAdManager(activity, new AppOpenListener() {
 			@Override
 			public void onAdLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo) {
-				emitSignal(SIGNAL_APP_OPEN_AD_LOADED, adInfo.buildRawData(), new AdmobResponse(responseInfo).buildRawData());
+				emitSignal(SIGNAL_APP_OPEN_AD_LOADED, adInfo.buildRawData(),
+					new AdmobResponse(responseInfo).buildRawData());
 			}
 
 			@Override
 			public void onAdFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError) {
-				emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, adInfo.buildRawData(), new AdmobLoadAdError(loadAdError).buildRawData());
+				emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_LOAD, adInfo.buildRawData(),
+					new AdmobLoadAdError(loadAdError).buildRawData());
 			}
 
 			@Override
@@ -1055,7 +1078,8 @@ public class AdmobPlugin extends GodotPlugin {
 
 			@Override
 			public void onAdFailedToShow(AdmobAdInfo adInfo, AdError adError) {
-				emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adInfo.buildRawData(), new AdmobAdError(adError).buildRawData());
+				emitSignal(SIGNAL_APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT, adInfo.buildRawData(),
+					new AdmobAdError(adError).buildRawData());
 			}
 
 			@Override

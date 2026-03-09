@@ -7,7 +7,6 @@ package org.godotengine.plugin.admob.model;
 import android.util.Log;
 
 import com.google.android.gms.ads.initialization.AdapterStatus;
-import com.google.android.gms.ads.initialization.AdapterStatus.State;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 
 import java.util.Map;
@@ -53,7 +52,8 @@ public class AdmobStatus {
 				Log.d(LOG_TAG, "Initialization status " + adapterStatusStr + " for network tag '" + networkTag + "'.");
 			} else {
 				dict.put(adapterClass, statusDict);
-				Log.w(LOG_TAG, "Initialization status " + adapterStatusStr + " for an invalid or unsupported adapter class '" + adapterClass + "'.");
+				Log.w(LOG_TAG, "Initialization status " + adapterStatusStr
+						+ " for an invalid or unsupported adapter class '" + adapterClass + "'.");
 			}
 		}
 
@@ -62,9 +62,9 @@ public class AdmobStatus {
 
 	private static String adapterStatusToString(AdapterStatus.State adapterInitializationState) {
 		return switch (adapterInitializationState) {
-					case NOT_READY -> "NOT_READY";
-					case READY -> "READY";
-					default -> "INVALID";
-				};
+			case NOT_READY -> "NOT_READY";
+			case READY -> "READY";
+			default -> "INVALID";
+		};
 	}
 }

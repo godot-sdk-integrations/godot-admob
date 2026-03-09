@@ -25,7 +25,8 @@ public class AdmobLoadAdError extends AdmobAdError {
 		Dictionary dict = super.buildRawData();
 
 		ResponseInfo responseInfo = loadAdError.getResponseInfo();
-		dict.put(RESPONSE_INFO_PROPERTY, responseInfo == null ? new Dictionary() : new AdmobResponse(responseInfo).buildRawData());
+		dict.put(RESPONSE_INFO_PROPERTY, responseInfo == null ? new Dictionary()
+				: new AdmobResponse(responseInfo).buildRawData());
 
 		return dict;
 	}

@@ -10,23 +10,24 @@
 
 #include "core/object/class_db.h"
 
-
 @interface AdmobAdapterResponse : NSObject
 
-@property (nonatomic, strong) NSString *adapterClassName;
-@property (nonatomic, strong) NSString *networkTag;
+@property(nonatomic, strong) NSString *adapterClassName;
+@property(nonatomic, strong) NSString *networkTag;
 
 /**
- * Initializes the adapter response wrapper with the Google Mobile Ads adapter response info
- * @param info The GADAdNetworkResponseInfo object from the Google Mobile Ads SDK
+ * Initializes the adapter response wrapper with the Google Mobile Ads adapter
+ * response info
+ * @param info The GADAdNetworkResponseInfo object from the Google Mobile Ads
+ * SDK
  */
-- (instancetype) initWithAdapterResponseInfo:(GADAdNetworkResponseInfo *)info;
+- (instancetype)initWithAdapterResponseInfo:(GADAdNetworkResponseInfo *)info;
 
 /**
  * Builds a Godot-compatible Dictionary containing the adapter response data
  * @return A Dictionary object with the adapter response details
  */
-- (Dictionary) buildRawData;
+- (Dictionary)buildRawData;
 
 @end
 

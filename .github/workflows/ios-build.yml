@@ -1,0 +1,40 @@
+name: iOS Build
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'common/config/**'
+      - 'common/*.gradle.kts'
+      - 'ios/src/**'
+      - 'ios/config/**'
+      - 'ios/*.gradle.kts'
+      - 'ios/*.xcodeproj/**'
+
+jobs:
+  build-ios-debug:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Node
+        uses: ./.github/actions/install-node
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Download Godot
+        working-directory: common
+        run: ./gradlew downloadGodot
+
+      - name: Generate Godot Headers
+        working-directory: common
+        run: ./gradlew generateGodotHeaders
+
+      - name: Build iOS debug
+        working-directory: common
+        run: ./gradlew buildiOSDebug

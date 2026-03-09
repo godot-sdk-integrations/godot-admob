@@ -9,14 +9,13 @@
 
 #include "core/object/class_db.h"
 
-
 @interface PrivacySettings : NSObject
 
-@property (nonatomic, assign) Dictionary rawData;
+@property(nonatomic, assign) Dictionary rawData;
 
-- (instancetype) initWithDictionary:(Dictionary) rawData;
+- (instancetype)initWithDictionary:(Dictionary)rawData;
 
-- (void) applyPrivacySettings;
+- (void)applyPrivacySettings;
 
 - (BOOL)containsGdprConsentData;
 
@@ -24,11 +23,11 @@
 
 - (BOOL)containsCcpaSaleConsentData;
 
-- (BOOL) hasGdprConsent;
+- (BOOL)hasGdprConsent;
 
-- (BOOL) isAgeRestrictedUser;
+- (BOOL)isAgeRestrictedUser;
 
-- (BOOL) hasCcpaSaleConsent;
+- (BOOL)hasCcpaSaleConsent;
 
 @end
 

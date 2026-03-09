@@ -1,13 +1,11 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
-class_name NetworkExtras extends Resource
-
+class_name NetworkExtras
+extends Resource
 
 const NETWORK_TAG_PROPERTY: String = "network_tag"
 const EXTRAS_PROPERTY: String = "extras"
-
 
 ## Identifies the target ad network for the extras.
 @export var network_flag: MediationNetwork.Flag = MediationNetwork.Flag.APPLOVIN

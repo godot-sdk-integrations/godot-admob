@@ -5,7 +5,6 @@
 package org.godotengine.plugin.admob.model;
 
 import android.app.Activity;
-import android.provider.Settings;
 import android.util.Log;
 
 import com.google.android.gms.ads.AdRequest;
@@ -13,11 +12,8 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
 
 import org.godotengine.godot.Dictionary;
 
@@ -37,69 +33,76 @@ public class AdmobConfiguration {
 	private static String PERSONALIZATION_STATE_PROPERTY = "personalization_state";
 	private static String TEST_DEVICE_IDS_PROPERTY = "test_device_ids";
 
-	private Dictionary _data;
+	private Dictionary data;
 
 	public AdmobConfiguration(Dictionary data) {
-		this._data = data;
+		this.data = data;
 	}
 
 	public boolean isReal() {
-		return (boolean) _data.get(IS_REAL_PROPERTY);
+		return (boolean) data.get(IS_REAL_PROPERTY);
 	}
 
 	public String getMaxContentRating() {
-		return (String) _data.get(MAX_AD_CONTENT_RATING_PROPERTY);
+		return (String) data.get(MAX_AD_CONTENT_RATING_PROPERTY);
 	}
 
 	public int getChildDirectedTreatment() {
-		return toInt(_data.get(CHILD_DIRECTED_TREATMENT_PROPERTY));
+		return toInt(data.get(CHILD_DIRECTED_TREATMENT_PROPERTY));
 	}
 
 	public int getUnderAgeOfConsent() {
-		return toInt(_data.get(UNDER_AGE_OF_CONSENT_PROPERTY));
+		return toInt(data.get(UNDER_AGE_OF_CONSENT_PROPERTY));
 	}
 
 	public boolean getFirstPartyIdEnabled() {
-		return (boolean) _data.get(FIRST_PARTY_ID_ENABLED_PROPERTY);
+		return (boolean) data.get(FIRST_PARTY_ID_ENABLED_PROPERTY);
 	}
 
 	public int getPublisherPrivacyPersonalizationState() {
-		return toInt(_data.get(PERSONALIZATION_STATE_PROPERTY));
+		return toInt(data.get(PERSONALIZATION_STATE_PROPERTY));
 	}
 
 	public String[] getTestDeviceIds() {
-		return (String[]) _data.get(TEST_DEVICE_IDS_PROPERTY);
+		return (String[]) data.get(TEST_DEVICE_IDS_PROPERTY);
 	}
 
 	public RequestConfiguration createRequestConfiguration(Activity activity) {
 		RequestConfiguration.Builder builder = MobileAds.getRequestConfiguration().toBuilder();
 
-		if (_data.containsKey(MAX_AD_CONTENT_RATING_PROPERTY))
+		if (data.containsKey(MAX_AD_CONTENT_RATING_PROPERTY)) {
 			builder.setMaxAdContentRating(getMaxContentRating());
+		}
 
-		if (_data.containsKey(CHILD_DIRECTED_TREATMENT_PROPERTY))
+		if (data.containsKey(CHILD_DIRECTED_TREATMENT_PROPERTY)) {
 			builder.setTagForChildDirectedTreatment(getChildDirectedTreatment());
+		}
 
-		if (_data.containsKey(UNDER_AGE_OF_CONSENT_PROPERTY))
+		if (data.containsKey(UNDER_AGE_OF_CONSENT_PROPERTY)) {
 			builder.setTagForUnderAgeOfConsent(getUnderAgeOfConsent());
+		}
 
-		if (_data.containsKey(FIRST_PARTY_ID_ENABLED_PROPERTY)) {
-			// Note: Android RequestConfiguration does not have a direct equivalent for iOS's setPublisherFirstPartyIDEnabled.
-			// First-party user IDs are typically set per AdRequest via setFirstPartyUserId.
+		if (data.containsKey(FIRST_PARTY_ID_ENABLED_PROPERTY)) {
+			// Note: Android RequestConfiguration does not have a direct equivalent for iOS's
+			// setPublisherFirstPartyIDEnabled. First-party user IDs are typically set per AdRequest via
+			// setFirstPartyUserId.
 			Log.d(LOG_TAG, "firstPartyIdEnabled: " + getFirstPartyIdEnabled() + " (handled per AdRequest on Android)");
 		}
 
-		if (_data.containsKey(PERSONALIZATION_STATE_PROPERTY)) {
+		if (data.containsKey(PERSONALIZATION_STATE_PROPERTY)) {
 			int state = getPublisherPrivacyPersonalizationState();
 			switch (state) {
-				case 1 -> builder.setPublisherPrivacyPersonalizationState(RequestConfiguration.PublisherPrivacyPersonalizationState.ENABLED);
-				case 2 -> builder.setPublisherPrivacyPersonalizationState(RequestConfiguration.PublisherPrivacyPersonalizationState.DISABLED);
-				default -> builder.setPublisherPrivacyPersonalizationState(RequestConfiguration.PublisherPrivacyPersonalizationState.DEFAULT);
+				case 1 -> builder.setPublisherPrivacyPersonalizationState(
+					RequestConfiguration.PublisherPrivacyPersonalizationState.ENABLED);
+				case 2 -> builder.setPublisherPrivacyPersonalizationState(
+					RequestConfiguration.PublisherPrivacyPersonalizationState.DISABLED);
+				default -> builder.setPublisherPrivacyPersonalizationState(
+					RequestConfiguration.PublisherPrivacyPersonalizationState.DEFAULT);
 			}
 		}
 
 		ArrayList<String> testDeviceIds = new ArrayList<>();
-		if (_data.containsKey(TEST_DEVICE_IDS_PROPERTY)) {
+		if (data.containsKey(TEST_DEVICE_IDS_PROPERTY)) {
 			String[] configuredIds = getTestDeviceIds();
 			if (configuredIds != null) {
 				testDeviceIds.addAll(Arrays.asList(configuredIds));
@@ -112,7 +115,8 @@ public class AdmobConfiguration {
 			// Add hashed device ID (equivalent to iOS hashed device ID)
 			testDeviceIds.add(GodotConverter.getAdMobDeviceId(activity));
 			// Retrieve and add Advertising ID if tracking is not limited (mirroring iOS ATTrackingManager logic)
-			// Note: getAdvertisingIdInfo() must NOT be called on the main thread to avoid ANR. For production, use async retrieval.
+			// Note: getAdvertisingIdInfo() must NOT be called on the main thread to avoid ANR. For production, use
+			// async retrieval.
 			try {
 				AdvertisingIdClient.Info adInfo = AdvertisingIdClient.getAdvertisingIdInfo(activity);
 				if (!adInfo.isLimitAdTrackingEnabled() && adInfo.getId() != null) {

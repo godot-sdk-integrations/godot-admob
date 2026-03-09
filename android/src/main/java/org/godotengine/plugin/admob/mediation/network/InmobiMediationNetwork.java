@@ -10,8 +10,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import org.godotengine.plugin.admob.mediation.network.MediationNetwork;
-
 
 public class InmobiMediationNetwork extends MediationNetwork {
 
@@ -46,7 +44,8 @@ public class InmobiMediationNetwork extends MediationNetwork {
 		// Create the new object instance
 		Object consentObject = jsonConstructor.newInstance();
 
-		// Get the static field InMobiSdk.IM_GDPR_CONSENT_AVAILABLE (the value is needed as the key for the first 'put' call)
+		// Get the static field InMobiSdk.IM_GDPR_CONSENT_AVAILABLE (the value is needed as the key for the first
+		// 'put' call)
 		Field gdprAvailableField = inMobiSdkClass.getField("IM_GDPR_CONSENT_AVAILABLE");
 
 		// Retrieve the actual String value of the static field. Pass 'null' because it's static.

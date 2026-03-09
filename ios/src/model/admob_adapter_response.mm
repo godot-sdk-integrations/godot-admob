@@ -7,7 +7,6 @@
 #import "admob_ad_error.h"
 #import "mediation_network_factory.h"
 
-
 static String const kAdErrorProperty = "ad_error";
 static String const kAdSourceIdProperty = "ad_source_id";
 static String const kAdSourceInstanceIdProperty = "ad_source_instance_id";
@@ -19,7 +18,7 @@ static String const kLatencyProperty = "latency";
 
 @interface AdmobAdapterResponse ()
 
-@property (nonatomic, strong) GADAdNetworkResponseInfo *info;
+@property(nonatomic, strong) GADAdNetworkResponseInfo *info;
 
 @end
 

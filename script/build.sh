@@ -6,22 +6,8 @@
 set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-ROOT_DIR=$(realpath $SCRIPT_DIR/..)
-COMMON_DIR=$ROOT_DIR/common
-IOS_DIR=$ROOT_DIR/ios
+ROOT_DIR=$(realpath "$SCRIPT_DIR/..")
 RELEASE_DIR=$ROOT_DIR/release
-DEMO_DIR=$ROOT_DIR/demo
-
-COMMON_CONFIG_FILE=$COMMON_DIR/config/config.properties
-
-PLUGIN_NODE_NAME=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE pluginNodeName)
-PLUGIN_NAME="${PLUGIN_NODE_NAME}Plugin"
-PLUGIN_VERSION=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE pluginVersion)
-PLUGIN_MODULE_NAME=$($SCRIPT_DIR/get_config_property.sh -f $COMMON_CONFIG_FILE pluginModuleName)
-
-ANDROID_ARCHIVE="$COMMON_DIR/build/archive/$PLUGIN_NAME-Android-v$PLUGIN_VERSION.zip"
-IOS_ARCHIVE="$IOS_DIR/build/release/$PLUGIN_NAME-iOS-v$PLUGIN_VERSION.zip"
-MULTI_PLATFORM_ARCHIVE="$RELEASE_DIR/$PLUGIN_NAME-Multi-v$PLUGIN_VERSION.zip"
 
 do_clean_build=false
 do_clean_all=false
@@ -38,13 +24,13 @@ do_full_release=false
 function display_help()
 {
 	echo
-	$SCRIPT_DIR/echocolor.sh -y "The " -Y "$0 script" -y " builds the plugin and creates a zip file containing all"
+	"$SCRIPT_DIR"/echocolor.sh -y "The " -Y "$0 script" -y " builds the plugin and creates a zip file containing all"
 	echo_yellow "libraries and configuration."
 	echo
-	$SCRIPT_DIR/echocolor.sh -Y "Syntax:"
+	"$SCRIPT_DIR"/echocolor.sh -Y "Syntax:"
 	echo_yellow "	$0 [-a|A|c|C|d|D|h|i|I|M|R|z|Z]"
 	echo
-	$SCRIPT_DIR/echocolor.sh -Y "Options:"
+	"$SCRIPT_DIR"/echocolor.sh -Y "Options:"
 	echo_yellow "	a	build plugin for the Android platform"
 	echo_yellow "	A	build and create Android release archive"
 	echo_yellow "	c	remove existing builds"
@@ -57,7 +43,7 @@ function display_help()
 	echo_yellow "	M	build and create multi-platform release archive (assumes Godot is already downloaded)"
 	echo_yellow "	R	build and create all release archives (assumes Godot is already downloaded)"
 	echo
-	$SCRIPT_DIR/echocolor.sh -Y "Examples:"
+	"$SCRIPT_DIR"/echocolor.sh -Y "Examples:"
 	echo_yellow "	* clean existing build, do a release build for Android, and create archive"
 	echo_yellow "		$> $0 -A"
 	echo
@@ -91,22 +77,22 @@ function display_help()
 
 function echo_yellow()
 {
-	$SCRIPT_DIR/echocolor.sh -y "$1"
+	"$SCRIPT_DIR"/echocolor.sh -y "$1"
 }
 
 
 function echo_green()
 {
-	$SCRIPT_DIR/echocolor.sh -g "$1"
+	"$SCRIPT_DIR"/echocolor.sh -g "$1"
 }
 
 
 function display_status()
 {
 	echo
-	$SCRIPT_DIR/echocolor.sh -c "********************************************************************************"
-	$SCRIPT_DIR/echocolor.sh -c "* $1"
-	$SCRIPT_DIR/echocolor.sh -c "********************************************************************************"
+	"$SCRIPT_DIR"/echocolor.sh -c "********************************************************************************"
+	"$SCRIPT_DIR"/echocolor.sh -c "* $1"
+	"$SCRIPT_DIR"/echocolor.sh -c "********************************************************************************"
 	echo
 }
 
@@ -121,7 +107,7 @@ function display_step()
 
 function display_error()
 {
-	$SCRIPT_DIR/echocolor.sh -r "Error: $1"
+	"$SCRIPT_DIR"/echocolor.sh -r "Error: $1"
 }
 
 
@@ -138,7 +124,7 @@ function run_android_build()
 
 	display_step "Running Android build script with opts: $build_arguments"
 
-	$SCRIPT_DIR/build_android.sh "$build_arguments"
+	"$SCRIPT_DIR"/build_android.sh "$build_arguments"
 }
 
 
@@ -148,7 +134,7 @@ function run_ios_build()
 
 	display_step "Running iOS build script with opts: $build_arguments"
 
-	$SCRIPT_DIR/build_ios.sh "$build_arguments"
+	"$SCRIPT_DIR"/build_ios.sh "$build_arguments"
 }
 
 
@@ -203,24 +189,24 @@ shift $((OPTIND - 1))
 if [[ "$do_uninstall" == true ]]
 then
 	display_status "Uninstalling plugin from demo app"
-	$SCRIPT_DIR/run_gradle_task.sh uninstall
+	"$SCRIPT_DIR"/run_gradle_task.sh uninstall
 fi
 
 if [[ "$do_clean_build" == true ]]
 then
 	display_status "Cleaning builds"
-	$SCRIPT_DIR/run_gradle_task.sh clean
+	"$SCRIPT_DIR"/run_gradle_task.sh clean
 fi
 
 if [[ "$do_clean_all" == true ]]
 then
 	display_status "Cleaning all builds and release archives"
 
-	$SCRIPT_DIR/run_gradle_task.sh clean
+	"$SCRIPT_DIR"/run_gradle_task.sh clean
 
 	if [[ -d "$RELEASE_DIR" ]]; then
 		display_step "Removing $RELEASE_DIR"
-		rm -rf $RELEASE_DIR
+		rm -rf "$RELEASE_DIR"
 	else
 		echo_yellow "'$RELEASE_DIR' does not exist. Skipping."
 	fi
@@ -239,7 +225,7 @@ fi
 if [[ "$do_multiplatform_release" == true ]]
 then
 	display_step "Creating Multi-platform release archive"
-	$SCRIPT_DIR/run_gradle_task.sh "createMultiArchive"
+	"$SCRIPT_DIR"/run_gradle_task.sh "createMultiArchive"
 fi
 
 if [[ "$do_android_release" == true ]]
@@ -255,11 +241,11 @@ fi
 if [[ "$do_full_release" == true ]]
 then
 	display_status "Creating all release archives"
-	$SCRIPT_DIR/run_gradle_task.sh "createArchives"
+	"$SCRIPT_DIR"/run_gradle_task.sh "createArchives"
 fi
 
 if [[ "$do_install" == true ]]
 then
 	display_status "Installing plugin to demo app"
-	$SCRIPT_DIR/run_gradle_task.sh "installToDemo"
+	"$SCRIPT_DIR"/run_gradle_task.sh "installToDemo"
 fi

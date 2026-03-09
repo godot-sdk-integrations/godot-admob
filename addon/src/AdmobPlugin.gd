@@ -85,8 +85,10 @@ class AndroidExportPlugin extends EditorExportPlugin:
 			for network in _export_config.enabled_mediation_networks:
 				if network.android_custom_maven_repo and not network.android_custom_maven_repo.is_empty():
 					__custom_repos.append(network.android_custom_maven_repo)
-					Admob.log_info("Added custom Maven repo for %s mediation: %s" %
-							[network.tag, network.android_custom_maven_repo])
+					Admob.log_info(
+						"Added custom Maven repo for %s mediation: %s" %
+						[network.tag, network.android_custom_maven_repo],
+					)
 
 		return __custom_repos
 
@@ -95,7 +97,8 @@ class AndroidExportPlugin extends EditorExportPlugin:
 		var __contents: String
 
 		if _export_config:
-			__contents = APP_ID_META_TAG % (_export_config.real_application_id if _export_config.is_real else _export_config.debug_application_id)
+			__contents = APP_ID_META_TAG % (_export_config.real_application_id if _export_config.is_real \
+				else _export_config.debug_application_id )
 		else:
 			Admob.log_warn("Export config not found for %s!" % _plugin_name)
 			__contents = ""
@@ -135,13 +138,20 @@ class IosExportPlugin extends EditorExportPlugin:
 				_export_config.load_export_config_from_node()
 
 			add_apple_embedded_platform_plist_content("<key>GADApplicationIdentifier</key>")
-			add_apple_embedded_platform_plist_content("\t<string>%s</string>" % (_export_config.real_application_id if _export_config.is_real else _export_config.debug_application_id))
+			add_apple_embedded_platform_plist_content(
+				"\t<string>%s</string>" % (_export_config.real_application_id
+					if _export_config.is_real else _export_config.debug_application_id ),
+			)
 
 			if _export_config.att_enabled and _export_config.att_text and not _export_config.att_text.is_empty():
 				add_apple_embedded_platform_plist_content("<key>NSUserTrackingUsageDescription</key>")
 				add_apple_embedded_platform_plist_content("<string>%s</string>" % _export_config.att_text)
 
-			add_apple_embedded_platform_plist_content(MediationNetwork.generate_sk_ad_network_plist(_export_config.enabled_mediation_networks))
+			add_apple_embedded_platform_plist_content(
+				MediationNetwork.generate_sk_ad_network_plist(
+					_export_config.enabled_mediation_networks,
+				),
+			)
 
 			add_apple_embedded_platform_plist_content(NS_APP_TRANSPORT_SECURITY)
 
@@ -172,7 +182,10 @@ class IosExportPlugin extends EditorExportPlugin:
 						var chmod_output: Array = []
 						var chmod_code = OS.execute("chmod", ["+x", __script_path], chmod_output, true, false)
 						if chmod_code != 0:
-							Admob.log_error("Failed to chmod script: %s" % (chmod_output if chmod_output.size() > 0 else "Unknown error"))
+							Admob.log_error(
+								"Failed to chmod script: %s" % (chmod_output if chmod_output.size() > 0
+									else "Unknown error" ),
+							)
 							Admob.log_warn("Run manually: cd %s && ./setup_pods.sh" % a_base_dir)
 							return
 
@@ -297,23 +310,29 @@ rescue => e
 end
 """
 
+
 	func _generate_dependency_script(a_project_dir: String, a_project_name: String) -> Error:
 		var __result = Error.OK
 		var __script_path = a_project_dir.path_join("add_dependencies.rb")
 
 		# Generate Podfile content
 		var __script_content = ADD_DEPENDENCIES_RUBY_SCRIPT % [
-				a_project_name,
-				MediationNetwork.generate_package_list(_export_config.enabled_mediation_networks)
-			]
+			a_project_name,
+			MediationNetwork.generate_package_list(_export_config.enabled_mediation_networks),
+		]
 
 		# Write Podfile
 		var __script_file = FileAccess.open(__script_path, FileAccess.WRITE)
 		if __script_file:
 			__script_file.store_string(__script_content)
 			__script_file.close()
-			Admob.log_info("Generated %s for target '%s' with mediation: %s" % [__script_path, a_project_name,
-					MediationNetwork.generate_tag_list(_export_config.enabled_mediation_networks)])
+			Admob.log_info(
+				"Generated %s for target '%s' with mediation: %s" % [
+					__script_path,
+					a_project_name,
+					MediationNetwork.generate_tag_list(_export_config.enabled_mediation_networks),
+				],
+			)
 		else:
 			Admob.log_error("Failed to write script file: %s" % __script_path)
 			__result = Error.ERR_FILE_CANT_WRITE
@@ -343,10 +362,11 @@ echo
 echo "Setup complete!"
 """
 
+
 	func _generate_setup_script(a_script_path: String, a_project_name: String) -> Error:
 		var __result: Error = Error.OK
 
-		var __script_content = SETUP_BASH_SCRIPT % [ a_project_name, a_project_name]
+		var __script_content = SETUP_BASH_SCRIPT % [a_project_name, a_project_name]
 
 		var __script_file = FileAccess.open(a_script_path, FileAccess.WRITE)
 		if __script_file:
