@@ -62,7 +62,8 @@ public class AdmobAdInfo {
 		dict.put(MEASURED_WIDTH_PROPERTY, this.measuredWidth);
 		dict.put(MEASURED_HEIGHT_PROPERTY, this.measuredHeight);
 		dict.put(IS_COLLAPSIBLE_PROPERTY, this.isCollapsible);
-		dict.put(LOAD_AD_REQUEST_PROPERTY, this.loadAdRequest == null ? new Dictionary() : this.loadAdRequest.getRawData());
+		dict.put(LOAD_AD_REQUEST_PROPERTY, this.loadAdRequest == null ? new Dictionary()
+				: this.loadAdRequest.getRawData());
 
 		return dict;
 	}

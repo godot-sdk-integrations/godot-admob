@@ -1,8 +1,8 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
-class_name AdInfo extends RefCounted
+class_name AdInfo
+extends RefCounted
 
 const AD_ID_PROPERTY: String = "ad_id"
 const MEASURED_WIDTH_PROPERTY: String = "measured_width"

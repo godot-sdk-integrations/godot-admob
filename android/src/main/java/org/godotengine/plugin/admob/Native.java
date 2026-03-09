@@ -26,12 +26,19 @@ import org.godotengine.plugin.admob.model.LoadAdRequest;
 
 interface NativeListener {
 	void onAdLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo);
+
 	void onAdFailedToLoad(AdmobAdInfo adInfo, LoadAdError error);
+
 	void onAdImpression(AdmobAdInfo adInfo);
+
 	void onAdClicked(AdmobAdInfo adInfo);
+
 	void onAdOpened(AdmobAdInfo adInfo);
+
 	void onAdClosed(AdmobAdInfo adInfo);
+
 	void onAdSwipeGestureClicked(AdmobAdInfo adInfo);
+
 	void onAdSizeMeasured(AdmobAdInfo adInfo);
 }
 
@@ -123,14 +130,17 @@ public class Native {
 	}
 
 	private void createView() {
-		if (container != null) return;
+		if (container != null) {
+			return;
+		}
 		LayoutInflater inflater = LayoutInflater.from(activity);
 		adView = (NativeAdView) inflater.inflate(R.layout.native_ad, layout, false);
 		bindNativeAd(adView, nativeAd);
 
 		container = new FrameLayout(activity);
 
-		layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+		layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+			FrameLayout.LayoutParams.WRAP_CONTENT);
 		container.setLayoutParams(layoutParams);
 		container.addView(adView);
 		container.setVisibility(View.GONE);
@@ -153,7 +163,9 @@ public class Native {
 	}
 
 	void show() {
-		if (container == null) return;
+		if (container == null) {
+			return;
+		}
 		if (nativeAd == null) {
 			Log.w(LOG_TAG, "show(): native ad not loaded.");
 			return;
@@ -164,7 +176,9 @@ public class Native {
 	}
 
 	public void hide() {
-		if (container == null) return;
+		if (container == null) {
+			return;
+		}
 		activity.runOnUiThread(() -> container.setVisibility(View.GONE));
 	}
 
@@ -210,11 +224,15 @@ public class Native {
 	}
 
 	public void updateLayout(int xPx, int yPx, int widthPx, int heightPx, boolean visible) {
-		if (container == null || layoutParams == null) return;
+		if (container == null || layoutParams == null) {
+			return;
+		}
 		container.setPadding(0, 0, 0, 0);
 		adView.setPadding(0, 0, 0, 0);
 
-		if (xPx == lastX && yPx == lastY && widthPx == lastW && heightPx == lastH && visible == lastVisible) return;
+		if (xPx == lastX && yPx == lastY && widthPx == lastW && heightPx == lastH && visible == lastVisible) {
+			return;
+		}
 
 		lastX = xPx;
 		lastY = yPx;
@@ -225,7 +243,7 @@ public class Native {
 		activity.runOnUiThread(() -> {
 			layoutParams.leftMargin = xPx;
 			layoutParams.topMargin = yPx;
-			layoutParams.width  = widthPx  > 0 ? widthPx  : FrameLayout.LayoutParams.WRAP_CONTENT;
+			layoutParams.width = widthPx > 0 ? widthPx : FrameLayout.LayoutParams.WRAP_CONTENT;
 			layoutParams.height = heightPx > 0 ? heightPx : FrameLayout.LayoutParams.WRAP_CONTENT;
 			container.setVisibility(visible ? View.VISIBLE : View.GONE);
 			layout.updateViewLayout(container, layoutParams);

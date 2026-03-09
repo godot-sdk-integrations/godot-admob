@@ -1,0 +1,74 @@
+name: Android Build
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'common/config/**'
+      - 'common/*.gradle.kts'
+      - 'android/src/**'
+      - 'android/*.gradle.kts'
+
+jobs:
+  build-android-debug:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Node (act)
+        if: env.ACT == 'true'
+        run: |
+          NODE_VERSION=22.13.1
+
+          OS=$(uname -s)
+          ARCH=$(uname -m)
+
+          if [ "$OS" = "Darwin" ]; then
+            PLATFORM="darwin"
+          else
+            PLATFORM="linux"
+          fi
+
+          if [ "$ARCH" = "arm64" ]; then
+            ARCH="arm64"
+          else
+            ARCH="x64"
+          fi
+
+          FILE="node-v$NODE_VERSION-$PLATFORM-$ARCH.tar.xz"
+          URL="https://nodejs.org/dist/v$NODE_VERSION"
+
+          echo "Downloading $FILE from $URL"
+          curl -fsSL "$URL/$FILE" -o node.tar.xz
+
+          mkdir -p "$HOME/node"
+          tar -xJf node.tar.xz -C "$HOME/node" --strip-components=1
+
+          # Make available to this step
+          export PATH="$HOME/node/bin:$PATH"
+
+          # Make available to later steps
+          echo "$HOME/node/bin" >> "$GITHUB_PATH"
+
+          node -v
+          npm -v
+
+      - name: Setup Node (GitHub)
+        if: env.ACT != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build Android debug
+        working-directory: common
+        run: ./gradlew buildAndroidDebug

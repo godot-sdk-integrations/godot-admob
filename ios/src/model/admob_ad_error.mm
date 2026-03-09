@@ -4,16 +4,14 @@
 
 #import "admob_ad_error.h"
 
-
 static String const kCodeProperty = "code";
 static String const kDomainProperty = "domain";
 static String const kMessageProperty = "message";
 static String const kCauseProperty = "cause";
 
-
 @implementation AdmobAdError
 
-- (instancetype) initWithNsError:(NSError*) nsError {
+- (instancetype)initWithNsError:(NSError *)nsError {
 	self = [super init];
 	if (self) {
 		_code = nsError.code;
@@ -36,10 +34,10 @@ static String const kCauseProperty = "cause";
 	return self;
 }
 
-- (Dictionary) buildRawData {
+- (Dictionary)buildRawData {
 	Dictionary dict = Dictionary();
 
-	dict[kCodeProperty] = (int) self.code;
+	dict[kCodeProperty] = (int)self.code;
 	dict[kDomainProperty] = [self.domain UTF8String];
 
 	if (self.message) {

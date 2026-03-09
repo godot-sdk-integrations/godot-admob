@@ -1,0 +1,16 @@
+---
+type: specs.openrewrite.org/v1beta/style
+name: org.godotengine.plugin.JavaStyle
+configure:
+  org.openrewrite.java.style.TabsAndIndentsStyle:
+    useTabCharacter: true
+    tabSize: 4
+    indentSize: 4
+    continuationIndent: 8
+  org.openrewrite.java.style.ImportLayoutStyle:
+    classCountToUseStarImport: 999
+    nameCountToUseStarImport: 999
+    layout:
+      - import all other imports
+      - <blank line>
+      - import static all other imports

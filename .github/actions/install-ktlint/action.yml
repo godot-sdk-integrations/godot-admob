@@ -1,14 +1,39 @@
 name: Install ktlint
-description: Installs a pinned version of ktlint and places it on PATH.
+description: Installs a pinned version of ktlint, caches it, and places it on PATH.
+
+inputs:
+  version:
+    description: 'The version of ktlint to install'
+    required: false
+    default: '1.8.0'
 
 runs:
   using: composite
 
   steps:
-    - name: Install ktlint
+    # Attempt to restore ktlint from the cache
+    - name: Cache ktlint
+      id: cache-ktlint
+      # Skip caching when running locally via 'act' to avoid missing Node/Docker execution errors
+      if: env.ACT != 'true'
+      uses: actions/cache@v5
+      with:
+        path: ~/.local/bin/ktlint
+        key: ${{ runner.os }}-ktlint-${{ inputs.version }}
+
+    # Download ktlint ONLY if it wasn't found in the cache
+    - name: Download ktlint
+      if: steps.cache-ktlint.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        KTLINT_VERSION="1.8.0"
-        curl -sSLO "https://github.com/pinterest/ktlint/releases/download/${KTLINT_VERSION}/ktlint"
-        chmod +x ktlint
-        sudo mv ktlint /usr/local/bin/
+        echo "Cache miss: Downloading ktlint version ${{ inputs.version }}..."
+        mkdir -p "$HOME/.local/bin"
+        curl -sSL "https://github.com/pinterest/ktlint/releases/download/${{ inputs.version }}/ktlint" -o "$HOME/.local/bin/ktlint"
+        chmod +x "$HOME/.local/bin/ktlint"
+
+    # Expose ktlint to PATH (must run on both cache hits and misses)
+    - name: Add ktlint to PATH
+      shell: bash
+      run: |
+        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        echo "ktlint is ready!"

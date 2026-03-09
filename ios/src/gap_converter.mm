@@ -12,18 +12,17 @@
 
 @implementation GAPConverter
 
-
 // FROM GODOT
 
-+ (NSString*) toNsString:(String) godotString {
++ (NSString *)toNsString:(String)godotString {
 	return [NSString stringWithUTF8String:godotString.utf8().get_data()];
 }
 
-+ (NSString*) toAdId:(NSString*) unitId withSequence:(int) value {
++ (NSString *)toAdId:(NSString *)unitId withSequence:(int)value {
 	return [NSString stringWithFormat:@"%s-%d", [unitId UTF8String], value];
 }
 
-+ (id) toNsObject:(Variant) godotValue {
++ (id)toNsObject:(Variant)godotValue {
 	switch (godotValue.get_type()) {
 		case Variant::Type::NIL:
 			return [NSNull null];
@@ -70,7 +69,7 @@
 	}
 }
 
-+ (NSDictionary*) toNsDictionary:(Dictionary)godotDictionary {
++ (NSDictionary *)toNsDictionary:(Dictionary)godotDictionary {
 	NSMutableDictionary *nsDictionary = [NSMutableDictionary dictionary];
 
 	Array keys = godotDictionary.keys();
@@ -82,8 +81,12 @@
 		id nsKey = [GAPConverter toNsObject:key];
 		id nsValue = [GAPConverter toNsObject:value];
 
-		if (!nsKey) nsKey = [NSNull null];
-		if (!nsValue) nsValue = [NSNull null];
+		if (!nsKey) {
+			nsKey = [NSNull null];
+		}
+		if (!nsValue) {
+			nsValue = [NSNull null];
+		}
 
 		// Ensure key is NSString (NSDictionary requires NSString keys)
 		if (![nsKey isKindOfClass:[NSString class]]) {
@@ -96,9 +99,8 @@
 	return nsDictionary;
 }
 
-
-+ (NSArray*) toNsStringArray: (Array) arr {
-	NSMutableArray* result = [[NSMutableArray alloc] init];
++ (NSArray *)toNsStringArray:(Array)arr {
+	NSMutableArray *result = [[NSMutableArray alloc] init];
 	for (int i = 0; i < arr.size(); ++i) {
 		NSString *value = [GAPConverter toNsString:arr[i]];
 		if (value != NULL) {
@@ -110,9 +112,9 @@
 	return result;
 }
 
-+ (GADPublisherPrivacyPersonalizationState)intToPublisherPrivacyPersonalizationState:(Variant) intValue {
++ (GADPublisherPrivacyPersonalizationState)intToPublisherPrivacyPersonalizationState:(Variant)intValue {
 	GADPublisherPrivacyPersonalizationState state;
-	switch((int) intValue) {
+	switch ((int)intValue) {
 		case 1:
 			state = GADPublisherPrivacyPersonalizationStateEnabled;
 			break;
@@ -125,7 +127,7 @@
 	return state;
 }
 
-+ (GADServerSideVerificationOptions*) godotDictionaryToServerSideVerificationOptions:(Dictionary) godotDictionary {
++ (GADServerSideVerificationOptions *)godotDictionaryToServerSideVerificationOptions:(Dictionary)godotDictionary {
 	GADServerSideVerificationOptions *options = [[GADServerSideVerificationOptions alloc] init];
 
 	String custom_data = godotDictionary["custom_data"];
@@ -145,17 +147,17 @@
 	return options;
 }
 
-+ (UMPRequestParameters *) godotDictionaryToUMPRequestParameters:(Dictionary) godotDictionary {
++ (UMPRequestParameters *)godotDictionaryToUMPRequestParameters:(Dictionary)godotDictionary {
 	UMPRequestParameters *parameters = [[UMPRequestParameters alloc] init];
 
 	if (godotDictionary.has("tag_for_under_age_of_consent")) {
-		bool tagForUnderAgeOfConsent = (bool) godotDictionary["tag_for_under_age_of_consent"];
+		bool tagForUnderAgeOfConsent = (bool)godotDictionary["tag_for_under_age_of_consent"];
 		parameters.tagForUnderAgeOfConsent = tagForUnderAgeOfConsent;
 	}
 
 	bool debugMode = false;
 	if (godotDictionary.has("is_real")) {
-		debugMode = !(bool) godotDictionary["is_real"];
+		debugMode = !(bool)godotDictionary["is_real"];
 	}
 
 	if (debugMode) {
@@ -183,7 +185,10 @@
 				debugSettings.geography = UMPDebugGeographyRegulatedUSState;
 				break;
 			default:
-				os_log_error(admob_log, "Unsupported debug geography value: %d, defaulting to UMPDebugGeographyOther", debugGeographyValue);
+				os_log_error(admob_log,
+						"Unsupported debug geography value: %d, defaulting to "
+						"UMPDebugGeographyOther",
+						debugGeographyValue);
 			case 2: // DEBUG_GEOGRAPHY_NOT_EEA deprecated
 			case 4: // DEBUG_GEOGRAPHY_OTHER
 				debugSettings.geography = UMPDebugGeographyOther;
@@ -216,46 +221,43 @@
 	return debugSettings;
 }
 
-
 // TO GODOT
 
-+ (String) nsStringToGodotString:(NSString*) nsString {
++ (String)nsStringToGodotString:(NSString *)nsString {
 	return [nsString UTF8String];
 }
 
-+ (Dictionary) nsDictionaryToGodotDictionary:(NSDictionary*) nsDictionary {
++ (Dictionary)nsDictionaryToGodotDictionary:(NSDictionary *)nsDictionary {
 	Dictionary dictionary = Dictionary();
 
-	for (NSObject* keyObject in [nsDictionary allKeys]) {
+	for (NSObject *keyObject in [nsDictionary allKeys]) {
 		if (keyObject && [keyObject isKindOfClass:[NSString class]]) {
-			NSString* key = (NSString*) keyObject;
+			NSString *key = (NSString *)keyObject;
 
-			NSObject* valueObject = [nsDictionary objectForKey:key];
+			NSObject *valueObject = [nsDictionary objectForKey:key];
 			if (valueObject) {
 				if ([valueObject isKindOfClass:[NSString class]]) {
-					NSString* value = (NSString*) valueObject;
+					NSString *value = (NSString *)valueObject;
 					dictionary[[key UTF8String]] = (value) ? [value UTF8String] : "";
-				}
-				else if ([valueObject isKindOfClass:[NSNumber class]]) {
-					NSNumber* value = (NSNumber*) valueObject;
+				} else if ([valueObject isKindOfClass:[NSNumber class]]) {
+					NSNumber *value = (NSNumber *)valueObject;
 					if (strcmp([value objCType], @encode(BOOL)) == 0) {
-						dictionary[[key UTF8String]] = (int) [value boolValue];
+						dictionary[[key UTF8String]] = (int)[value boolValue];
 					} else if (strcmp([value objCType], @encode(char)) == 0) {
-						dictionary[[key UTF8String]] = (int) [value charValue];
+						dictionary[[key UTF8String]] = (int)[value charValue];
 					} else if (strcmp([value objCType], @encode(int)) == 0) {
 						dictionary[[key UTF8String]] = [value intValue];
 					} else if (strcmp([value objCType], @encode(unsigned int)) == 0) {
-						dictionary[[key UTF8String]] = (int) [value unsignedIntValue];
+						dictionary[[key UTF8String]] = (int)[value unsignedIntValue];
 					} else if (strcmp([value objCType], @encode(long long)) == 0) {
-						dictionary[[key UTF8String]] = (int) [value longValue];
+						dictionary[[key UTF8String]] = (int)[value longValue];
 					} else if (strcmp([value objCType], @encode(float)) == 0) {
 						dictionary[[key UTF8String]] = [value floatValue];
 					} else if (strcmp([value objCType], @encode(double)) == 0) {
-						dictionary[[key UTF8String]] = (float) [value doubleValue];
+						dictionary[[key UTF8String]] = (float)[value doubleValue];
 					}
-				}
-				else if ([valueObject isKindOfClass:[NSDictionary class]]) {
-					NSDictionary* value = (NSDictionary*) valueObject;
+				} else if ([valueObject isKindOfClass:[NSDictionary class]]) {
+					NSDictionary *value = (NSDictionary *)valueObject;
 					dictionary[[key UTF8String]] = [GAPConverter nsDictionaryToGodotDictionary:value];
 				}
 			}
@@ -265,7 +267,7 @@
 	return dictionary;
 }
 
-+ (Dictionary) adRewardToGodotDictionary:(GADAdReward*) adReward {
++ (Dictionary)adRewardToGodotDictionary:(GADAdReward *)adReward {
 	Dictionary dictionary;
 
 	dictionary["type"] = adReward.type.UTF8String;
@@ -274,20 +276,19 @@
 	return dictionary;
 }
 
-+ (Dictionary) nsFormErrorToGodotDictionary:(NSError*) nsError {
++ (Dictionary)nsFormErrorToGodotDictionary:(NSError *)nsError {
 	Dictionary dictionary;
 
-	dictionary["error_code"] = (int) nsError.code;
+	dictionary["error_code"] = (int)nsError.code;
 	dictionary["message"] = [nsError.localizedDescription UTF8String];
 
 	return dictionary;
 }
 
-
 // UTIL
 
-+ (NSString*) getAdmobDeviceID {
-	NSUUID* adid = [[ASIdentifierManager sharedManager] advertisingIdentifier];
++ (NSString *)getAdmobDeviceID {
+	NSUUID *adid = [[ASIdentifierManager sharedManager] advertisingIdentifier];
 	const char *cStr = [adid.UUIDString UTF8String];
 
 	unsigned char digest[CC_SHA256_DIGEST_LENGTH];
@@ -303,7 +304,7 @@
 	return output;
 }
 
-+ (NSString *) convertTrackingStatusToString:(ATTrackingManagerAuthorizationStatus) status API_AVAILABLE(ios(14)) {
++ (NSString *)convertTrackingStatusToString:(ATTrackingManagerAuthorizationStatus)status API_AVAILABLE(ios(14)) {
 	switch (status) {
 		case ATTrackingManagerAuthorizationStatusDenied:
 			return @"denied";

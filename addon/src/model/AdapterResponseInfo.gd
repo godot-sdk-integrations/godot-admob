@@ -1,8 +1,8 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
-class_name AdapterResponseInfo extends RefCounted
+class_name AdapterResponseInfo
+extends RefCounted
 
 const AD_ERROR_PROPERTY: String = "ad_error"
 const AD_SOURCE_ID_PROPERTY: String = "ad_source_id"
@@ -21,8 +21,7 @@ func _init(a_data: Dictionary):
 
 
 func get_ad_error() -> AdError:
-	return AdError.new(_data[AD_ERROR_PROPERTY]) \
-			if _data.has(AD_ERROR_PROPERTY) else null
+	return AdError.new(_data[AD_ERROR_PROPERTY]) if _data.has(AD_ERROR_PROPERTY) else null
 
 
 func get_ad_source_id() -> String:

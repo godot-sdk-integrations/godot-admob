@@ -1,8 +1,8 @@
 #
 # © 2026-present https://github.com/cengiz-pz
 #
-
-class_name AdmobSettings extends RefCounted
+class_name AdmobSettings
+extends RefCounted
 
 const DATA_KEY_AD_VOLUME = "ad_volume"
 const DATA_KEY_ADS_MUTED = "ads_muted"

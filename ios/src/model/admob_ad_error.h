@@ -10,25 +10,24 @@
 
 #include "core/object/class_db.h"
 
-
 @interface AdmobAdError : NSObject
 
-@property (nonatomic) NSInteger code;
-@property (nonatomic, strong) NSString *domain;
-@property (nonatomic, strong) NSString *message;
-@property (nonatomic, strong) AdmobAdError *cause;
+@property(nonatomic) NSInteger code;
+@property(nonatomic, strong) NSString *domain;
+@property(nonatomic, strong) NSString *message;
+@property(nonatomic, strong) AdmobAdError *cause;
 
 /**
  * Initializes the ad error wrapper with the Google Mobile Ads error object
  * @param nsError The NSError object from the Google Mobile Ads SDK
  */
-- (instancetype) initWithNsError:(NSError*) nsError;
+- (instancetype)initWithNsError:(NSError *)nsError;
 
 /**
  * Builds a Godot-compatible Dictionary containing the ad error data
  * @return A Dictionary object with the error details
  */
-- (Dictionary) buildRawData;
+- (Dictionary)buildRawData;
 
 @end
 

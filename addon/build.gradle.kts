@@ -17,6 +17,8 @@ val androidDependencies =
         }
 
 tasks {
+    val addonSrcDir = file(project.extra["templateDir"] as String)
+
     register<Delete>("cleanOutput") {
         // Keep the directory itself and delete files with specified type inside
         delete(
@@ -30,7 +32,7 @@ tasks {
 
     register<Copy>("copyAssets") {
         description = "Copies plugin assets such as PNG images to the output directory"
-        from(project.extra["templateDirectory"] as String)
+        from(addonSrcDir)
         into("${project.extra["outputDir"]}/addons/${project.extra["pluginName"]}")
         include("**/*.png")
     }
@@ -39,7 +41,7 @@ tasks {
         description = "Copies the GDScript templates and plugin config to the output directory and replaces tokens"
         finalizedBy("copyAssets")
 
-        from(project.extra["templateDirectory"] as String)
+        from(addonSrcDir)
         into("${project.extra["outputDir"]}/addons/${project.extra["pluginName"]}")
 
         include("**/*.gd")
@@ -121,7 +123,7 @@ tasks {
             result
         }
 
-        inputs.dir(project.extra["templateDirectory"] as String)
+        inputs.dir(addonSrcDir)
         inputs.files(
             rootProject.file("config/config.properties"),
             rootProject.file("../ios/config/config.properties"),
@@ -188,5 +190,98 @@ tasks {
     // Ensure generateiOSConfig always runs after generateGDScript
     named<Copy>("generateiOSConfig") {
         mustRunAfter("generateGDScript")
+    }
+
+    val gdscriptFormatExcludes =
+        listOf(
+            "**/AdmobPlugin.gd",
+            "**/MediationNetwork.gd",
+        )
+
+    register<Exec>("checkGdscriptFormat") {
+        description = "Checks gdscript-formatter compliance of GDScript source files (dry-run, no changes written)"
+        group = "formatting"
+
+        val gdformatrcSource = file("$projectDir/../.github/config/.gdformatrc")
+        val gdformatrcDest = addonSrcDir.resolve(".gdformatrc")
+        workingDir = addonSrcDir
+
+        doFirst {
+            copy {
+                from(gdformatrcSource)
+                into(addonSrcDir)
+                println("[DEBUG] Copied $gdformatrcSource into $addonSrcDir")
+            }
+
+            val sourceFiles =
+                fileTree(addonSrcDir) {
+                    include("**/*.gd")
+                    gdscriptFormatExcludes.forEach { exclude(it) }
+                }.files
+                    .map { it.relativeTo(addonSrcDir).path }
+                    .sorted()
+
+            if (sourceFiles.isEmpty()) {
+                throw GradleException("checkGdscriptFormat: no source files found under ${addonSrcDir.absolutePath}")
+            }
+
+            commandLine(
+                buildList {
+                    add("gdformat")
+                    add("--check")
+                    addAll(sourceFiles)
+                },
+            )
+        }
+
+        doLast {
+            if (gdformatrcDest.exists()) {
+                gdformatrcDest.delete()
+                println("[DEBUG] Deleted $gdformatrcDest")
+            }
+        }
+    }
+
+    register<Exec>("formatGdscriptSource") {
+        description = "Formats GDScript source files in-place using gdscript-formatter"
+        group = "formatting"
+
+        val gdformatrcSource = file("$projectDir/../.github/config/.gdformatrc")
+        val gdformatrcDest = addonSrcDir.resolve(".gdformatrc")
+        workingDir = addonSrcDir
+
+        doFirst {
+            copy {
+                from(gdformatrcSource)
+                into(addonSrcDir)
+                println("[DEBUG] Copied $gdformatrcSource into $addonSrcDir")
+            }
+
+            val sourceFiles =
+                fileTree(addonSrcDir) {
+                    include("**/*.gd")
+                    gdscriptFormatExcludes.forEach { exclude(it) }
+                }.files
+                    .map { it.relativeTo(addonSrcDir).path }
+                    .sorted()
+
+            if (sourceFiles.isEmpty()) {
+                throw GradleException("formatGdscriptSource: no source files found under ${addonSrcDir.absolutePath}")
+            }
+
+            commandLine(
+                buildList {
+                    add("gdformat")
+                    addAll(sourceFiles)
+                },
+            )
+        }
+
+        doLast {
+            if (gdformatrcDest.exists()) {
+                gdformatrcDest.delete()
+                println("[DEBUG] Deleted $gdformatrcDest")
+            }
+        }
     }
 }

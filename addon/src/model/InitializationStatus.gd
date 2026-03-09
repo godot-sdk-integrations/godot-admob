@@ -1,8 +1,8 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
-class_name InitializationStatus extends RefCounted
+class_name InitializationStatus
+extends RefCounted
 
 var _data: Dictionary
 

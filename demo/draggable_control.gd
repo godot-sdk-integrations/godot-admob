@@ -3,6 +3,7 @@ extends Control
 var _dragging := false
 var _drag_offset := Vector2.ZERO
 
+
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:

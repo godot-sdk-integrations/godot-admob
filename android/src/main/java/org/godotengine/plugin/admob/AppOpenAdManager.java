@@ -30,11 +30,17 @@ import org.godotengine.plugin.admob.model.LoadAdRequest;
 
 interface AppOpenListener {
 	void onAdLoaded(AdmobAdInfo adInfo, ResponseInfo responseInfo);
+
 	void onAdFailedToLoad(AdmobAdInfo adInfo, LoadAdError loadAdError);
+
 	void onAdShowed(AdmobAdInfo adInfo);
+
 	void onAdFailedToShow(AdmobAdInfo adInfo, AdError adError);
+
 	void onAdImpression(AdmobAdInfo adInfo);
+
 	void onAdClicked(AdmobAdInfo adInfo);
+
 	void onAdClosed(AdmobAdInfo adInfo);
 }
 

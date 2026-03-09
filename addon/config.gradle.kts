@@ -40,7 +40,7 @@ extra.apply {
         }
     }
 
-    set("templateDirectory", "$projectDir/src")
+    set("templateDir", "$projectDir/src")
     set("buildDir", "$projectDir/build")
     set("outputDir", "${get("buildDir")}/output")
 

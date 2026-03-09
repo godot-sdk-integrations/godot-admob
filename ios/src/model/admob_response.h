@@ -10,7 +10,6 @@
 
 #include "core/object/class_db.h"
 
-
 @interface AdmobResponse : NSObject
 
 /**

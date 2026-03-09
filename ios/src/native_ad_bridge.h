@@ -13,12 +13,11 @@
 class AdmobPlugin;
 @protocol AdmobNativeAdDelegate;
 
-
 @interface NativeAdBridge : NSObject <AdmobNativeAdDelegate>
 
-@property (nonatomic, assign) AdmobPlugin* plugin;
+@property(nonatomic, assign) AdmobPlugin *plugin;
 
-- (instancetype)initWithPlugin:(AdmobPlugin*)plugin;
+- (instancetype)initWithPlugin:(AdmobPlugin *)plugin;
 
 @end
 

@@ -1,38 +1,44 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
-class_name LoadAdRequest extends RefCounted
+class_name LoadAdRequest
+extends RefCounted
 
 enum AdPosition {
-	TOP, ## Ad will be anchored at the top of the screen.
-	BOTTOM, ## Ad will be anchored at the bottom of the screen.
-	LEFT, ## Ad will be anchored to the left of the screen.
-	RIGHT, ## Ad will be anchored to the right of the screen.
-	TOP_LEFT, ## Ad will be anchored at the top-left of the screen.
-	TOP_RIGHT, ## Ad will be anchored at the top-right of the screen.
-	BOTTOM_LEFT, ## Ad will be anchored at the bottom-left of the screen.
-	BOTTOM_RIGHT, ## Ad will be anchored at the bottom-right of the screen.
-	CENTER, ## Ad will be anchored at the center of the screen.
-	CUSTOM ## Ad position will be set dynamically.
+	TOP,  ## Ad will be anchored at the top of the screen.
+	BOTTOM,  ## Ad will be anchored at the bottom of the screen.
+	LEFT,  ## Ad will be anchored to the left of the screen.
+	RIGHT,  ## Ad will be anchored to the right of the screen.
+	TOP_LEFT,  ## Ad will be anchored at the top-left of the screen.
+	TOP_RIGHT,  ## Ad will be anchored at the top-right of the screen.
+	BOTTOM_LEFT,  ## Ad will be anchored at the bottom-left of the screen.
+	BOTTOM_RIGHT,  ## Ad will be anchored at the bottom-right of the screen.
+	CENTER,  ## Ad will be anchored at the center of the screen.
+	CUSTOM,  ## Ad position will be set dynamically.
 }
 
 enum RequestedAdSize {
-	BANNER, ## A standard ad size that refers to a rectangular ad unit, most commonly 320x50 density-independent pixels (dp).
-	LARGE_BANNER, ## A fixed-size banner with dimensions of 320x100 density-independent pixels (dp).
-	MEDIUM_RECTANGLE, ## A standard 300x250 pixel ad, often referred to as the Interactive Advertising Bureau (IAB) medium rectangle.
-	FULL_BANNER, ## An ad size constant for an Interactive Advertising Bureau (IAB) full-size banner, which has a fixed size of 468x60 density-independent pixels (dp).
-	LEADERBOARD, ## A banner ad with dimensions of 728 pixels wide by 90 pixels tall. This is a standard display ad size that is designed for tablet screens.
-	ADAPTIVE, ## An ad that automatically adjusts its width and height to fit the device’s available screen space, providing the best-performing banner size for that specific layout.
-	INLINE_ADAPTIVE, ## An ad that dynamically optimizes its height for the available inline content width, ensuring a smoothly integrated banner that fits naturally within scrollable or in-feed layouts.
-	SKYSCRAPER, ## Deprecated
-	FLUID, ## Deprecated
+	BANNER,  ## A standard ad size that refers to a rectangular ad unit, most commonly 320x50 density-independent pixels
+	## (dp).
+	LARGE_BANNER,  ## A fixed-size banner with dimensions of 320x100 density-independent pixels (dp).
+	MEDIUM_RECTANGLE,  ## A standard 300x250 pixel ad, often referred to as the Interactive Advertising Bureau (IAB)
+	## medium rectangle.
+	FULL_BANNER,  ## An ad size constant for an Interactive Advertising Bureau (IAB) full-size banner, which has a fixed
+	## size of 468x60 density-independent pixels (dp).
+	LEADERBOARD,  ## A banner ad with dimensions of 728 pixels wide by 90 pixels tall. This is a standard display ad
+	## size that is designed for tablet screens.
+	ADAPTIVE,  ## An ad that automatically adjusts its width and height to fit the device’s available screen space,
+	## providing the best-performing banner size for that specific layout.
+	INLINE_ADAPTIVE,  ## An ad that dynamically optimizes its height for the available inline content width, ensuring a
+	## smoothly integrated banner that fits naturally within scrollable or in-feed layouts.
+	SKYSCRAPER,  ## Deprecated
+	FLUID,  ## Deprecated
 }
 
 enum CollapsiblePosition {
-	DISABLED, ## The banner ad will not be collapsible.
-	TOP, ## The banner ad will be collapsible from bottom to top.
-	BOTTOM ## The banner ad will be collapsible from top to bottom.
+	DISABLED,  ## The banner ad will not be collapsible.
+	TOP,  ## The banner ad will be collapsible from bottom to top.
+	BOTTOM,  ## The banner ad will be collapsible from top to bottom.
 }
 
 const COLLAPSIBLE_POSITION_NAMES: Dictionary = {
@@ -55,7 +61,7 @@ const DATA_KEY_NETWORK_EXTRAS = "network_extras"
 
 const DEFAULT_DATA: Dictionary = {
 	DATA_KEY_KEYWORDS: [],
-	DATA_KEY_NETWORK_EXTRAS: []
+	DATA_KEY_NETWORK_EXTRAS: [],
 }
 
 var _data: Dictionary
@@ -126,7 +132,11 @@ func set_collapsible_position(a_value: CollapsiblePosition) -> LoadAdRequest:
 
 
 func get_collapsible_position() -> CollapsiblePosition:
-	return CollapsiblePosition[_data[DATA_KEY_COLLAPSIBLE_POSITION]] if _data.has(DATA_KEY_COLLAPSIBLE_POSITION) else CollapsiblePosition.DISABLED
+	return (
+		CollapsiblePosition[_data[DATA_KEY_COLLAPSIBLE_POSITION]]
+		if _data.has(DATA_KEY_COLLAPSIBLE_POSITION)
+		else CollapsiblePosition.DISABLED
+	)
 
 
 func set_anchor_to_safe_area(a_value: bool) -> LoadAdRequest:

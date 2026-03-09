@@ -13,9 +13,9 @@
 
 @property(nonatomic, strong) GADRewardedInterstitialAd *gadAd;
 
-- (instancetype) initWithID:(NSString*) adId;
-- (void) load:(LoadAdRequest*) loadAdRequest;
-- (void) show;
+- (instancetype)initWithID:(NSString *)adId;
+- (void)load:(LoadAdRequest *)loadAdRequest;
+- (void)show;
 
 @end
 

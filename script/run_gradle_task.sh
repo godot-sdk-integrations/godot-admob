@@ -6,12 +6,12 @@
 set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-ROOT_DIR=$(realpath $SCRIPT_DIR/..)
+ROOT_DIR=$(realpath "$SCRIPT_DIR/..")
 COMMON_DIR=$ROOT_DIR/common
 
 gradle_build_task="build"
 
-if ! [[ -z "${1:-}" ]]; then
+if [[ -n "${1:-}" ]]; then
 	gradle_build_task=$1
 fi
 
@@ -19,15 +19,15 @@ fi
 function display_help()
 {
 	echo
-	$SCRIPT_DIR/echocolor.sh -y "The " -Y "$0 script" -y " runs the specified gradle build task."
+	"$SCRIPT_DIR"/echocolor.sh -y "The " -Y "$0 script" -y " runs the specified gradle build task."
 	echo
-	$SCRIPT_DIR/echocolor.sh -Y "Syntax:"
+	"$SCRIPT_DIR"/echocolor.sh -Y "Syntax:"
 	echo_yellow "	$0 [-h] <gradle-build-task-name>"
 	echo
-	$SCRIPT_DIR/echocolor.sh -Y "Options:"
+	"$SCRIPT_DIR"/echocolor.sh -Y "Options:"
 	echo_yellow "	h	display usage information"
 	echo
-	$SCRIPT_DIR/echocolor.sh -Y "Examples:"
+	"$SCRIPT_DIR"/echocolor.sh -Y "Examples:"
 	echo_yellow "	* generate plugin's GDScript code"
 	echo_yellow "		$> $0 generateGDScript"
 	echo
@@ -43,13 +43,13 @@ function display_help()
 
 function echo_yellow()
 {
-	$SCRIPT_DIR/echocolor.sh -y "$1"
+	"$SCRIPT_DIR"/echocolor.sh -y "$1"
 }
 
 
 function echo_green()
 {
-	$SCRIPT_DIR/echocolor.sh -g "$1"
+	"$SCRIPT_DIR"/echocolor.sh -g "$1"
 }
 
 
@@ -63,7 +63,7 @@ function display_step()
 
 function display_error()
 {
-	$SCRIPT_DIR/echocolor.sh -r "$1"
+	"$SCRIPT_DIR"/echocolor.sh -r "$1"
 }
 
 
@@ -78,8 +78,8 @@ function run_android_gradle_task()
 {
 	display_step "Running gradle task $gradle_build_task"
 
-	pushd $COMMON_DIR
-	$COMMON_DIR/gradlew $gradle_build_task
+	pushd "$COMMON_DIR"
+	"$COMMON_DIR"/gradlew "$gradle_build_task"
 	popd
 }
 

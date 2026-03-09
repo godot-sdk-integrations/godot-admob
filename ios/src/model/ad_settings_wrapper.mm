@@ -10,7 +10,7 @@ static String const kApplyAtStartupProperty = "apply_at_startup";
 
 @interface AdSettingsWrapper ()
 
-@property (nonatomic) Dictionary data;
+@property(nonatomic) Dictionary data;
 
 @end
 

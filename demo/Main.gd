@@ -1,42 +1,73 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
 extends Node
 
 @onready var admob: Admob = $Admob as Admob
-@onready var ad_id_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/IDHBoxContainer/AdIdOptionButton
-@onready var show_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/ShowBannerButton
-@onready var hide_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/HideBannerButton
-@onready var size_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/SizeButton
-@onready var size_px_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/PixelSizeButton
-@onready var remove_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/ButtonsHBoxContainer/RemoveBannerButton
-@onready var load_banner_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/LoadButtonHBoxContainer/LoadBannerButton
-@onready var banner_position_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/PositionHBoxContainer/OptionButton
-@onready var banner_size_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/SizeHBoxContainer/OptionButton
-@onready var banner_collapsible_pos_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/CollapsiblePosHBoxContainer/OptionButton
-@onready var banner_anchor_at_safe_area_check_box: CheckBox = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Banner/AnchorHBoxContainer/CheckBox
-@onready var load_native_ad_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/LoadNativeAdButton
-@onready var native_ad_id_option_button: OptionButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/IDHBoxContainer/AdIdOptionButton
-@onready var show_native_ad_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer/ShowNativeAdButton
-@onready var hide_native_ad_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer/HideNativeAdButton
-@onready var attach_native_ad_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer/AttachNativeAdButton
-@onready var remove_native_ad_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Native/ButtonsHBoxContainer/RemoveNativeAdButton
+@onready
+var ad_id_option_button: OptionButton = %AdIdOptionButton
+@onready
+var show_banner_button: Button = %ShowBannerButton
+@onready
+var hide_banner_button: Button = %HideBannerButton
+@onready
+var size_banner_button: Button = %SizeButton
+@onready
+var size_px_banner_button: Button = %PixelSizeButton
+@onready
+var remove_banner_button: Button = %RemoveBannerButton
+@onready
+var load_banner_button: Button = %LoadBannerButton
+@onready
+var banner_position_option_button: OptionButton = %PositionHBoxContainer/OptionButton
+@onready
+var banner_size_option_button: OptionButton = %SizeHBoxContainer/OptionButton
+@onready
+var banner_collapsible_pos_option_button: OptionButton = %CollapsiblePosHBoxContainer/OptionButton
+@onready
+var banner_anchor_at_safe_area_check_box: CheckBox = %AnchorHBoxContainer/CheckBox
+@onready
+var load_native_ad_button: Button = %LoadNativeAdButton
+@onready
+var native_ad_id_option_button: OptionButton = %NativeAdIdOptionButton
+@onready
+var show_native_ad_button: Button = %ShowNativeAdButton
+@onready
+var hide_native_ad_button: Button = %HideNativeAdButton
+@onready
+var attach_native_ad_button: Button = %AttachNativeAdButton
+@onready
+var remove_native_ad_button: Button = %RemoveNativeAdButton
 
-@onready var interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/InterstitialButton
-@onready var rewarded_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/RewardedButton
-@onready var rewarded_interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/RewardedInterstitialButton
-@onready var reload_interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/InterstitialHBoxContainer/ReloadInterstitialButton
-@onready var reload_rewarded_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedHBoxContainer/ReloadRewardedButton
-@onready var reload_rewarded_interstitial_button: Button = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Other/RewardedInterstitialHBoxContainer/ReloadRewardedInterstitialButton
-@onready var consent_status_label: Label = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Consent/VBoxContainer/StatusHBoxContainer/ValueLabel
-@onready var volume_hslider: HSlider = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/VolumeHBC/VolumeHSlider
-@onready var volume_value_label: Label = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/VolumeHBC/ValueLabel
-@onready var muted_checkbutton: CheckButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/MuteHBC/CheckButton
-@onready var startup_checkbutton: CheckButton = $CanvasLayer/MainContainer/VBoxContainer/VBoxContainer/TabContainer/Settings/SettingsVBC/StartupHBC/CheckButton
+@onready
+var interstitial_button: Button = %InterstitialButton
+@onready
+var rewarded_button: Button = %RewardedButton
+@onready
+var rewarded_interstitial_button: Button = %RewardedInterstitialButton
+@onready
+var reload_interstitial_button: Button = %ReloadInterstitialButton
+@onready
+var reload_rewarded_button: Button = %ReloadRewardedButton
+@onready
+var reload_rewarded_interstitial_button: Button = %ReloadRewardedInterstitialButton
+@onready
+var consent_status_label: Label = %ConsentStatusValueLabel
+@onready
+var volume_hslider: HSlider = %VolumeHSlider
+@onready
+var volume_value_label: Label = %ValueLabel
+@onready
+var muted_checkbutton: CheckButton = %MuteHBC/CheckButton
+@onready
+var startup_checkbutton: CheckButton = %StartupHBC/CheckButton
 @onready var _label: RichTextLabel = $CanvasLayer/MainContainer/VBoxContainer/RichTextLabel as RichTextLabel
-@onready var _android_texture_rect: TextureRect = $CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer/AndroidTextureRect as TextureRect
-@onready var _ios_texture_rect: TextureRect = $CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer/iOSTextureRect as TextureRect
+@onready var _android_texture_rect: TextureRect = (
+	$CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer/AndroidTextureRect as TextureRect
+)
+@onready var _ios_texture_rect: TextureRect = (
+	$CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer/iOSTextureRect as TextureRect
+)
 
 var _active_texture_rect: TextureRect
 
@@ -89,12 +120,18 @@ func _ready() -> void:
 func _on_admob_initialization_completed(status_data: InitializationStatus) -> void:
 	for __network_tag in status_data.get_network_tags():
 		var __adapter_status: AdapterStatus = status_data.get_adapter_status(__network_tag)
-		_print_to_screen("Network '%s' (%s) status: %s [Latency: %d, Description: %s]" %
-				[__network_tag,
-				__adapter_status.get_adapter_class(),
-				__adapter_status.get_initialization_state(),
-				__adapter_status.get_latency(),
-				__adapter_status.get_description()])
+		_print_to_screen(
+			(
+				"Network '%s' (%s) status: %s [Latency: %d, Description: %s]"
+				% [
+					__network_tag,
+					__adapter_status.get_adapter_class(),
+					__adapter_status.get_initialization_state(),
+					__adapter_status.get_latency(),
+					__adapter_status.get_description(),
+				]
+			),
+		)
 	_process_consent_status(admob.get_consent_status())
 
 
@@ -132,18 +169,36 @@ func _update_banner_buttons() -> void:
 func _on_load_banner_button_pressed() -> void:
 	load_banner_button.disabled = true
 
-	admob.banner_position = LoadAdRequest.AdPosition[banner_position_option_button.get_item_text(banner_position_option_button.selected)]
-	admob.banner_size = LoadAdRequest.RequestedAdSize[banner_size_option_button.get_item_text(banner_size_option_button.selected)]
-	admob.banner_collapsible_position = LoadAdRequest.CollapsiblePosition[banner_collapsible_pos_option_button.get_item_text(banner_collapsible_pos_option_button.selected)]
+	admob.banner_position = LoadAdRequest.AdPosition[banner_position_option_button.get_item_text(
+		banner_position_option_button.selected
+	)]
+	admob.banner_size = LoadAdRequest.RequestedAdSize[banner_size_option_button.get_item_text(
+		banner_size_option_button.selected
+	)]
+	admob.banner_collapsible_position = LoadAdRequest.CollapsiblePosition[
+		banner_collapsible_pos_option_button.get_item_text(banner_collapsible_pos_option_button.selected)
+	]
 
-	print(" --- Load banner button PRESSED --- pos: %s --- size: %s --- collapsible pos: %s" % [
-		LoadAdRequest.AdPosition.keys()[admob.banner_position],
-		LoadAdRequest.RequestedAdSize.keys()[admob.banner_size],
-		LoadAdRequest.CollapsiblePosition.keys()[admob.banner_collapsible_position]
-	])
+	print(
+		(
+			" --- Load banner button PRESSED --- pos: %s --- size: %s --- collapsible pos: %s"
+			% [
+				LoadAdRequest.AdPosition.keys()[admob.banner_position],
+				LoadAdRequest.RequestedAdSize.keys()[admob.banner_size],
+				LoadAdRequest.CollapsiblePosition.keys()[admob.banner_collapsible_position],
+			]
+		),
+	)
 
 	var __request: LoadAdRequest = admob.create_banner_ad_request()
-	__request.set_ad_unit_id(_get_banner_ad_unit_id(admob.banner_collapsible_position != LoadAdRequest.CollapsiblePosition.DISABLED))
+	(
+		__request
+		. set_ad_unit_id(
+			_get_banner_ad_unit_id(
+				admob.banner_collapsible_position != LoadAdRequest.CollapsiblePosition.DISABLED,
+			),
+		)
+	)
 	__request.set_anchor_to_safe_area(banner_anchor_at_safe_area_check_box.button_pressed)
 	_is_banner_loading = true
 	admob.load_banner_ad(__request)
@@ -184,7 +239,7 @@ func _on_remove_banner_button_pressed() -> void:
 		admob.remove_banner_ad(__banner_ad_id)
 		ad_id_option_button.remove_item(ad_id_option_button.selected)
 		if ad_id_option_button.item_count > 0:
-			ad_id_option_button.select(ad_id_option_button.item_count-1)
+			ad_id_option_button.select(ad_id_option_button.item_count - 1)
 		_update_banner_buttons()
 
 
@@ -231,28 +286,41 @@ func _on_volume_h_slider_value_changed(value: float) -> void:
 
 
 func _on_get_settings_button_pressed() -> void:
-	var __settings:= admob.get_global_settings()
+	var __settings := admob.get_global_settings()
 	volume_hslider.value = __settings.get_ad_volume()
 	muted_checkbutton.button_pressed = __settings.are_ads_muted()
 	startup_checkbutton.button_pressed = __settings.get_apply_at_startup()
-	_print_to_screen("Get global settings: volume=%.2f muted=%s apply_at_startup=%s" % [
-			__settings.get_ad_volume(),
-			str(__settings.are_ads_muted()),
-			str(__settings.get_apply_at_startup())
-	])
+	_print_to_screen(
+		(
+			"Get global settings: volume=%.2f muted=%s apply_at_startup=%s"
+			% [
+				__settings.get_ad_volume(),
+				str(__settings.are_ads_muted()),
+				str(__settings.get_apply_at_startup()),
+			]
+		),
+	)
 
 
 func _on_set_settings_button_pressed() -> void:
-	var __settings:= (AdmobSettings.new()
-			.set_ad_volume(volume_hslider.value)
-			.set_ads_muted(muted_checkbutton.button_pressed)
-			.set_apply_at_startup(startup_checkbutton.button_pressed))
+	var __settings := (
+		AdmobSettings
+		. new()
+		. set_ad_volume(volume_hslider.value)
+		. set_ads_muted(muted_checkbutton.button_pressed)
+		. set_apply_at_startup(startup_checkbutton.button_pressed)
+	)
 	admob.set_global_settings(__settings)
-	_print_to_screen("Set global settings: volume=%.2f muted=%s apply_at_startup=%s" % [
-			__settings.get_ad_volume(),
-			str(__settings.are_ads_muted()),
-			str(__settings.get_apply_at_startup())
-	])
+	_print_to_screen(
+		(
+			"Set global settings: volume=%.2f muted=%s apply_at_startup=%s"
+			% [
+				__settings.get_ad_volume(),
+				str(__settings.are_ads_muted()),
+				str(__settings.get_apply_at_startup()),
+			]
+		),
+	)
 
 
 func _on_admob_banner_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) -> void:
@@ -260,20 +328,41 @@ func _on_admob_banner_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) ->
 	load_banner_button.disabled = false
 	ad_id_option_button.add_item(ad_info.get_ad_id())
 	_update_banner_buttons()
-	_print_to_screen("%sbanner ad loaded by %s network (%s) id: %s" %
-			["collapsible " if ad_info.get_is_collapsible() else "", response_info.get_network_tag(),
-			response_info.get_adapter_class_name(), ad_info.get_ad_id()])
+	_print_to_screen(
+		(
+			"%sbanner ad loaded by %s network (%s) id: %s"
+			% [
+				"collapsible " if ad_info.get_is_collapsible() else "",
+				response_info.get_network_tag(),
+				response_info.get_adapter_class_name(),
+				ad_info.get_ad_id(),
+			]
+		),
+	)
 
 
 func _on_admob_banner_ad_refreshed(ad_info: AdInfo, response_info: ResponseInfo) -> void:
-	_print_to_screen("%sbanner refreshed by %s network (%s) ad id: %s" %
-			["collapsible " if ad_info.get_is_collapsible() else "", response_info.get_network_tag(),
-			response_info.get_adapter_class_name(), ad_info.get_ad_id()])
+	_print_to_screen(
+		(
+			"%sbanner refreshed by %s network (%s) ad id: %s"
+			% [
+				"collapsible " if ad_info.get_is_collapsible() else "",
+				response_info.get_network_tag(),
+				response_info.get_adapter_class_name(),
+				ad_info.get_ad_id(),
+			]
+		),
+	)
 
 
 func _on_admob_banner_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError) -> void:
-	_print_to_screen("banner %s failed to load. error: %d, message: %s" %
-				[ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()], true)
+	_print_to_screen(
+		(
+			"banner %s failed to load. error: %d, message: %s"
+			% [ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()]
+		),
+		true,
+	)
 	_is_banner_loading = false
 	load_banner_button.disabled = false
 
@@ -281,19 +370,32 @@ func _on_admob_banner_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError
 func _on_admob_interstitial_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) -> void:
 	_is_interstitial_loaded = true
 	interstitial_button.disabled = false
-	_print_to_screen("interstitial ad loaded by %s network (%s) id: %s" %
-			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()])
+	_print_to_screen(
+		(
+			"interstitial ad loaded by %s network (%s) id: %s"
+			% [response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()]
+		),
+	)
 
 
 func _on_admob_interstitial_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError) -> void:
-	_print_to_screen("interstitial %s failed to load. error: %d, message: %s" %
-				[ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()], true)
+	_print_to_screen(
+		(
+			"interstitial %s failed to load. error: %d, message: %s"
+			% [ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()]
+		),
+		true,
+	)
 	reload_interstitial_button.disabled = false
 
 
 func _on_admob_interstitial_ad_refreshed(ad_info: AdInfo, response_info: ResponseInfo) -> void:
-	_print_to_screen("interstitial refreshed by %s network (%s) ad id: %s" %
-			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()])
+	_print_to_screen(
+		(
+			"interstitial refreshed by %s network (%s) ad id: %s"
+			% [response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()]
+		),
+	)
 
 
 func _on_admob_interstitial_ad_dismissed_full_screen_content(ad_info: AdInfo) -> void:
@@ -303,26 +405,44 @@ func _on_admob_interstitial_ad_dismissed_full_screen_content(ad_info: AdInfo) ->
 func _on_admob_rewarded_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) -> void:
 	_is_rewarded_video_loaded = true
 	rewarded_button.disabled = false
-	_print_to_screen("rewarded video ad loaded by %s network (%s) id: %s" %
-			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()])
+	_print_to_screen(
+		(
+			"rewarded video ad loaded by %s network (%s) id: %s"
+			% [response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()]
+		),
+	)
 
 	# Check all responses
 	for __adapter_response in response_info.get_adapter_responses():
-		_print_to_screen("Adapter '%s' - latency %d" % [
-			__adapter_response.get_adapter_class_name(),
-			__adapter_response.get_latency()
-		])
+		_print_to_screen(
+			(
+				"Adapter '%s' - latency %d"
+				% [
+					__adapter_response.get_adapter_class_name(),
+					__adapter_response.get_latency(),
+				]
+			),
+		)
 
 
 func _on_admob_rewarded_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError) -> void:
-	_print_to_screen("rewarded video %s failed to load. error: %d, message: %s" %
-				[ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()], true)
+	_print_to_screen(
+		(
+			"rewarded video %s failed to load. error: %d, message: %s"
+			% [ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()]
+		),
+		true,
+	)
 	reload_rewarded_button.disabled = true
 
 
 func _on_admob_rewarded_ad_user_earned_reward(ad_info: AdInfo, reward_data: RewardItem) -> void:
-	_print_to_screen("user rewarded for rewarded ad '%s' with %d %s" %
-				[ad_info.get_ad_id(), reward_data.get_amount(), reward_data.get_type()])
+	_print_to_screen(
+		(
+			"user rewarded for rewarded ad '%s' with %d %s"
+			% [ad_info.get_ad_id(), reward_data.get_amount(), reward_data.get_type()]
+		),
+	)
 
 
 func _on_admob_rewarded_ad_dismissed_full_screen_content(ad_info: AdInfo) -> void:
@@ -332,19 +452,32 @@ func _on_admob_rewarded_ad_dismissed_full_screen_content(ad_info: AdInfo) -> voi
 func _on_admob_rewarded_interstitial_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) -> void:
 	_is_rewarded_interstitial_loaded = true
 	rewarded_interstitial_button.disabled = false
-	_print_to_screen("rewarded interstitial ad loaded by %s network (%s) id: %s" %
-			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()])
+	_print_to_screen(
+		(
+			"rewarded interstitial ad loaded by %s network (%s) id: %s"
+			% [response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()]
+		),
+	)
 
 
 func _on_admob_rewarded_interstitial_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError) -> void:
-	_print_to_screen("rewarded interstitial %s failed to load. error: %d, message: %s" %
-				[ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()], true)
+	_print_to_screen(
+		(
+			"rewarded interstitial %s failed to load. error: %d, message: %s"
+			% [ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()]
+		),
+		true,
+	)
 	reload_rewarded_interstitial_button.disabled = false
 
 
 func _on_admob_rewarded_interstitial_ad_user_earned_reward(ad_info: AdInfo, reward_data: RewardItem) -> void:
-	_print_to_screen("user rewarded for rewarded interstitial ad '%s' with %d %s" %
-				[ad_info.get_ad_id(), reward_data.get_amount(), reward_data.get_type()])
+	_print_to_screen(
+		(
+			"user rewarded for rewarded interstitial ad '%s' with %d %s"
+			% [ad_info.get_ad_id(), reward_data.get_amount(), reward_data.get_type()]
+		),
+	)
 
 
 func _on_admob_rewarded_interstitial_ad_dismissed_full_screen_content(ad_info: AdInfo) -> void:
@@ -352,15 +485,24 @@ func _on_admob_rewarded_interstitial_ad_dismissed_full_screen_content(ad_info: A
 
 
 func _on_admob_app_open_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo) -> void:
-	_print_to_screen("app open ad loaded by %s network (%s) id: %s" %
-			[response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()])
+	_print_to_screen(
+		(
+			"app open ad loaded by %s network (%s) id: %s"
+			% [response_info.get_network_tag(), response_info.get_adapter_class_name(), ad_info.get_ad_id()]
+		),
+	)
 	if not _is_app_open_ad_displayed_at_startup:
 		admob.show_app_open_ad()
 
 
 func _on_admob_app_open_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError) -> void:
-	_print_to_screen("app open ad %s failed to load. error: %d, message: %s" %
-				[ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()], true)
+	_print_to_screen(
+		(
+			"app open ad %s failed to load. error: %d, message: %s"
+			% [ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()]
+		),
+		true,
+	)
 
 
 func _on_admob_app_open_ad_showed_full_screen_content(ad_info: AdInfo) -> void:
@@ -374,8 +516,13 @@ func _on_admob_app_open_ad_impression(ad_info: AdInfo) -> void:
 
 
 func _on_admob_app_open_ad_failed_to_show_full_screen_content(ad_info: AdInfo, error_data: AdError) -> void:
-	_print_to_screen("app open ad %s failed to show. error: %d, message: %s" %
-				[ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()], true)
+	_print_to_screen(
+		(
+			"app open ad %s failed to show. error: %d, message: %s"
+			% [ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()]
+		),
+		true,
+	)
 	_is_app_open_ad_displayed_at_startup = true
 	admob.load_app_open_ad()
 
@@ -409,10 +556,18 @@ func _process_consent_status(a_consent_status: UserConsent) -> void:
 			admob.load_consent_form()
 		UserConsent.Status.OBTAINED:
 			_print_to_screen("consent has been obtained")
-			admob.set_mediation_privacy_settings(NetworkPrivacySettings.new()
-					.set_has_gdpr_consent(true)
-					.set_is_age_restricted_user(false)
-					.set_has_ccpa_sale_consent(true))
+			(
+				admob
+				. set_mediation_privacy_settings(
+					(
+						NetworkPrivacySettings
+						. new()
+						. set_has_gdpr_consent(true)
+						. set_is_age_restricted_user(false)
+						. set_has_ccpa_sale_consent(true)
+					),
+				)
+			)
 			_load_ads()
 
 
@@ -534,7 +689,7 @@ func _on_remove_native_ad_button_pressed() -> void:
 		admob.remove_native_ad(__native_ad_id)
 		native_ad_id_option_button.remove_item(native_ad_id_option_button.selected)
 		if native_ad_id_option_button.item_count > 0:
-			native_ad_id_option_button.select(native_ad_id_option_button.item_count-1)
+			native_ad_id_option_button.select(native_ad_id_option_button.item_count - 1)
 		_update_native_ad_buttons()
 
 
@@ -547,8 +702,13 @@ func _on_admob_native_ad_loaded(ad_info: AdInfo, _response_info: ResponseInfo) -
 
 
 func _on_admob_native_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError) -> void:
-	_print_to_screen("native %s failed to load. error: %d, message: %s" %
-				[ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()], true)
+	_print_to_screen(
+		(
+			"native %s failed to load. error: %d, message: %s"
+			% [ad_info.get_ad_id(), error_data.get_code(), error_data.get_message()]
+		),
+		true,
+	)
 	_is_native_ad_loading = false
 	load_native_ad_button.disabled = false
 

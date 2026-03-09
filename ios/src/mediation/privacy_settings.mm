@@ -4,12 +4,11 @@
 
 #import "privacy_settings.h"
 
+#import "admob_logger.h"
+#import "gap_converter.h"
 #import "mediation_network.h"
 #import "mediation_network_factory.h"
-#import "gap_converter.h"
-#import "admob_logger.h"
 #import <objc/message.h>
-
 
 static NSString *const LOG_TAG = @"godot::AdmobPlugin::PrivacySettings";
 
@@ -20,18 +19,19 @@ const String ENABLED_NETWORKS_PROPERTY = "enabled_networks";
 
 @implementation PrivacySettings
 
-- (instancetype) initWithDictionary:(Dictionary) rawData {
+- (instancetype)initWithDictionary:(Dictionary)rawData {
 	if ((self = [super init])) {
 		self.rawData = rawData;
 	}
 	return self;
 }
 
-- (void) applyPrivacySettings {
+- (void)applyPrivacySettings {
 	os_log_debug(admob_log, "%@:: applyPrivacySettings()", LOG_TAG);
 
 	Array enabledNetworksArray = [self enabledNetworks];
-	os_log_debug(admob_log, "%@:: Found %lld enabled networks to process", LOG_TAG, (long long)enabledNetworksArray.size());
+	os_log_debug(
+			admob_log, "%@:: Found %lld enabled networks to process", LOG_TAG, (long long)enabledNetworksArray.size());
 
 	for (const Variant &item : enabledNetworksArray) {
 		if (item.get_type() == Variant::STRING) {
@@ -53,11 +53,9 @@ const String ENABLED_NETWORKS_PROPERTY = "enabled_networks";
 	return self.rawData.has(HAS_GDPR_CONSENT_PROPERTY);
 }
 
-
 - (BOOL)containsAgeRestrictedUserData {
 	return self.rawData.has(IS_AGE_RESTRICTED_USER_PROPERTY);
 }
-
 
 - (BOOL)containsCcpaSaleConsentData {
 	return self.rawData.has(HAS_CCPA_SALE_CONSENT_PROPERTY);
@@ -65,20 +63,20 @@ const String ENABLED_NETWORKS_PROPERTY = "enabled_networks";
 
 // Getters
 
-- (BOOL) hasGdprConsent {
+- (BOOL)hasGdprConsent {
 	return self.rawData[HAS_GDPR_CONSENT_PROPERTY];
 }
 
-- (BOOL) isAgeRestrictedUser {
+- (BOOL)isAgeRestrictedUser {
 	return self.rawData[IS_AGE_RESTRICTED_USER_PROPERTY];
 }
 
-- (BOOL) hasCcpaSaleConsent {
+- (BOOL)hasCcpaSaleConsent {
 	return self.rawData[HAS_CCPA_SALE_CONSENT_PROPERTY];
 }
 
-- (Array) enabledNetworks {
-	return self.rawData.has(ENABLED_NETWORKS_PROPERTY) ? (Array) self.rawData[ENABLED_NETWORKS_PROPERTY] : Array();
+- (Array)enabledNetworks {
+	return self.rawData.has(ENABLED_NETWORKS_PROPERTY) ? (Array)self.rawData[ENABLED_NETWORKS_PROPERTY] : Array();
 }
 
 @end

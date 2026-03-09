@@ -7,15 +7,13 @@
 
 #import <Foundation/Foundation.h>
 
-
 @interface AdmobAdInfo : NSObject
 
-@property (nonatomic) NSInteger measuredWidth;
-@property (nonatomic) NSInteger measuredHeight;
-@property (nonatomic) BOOL isCollapsible;
+@property(nonatomic) NSInteger measuredWidth;
+@property(nonatomic) NSInteger measuredHeight;
+@property(nonatomic) BOOL isCollapsible;
 
-
-- (NSString*) adUnitId;
+- (NSString *)adUnitId;
 
 @end
 

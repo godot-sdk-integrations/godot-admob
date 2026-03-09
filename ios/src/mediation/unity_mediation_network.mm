@@ -34,7 +34,8 @@ static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterUnity";
 	Class metaClass = ClassOrThrow(@"UADSMetaData");
 
 	/* UADSMetaData is an *instance* class – allocate + init */
-	id metaData = ((id (*)(id, SEL))objc_msgSend)(((id (*)(id, SEL))objc_msgSend)(metaClass, SelectorOrThrow(@"alloc")), SelectorOrThrow(@"init"));
+	id metaData = ((id (*)(id, SEL))objc_msgSend)(
+			((id (*)(id, SEL))objc_msgSend)(metaClass, SelectorOrThrow(@"alloc")), SelectorOrThrow(@"init"));
 	SEL setSel = SelectorOrThrow(@"set:value:");
 
 	((void (*)(id, SEL, id, id))objc_msgSend)(metaData, setSel, @"gdpr.consent", @(hasGdprConsent));
@@ -55,7 +56,8 @@ static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterUnity";
 	Class metaClass = ClassOrThrow(@"UADSMetaData");
 
 	/* UADSMetaData is an *instance* class – allocate + init */
-	id metaData = ((id (*)(id, SEL))objc_msgSend)(((id (*)(id, SEL))objc_msgSend)(metaClass, SelectorOrThrow(@"alloc")), SelectorOrThrow(@"init"));
+	id metaData = ((id (*)(id, SEL))objc_msgSend)(
+			((id (*)(id, SEL))objc_msgSend)(metaClass, SelectorOrThrow(@"alloc")), SelectorOrThrow(@"init"));
 
 	SEL setSel = SelectorOrThrow(@"set:value:");
 

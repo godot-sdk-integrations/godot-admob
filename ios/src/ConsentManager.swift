@@ -3,8 +3,8 @@
 //
 
 import Foundation
-import UIKit
 import OSLog
+import UIKit
 import UserMessagingPlatform
 
 @objc public class ConsentManager: NSObject {

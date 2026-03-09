@@ -48,7 +48,8 @@ public abstract class MediationNetwork {
 	 * @param isAgeRestrictedUser Whether user is age-restricted
 	 * @param context The Android Context required for SDK calls
 	 */
-	protected abstract void applyAgeRestrictedUserSettings(boolean isAgeRestrictedUser, Context context) throws Exception;
+	protected abstract void applyAgeRestrictedUserSettings(boolean isAgeRestrictedUser, Context context)
+			throws Exception;
 
 	/**
 	 * Applies the CCPA privacy settings to the specific network via reflection calls
@@ -73,7 +74,8 @@ public abstract class MediationNetwork {
 			} catch (UnsupportedOperationException uoe) {
 				Log.d(LOG_TAG, "GDPR settings not needed by " + tag);
 			} catch (Exception e) {
-				Log.e(LOG_TAG, e.getClass().getSimpleName() + ":: " + e.getMessage() + ":: Failed to set GDPR settings for " + tag);
+				Log.e(LOG_TAG, e.getClass().getSimpleName() + ":: " + e.getMessage()
+						+ ":: Failed to set GDPR settings for " + tag);
 			}
 		}
 
@@ -85,7 +87,8 @@ public abstract class MediationNetwork {
 			} catch (UnsupportedOperationException uoe) {
 				Log.d(LOG_TAG, "Age-restricted user settings not needed by " + tag);
 			} catch (Exception e) {
-				Log.e(LOG_TAG, e.getClass().getSimpleName() + ":: " + e.getMessage() + ":: Failed to set age-restricted user settings for " + tag);
+				Log.e(LOG_TAG, e.getClass().getSimpleName() + ":: " + e.getMessage()
+						+ ":: Failed to set age-restricted user settings for " + tag);
 			}
 		}
 
@@ -97,7 +100,8 @@ public abstract class MediationNetwork {
 			} catch (UnsupportedOperationException uoe) {
 				Log.d(LOG_TAG, "CCPA settings not needed by " + tag);
 			} catch (Exception e) {
-				Log.e(LOG_TAG, e.getClass().getSimpleName() + ":: " + e.getMessage() + ":: Failed to set CCPA settings for " + tag);
+				Log.e(LOG_TAG, e.getClass().getSimpleName() + ":: " + e.getMessage()
+						+ ":: Failed to set CCPA settings for " + tag);
 			}
 		}
 	}

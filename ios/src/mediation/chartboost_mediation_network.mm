@@ -27,8 +27,9 @@ static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterChartboost";
 
 - (void)applyGDPRSettings:(BOOL)hasGdprConsent {
 	/*
-	 * CHBGDPRDataUseConsent *dataUseConsent = [CHBGDPRDataUseConsent gdprConsent:CHBGDPRConsentNonBehavioral];
-	 * [Chartboost addDataUseConsent:dataUseConsent];
+	 * CHBGDPRDataUseConsent *dataUseConsent = [CHBGDPRDataUseConsent
+	 * gdprConsent:CHBGDPRConsentNonBehavioral]; [Chartboost
+	 * addDataUseConsent:dataUseConsent];
 	 */
 	Class chartboostClass = ClassOrThrow(@"Chartboost");
 	Class gdprConsentClass = ClassOrThrow(@"CHBGDPRDataUseConsent");
@@ -38,16 +39,9 @@ static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterChartboost";
 	NSUInteger behavioralValue = 1; // User consents to behavioral targeting (GDPR)
 
 	id consent = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(
-		gdprConsentClass,
-		SelectorOrThrow(@"gdprConsent:"),
-		hasGdprConsent ? behavioralValue : nonBehavioralValue
-	);
+			gdprConsentClass, SelectorOrThrow(@"gdprConsent:"), hasGdprConsent ? behavioralValue : nonBehavioralValue);
 
-	((void (*)(id, SEL, id))objc_msgSend)(
-		chartboostClass,
-		SelectorOrThrow(@"addDataUseConsent:"),
-		consent
-	);
+	((void (*)(id, SEL, id))objc_msgSend)(chartboostClass, SelectorOrThrow(@"addDataUseConsent:"), consent);
 }
 
 - (void)applyAgeRestrictedUserSettings:(BOOL)isAgeRestrictedUser {
@@ -56,8 +50,9 @@ static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterChartboost";
 
 - (void)applyCCPASettings:(BOOL)hasCcpaConsent {
 	/*
-	 * CHBCCPADataUseConsent *dataUseConsent = [CHBCCPADataUseConsent ccpaConsent:CHBCCPAConsentOptInSale];
-	 * [Chartboost addDataUseConsent:dataUseConsent];
+	 * CHBCCPADataUseConsent *dataUseConsent = [CHBCCPADataUseConsent
+	 * ccpaConsent:CHBCCPAConsentOptInSale]; [Chartboost
+	 * addDataUseConsent:dataUseConsent];
 	 */
 	Class chartboostClass = ClassOrThrow(@"Chartboost");
 	Class ccpaConsentClass = ClassOrThrow(@"CHBCCPADataUseConsent");
@@ -67,16 +62,9 @@ static NSString *const _ADAPTER_CLASS = @"GADMediationAdapterChartboost";
 	NSUInteger optInSaleValue = 1; // User consents to the sale of personal information (CCPA)
 
 	id consent = ((id (*)(id, SEL, NSUInteger))objc_msgSend)(
-		ccpaConsentClass,
-		SelectorOrThrow(@"ccpaConsent:"),
-		hasCcpaConsent ? optInSaleValue : optOutSaleValue
-	);
+			ccpaConsentClass, SelectorOrThrow(@"ccpaConsent:"), hasCcpaConsent ? optInSaleValue : optOutSaleValue);
 
-	((void (*)(id, SEL, id))objc_msgSend)(
-		chartboostClass,
-		SelectorOrThrow(@"addDataUseConsent:"),
-		consent
-	);
+	((void (*)(id, SEL, id))objc_msgSend)(chartboostClass, SelectorOrThrow(@"addDataUseConsent:"), consent);
 }
 
 @end

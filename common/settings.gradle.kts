@@ -23,10 +23,25 @@ gradle.extra["libDir"] = localProperties.getProperty("lib.dir")
     ?: "$rootDir/../android/libs"
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         google()
         mavenCentral()
+
+        ivy {
+            name = "Node.js"
+            url = uri("https://nodejs.org/dist")
+            patternLayout {
+                artifact("v[revision]/[artifact]-v[revision]-[classifier].[ext]")
+            }
+            metadataSources {
+                artifact()
+            }
+            content {
+                includeGroup("org.nodejs")
+            }
+        }
+
         flatDir {
             dirs(gradle.extra["libDir"] as String)
         }

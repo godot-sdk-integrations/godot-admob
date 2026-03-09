@@ -4,7 +4,6 @@
 
 package org.godotengine.plugin.admob.mediation.network;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.util.HashMap;
@@ -12,24 +11,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.godotengine.plugin.admob.AdmobPlugin;
-import org.godotengine.plugin.admob.mediation.PrivacySettings;
-import org.godotengine.plugin.admob.mediation.network.ApplovinMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.ChartboostMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.DtexchangeMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.GoogleMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.ImobileMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.InmobiMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.IronsourceMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.LiftoffMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.LineMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.MaioMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.MediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.MetaMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.MintegralMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.MolocoMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.MytargetMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.PangleMediationNetwork;
-import org.godotengine.plugin.admob.mediation.network.UnityMediationNetwork;
 
 
 public class MediationNetworkFactory {
@@ -105,7 +86,8 @@ public class MediationNetworkFactory {
 	/**
 	 * Allow lookup of a MediationNetwork's tag based on the network's adapter class name
 	 *
-	 * @param adapterClassName The network's adapter class name (e.g., "com.google.ads.mediation.applovin.AppLovinMediationAdapter")
+	 * @param adapterClassName The network's adapter class name
+	 * 			(e.g., "com.google.ads.mediation.applovin.AppLovinMediationAdapter")
 	 * @return The network's tag, or null if the adapter class is unknown
 	 */
 	public static String getTagForAdapterClass(String adapterClassName) {

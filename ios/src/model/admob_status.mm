@@ -5,9 +5,8 @@
 #import "admob_status.h"
 #import <Foundation/Foundation.h>
 
-#import "mediation_network_factory.h"
 #import "admob_logger.h"
-
+#import "mediation_network_factory.h"
 
 @implementation AdmobStatus
 
@@ -17,11 +16,9 @@ String const kAdmobLatencyProperty = "latency";
 String const kAdmobInitializationStateProperty = "initialization_state";
 String const kAdmobDescriptionProperty = "description";
 
-
 static NSString *const kLogTag = @"AdmobPlugin::AdmobStatus::";
 
-
-- (instancetype)initWithStatus:(GADInitializationStatus *) status {
+- (instancetype)initWithStatus:(GADInitializationStatus *)status {
 	self = [super init];
 	if (self) {
 		_status = status; // Retain the status object
@@ -44,13 +41,17 @@ static NSString *const kLogTag = @"AdmobPlugin::AdmobStatus::";
 		adapterStatusDict[kAdmobInitializationStateProperty] = [adapterStatusStr UTF8String];
 		adapterStatusDict[kAdmobDescriptionProperty] = [adapterStatus.description UTF8String];
 
-		NSString* networkTag = [MediationNetworkFactory getTagForAdapterClass:adapterClass];
+		NSString *networkTag = [MediationNetworkFactory getTagForAdapterClass:adapterClass];
 		if (networkTag) {
 			dict[[networkTag UTF8String]] = adapterStatusDict;
-			os_log_debug(admob_log, "%@ Initialization status %@ for network tag '%@'", kLogTag, adapterStatusStr, networkTag);
+			os_log_debug(admob_log, "%@ Initialization status %@ for network tag '%@'", kLogTag, adapterStatusStr,
+					networkTag);
 		} else {
 			dict[[adapterClass UTF8String]] = adapterStatusDict;
-			os_log_error(admob_log, "%@ Initialization status %@ for an invalid or unsupported adapter class '%@'", kLogTag, adapterStatusStr, adapterClass);
+			os_log_error(admob_log,
+					"%@ Initialization status %@ for an invalid or unsupported "
+					"adapter class '%@'",
+					kLogTag, adapterStatusStr, adapterClass);
 		}
 	}
 

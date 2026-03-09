@@ -62,8 +62,9 @@ public class GodotConverter {
 			StringBuilder hexString = new StringBuilder();
 			for (byte b : messageDigest) {
 				StringBuilder h = new StringBuilder(Integer.toHexString(0xFF & b));
-				while (h.length() < 2)
+				while (h.length() < 2) {
 					h.insert(0, "0");
+				}
 				hexString.append(h);
 			}
 			return hexString.toString();

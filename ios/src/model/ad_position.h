@@ -5,7 +5,6 @@
 #ifndef ad_position_h
 #define ad_position_h
 
-
 typedef NS_ENUM(NSUInteger, AdPosition) {
 	AdPositionTop,
 	AdPositionBottom,

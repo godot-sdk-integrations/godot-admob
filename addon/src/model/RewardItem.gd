@@ -1,8 +1,8 @@
 #
 # © 2024-present https://github.com/cengiz-pz
 #
-
-class_name RewardItem extends RefCounted
+class_name RewardItem
+extends RefCounted
 
 const AMOUNT_PROPERTY: String = "amount"
 const TYPE_PROPERTY: String = "type"

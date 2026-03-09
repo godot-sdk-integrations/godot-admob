@@ -9,6 +9,9 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.undercouch.download) apply false
+    alias(libs.plugins.openrewrite) apply false
+    alias(libs.plugins.node) apply false
+//    alias(libs.plugins.spotless)
 }
 
 /**
@@ -50,7 +53,19 @@ allprojects {
 // Load configuration from project root
 apply(from = "$rootDir/config.gradle.kts")
 
+/*
+spotless {
+    cpp {
+        target("../ios/src/**/*.m", "../ios/src/**/*.mm", "../ios/src/**/*.h")
+
+        clangFormat(libs.versions.clang.format.get()).style("../.github/config/.clang-format")
+    }
+}
+*/
+
 tasks {
+    val repositoryRootDir = file("$rootDir/..")
+
     register<Copy>("buildAndroidDebug") {
         description = "Copies the generated GDScript and debug AAR binary to the plugin directory"
 
@@ -387,6 +402,15 @@ tasks {
         val destDir = pluginDir.resolve("ios")
         destinationDir = destDir
 
+        doFirst {
+            val frameworkCache = destDir.resolve("ios/framework")
+            if (frameworkCache.exists()) {
+                frameworkCache.walkBottomUp().forEach { it.setWritable(true) }
+            }
+        }
+
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
         // Search ALL DerivedData folders so it works for debug AND release builds
         val derivedDataDir = buildDir.resolve("DerivedData")
         inputs.dir(derivedDataDir).optional(true)
@@ -452,7 +476,15 @@ tasks {
         dependsOn("buildiOSDebug")
         dependsOn("copyiOSBuildArtifacts")
 
-        destinationDir = file("${project.extra["demoDir"]}")
+        val destDir = file("${project.extra["demoDir"]}")
+        destinationDir = destDir
+
+        doFirst {
+            val frameworkCache = destDir.resolve("ios/framework")
+            if (frameworkCache.exists()) {
+                frameworkCache.walkBottomUp().forEach { it.setWritable(true) }
+            }
+        }
 
         duplicatesStrategy = DuplicatesStrategy.WARN
 
@@ -611,5 +643,151 @@ tasks {
     register("createArchives") {
         description = "Creates both the Android and iOS zip archives"
         dependsOn("createAndroidArchive", "createiOSArchive", "createMultiArchive")
+    }
+
+    register<Exec>("checkIosFormat") {
+        description = "Checks clang-format compliance of iOS source files (dry-run, no changes written)"
+        group = "formatting"
+
+        val iosSrcDir = file("$rootDir/../ios/src")
+        workingDir = iosSrcDir
+
+        doFirst {
+            val sourceFiles =
+                fileTree(iosSrcDir) {
+                    include("**/*.mm", "**/*.m", "**/*.h")
+                }.files
+                    .map { it.relativeTo(iosSrcDir).path }
+                    .sorted()
+
+            if (sourceFiles.isEmpty()) {
+                throw GradleException("checkIosFormat: no source files found under ${iosSrcDir.absolutePath}")
+            }
+
+            commandLine(
+                buildList {
+                    add("clang-format")
+                    add("--style=file:../../.github/config/.clang-format")
+                    add("--dry-run")
+                    add("--Werror")
+                    addAll(sourceFiles)
+                },
+            )
+        }
+    }
+
+    register<Exec>("formatIosSource") {
+        description = "Formats iOS source files in-place using clang-format"
+        group = "formatting"
+
+        val iosSrcDir = file("$rootDir/../ios/src")
+        workingDir = iosSrcDir
+
+        doFirst {
+            val sourceFiles =
+                fileTree(iosSrcDir) {
+                    include("**/*.mm", "**/*.m", "**/*.h")
+                }.files
+                    .map { it.relativeTo(iosSrcDir).path }
+                    .sorted()
+
+            if (sourceFiles.isEmpty()) {
+                throw GradleException("formatIosSource: no source files found under ${iosSrcDir.absolutePath}")
+            }
+
+            commandLine(
+                buildList {
+                    add("clang-format")
+                    add("--style=file:../../.github/config/.clang-format")
+                    add("-i")
+                    addAll(sourceFiles)
+                },
+            )
+        }
+    }
+
+    register<Exec>("checkKtsFormat") {
+        description = "Checks ktlint compliance of Gradle Kotlin DSL files (dry-run, no changes written)"
+        group = "formatting"
+
+        workingDir = repositoryRootDir
+
+        doFirst {
+            val sourceFiles =
+                listOf("addon", "android", "common")
+                    .flatMap { dir ->
+                        fileTree("$repositoryRootDir/$dir") {
+                            include("*.gradle.kts")
+                        }.files
+                    }.map { it.relativeTo(repositoryRootDir).path }
+                    .sorted()
+
+            if (sourceFiles.isEmpty()) {
+                throw GradleException("checkKtsFormat: no *.gradle.kts files found under addon/, android/, or common/")
+            }
+
+            commandLine(
+                buildList {
+                    add("ktlint")
+                    addAll(sourceFiles)
+                },
+            )
+        }
+    }
+
+    register<Exec>("formatKtsSource") {
+        description = "Formats Gradle Kotlin DSL files in-place using ktlint --format"
+        group = "formatting"
+
+        workingDir = repositoryRootDir
+
+        doFirst {
+            val sourceFiles =
+                listOf("addon", "android", "common")
+                    .flatMap { dir ->
+                        fileTree("$repositoryRootDir/$dir") {
+                            include("*.gradle.kts")
+                        }.files
+                    }.map { it.relativeTo(repositoryRootDir).path }
+                    .sorted()
+
+            if (sourceFiles.isEmpty()) {
+                throw GradleException("formatKtsSource: no *.gradle.kts files found under addon/, android/, or common/")
+            }
+
+            commandLine(
+                buildList {
+                    add("ktlint")
+                    add("--format")
+                    addAll(sourceFiles)
+                },
+            )
+        }
+    }
+
+    register("checkFormat") {
+        description = "Validates format in all source code"
+
+        // Removed "spotlessCheck"
+        dependsOn(
+            ":android:rewriteDryRun",
+            ":android:checkXmlFormat",
+            "checkIosFormat",
+            "checkKtsFormat",
+            ":addon:checkGdscriptFormat",
+        )
+    }
+
+    register("applyFormat") {
+        description = "Formats all source code"
+
+        // Removed "spotlessApply"
+        dependsOn(
+            ":android:rewriteRun",
+            ":android:formatXml",
+            "formatIosSource",
+            "formatKtsSource",
+            ":addon:formatGdscriptSource",
+        )
     }
 }

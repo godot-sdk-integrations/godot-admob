@@ -1,0 +1,50 @@
+name: Install Node
+description: Installs Node.js manually when running under act, or via actions/setup-node on GitHub.
+
+runs:
+  using: composite
+  steps:
+    - name: Install Node (act)
+      if: env.ACT == 'true'
+      shell: bash
+      run: |
+        NODE_VERSION=22.13.1
+
+        OS=$(uname -s)
+        ARCH=$(uname -m)
+
+        if [ "$OS" = "Darwin" ]; then
+          PLATFORM="darwin"
+        else
+          PLATFORM="linux"
+        fi
+
+        if [ "$ARCH" = "arm64" ]; then
+          ARCH="arm64"
+        else
+          ARCH="x64"
+        fi
+
+        FILE="node-v$NODE_VERSION-$PLATFORM-$ARCH.tar.xz"
+        URL="https://nodejs.org/dist/v$NODE_VERSION"
+
+        echo "Downloading $FILE from $URL"
+        curl -fsSL "$URL/$FILE" -o node.tar.xz
+
+        mkdir -p "$HOME/node"
+        tar -xJf node.tar.xz -C "$HOME/node" --strip-components=1
+
+        # Make available to this step
+        export PATH="$HOME/node/bin:$PATH"
+
+        # Make available to later steps
+        echo "$HOME/node/bin" >> "$GITHUB_PATH"
+
+        node -v
+        npm -v
+
+    - name: Setup Node (GitHub)
+      if: env.ACT != 'true'
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22

@@ -6,16 +6,29 @@
 compileSdk = "35"
 minSdk = "24"
 buildTools = "35.0.0"
+android-lib-plugin = "8.6.1"
+kotlin-android-plugin = "2.2.0" 
+undercouch-download-plugin = "5.6.0"
 appcompat = "1.7.1"
 lifecycle = "2.8.3"
 playads = "24.9.0"
+openrewrite = "6.27.1"
+rewrite-static-analysis = "1.22.0"
+node-plugin = "7.1.0"
+node-env = "22.0.0"
+#spotless-plugin = "8.3.0"
+#clang-format = "22.1.0"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-lifecycle = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playads" }
+rewrite-static-analysis = { module = "org.openrewrite.recipe:rewrite-static-analysis", version.ref = "rewrite-static-analysis" }
 
 [plugins]
-android-library = { id = "com.android.library", version = "8.6.1" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version = "2.2.0" }
-undercouch-download = { id = "de.undercouch.download", version = "5.6.0" }
+android-library = { id = "com.android.library", version.ref = "android-lib-plugin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-android-plugin" }
+undercouch-download = { id = "de.undercouch.download", version.ref = "undercouch-download-plugin" }
+openrewrite = { id = "org.openrewrite.rewrite", version.ref = "openrewrite" }
+node = { id = "com.github.node-gradle.node", version.ref = "node-plugin" }
+#spotless = { id = "com.diffplug.spotless", version.ref = "spotless-plugin" }

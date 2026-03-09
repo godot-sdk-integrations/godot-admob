@@ -5,14 +5,13 @@
 #ifndef gap_converter_h
 #define gap_converter_h
 
-#import <Foundation/Foundation.h>
 #import <AppTrackingTransparency/AppTrackingTransparency.h>
+#import <Foundation/Foundation.h>
 
 #include "core/object/class_db.h"
 #include <UserMessagingPlatform/UMPRequestParameters.h>
 
 #import "ad_position.h"
-
 
 @import GoogleMobileAds;
 
@@ -21,27 +20,25 @@
 @interface GAPConverter : NSObject
 
 // From Godot
-+ (NSString*) toNsString:(String) godotString;
-+ (NSString*) toAdId:(NSString*)unitId withSequence:(int) value;
-+ (id) toNsObject:(Variant) godotValue;
-+ (NSDictionary*) toNsDictionary:(Dictionary) godotDictionary;
-+ (NSArray*) toNsStringArray:(Array) arr;
-+ (GADPublisherPrivacyPersonalizationState) intToPublisherPrivacyPersonalizationState:(Variant) intValue;
-+ (GADServerSideVerificationOptions*) godotDictionaryToServerSideVerificationOptions:(Dictionary) godotDictionary;
-+ (UMPRequestParameters*) godotDictionaryToUMPRequestParameters:(Dictionary) godotDictionary;
-+ (UMPDebugSettings*) godotDictionaryToUMPDebugSettings:(Dictionary) godotDictionary;
-
++ (NSString *)toNsString:(String)godotString;
++ (NSString *)toAdId:(NSString *)unitId withSequence:(int)value;
++ (id)toNsObject:(Variant)godotValue;
++ (NSDictionary *)toNsDictionary:(Dictionary)godotDictionary;
++ (NSArray *)toNsStringArray:(Array)arr;
++ (GADPublisherPrivacyPersonalizationState)intToPublisherPrivacyPersonalizationState:(Variant)intValue;
++ (GADServerSideVerificationOptions *)godotDictionaryToServerSideVerificationOptions:(Dictionary)godotDictionary;
++ (UMPRequestParameters *)godotDictionaryToUMPRequestParameters:(Dictionary)godotDictionary;
++ (UMPDebugSettings *)godotDictionaryToUMPDebugSettings:(Dictionary)godotDictionary;
 
 // To Godot
-+ (String) nsStringToGodotString:(NSString*) nsString;
-+ (Dictionary) nsDictionaryToGodotDictionary:(NSDictionary*) nsDictionary;
-+ (Dictionary) adRewardToGodotDictionary:(GADAdReward*) adReward;
-+ (Dictionary) nsFormErrorToGodotDictionary:(NSError*) nsError;
-
++ (String)nsStringToGodotString:(NSString *)nsString;
++ (Dictionary)nsDictionaryToGodotDictionary:(NSDictionary *)nsDictionary;
++ (Dictionary)adRewardToGodotDictionary:(GADAdReward *)adReward;
++ (Dictionary)nsFormErrorToGodotDictionary:(NSError *)nsError;
 
 // Util
-+ (NSString *) getAdmobDeviceID;
-+ (NSString *) convertTrackingStatusToString:(ATTrackingManagerAuthorizationStatus) status API_AVAILABLE(ios(14));
++ (NSString *)getAdmobDeviceID;
++ (NSString *)convertTrackingStatusToString:(ATTrackingManagerAuthorizationStatus)status API_AVAILABLE(ios(14));
 
 @end
 

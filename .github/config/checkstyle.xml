@@ -7,6 +7,7 @@
   <property name="charset" value="UTF-8"/>
   <property name="severity" value="error"/>
   <property name="fileExtensions" value="java"/>
+  <property name="tabWidth" value="4"/>
 
   <!-- Require files to end with a newline -->
   <module name="NewlineAtEndOfFile"/>
@@ -39,7 +40,6 @@
 	  <property name="throwsIndent" value="8"/>
 	  <property name="lineWrappingIndentation" value="8"/>
 	  <property name="arrayInitIndent" value="4"/>
-	  <property name="useTabCharacter" value="true"/>
 	</module>
 
 	<!-- Imports -->

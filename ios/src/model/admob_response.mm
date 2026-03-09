@@ -6,7 +6,6 @@
 
 #import "admob_adapter_response.h"
 
-
 static String const kAdapterResponsesProperty = "adapter_responses";
 static String const kLoadedAdapterResponseProperty = "loaded_adapter_response";
 static String const kAdapterClassNameProperty = "adapter_class_name";
@@ -15,7 +14,7 @@ static String const kResponseIdProperty = "response_id";
 
 @interface AdmobResponse ()
 
-@property (nonatomic, strong) GADResponseInfo *info;
+@property(nonatomic, strong) GADResponseInfo *info;
 
 @end
 
@@ -44,7 +43,8 @@ static String const kResponseIdProperty = "response_id";
 
 	GADAdNetworkResponseInfo *loadedAdapterResponseInfo = self.info.loadedAdNetworkResponseInfo;
 	if (loadedAdapterResponseInfo) {
-		AdmobAdapterResponse *adapterResponse = [[AdmobAdapterResponse alloc] initWithAdapterResponseInfo:loadedAdapterResponseInfo];
+		AdmobAdapterResponse *adapterResponse =
+				[[AdmobAdapterResponse alloc] initWithAdapterResponseInfo:loadedAdapterResponseInfo];
 		dict[kLoadedAdapterResponseProperty] = [adapterResponse buildRawData];
 
 		dict[kAdapterClassNameProperty] = [adapterResponse.adapterClassName UTF8String];

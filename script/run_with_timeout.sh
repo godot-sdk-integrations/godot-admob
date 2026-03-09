@@ -8,26 +8,26 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 function display_help()
 {
 	echo
-	$SCRIPT_DIR/echocolor.sh -y "The " -Y "$0 script" -y " runs specified command for specified number of seconds,"
-	$SCRIPT_DIR/echocolor.sh -y "then stops the command and exits."
+	"$SCRIPT_DIR"/echocolor.sh -y "The " -Y "$0 script" -y " runs specified command for specified number of seconds,"
+	"$SCRIPT_DIR"/echocolor.sh -y "then stops the command and exits."
 	echo
-	$SCRIPT_DIR/echocolor.sh -Y "Syntax:"
-	$SCRIPT_DIR/echocolor.sh -y "	$0 [-h] [-d <directory to run command in>] -t <timeout in seconds> -c <command to run>"
+	"$SCRIPT_DIR"/echocolor.sh -Y "Syntax:"
+	"$SCRIPT_DIR"/echocolor.sh -y "	$0 [-h] [-d <directory to run command in>] -t <timeout in seconds> -c <command to run>"
 	echo
-	$SCRIPT_DIR/echocolor.sh -Y "Options:"
-	$SCRIPT_DIR/echocolor.sh -y "	h	display usage information"
-	$SCRIPT_DIR/echocolor.sh -y "	t	timeout value in seconds"
-	$SCRIPT_DIR/echocolor.sh -y "	c	command to run"
-	$SCRIPT_DIR/echocolor.sh -y "	d	run command in specified directory"
+	"$SCRIPT_DIR"/echocolor.sh -Y "Options:"
+	"$SCRIPT_DIR"/echocolor.sh -y "	h	display usage information"
+	"$SCRIPT_DIR"/echocolor.sh -y "	t	timeout value in seconds"
+	"$SCRIPT_DIR"/echocolor.sh -y "	c	command to run"
+	"$SCRIPT_DIR"/echocolor.sh -y "	d	run command in specified directory"
 	echo
-	$SCRIPT_DIR/echocolor.sh -Y "Examples:"
-	$SCRIPT_DIR/echocolor.sh -y "		$> $0 -t 10 -c 'my_command'"
+	"$SCRIPT_DIR"/echocolor.sh -Y "Examples:"
+	"$SCRIPT_DIR"/echocolor.sh -y "		$> $0 -t 10 -c 'my_command'"
 	echo
 }
 
 function display_error()
 {
-	$SCRIPT_DIR/echocolor.sh -r "$1"
+	"$SCRIPT_DIR"/echocolor.sh -r "$1"
 }
 
 min_expected_arguments=1
@@ -78,7 +78,7 @@ fi
 
 # Debug: Print the command and directory
 echo "Executing command: $RUN_COMMAND"
-if ! [[ -z $RUN_DIRECTORY ]]; then
+if [[ -n $RUN_DIRECTORY ]]; then
 	echo "Target directory: $RUN_DIRECTORY"
 fi
 
@@ -88,7 +88,7 @@ LOG_FILE="/tmp/run_with_timeout_$$.log"
 # Run the command in a background subshell, suppressing shell notifications
 {
 	(
-		if ! [[ -z $RUN_DIRECTORY ]]
+		if [[ -n $RUN_DIRECTORY ]]
 		then
 			if ! cd "$RUN_DIRECTORY"; then
 				display_error "Error: Failed to change to directory $RUN_DIRECTORY" >> "$LOG_FILE"
@@ -99,7 +99,8 @@ LOG_FILE="/tmp/run_with_timeout_$$.log"
 
 		# Export environment variables for command
 		export PATH=$PATH:/usr/local/bin
-		export SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path 2>>"$LOG_FILE" || echo "")
+		SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path 2>>"$LOG_FILE" || echo "")
+		export SDKROOT
 
 		# Verify command exists
 		command -v "${RUN_COMMAND%% *}" >/dev/null 2>&1 || {
@@ -123,7 +124,7 @@ sleep 0.1
 
 # Display countdown timer on a new line
 echo
-for ((i=$RUN_TIMEOUT; i>=0; i--)); do
+for ((i=RUN_TIMEOUT; i>=0; i--)); do
 	printf "\rTime remaining: %02d seconds" $i
 	sleep 1
 done
@@ -132,12 +133,12 @@ echo -e "\nTerminating build after $RUN_TIMEOUT seconds..."
 # Terminate child processes of the subshell
 remaining_processes=$(pgrep -P $pid 2>/dev/null)
 if [ -n "$remaining_processes" ]; then
-	kill -TERM $remaining_processes 2>/dev/null || true
+	kill -TERM "$remaining_processes" 2>/dev/null || true
 	sleep 1
 	remaining_processes=$(pgrep -P $pid 2>/dev/null)
 	if [ -n "$remaining_processes" ]; then
 		echo "Processes still running, sending SIGKILL to child processes"
-		kill -KILL $remaining_processes 2>/dev/null || true
+		kill -KILL "$remaining_processes" 2>/dev/null || true
 		sleep 1
 		remaining_processes=$(pgrep -P $pid 2>/dev/null)
 	fi

@@ -4,30 +4,28 @@
 
 #import "admob_plugin.h"
 
-#import <AppTrackingTransparency/AppTrackingTransparency.h>
 #import <AdSupport/AdSupport.h>
+#import <AppTrackingTransparency/AppTrackingTransparency.h>
 
 #import <UserMessagingPlatform/UserMessagingPlatform.h>
 
 #import <objc/message.h>
 
+#import "ad_settings_wrapper.h"
 #import "admob_ad_info.h"
-#import "admob_response.h"
-#import "load_ad_request.h"
-#import "gap_converter.h"
 #import "admob_ad_size.h"
 #import "admob_config.h"
-#import "admob_status.h"
-#import "native_ad_bridge.h"
 #import "admob_logger.h"
-#import "ad_settings_wrapper.h"
+#import "admob_response.h"
+#import "admob_status.h"
+#import "gap_converter.h"
+#import "load_ad_request.h"
+#import "native_ad_bridge.h"
 #import "privacy_settings.h"
 
-
 @interface AdmobAdInfo (Access)
-- (instancetype) initWithId:(NSString *)adId request:(LoadAdRequest *)loadAdRequest;
+- (instancetype)initWithId:(NSString *)adId request:(LoadAdRequest *)loadAdRequest;
 @end
-
 
 const String INITIALIZATION_COMPLETED_SIGNAL = "initialization_completed";
 const String BANNER_AD_LOADED_SIGNAL = "banner_ad_loaded";
@@ -44,7 +42,8 @@ const String INTERSTITIAL_AD_REFRESHED_SIGNAL = "interstitial_ad_refreshed";
 const String INTERSTITIAL_AD_IMPRESSION_SIGNAL = "interstitial_ad_impression";
 const String INTERSTITIAL_AD_CLICKED_SIGNAL = "interstitial_ad_clicked";
 const String INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL = "interstitial_ad_showed_full_screen_content";
-const String INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL = "interstitial_ad_failed_to_show_full_screen_content";
+const String INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL =
+		"interstitial_ad_failed_to_show_full_screen_content";
 const String INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL = "interstitial_ad_dismissed_full_screen_content";
 const String REWARDED_AD_LOADED_SIGNAL = "rewarded_ad_loaded";
 const String REWARDED_AD_FAILED_TO_LOAD_SIGNAL = "rewarded_ad_failed_to_load";
@@ -58,9 +57,12 @@ const String REWARDED_INTERSTITIAL_AD_LOADED_SIGNAL = "rewarded_interstitial_ad_
 const String REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL = "rewarded_interstitial_ad_failed_to_load";
 const String REWARDED_INTERSTITIAL_AD_IMPRESSION_SIGNAL = "rewarded_interstitial_ad_impression";
 const String REWARDED_INTERSTITIAL_AD_CLICKED_SIGNAL = "rewarded_interstitial_ad_clicked";
-const String REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL = "rewarded_interstitial_ad_showed_full_screen_content";
-const String REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL = "rewarded_interstitial_ad_failed_to_show_full_screen_content";
-const String REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL = "rewarded_interstitial_ad_dismissed_full_screen_content";
+const String REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL =
+		"rewarded_interstitial_ad_showed_full_screen_content";
+const String REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL =
+		"rewarded_interstitial_ad_failed_to_show_full_screen_content";
+const String REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL =
+		"rewarded_interstitial_ad_dismissed_full_screen_content";
 const String REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD_SIGNAL = "rewarded_interstitial_ad_user_earned_reward";
 const String APP_OPEN_AD_LOADED_SIGNAL = "app_open_ad_loaded";
 const String APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL = "app_open_ad_failed_to_load";
@@ -73,6 +75,7 @@ const String NATIVE_AD_LOADED_SIGNAL = "native_ad_loaded";
 const String NATIVE_AD_FAILED_TO_LOAD_SIGNAL = "native_ad_failed_to_load";
 const String NATIVE_AD_IMPRESSION_SIGNAL = "native_ad_impression";
 const String NATIVE_AD_CLICKED_SIGNAL = "native_ad_clicked";
+const String NATIVE_AD_SWIPE_GESTURE_CLICKED_SIGNAL = "native_ad_swipe_gesture_clicked";
 const String NATIVE_AD_OPENED_SIGNAL = "native_ad_opened";
 const String NATIVE_AD_CLOSED_SIGNAL = "native_ad_closed";
 const String NATIVE_AD_SIZE_MEASURED_SIGNAL = "native_ad_size_measured";
@@ -88,7 +91,7 @@ static NSString *const kLogTag = @"AdmobPlugin::";
 
 static const int FULL_WIDTH = -1;
 
-AdmobPlugin* AdmobPlugin::instance = NULL;
+AdmobPlugin *AdmobPlugin::instance = NULL;
 
 void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("initialize"), &AdmobPlugin::initialize);
@@ -101,8 +104,10 @@ void AdmobPlugin::_bind_methods() {
 	ADD_SIGNAL(MethodInfo(INITIALIZATION_COMPLETED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "status_data")));
 
 	ClassDB::bind_method(D_METHOD("get_current_adaptive_banner_size"), &AdmobPlugin::get_current_adaptive_banner_size);
-	ClassDB::bind_method(D_METHOD("get_portrait_adaptive_banner_size"), &AdmobPlugin::get_portrait_adaptive_banner_size);
-	ClassDB::bind_method(D_METHOD("get_landscape_adaptive_banner_size"), &AdmobPlugin::get_landscape_adaptive_banner_size);
+	ClassDB::bind_method(
+			D_METHOD("get_portrait_adaptive_banner_size"), &AdmobPlugin::get_portrait_adaptive_banner_size);
+	ClassDB::bind_method(
+			D_METHOD("get_landscape_adaptive_banner_size"), &AdmobPlugin::get_landscape_adaptive_banner_size);
 	ClassDB::bind_method(D_METHOD("load_banner_ad"), &AdmobPlugin::load_banner_ad);
 	ClassDB::bind_method(D_METHOD("show_banner_ad"), &AdmobPlugin::show_banner_ad);
 	ClassDB::bind_method(D_METHOD("hide_banner_ad"), &AdmobPlugin::hide_banner_ad);
@@ -113,9 +118,12 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_banner_width_in_pixels"), &AdmobPlugin::get_banner_width_in_pixels);
 	ClassDB::bind_method(D_METHOD("get_banner_height_in_pixels"), &AdmobPlugin::get_banner_height_in_pixels);
 
-	ADD_SIGNAL(MethodInfo(BANNER_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
-	ADD_SIGNAL(MethodInfo(BANNER_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
-	ADD_SIGNAL(MethodInfo(BANNER_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "load_error_data")));
+	ADD_SIGNAL(MethodInfo(BANNER_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_SIZE_MEASURED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 	ADD_SIGNAL(MethodInfo(BANNER_AD_CLICKED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
@@ -126,63 +134,89 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("show_interstitial_ad"), &AdmobPlugin::show_interstitial_ad);
 	ClassDB::bind_method(D_METHOD("remove_interstitial_ad"), &AdmobPlugin::remove_interstitial_ad);
 
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "load_error_data")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_REFRESHED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "response_info")));
 	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_CLICKED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
-	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
+	ADD_SIGNAL(MethodInfo(
+			INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL,
+			PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
+	ADD_SIGNAL(MethodInfo(INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL,
+			PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
 
 	ClassDB::bind_method(D_METHOD("load_rewarded_ad"), &AdmobPlugin::load_rewarded_ad);
 	ClassDB::bind_method(D_METHOD("show_rewarded_ad"), &AdmobPlugin::show_rewarded_ad);
 	ClassDB::bind_method(D_METHOD("remove_rewarded_ad"), &AdmobPlugin::remove_rewarded_ad);
 
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
+	ADD_SIGNAL(MethodInfo(REWARDED_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "load_error_data")));
 	ADD_SIGNAL(MethodInfo(REWARDED_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 	ADD_SIGNAL(MethodInfo(REWARDED_AD_CLICKED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 	ADD_SIGNAL(MethodInfo(REWARDED_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
-	ADD_SIGNAL(MethodInfo(REWARDED_AD_USER_EARNED_REWARD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "reward_data")));
+	ADD_SIGNAL(MethodInfo(REWARDED_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL,
+			PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
+	ADD_SIGNAL(
+			MethodInfo(REWARDED_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_AD_USER_EARNED_REWARD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "reward_data")));
 
 	ClassDB::bind_method(D_METHOD("load_rewarded_interstitial_ad"), &AdmobPlugin::load_rewarded_interstitial_ad);
 	ClassDB::bind_method(D_METHOD("show_rewarded_interstitial_ad"), &AdmobPlugin::show_rewarded_interstitial_ad);
 	ClassDB::bind_method(D_METHOD("remove_rewarded_interstitial_ad"), &AdmobPlugin::remove_rewarded_interstitial_ad);
 
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "load_error_data")));
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_CLICKED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
-	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "reward_data")));
+	ADD_SIGNAL(MethodInfo(
+			REWARDED_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL,
+			PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "ad_error_data")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL,
+			PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(REWARDED_INTERSTITIAL_AD_USER_EARNED_REWARD_SIGNAL,
+			PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "reward_data")));
 
-	ClassDB::bind_method(D_METHOD("load_app_open_ad", "load_ad_request", "auto_show_on_resume"), &AdmobPlugin::load_app_open_ad, DEFVAL(Variant(false)));
+	ClassDB::bind_method(D_METHOD("load_app_open_ad", "load_ad_request", "auto_show_on_resume"),
+			&AdmobPlugin::load_app_open_ad, DEFVAL(Variant(false)));
 	ClassDB::bind_method(D_METHOD("show_app_open_ad"), &AdmobPlugin::show_app_open_ad);
 	ClassDB::bind_method(D_METHOD("is_app_open_ad_available"), &AdmobPlugin::is_app_open_ad_available);
 
-	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
-	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "load_error_data")));
 	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_CLICKED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_SHOWED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
-	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "error")));
-	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(APP_OPEN_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT_SIGNAL,
+			PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "error")));
+	ADD_SIGNAL(
+			MethodInfo(APP_OPEN_AD_DISMISSED_FULL_SCREEN_CONTENT_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 
 	ClassDB::bind_method(D_METHOD("load_native_ad"), &AdmobPlugin::load_native_ad);
 	ClassDB::bind_method(D_METHOD("show_native_ad"), &AdmobPlugin::show_native_ad);
 	ClassDB::bind_method(D_METHOD("hide_native_ad"), &AdmobPlugin::hide_native_ad);
 	ClassDB::bind_method(D_METHOD("remove_native_ad"), &AdmobPlugin::remove_native_ad);
-	ClassDB::bind_method(D_METHOD("update_native_ad_layout", "ad_id", "x", "y", "width", "height", "visible"), &AdmobPlugin::update_native_ad_layout);
+	ClassDB::bind_method(D_METHOD("update_native_ad_layout", "ad_id", "x", "y", "width", "height", "visible"),
+			&AdmobPlugin::update_native_ad_layout);
 
-	ADD_SIGNAL(MethodInfo(NATIVE_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "response_info")));
-	ADD_SIGNAL(MethodInfo(NATIVE_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"), PropertyInfo(Variant::DICTIONARY, "load_error_data")));
+	ADD_SIGNAL(MethodInfo(NATIVE_AD_LOADED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "response_info")));
+	ADD_SIGNAL(MethodInfo(NATIVE_AD_FAILED_TO_LOAD_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info"),
+			PropertyInfo(Variant::DICTIONARY, "load_error_data")));
 	ADD_SIGNAL(MethodInfo(NATIVE_AD_IMPRESSION_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 	ADD_SIGNAL(MethodInfo(NATIVE_AD_CLICKED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
+	ADD_SIGNAL(MethodInfo(NATIVE_AD_SWIPE_GESTURE_CLICKED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 	ADD_SIGNAL(MethodInfo(NATIVE_AD_OPENED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 	ADD_SIGNAL(MethodInfo(NATIVE_AD_CLOSED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
 	ADD_SIGNAL(MethodInfo(NATIVE_AD_SIZE_MEASURED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "ad_info")));
@@ -199,7 +233,8 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("update_consent_info"), &AdmobPlugin::update_consent_info);
 	ClassDB::bind_method(D_METHOD("reset_consent_info"), &AdmobPlugin::reset_consent_info);
 
-	ClassDB::bind_method(D_METHOD("set_mediation_privacy_settings", "settings"), &AdmobPlugin::set_mediation_privacy_settings);
+	ClassDB::bind_method(
+			D_METHOD("set_mediation_privacy_settings", "settings"), &AdmobPlugin::set_mediation_privacy_settings);
 
 	ADD_SIGNAL(MethodInfo(CONSENT_INFO_UPDATED_SIGNAL));
 	ADD_SIGNAL(MethodInfo(CONSENT_INFO_UPDATE_FAILED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "form_error_data")));
@@ -240,7 +275,8 @@ Error AdmobPlugin::initialize() {
 		}
 
 		initialized = true;
-		os_log_debug(admob_log, "%@ initialization completed for %tu adapters.", kLogTag, [status.adapterStatusesByClassName count]);
+		os_log_debug(admob_log, "%@ initialization completed for %tu adapters.", kLogTag,
+				[status.adapterStatusesByClassName count]);
 		Dictionary dictionary = [[[AdmobStatus alloc] initWithStatus:status] buildRawData];
 		emit_signal(INITIALIZATION_COMPLETED_SIGNAL, dictionary);
 	}];
@@ -256,7 +292,7 @@ Error AdmobPlugin::set_request_configuration(Dictionary configData) {
 		return FAILED;
 	}
 
-	AdmobConfig* admobConfig = [[AdmobConfig alloc] initWithDictionary: configData];
+	AdmobConfig *admobConfig = [[AdmobConfig alloc] initWithDictionary:configData];
 
 	[admobConfig applyToGADRequestConfiguration:GADMobileAds.sharedInstance.requestConfiguration];
 
@@ -287,16 +323,17 @@ void AdmobPlugin::set_global_settings(Dictionary settingsDict) {
 
 	AdSettings *settings = [wrapper createAdSettings];
 
-	[GlobalSettings applyToGADMobileAds:settings];	// Apply settings
+	[GlobalSettings applyToGADMobileAds:settings]; // Apply settings
 
-	[GlobalSettings saveSettings: settings];	// Persist settings
+	[GlobalSettings saveSettings:settings]; // Persist settings
 }
 
 Dictionary AdmobPlugin::get_current_adaptive_banner_size(int width) {
 	os_log_debug(admob_log, "AdmobPlugin get_current_adaptive_banner_size");
 	int currentWidth = (width == FULL_WIDTH) ? getAdWidth() : width;
 
-	AdmobAdSize *adSize = [[AdmobAdSize alloc] initWithAdSize: GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(currentWidth)];
+	AdmobAdSize *adSize = [[AdmobAdSize alloc]
+			initWithAdSize:GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(currentWidth)];
 	Dictionary dictionary = [adSize buildRawData];
 
 	return dictionary;
@@ -306,7 +343,8 @@ Dictionary AdmobPlugin::get_portrait_adaptive_banner_size(int width) {
 	os_log_debug(admob_log, "AdmobPlugin get_portrait_adaptive_banner_size");
 	int currentWidth = (width == FULL_WIDTH) ? getAdWidth() : width;
 
-	AdmobAdSize *adSize = [[AdmobAdSize alloc] initWithAdSize: GADPortraitAnchoredAdaptiveBannerAdSizeWithWidth(currentWidth)];
+	AdmobAdSize *adSize =
+			[[AdmobAdSize alloc] initWithAdSize:GADPortraitAnchoredAdaptiveBannerAdSizeWithWidth(currentWidth)];
 	Dictionary dictionary = [adSize buildRawData];
 
 	return dictionary;
@@ -316,7 +354,8 @@ Dictionary AdmobPlugin::get_landscape_adaptive_banner_size(int width) {
 	os_log_debug(admob_log, "AdmobPlugin get_landscape_adaptive_banner_size");
 	int currentWidth = (width == FULL_WIDTH) ? getAdWidth() : width;
 
-	AdmobAdSize *adSize = [[AdmobAdSize alloc] initWithAdSize: GADLandscapeAnchoredAdaptiveBannerAdSizeWithWidth(currentWidth)];
+	AdmobAdSize *adSize =
+			[[AdmobAdSize alloc] initWithAdSize:GADLandscapeAnchoredAdaptiveBannerAdSizeWithWidth(currentWidth)];
 	Dictionary dictionary = [adSize buildRawData];
 
 	return dictionary;
@@ -324,7 +363,7 @@ Dictionary AdmobPlugin::get_landscape_adaptive_banner_size(int width) {
 
 CGFloat AdmobPlugin::getAdWidth() {
 	UIWindow *window = nil;
-	for (UIWindowScene* windowScene in [UIApplication sharedApplication].connectedScenes) {
+	for (UIWindowScene *windowScene in [UIApplication sharedApplication].connectedScenes) {
 		if (windowScene.activationState == UISceneActivationStateForegroundActive) {
 			for (UIWindow *w in windowScene.windows) {
 				if (w.isKeyWindow) {
@@ -332,19 +371,20 @@ CGFloat AdmobPlugin::getAdWidth() {
 					break;
 				}
 			}
-			if (window) break;
+			if (window) {
+				break;
+			}
 		}
 	}
 
 	CGRect frame = CGRectZero;
-	if (window){
-		UIView* rootView = window.rootViewController.view;
+	if (window) {
+		UIView *rootView = window.rootViewController.view;
 		frame = rootView.frame;
 
 		UIEdgeInsets safeAreaInsets = rootView.safeAreaInsets;
 		frame = UIEdgeInsetsInsetRect(frame, safeAreaInsets);
-	}
-	else {
+	} else {
 		os_log_error(admob_log, "AdmobPlugin getAdWidth(): key window not found");
 	}
 
@@ -360,14 +400,14 @@ Error AdmobPlugin::load_banner_ad(Dictionary adData) {
 	}
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: adData];
-		NSString* adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++bannerAdSequence];
+		LoadAdRequest *loadAdRequest = [[LoadAdRequest alloc] initWithDictionary:adData];
+		NSString *adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++bannerAdSequence];
 
-		BannerAd* ad = [[BannerAd alloc] initWithID:adId];
+		BannerAd *ad = [[BannerAd alloc] initWithID:adId];
 
 		bannerAds[adId] = ad;
 
-		[ad load: loadAdRequest];
+		[ad load:loadAdRequest];
 	});
 
 	return OK;
@@ -377,11 +417,12 @@ void AdmobPlugin::show_banner_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin show_banner_ad %s", adId.utf8().get_data());
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		BannerAd* ad = (BannerAd*) bannerAds[[GAPConverter toNsString:adId]];
+		BannerAd *ad = (BannerAd *)bannerAds[[GAPConverter toNsString:adId]];
 		if (ad) {
 			[ad show];
 		} else {
-			os_log_error(admob_log, "AdmobPlugin show_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+			os_log_error(
+					admob_log, "AdmobPlugin show_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 		}
 	});
 }
@@ -390,11 +431,12 @@ void AdmobPlugin::hide_banner_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin hide_banner_ad %s", adId.utf8().get_data());
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		BannerAd* ad = (BannerAd*) bannerAds[[GAPConverter toNsString:adId]];
+		BannerAd *ad = (BannerAd *)bannerAds[[GAPConverter toNsString:adId]];
 		if (ad) {
 			[ad hide];
 		} else {
-			os_log_error(admob_log, "AdmobPlugin hide_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+			os_log_error(
+					admob_log, "AdmobPlugin hide_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 		}
 	});
 }
@@ -403,12 +445,13 @@ void AdmobPlugin::remove_banner_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin remove_banner_ad %s", adId.utf8().get_data());
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		NSString* key = [GAPConverter toNsString:adId];
+		NSString *key = [GAPConverter toNsString:adId];
 		if (bannerAds[key]) {
 			[bannerAds[key] destroy];
 			[bannerAds removeObjectForKey:key];
 		} else {
-			os_log_error(admob_log, "AdmobPlugin remove_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+			os_log_error(admob_log, "AdmobPlugin remove_banner_ad: ERROR: ad with id '%s' not found!",
+					adId.utf8().get_data());
 		}
 	});
 }
@@ -417,11 +460,12 @@ void AdmobPlugin::move_banner_ad(String adId, real_t x, real_t y) {
 	os_log_debug(admob_log, "AdmobPlugin move_banner_ad('%s',%.2f,%.2f)", adId.utf8().get_data(), x, y);
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		BannerAd* banner = [bannerAds objectForKey:[GAPConverter toNsString:adId]];
+		BannerAd *banner = [bannerAds objectForKey:[GAPConverter toNsString:adId]];
 		if (banner) {
 			[banner moveToX:x y:y];
 		} else {
-			os_log_error(admob_log, "AdmobPlugin remove_banner_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+			os_log_error(admob_log, "AdmobPlugin remove_banner_ad: ERROR: ad with id '%s' not found!",
+					adId.utf8().get_data());
 		}
 	});
 }
@@ -429,11 +473,12 @@ void AdmobPlugin::move_banner_ad(String adId, real_t x, real_t y) {
 int AdmobPlugin::get_banner_width(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin get_banner_width %s", adId.utf8().get_data());
 
-	BannerAd* ad = (BannerAd*) bannerAds[[GAPConverter toNsString:adId]];
+	BannerAd *ad = (BannerAd *)bannerAds[[GAPConverter toNsString:adId]];
 	if (ad) {
 		return [ad getWidth];
 	} else {
-		os_log_error(admob_log, "AdmobPlugin get_banner_width: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		os_log_error(
+				admob_log, "AdmobPlugin get_banner_width: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 	}
 
 	return -1;
@@ -442,11 +487,12 @@ int AdmobPlugin::get_banner_width(String adId) {
 int AdmobPlugin::get_banner_height(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin get_banner_height %s", adId.utf8().get_data());
 
-	BannerAd* ad = (BannerAd*) bannerAds[[GAPConverter toNsString:adId]];
+	BannerAd *ad = (BannerAd *)bannerAds[[GAPConverter toNsString:adId]];
 	if (ad) {
 		return [ad getHeight];
 	} else {
-		os_log_error(admob_log, "AdmobPlugin get_banner_height: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		os_log_error(
+				admob_log, "AdmobPlugin get_banner_height: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
 	}
 
 	return -1;
@@ -455,11 +501,12 @@ int AdmobPlugin::get_banner_height(String adId) {
 int AdmobPlugin::get_banner_width_in_pixels(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin get_width_in_pixels %s", adId.utf8().get_data());
 
-	BannerAd* ad = (BannerAd*) bannerAds[[GAPConverter toNsString:adId]];
+	BannerAd *ad = (BannerAd *)bannerAds[[GAPConverter toNsString:adId]];
 	if (ad) {
 		return [ad getWidthInPixels];
 	} else {
-		os_log_error(admob_log, "AdmobPlugin get_width_in_pixels: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		os_log_error(admob_log, "AdmobPlugin get_width_in_pixels: ERROR: ad with id '%s' not found!",
+				adId.utf8().get_data());
 	}
 
 	return -1;
@@ -468,11 +515,12 @@ int AdmobPlugin::get_banner_width_in_pixels(String adId) {
 int AdmobPlugin::get_banner_height_in_pixels(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin get_height_in_pixels %s", adId.utf8().get_data());
 
-	BannerAd* ad = (BannerAd*) bannerAds[[GAPConverter toNsString:adId]];
+	BannerAd *ad = (BannerAd *)bannerAds[[GAPConverter toNsString:adId]];
 	if (ad) {
 		return [ad getHeightInPixels];
 	} else {
-		os_log_error(admob_log, "AdmobPlugin get_width_in_pixels: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		os_log_error(admob_log, "AdmobPlugin get_width_in_pixels: ERROR: ad with id '%s' not found!",
+				adId.utf8().get_data());
 	}
 
 	return -1;
@@ -487,14 +535,14 @@ Error AdmobPlugin::load_interstitial_ad(Dictionary adData) {
 	}
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: adData];
-		NSString* adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++interstitialAdSequence];
+		LoadAdRequest *loadAdRequest = [[LoadAdRequest alloc] initWithDictionary:adData];
+		NSString *adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++interstitialAdSequence];
 
 		InterstitialAd *ad = [[InterstitialAd alloc] initWithID:adId];
 
 		interstitialAds[adId] = ad;
 
-		[ad load: loadAdRequest];
+		[ad load:loadAdRequest];
 	});
 
 	return OK;
@@ -504,11 +552,12 @@ void AdmobPlugin::show_interstitial_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin show_interstitial_ad %s", adId.utf8().get_data());
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		InterstitialAd* ad = (InterstitialAd*) interstitialAds[[GAPConverter toNsString:adId]];
+		InterstitialAd *ad = (InterstitialAd *)interstitialAds[[GAPConverter toNsString:adId]];
 		if (ad) {
 			[ad show];
 		} else {
-			os_log_error(admob_log, "AdmobPlugin show_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+			os_log_error(admob_log, "AdmobPlugin show_interstitial_ad: ERROR: ad with id '%s' not found!",
+					adId.utf8().get_data());
 		}
 	});
 }
@@ -517,11 +566,14 @@ void AdmobPlugin::remove_interstitial_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin remove_interstitial_ad %s", adId.utf8().get_data());
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		NSString* key = [GAPConverter toNsString:adId];
+		NSString *key = [GAPConverter toNsString:adId];
 		if (interstitialAds[key]) {
 			[interstitialAds removeObjectForKey:key];
 		} else {
-			os_log_error(admob_log, "AdmobPlugin remove_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+			os_log_error(admob_log,
+					"AdmobPlugin remove_interstitial_ad: ERROR: ad with id '%s' "
+					"not found!",
+					adId.utf8().get_data());
 		}
 	});
 }
@@ -535,14 +587,14 @@ Error AdmobPlugin::load_rewarded_ad(Dictionary adData) {
 	}
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: adData];
-		NSString* adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++rewardedAdSequence];
+		LoadAdRequest *loadAdRequest = [[LoadAdRequest alloc] initWithDictionary:adData];
+		NSString *adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++rewardedAdSequence];
 
 		RewardedAd *ad = [[RewardedAd alloc] initWithID:adId];
 
 		rewardedAds[adId] = ad;
 
-		[ad load: loadAdRequest];
+		[ad load:loadAdRequest];
 	});
 
 	return OK;
@@ -552,11 +604,12 @@ void AdmobPlugin::show_rewarded_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin show_rewarded_ad %s", adId.utf8().get_data());
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		RewardedAd* ad = (RewardedAd*) rewardedAds[[GAPConverter toNsString:adId]];
+		RewardedAd *ad = (RewardedAd *)rewardedAds[[GAPConverter toNsString:adId]];
 		if (ad) {
 			[ad show];
 		} else {
-			os_log_error(admob_log, "AdmobPlugin show_rewarded_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+			os_log_error(admob_log, "AdmobPlugin show_rewarded_ad: ERROR: ad with id '%s' not found!",
+					adId.utf8().get_data());
 		}
 	});
 }
@@ -565,11 +618,12 @@ void AdmobPlugin::remove_rewarded_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin remove_rewarded_ad %s", adId.utf8().get_data());
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		NSString* key = [GAPConverter toNsString:adId];
+		NSString *key = [GAPConverter toNsString:adId];
 		if (rewardedAds[key]) {
 			[rewardedAds removeObjectForKey:key];
 		} else {
-			os_log_error(admob_log, "AdmobPlugin remove_rewarded_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+			os_log_error(admob_log, "AdmobPlugin remove_rewarded_ad: ERROR: ad with id '%s' not found!",
+					adId.utf8().get_data());
 		}
 	});
 }
@@ -583,14 +637,14 @@ Error AdmobPlugin::load_rewarded_interstitial_ad(Dictionary adData) {
 	}
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: adData];
-		NSString* adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++rewardedInterstitialAdSequence];
+		LoadAdRequest *loadAdRequest = [[LoadAdRequest alloc] initWithDictionary:adData];
+		NSString *adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++rewardedInterstitialAdSequence];
 
 		RewardedInterstitialAd *ad = [[RewardedInterstitialAd alloc] initWithID:adId];
 
 		rewardedInterstitialAds[adId] = ad;
 
-		[ad load: loadAdRequest];
+		[ad load:loadAdRequest];
 	});
 
 	return OK;
@@ -600,11 +654,14 @@ void AdmobPlugin::show_rewarded_interstitial_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin show_rewarded_interstitial_ad %s", adId.utf8().get_data());
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		RewardedInterstitialAd* ad = (RewardedInterstitialAd*) rewardedInterstitialAds[[GAPConverter toNsString:adId]];
+		RewardedInterstitialAd *ad = (RewardedInterstitialAd *)rewardedInterstitialAds[[GAPConverter toNsString:adId]];
 		if (ad) {
 			[ad show];
 		} else {
-			os_log_error(admob_log, "AdmobPlugin show_rewarded_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+			os_log_error(admob_log,
+					"AdmobPlugin show_rewarded_interstitial_ad: ERROR: ad with "
+					"id '%s' not found!",
+					adId.utf8().get_data());
 		}
 	});
 }
@@ -613,12 +670,14 @@ void AdmobPlugin::remove_rewarded_interstitial_ad(String adId) {
 	os_log_debug(admob_log, "AdmobPlugin remove_rewarded_interstitial_ad %s", adId.utf8().get_data());
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		NSString* key = [GAPConverter toNsString:adId];
+		NSString *key = [GAPConverter toNsString:adId];
 		if (rewardedInterstitialAds[key]) {
 			[rewardedInterstitialAds removeObjectForKey:key];
-		}
-		else {
-			os_log_error(admob_log, "AdmobPlugin remove_rewarded_interstitial_ad: ERROR: ad with id '%s' not found!", adId.utf8().get_data());
+		} else {
+			os_log_error(admob_log,
+					"AdmobPlugin remove_rewarded_interstitial_ad: ERROR: ad "
+					"with id '%s' not found!",
+					adId.utf8().get_data());
 		}
 	});
 }
@@ -632,8 +691,8 @@ Error AdmobPlugin::load_app_open_ad(Dictionary requestDict, bool autoShowOnResum
 	}
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-		LoadAdRequest* loadAdRequest = [[LoadAdRequest alloc] initWithDictionary: requestDict];
-		NSString* nsAdUnitId = [loadAdRequest adUnitId];
+		LoadAdRequest *loadAdRequest = [[LoadAdRequest alloc] initWithDictionary:requestDict];
+		NSString *nsAdUnitId = [loadAdRequest adUnitId];
 		os_log_debug(admob_log, "%@ load_app_open_ad: %@", kLogTag, nsAdUnitId);
 		if (this->appOpenAd == nil) {
 			this->appOpenAd = [[AppOpenAd alloc] initWithPlugin:this];
@@ -677,11 +736,12 @@ void AdmobPlugin::applicationDidBecomeActive() {
 			if ([appOpenAd isAvailable] && !appOpenAd.isShowing) {
 				os_log_debug(admob_log, "%@ Auto-showing app open ad with 100ms delay", kLogTag);
 
-				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-					if ([appOpenAd isAvailable] && !appOpenAd.isShowing) {
-						[appOpenAd show];
-					}
-				});
+				dispatch_after(
+						dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+							if ([appOpenAd isAvailable] && !appOpenAd.isShowing) {
+								[appOpenAd show];
+							}
+						});
 			} else {
 				os_log_debug(admob_log, "%@ App open ad not available or already showing", kLogTag);
 			}
@@ -707,7 +767,7 @@ Error AdmobPlugin::load_native_ad(Dictionary adData) {
 	LoadAdRequest *loadAdRequest = [[LoadAdRequest alloc] initWithDictionary:adData];
 
 	// Create ad ID
-	NSString* adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++nativeAdSequence];
+	NSString *adId = [GAPConverter toAdId:loadAdRequest.adUnitId withSequence:++nativeAdSequence];
 
 	// Create AdmobAdInfo
 	AdmobAdInfo *adInfo = [[AdmobAdInfo alloc] initWithId:adId request:loadAdRequest];
@@ -724,9 +784,9 @@ Error AdmobPlugin::load_native_ad(Dictionary adData) {
 
 	// Create AdmobNativeAd instance
 	AdmobNativeAd *nativeAd = [[AdmobNativeAd alloc] initWithAdInfo:adInfo
-									adRequest:[loadAdRequest createGADRequest]
-									parentView:parentView
-									delegate:nativeAdBridge];
+														  adRequest:[loadAdRequest createGADRequest]
+														 parentView:parentView
+														   delegate:nativeAdBridge];
 
 	// Store the native ad
 	[nativeAds setObject:nativeAd forKey:adId];
@@ -782,7 +842,11 @@ void AdmobPlugin::update_native_ad_layout(String adId, real_t x, real_t y, real_
 	AdmobNativeAd *nativeAd = [nativeAds objectForKey:nsAdId];
 
 	if (nativeAd) {
-		[nativeAd updateLayoutWithX:(CGFloat)x y:(CGFloat)y width:(CGFloat)width height:(CGFloat)height visible:visible];
+		[nativeAd updateLayoutWithX:(CGFloat)x
+								  y:(CGFloat)y
+							  width:(CGFloat)width
+							 height:(CGFloat)height
+							visible:visible];
 	} else {
 		os_log_error(admob_log, "%@ Cannot update native ad layout: ad not found for ID %@", kLogTag, nsAdId);
 	}
@@ -798,11 +862,15 @@ Error AdmobPlugin::load_consent_form() {
 		return FAILED;
 	}
 
-	[consentManager loadFormWithCompletion:^(NSError * _Nullable error) {
+	[consentManager loadFormWithCompletion:^(NSError *_Nullable error) {
 		if (error) {
-			os_log_error(admob_log, "AdmobPlugin load_consent_form: Error loading ConsentForm. Error code: %ld", (long)error.code);
+			os_log_error(admob_log,
+					"AdmobPlugin load_consent_form: Error loading ConsentForm. "
+					"Error code: %ld",
+					(long)error.code);
 			Dictionary errorDictionary = [GAPConverter nsFormErrorToGodotDictionary:error];
-			AdmobPlugin::get_singleton()->call_deferred("emit_signal", CONSENT_FORM_FAILED_TO_LOAD_SIGNAL, errorDictionary);
+			AdmobPlugin::get_singleton()->call_deferred(
+					"emit_signal", CONSENT_FORM_FAILED_TO_LOAD_SIGNAL, errorDictionary);
 		} else {
 			AdmobPlugin::get_singleton()->call_deferred("emit_signal", CONSENT_FORM_LOADED_SIGNAL);
 		}
@@ -817,18 +885,24 @@ Error AdmobPlugin::show_consent_form() {
 	UIViewController *rootVC = GDTAppDelegateService.viewController;
 
 	if (rootVC) {
-		[consentManager showFormFrom:rootVC completion:^(NSError * _Nullable error) {
-			Dictionary formErrorDictionary;
-			if (error) {
-				os_log_error(admob_log, "AdmobPlugin show_consent_form: Error presenting ConsentForm");
-				formErrorDictionary = [GAPConverter nsFormErrorToGodotDictionary:error];
-			}
-			os_log_debug(admob_log, "AdmobPlugin show_consent_form: completion handler");
+		[consentManager showFormFrom:rootVC
+						  completion:^(NSError *_Nullable error) {
+							  Dictionary formErrorDictionary;
+							  if (error) {
+								  os_log_error(admob_log,
+										  "AdmobPlugin show_consent_form: Error "
+										  "presenting ConsentForm");
+								  formErrorDictionary = [GAPConverter nsFormErrorToGodotDictionary:error];
+							  }
+							  os_log_debug(admob_log, "AdmobPlugin show_consent_form: completion handler");
 
-			AdmobPlugin::get_singleton()->call_deferred("emit_signal", CONSENT_FORM_DISMISSED_SIGNAL, formErrorDictionary);
-		}];
+							  AdmobPlugin::get_singleton()->call_deferred(
+									  "emit_signal", CONSENT_FORM_DISMISSED_SIGNAL, formErrorDictionary);
+						  }];
 	} else {
-		os_log_error(admob_log, "AdmobPlugin show_consent_form: ERROR: Root View Controller not found!");
+		os_log_error(admob_log,
+				"AdmobPlugin show_consent_form: ERROR: Root View "
+				"Controller not found!");
 		return FAILED;
 	}
 
@@ -836,7 +910,7 @@ Error AdmobPlugin::show_consent_form() {
 }
 
 String AdmobPlugin::get_consent_status() {
-	NSString* status = [consentManager getConsentStatusString];
+	NSString *status = [consentManager getConsentStatusString];
 	os_log_debug(admob_log, "AdmobPlugin get_consent_status: %@", status);
 	return [status UTF8String];
 }
@@ -848,17 +922,20 @@ bool AdmobPlugin::is_consent_form_available() {
 void AdmobPlugin::update_consent_info(Dictionary consentRequestParameters) {
 	os_log_debug(admob_log, "AdmobPlugin update_consent_info");
 
-	UMPRequestParameters* parameters = [GAPConverter godotDictionaryToUMPRequestParameters:consentRequestParameters];
+	UMPRequestParameters *parameters = [GAPConverter godotDictionaryToUMPRequestParameters:consentRequestParameters];
 
-	[consentManager requestConsentInfoUpdateWith:parameters completion:^(NSError * _Nullable error) {
-		if (error) {
-			Dictionary formErrorDictionary = [GAPConverter nsFormErrorToGodotDictionary:error];
-			AdmobPlugin::get_singleton()->call_deferred("emit_signal", CONSENT_INFO_UPDATE_FAILED_SIGNAL, formErrorDictionary);
-		}
-		else {
-			AdmobPlugin::get_singleton()->call_deferred("emit_signal", CONSENT_INFO_UPDATED_SIGNAL);
-		}
-	}];
+	[consentManager requestConsentInfoUpdateWith:parameters
+									  completion:^(NSError *_Nullable error) {
+										  if (error) {
+											  Dictionary formErrorDictionary =
+													  [GAPConverter nsFormErrorToGodotDictionary:error];
+											  AdmobPlugin::get_singleton()->call_deferred("emit_signal",
+													  CONSENT_INFO_UPDATE_FAILED_SIGNAL, formErrorDictionary);
+										  } else {
+											  AdmobPlugin::get_singleton()->call_deferred(
+													  "emit_signal", CONSENT_INFO_UPDATED_SIGNAL);
+										  }
+									  }];
 }
 
 void AdmobPlugin::reset_consent_info() {
@@ -869,26 +946,29 @@ void AdmobPlugin::reset_consent_info() {
 void AdmobPlugin::set_mediation_privacy_settings(Dictionary settings) {
 	os_log_debug(admob_log, "AdmobPlugin set_mediation_privacy_settings");
 
-	PrivacySettings* privacySettings = [[PrivacySettings alloc] initWithDictionary: settings];
+	PrivacySettings *privacySettings = [[PrivacySettings alloc] initWithDictionary:settings];
 	[privacySettings applyPrivacySettings];
 }
 
 void AdmobPlugin::request_tracking_authorization() {
 	os_log_debug(admob_log, "AdmobPlugin request_tracking_authorization");
-	[ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
-		if (status == ATTrackingManagerAuthorizationStatusAuthorized) {
-			os_log_debug(admob_log, "Tracking has been authorized for %@", [[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString]);
-			dispatch_async(dispatch_get_main_queue(), ^{
-				instance->call_deferred("emit_signal", TRACKING_AUTHORIZATION_GRANTED);
-			});
-		} else {
-			os_log_debug(admob_log, "Tracking has been denied for %@ with status '%@'", [[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString],
-				[GAPConverter convertTrackingStatusToString: status]);
-			dispatch_async(dispatch_get_main_queue(), ^{
-				instance->call_deferred("emit_signal", TRACKING_AUTHORIZATION_DENIED);
-			});
-		}
-	}];
+	[ATTrackingManager
+			requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+				if (status == ATTrackingManagerAuthorizationStatusAuthorized) {
+					os_log_debug(admob_log, "Tracking has been authorized for %@",
+							[[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString]);
+					dispatch_async(dispatch_get_main_queue(), ^{
+						instance->call_deferred("emit_signal", TRACKING_AUTHORIZATION_GRANTED);
+					});
+				} else {
+					os_log_debug(admob_log, "Tracking has been denied for %@ with status '%@'",
+							[[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString],
+							[GAPConverter convertTrackingStatusToString:status]);
+					dispatch_async(dispatch_get_main_queue(), ^{
+						instance->call_deferred("emit_signal", TRACKING_AUTHORIZATION_DENIED);
+					});
+				}
+			}];
 }
 
 void AdmobPlugin::open_app_settings() {
@@ -898,7 +978,7 @@ void AdmobPlugin::open_app_settings() {
 	[[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
 }
 
-AdmobPlugin* AdmobPlugin::get_singleton() {
+AdmobPlugin *AdmobPlugin::get_singleton() {
 	return instance;
 }
 
@@ -922,12 +1002,13 @@ AdmobPlugin::AdmobPlugin() {
 	nativeAds = [[NSMutableDictionary alloc] init];
 	appOpenAd = nil;
 	consentManager = [[ConsentManager alloc] init];
-	foregroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification
-													object:nil
-													queue:[NSOperationQueue mainQueue]
-													usingBlock:^(NSNotification * _Nonnull note) {
-		this->applicationDidBecomeActive();
-	}];
+	foregroundObserver =
+			[[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification
+															  object:nil
+															   queue:[NSOperationQueue mainQueue]
+														  usingBlock:^(NSNotification *_Nonnull note) {
+															  this->applicationDidBecomeActive();
+														  }];
 }
 
 AdmobPlugin::~AdmobPlugin() {

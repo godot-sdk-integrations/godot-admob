@@ -1,34 +1,57 @@
 name: Install editorconfig-checker
-description: >
-  Installs a pinned version of editorconfig-checker. Handles Linux and macOS
-  runners automatically, including Apple Silicon vs Intel detection on macOS.
+description: Installs a pinned version of editorconfig-checker with caching.
+
+inputs:
+  version:
+    description: 'The version of editorconfig-checker to install'
+    required: false
+    default: '3.6.1'
 
 runs:
   using: composite
 
   steps:
-    - name: Install editorconfig-checker (Linux)
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        EC_VERSION="3.6.1"
-        curl -O -L "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v${EC_VERSION}/ec-linux-amd64.tar.gz"
-        tar xzf ec-linux-amd64.tar.gz
-        sudo mv bin/ec-linux-amd64 /usr/local/bin/editorconfig-checker
-        rm -rf ec-linux-amd64.tar.gz bin/
+    - name: Cache editorconfig-checker
+      id: cache-ec
+      # Skip caching when running locally via 'act' to avoid missing Node/Docker execution errors
+      if: env.ACT != 'true'
+      uses: actions/cache@v5
+      with:
+        path: ~/.local/bin/editorconfig-checker
+        key: ${{ runner.os }}-${{ runner.arch }}-ec-${{ inputs.version }}
 
-    - name: Install editorconfig-checker (macOS)
-      if: runner.os == 'macOS'
+    - name: Install editorconfig-checker
+      # This runs if there's a cache miss OR if the cache step was skipped entirely
+      if: steps.cache-ec.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        EC_VERSION="3.6.1"
-        ARCH="$(uname -m)"
-        if [ "${ARCH}" = "arm64" ]; then
-          ASSET="ec-darwin-arm64"
+        # Determine OS and Architecture
+        OS_TYPE=$(echo "${{ runner.os }}" | tr '[:upper:]' '[:lower:]')
+        ARCH_TYPE=$(uname -m)
+        
+        # Map architecture to release naming conventions
+        if [ "$ARCH_TYPE" = "x86_64" ]; then 
+          ARCH="amd64"
+        elif [ "$ARCH_TYPE" = "aarch64" ] || [ "$ARCH_TYPE" = "arm64" ]; then 
+          ARCH="arm64"
         else
-          ASSET="ec-darwin-amd64"
+          echo "Unsupported architecture: $ARCH_TYPE"
+          exit 1
         fi
-        curl -O -L "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v${EC_VERSION}/${ASSET}.tar.gz"
+        
+        ASSET="ec-${OS_TYPE}-${ARCH}"
+
+        echo "Downloading ${ASSET}..."
+        curl -sSLO "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v${{ inputs.version }}/${ASSET}.tar.gz"
+        
         tar xzf "${ASSET}.tar.gz"
-        sudo mv "bin/${ASSET}" /usr/local/bin/editorconfig-checker
+        mkdir -p "$HOME/.local/bin"
+        mv "bin/${ASSET}" "$HOME/.local/bin/editorconfig-checker"
+        chmod +x "$HOME/.local/bin/editorconfig-checker"
+        
+        # Clean up
         rm -rf "${ASSET}.tar.gz" bin/
+
+    - name: Add to PATH
+      shell: bash
+      run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
