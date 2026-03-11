@@ -1,5 +1,5 @@
 ---
-title: User consent
+title: User Consent
 icon: fontawesome/solid/user-shield
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: Banner ads
+title: Banner Ads
 icon: fontawesome/solid/rectangle-ad
 ---
 

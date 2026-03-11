@@ -1,5 +1,5 @@
 ---
-title: App open ads
+title: App Open Ads
 icon: fontawesome/solid/arrow-up-right-from-square
 ---
 

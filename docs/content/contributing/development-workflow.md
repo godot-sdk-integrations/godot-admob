@@ -1,5 +1,5 @@
 ---
-title: Development workflow
+title: Development Workflow
 icon: fontawesome/solid/diagram-project
 ---
 

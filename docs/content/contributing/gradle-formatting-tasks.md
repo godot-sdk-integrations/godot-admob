@@ -1,3 +1,9 @@
+---
+title: Gradle Formatting Tasks
+icon: fontawesome/solid/circle-check
+---
+
+
 # Gradle Formatting Tasks
 
 This document describes the `checkFormat` and `applyFormat` aggregate Gradle tasks, all tasks they depend on, and the prerequisite tools that must be installed on the system before those tasks can execute successfully.

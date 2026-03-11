@@ -1,5 +1,5 @@
 ---
-title: Multi scene
+title: Multi Scene
 icon: fontawesome/solid/layer-group
 ---
 
