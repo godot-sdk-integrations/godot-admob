@@ -1,3 +1,8 @@
+---
+title: GitHub Workflows
+icon: fontawesome/brands/github
+---
+
 # GitHub Actions Workflows
 
 This document describes each GitHub Actions workflow in `.github/workflows/`, covering what it does, when it runs, and which tools it relies on.

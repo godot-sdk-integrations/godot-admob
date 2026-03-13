@@ -1,5 +1,5 @@
 ---
-title: Loading ads
+title: Loading Ads
 icon: fontawesome/solid/spinner
 ---
 
