@@ -4,70 +4,37 @@
 extends Node
 
 @onready var admob: Admob = $Admob as Admob
-@onready
-var ad_id_option_button: OptionButton = %AdIdOptionButton
-@onready
-var show_banner_button: Button = %ShowBannerButton
-@onready
-var hide_banner_button: Button = %HideBannerButton
-@onready
-var size_banner_button: Button = %SizeButton
-@onready
-var size_px_banner_button: Button = %PixelSizeButton
-@onready
-var remove_banner_button: Button = %RemoveBannerButton
-@onready
-var load_banner_button: Button = %LoadBannerButton
-@onready
-var banner_position_option_button: OptionButton = %PositionHBoxContainer/OptionButton
-@onready
-var banner_size_option_button: OptionButton = %SizeHBoxContainer/OptionButton
-@onready
-var banner_collapsible_pos_option_button: OptionButton = %CollapsiblePosHBoxContainer/OptionButton
-@onready
-var banner_anchor_at_safe_area_check_box: CheckBox = %AnchorHBoxContainer/CheckBox
-@onready
-var load_native_ad_button: Button = %LoadNativeAdButton
-@onready
-var native_ad_id_option_button: OptionButton = %NativeAdIdOptionButton
-@onready
-var show_native_ad_button: Button = %ShowNativeAdButton
-@onready
-var hide_native_ad_button: Button = %HideNativeAdButton
-@onready
-var attach_native_ad_button: Button = %AttachNativeAdButton
-@onready
-var remove_native_ad_button: Button = %RemoveNativeAdButton
-
-@onready
-var interstitial_button: Button = %InterstitialButton
-@onready
-var rewarded_button: Button = %RewardedButton
-@onready
-var rewarded_interstitial_button: Button = %RewardedInterstitialButton
-@onready
-var reload_interstitial_button: Button = %ReloadInterstitialButton
-@onready
-var reload_rewarded_button: Button = %ReloadRewardedButton
-@onready
-var reload_rewarded_interstitial_button: Button = %ReloadRewardedInterstitialButton
-@onready
-var consent_status_label: Label = %ConsentStatusValueLabel
-@onready
-var volume_hslider: HSlider = %VolumeHSlider
-@onready
-var volume_value_label: Label = %ValueLabel
-@onready
-var muted_checkbutton: CheckButton = %MuteHBC/CheckButton
-@onready
-var startup_checkbutton: CheckButton = %StartupHBC/CheckButton
+@onready var ad_id_option_button: OptionButton = %AdIdOptionButton
+@onready var show_banner_button: Button = %ShowBannerButton
+@onready var hide_banner_button: Button = %HideBannerButton
+@onready var size_banner_button: Button = %SizeButton
+@onready var size_px_banner_button: Button = %PixelSizeButton
+@onready var remove_banner_button: Button = %RemoveBannerButton
+@onready var load_banner_button: Button = %LoadBannerButton
+@onready var banner_position_option_button: OptionButton = %PositionHBoxContainer/OptionButton
+@onready var banner_size_option_button: OptionButton = %SizeHBoxContainer/OptionButton
+@onready var banner_collapsible_pos_option_button: OptionButton = %CollapsiblePosHBoxContainer/OptionButton
+@onready var banner_anchor_at_safe_area_check_box: CheckBox = %AnchorHBoxContainer/CheckBox
+@onready var load_native_ad_button: Button = %LoadNativeAdButton
+@onready var native_ad_id_option_button: OptionButton = %NativeAdIdOptionButton
+@onready var show_native_ad_button: Button = %ShowNativeAdButton
+@onready var hide_native_ad_button: Button = %HideNativeAdButton
+@onready var attach_native_ad_button: Button = %AttachNativeAdButton
+@onready var remove_native_ad_button: Button = %RemoveNativeAdButton
+@onready var interstitial_button: Button = %InterstitialButton
+@onready var rewarded_button: Button = %RewardedButton
+@onready var rewarded_interstitial_button: Button = %RewardedInterstitialButton
+@onready var reload_interstitial_button: Button = %ReloadInterstitialButton
+@onready var reload_rewarded_button: Button = %ReloadRewardedButton
+@onready var reload_rewarded_interstitial_button: Button = %ReloadRewardedInterstitialButton
+@onready var consent_status_label: Label = %ConsentStatusValueLabel
+@onready var volume_hslider: HSlider = %VolumeHSlider
+@onready var volume_value_label: Label = %ValueLabel
+@onready var muted_checkbutton: CheckButton = %MuteHBC/CheckButton
+@onready var startup_checkbutton: CheckButton = %StartupHBC/CheckButton
 @onready var _label: RichTextLabel = $CanvasLayer/MainContainer/VBoxContainer/RichTextLabel as RichTextLabel
-@onready var _android_texture_rect: TextureRect = (
-	$CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer/AndroidTextureRect as TextureRect
-)
-@onready var _ios_texture_rect: TextureRect = (
-	$CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer/iOSTextureRect as TextureRect
-)
+@onready var _android_texture_rect := %AndroidTextureRect as TextureRect
+@onready var _ios_texture_rect := %iOSTextureRect as TextureRect
 
 var _active_texture_rect: TextureRect
 

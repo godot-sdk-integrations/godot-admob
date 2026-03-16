@@ -36,6 +36,7 @@ size_flags_vertical = 0
 theme_override_constants/separation = 40
 
 [node name="AndroidTextureRect" type="TextureRect" parent="CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer" unique_id=391443280]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 texture = ExtResource("2_qti4s")
@@ -43,6 +44,7 @@ expand_mode = 3
 stretch_mode = 5
 
 [node name="iOSTextureRect" type="TextureRect" parent="CanvasLayer/MainContainer/VBoxContainer/TextureHBoxContainer" unique_id=1762200736]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 texture = ExtResource("3_cm0pq")

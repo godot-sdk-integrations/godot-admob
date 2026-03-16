@@ -1,3 +1,7 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
 name: Install editorconfig-checker
 description: Installs a pinned version of editorconfig-checker with caching.
 

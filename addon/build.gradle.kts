@@ -4,7 +4,7 @@
 
 import org.apache.tools.ant.filters.ReplaceTokens
 
-apply(from = "$projectDir/config.gradle.kts")
+apply(from = "$projectDir/config/addon.gradle.kts")
 
 // Access the library catalog by name ("libs")
 val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
@@ -194,7 +194,7 @@ tasks {
 
     val gdscriptFormatExcludes =
         listOf(
-            "**/AdmobPlugin.gd",
+            "**/*Plugin.gd",
             "**/MediationNetwork.gd",
         )
 
@@ -214,10 +214,16 @@ tasks {
             }
 
             val sourceFiles =
-                fileTree(addonSrcDir) {
-                    include("**/*.gd")
-                    gdscriptFormatExcludes.forEach { exclude(it) }
-                }.files
+                (
+                    fileTree(addonSrcDir) {
+                        include("**/*.gd")
+                        gdscriptFormatExcludes.forEach { exclude(it) }
+                    } +
+                        fileTree("${rootProject.projectDir}/../demo") {
+                            include("**/*.gd")
+                            exclude("addons/**")
+                        }
+                ).files
                     .map { it.relativeTo(addonSrcDir).path }
                     .sorted()
 
@@ -258,10 +264,16 @@ tasks {
             }
 
             val sourceFiles =
-                fileTree(addonSrcDir) {
-                    include("**/*.gd")
-                    gdscriptFormatExcludes.forEach { exclude(it) }
-                }.files
+                (
+                    fileTree(addonSrcDir) {
+                        include("**/*.gd")
+                        gdscriptFormatExcludes.forEach { exclude(it) }
+                    } +
+                        fileTree("${rootProject.projectDir}/../demo") {
+                            include("**/*.gd")
+                            exclude("addons/**")
+                        }
+                ).files
                     .map { it.relativeTo(addonSrcDir).path }
                     .sorted()
 

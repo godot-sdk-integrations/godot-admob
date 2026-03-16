@@ -17,14 +17,17 @@ extra.apply {
     set("pluginModuleName", "${commonProperties.getProperty("pluginModuleName")}")
     set("pluginPackageName", commonProperties.getProperty("pluginPackage"))
     set("pluginVersion", commonProperties.getProperty("pluginVersion"))
-    set("pluginArchiveAndroid", "${get("pluginName")}-Android-v${get("pluginVersion")}.zip")
-    set("pluginArchiveiOS", "${get("pluginName")}-iOS-v${get("pluginVersion")}.zip")
-    set("pluginArchiveMulti", "${get("pluginName")}-Multi-v${get("pluginVersion")}.zip")
 
+    // Godot
+    set("godotVersion", commonProperties.getProperty("godotVersion"))
+    set("godotReleaseType", commonProperties.getProperty("godotReleaseType"))
+
+    // Project directories
     set("pluginDir", "$rootDir/build/plugin")
-    set("archiveDir", "$rootDir/../release")
-    set("iosDir", "$rootDir/../ios")
+    set("repositoryRootDir", "$rootDir/..")
+    set("archiveDir", "${get("repositoryRootDir")}/release")
+    set("demoDir", "${get("repositoryRootDir")}/demo")
 
-    // Demo
-    set("demoDir", "$rootDir/../demo")
+    // Release archive
+    set("pluginArchiveMulti", "${get("pluginName")}-Multi-v${get("pluginVersion")}.zip")
 }

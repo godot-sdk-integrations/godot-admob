@@ -7,9 +7,7 @@
 <br>
 
 <div align="center">
-	<a href="https://github.com/godot-sdk-integrations/godot-admob">
-		<img src="https://img.shields.io/github/stars/godot-sdk-integrations/godot-admob?label=Stars&style=plastic" height="32"/>
-	</a>
+	<a href="https://github.com/godot-sdk-integrations/godot-admob"><img src="https://img.shields.io/github/stars/godot-sdk-integrations/godot-admob?label=Stars&style=plastic" height="32"/></a>
 	<img src="https://img.shields.io/github/v/release/godot-sdk-integrations/godot-admob?label=Latest%20Release&style=plastic" height="32"/>
 	<img src="https://img.shields.io/github/downloads/godot-sdk-integrations/godot-admob/latest/total?label=Downloads&style=plastic" height="32"/>
 	<img src="https://img.shields.io/github/downloads/godot-sdk-integrations/godot-admob/total?label=Total%20Downloads&style=plastic" height="32"/>
@@ -163,7 +161,7 @@ Explore the plugin documentation for a deep dive into features:
 
 Developed by [Cengiz](https://github.com/cengiz-pz)
 
-Based on [Godot Mobile Plugin Template](https://github.com/godot-mobile-plugins/godot-plugin-template)
+Based on [Godot Mobile Plugin Template v5](https://github.com/godot-mobile-plugins/godot-plugin-template/tree/v5)
 
 Original repository: [Godot Admob Plugin](https://github.com/godot-sdk-integrations/godot-admob)
 

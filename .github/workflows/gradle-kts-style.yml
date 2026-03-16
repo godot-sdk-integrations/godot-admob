@@ -1,12 +1,14 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
 name: Gradle Kotlin DSL Style
 
 on:
   pull_request:
     branches: [ main ]
     paths:
-      - 'addon/*.gradle.kts'
-      - 'android/*.gradle.kts'
-      - 'common/*.gradle.kts'
+      - '**/*.gradle.kts'
 
 jobs:
   gradle-kts-style:

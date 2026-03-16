@@ -5,6 +5,8 @@
 import com.android.build.gradle.internal.api.LibraryVariantOutputImpl
 import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.npm.task.NpxTask
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 plugins {
     alias(libs.plugins.android.library)
@@ -14,7 +16,7 @@ plugins {
     alias(libs.plugins.node)
 }
 
-apply(from = "$projectDir/config.gradle.kts")
+apply(from = "$projectDir/config/android.gradle.kts")
 
 configure<org.openrewrite.gradle.RewriteExtension> {
     activeRecipe(
@@ -74,6 +76,15 @@ android {
     }
 }
 
+androidComponents {
+    beforeVariants(selector().all()) { variantBuilder ->
+        // Disables unit tests
+        variantBuilder.enableUnitTest = false
+        // Disables instrumented tests
+        variantBuilder.androidTest.enable = false
+    }
+}
+
 node {
     download = true
     version =
@@ -98,7 +109,7 @@ val androidDependencies =
 dependencies {
     "rewrite"(libs.rewrite.static.analysis)
 
-    implementation("godot:godot-lib:${project.extra["godotVersion"]}.${project.extra["releaseType"]}@aar")
+    implementation("godot:godot-lib:${project.extra["godotVersion"]}.${project.extra["godotReleaseType"]}@aar")
     androidDependencies.forEach {
         println("[DEBUG] Adding Android dependency: $it")
         implementation(it)
@@ -106,6 +117,132 @@ dependencies {
 }
 
 tasks {
+    val pluginDir: String by project.extra
+    val repositoryRootDir: String by project.extra
+    val archiveDir: String by project.extra
+    val demoDir: String by project.extra
+
+    register<Copy>("buildAndroidDebug") {
+        description = "Copies the generated GDScript and debug AAR binary to the plugin directory"
+
+        dependsOn(
+            project(":addon").tasks.named("generateGDScript"),
+            project(":addon").tasks.named("copyAssets"),
+            project(":android").tasks.named("assembleDebug"),
+        )
+
+        into("$pluginDir/android")
+
+        from("$repositoryRootDir/addon/build/output") {
+            include("addons/${project.extra["pluginName"]}/**")
+        }
+
+        from("$projectDir/build/outputs/aar") {
+            include("${project.extra["pluginName"]}-debug.aar")
+            into("addons/${project.extra["pluginName"]}/bin/debug")
+        }
+
+        doLast {
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            val current = LocalDateTime.now().format(formatter)
+            println("Android debug build completed at: $current")
+        }
+
+        outputs.dir("$pluginDir/android")
+    }
+
+    register<Copy>("buildAndroidRelease") {
+        description = "Copies the generated GDScript and release AAR binary to the plugin directory"
+
+        dependsOn(
+            project(":addon").tasks.named("generateGDScript"),
+            project(":addon").tasks.named("copyAssets"),
+            project(":android").tasks.named("assembleRelease"),
+        )
+
+        into("$pluginDir/android")
+
+        from("$repositoryRootDir/addon/build/output") {
+            include("addons/${project.extra["pluginName"]}/**")
+        }
+
+        from("$projectDir/build/outputs/aar") {
+            include("${project.extra["pluginName"]}-release.aar")
+            into("addons/${project.extra["pluginName"]}/bin/release")
+        }
+
+        doLast {
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            val current = LocalDateTime.now().format(formatter)
+            println("Android release build completed at: $current")
+        }
+
+        outputs.dir("$pluginDir/android")
+    }
+
+    register("buildAndroid") {
+        description = "Builds both debug and release"
+
+        dependsOn(
+            "buildAndroidDebug",
+            "buildAndroidRelease",
+        )
+    }
+
+    register<Zip>("createAndroidArchive") {
+        dependsOn(
+            "buildAndroidDebug",
+            "buildAndroidRelease",
+        )
+
+        val archiveName = project.extra["pluginArchiveAndroid"] as String
+        val sourceDir = "$pluginDir/android"
+
+        archiveFileName.set(archiveName)
+        destinationDirectory.set(layout.projectDirectory.dir(archiveDir))
+
+        into("res") {
+            from(layout.projectDirectory.dir(sourceDir)) {
+                includeEmptyDirs = false
+            }
+        }
+
+        doLast {
+            println("Android zip archive created at: ${archiveFile.get().asFile.path}")
+        }
+    }
+
+    register<Copy>("installToDemoAndroid") {
+        description = "Copies the assembled Android plugin to demo application's addons directory"
+
+        dependsOn(
+            project(":addon").tasks.named("generateGDScript"),
+            project(":addon").tasks.named("copyAssets"),
+            "buildAndroidDebug",
+        )
+
+        destinationDir = file(demoDir)
+
+        duplicatesStrategy = DuplicatesStrategy.WARN
+
+        into(".") {
+            from("$pluginDir/android")
+        }
+
+        outputs.dir(destinationDir)
+    }
+
+    register<Delete>("uninstallAndroid") {
+        description = "Keep demo app's plugin directory and delete everything inside except for .uid and .import files"
+        delete(
+            fileTree("$demoDir/addons/${project.extra["pluginName"]}").apply {
+                include("**/*")
+                exclude("**/*.uid")
+                exclude("**/*.import")
+            },
+        )
+    }
+
     register<NpmTask>("installPrettier") {
         args.set(listOf("install", "--save-dev", "prettier", "@prettier/plugin-xml"))
     }

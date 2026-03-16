@@ -1,3 +1,7 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
 name: GDScript Code Style
 
 on:
@@ -25,9 +29,9 @@ jobs:
         run: |
           cp .github/config/.gdformatrc .gdformatrc
           echo "Checking GDScript formatting in addon directory..."
-          find addon/src -type f -name "*.gd" ! \( -name "AdmobPlugin.gd" -o -name "MediationNetwork.gd" \) | xargs gdformat --check
+          find addon/src -type f -name "*.gd" ! \( -name "*Plugin.gd" -o -name "MediationNetwork.gd" \) | xargs gdformat --check
           echo "Checking GDScript formatting in demo directory..."
-          find demo -type f -name "*.gd" ! \( -name "Main.gd" \)  -not -path "demo/addons/*" | xargs gdformat --check
+          find demo -type f -name "*.gd" -not -path "demo/addons/*" | xargs gdformat --check
 
       - name: Install editorconfig-checker
         uses: ./.github/actions/install-ec

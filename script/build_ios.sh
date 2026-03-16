@@ -15,6 +15,7 @@ FRAMEWORK_DIR="$BUILD_DIR/framework"
 LIB_DIR="$BUILD_DIR/lib"
 
 COMMON_CONFIG_FILE="$COMMON_DIR/config/config.properties"
+IOS_CONFIG_FILE="$IOS_DIR/config/config.properties"
 LOCAL_PROPERTIES_FILE="$COMMON_DIR/local.properties"
 
 # Resolve GODOT_DIR: use godot.dir from local.properties if set, otherwise default to $IOS_DIR/godot
@@ -33,8 +34,10 @@ PLUGIN_MODULE_NAME=$("$SCRIPT_DIR"/get_config_property.sh -f "$COMMON_CONFIG_FIL
 GODOT_VERSION=$("$SCRIPT_DIR"/get_config_property.sh -f "$COMMON_CONFIG_FILE" godotVersion)
 GODOT_RELEASE_TYPE=$("$SCRIPT_DIR"/get_config_property.sh -f "$COMMON_CONFIG_FILE" godotReleaseType)
 
+SWIFT_VERSION=$("$SCRIPT_DIR"/get_config_property.sh -f "$IOS_CONFIG_FILE" swift_version)
+
 SCHEME="${PLUGIN_MODULE_NAME}_plugin"
-PROJECT="${SCHEME}.xcodeproj"
+PROJECT="plugin.xcodeproj"
 WORKSPACE="${PROJECT}/project.xcworkspace"
 SPM_DIR=$IOS_DIR/$WORKSPACE/xcshareddata/swiftpm
 
@@ -171,15 +174,30 @@ function resolve_spm_dependencies()
 		-project "$IOS_DIR/$PROJECT" \
 		-scheme "$SCHEME" \
 		-derivedDataPath "$DERIVED_DATA_DIR" \
-		GODOT_DIR="$GODOT_DIR" || true
+		GODOT_DIR="$GODOT_DIR" \
+		SWIFT_VERSION="$SWIFT_VERSION" || true
 }
 
 
 function download_godot()
 {
 	if [[ -d "$GODOT_DIR" ]]; then
-		display_error "$GODOT_DIR directory already exists. Remove it first or use a different directory."
-		exit 1
+		if [[ -f "$GODOT_DIR/GODOT_VERSION" ]]; then
+			local existing_version
+			existing_version=$(tr -d '[:space:]' < "$GODOT_DIR/GODOT_VERSION")
+			if [[ "$existing_version" == "$GODOT_VERSION" ]]; then
+				display_progress "Godot $GODOT_VERSION already present in $GODOT_DIR. Skipping download."
+				return 0
+			else
+				display_error "$GODOT_DIR exists with version '$existing_version', expected '$GODOT_VERSION'. \
+Remove it first or run with -g."
+				exit 1
+			fi
+		else
+			display_error "$GODOT_DIR directory already exists but contains no GODOT_VERSION file. \
+Remove it first or run with -g."
+			exit 1
+		fi
 	fi
 
 	local filename="godot-${GODOT_VERSION}-${GODOT_RELEASE_TYPE}.tar.xz"
@@ -280,6 +298,18 @@ function validate_godot_version()
 }
 
 
+function sync_swift_version_to_pbxproj()
+{
+	local pbxproj="$IOS_DIR/$PROJECT/project.pbxproj"
+	display_status "Syncing SWIFT_VERSION ($SWIFT_VERSION) into project.pbxproj..."
+
+	local tmpfile
+	tmpfile=$(mktemp)
+	sed "s/SWIFT_VERSION = [0-9.]*;/SWIFT_VERSION = $SWIFT_VERSION;/g" "$pbxproj" > "$tmpfile"
+	mv "$tmpfile" "$pbxproj"
+}
+
+
 function build_debug()
 {
 	if [[ ! -d "$GODOT_DIR" ]]; then
@@ -313,7 +343,8 @@ dependencies."
 		-sdk iphoneos \
 		SKIP_INSTALL=NO \
 		GCC_PREPROCESSOR_DEFINITIONS="\$(inherited) DEBUG_ENABLED=1" \
-		GODOT_DIR="$GODOT_DIR"
+		GODOT_DIR="$GODOT_DIR" \
+		SWIFT_VERSION="$SWIFT_VERSION"
 
 	display_status "Building iOS simulator debug"
 	xcodebuild archive \
@@ -324,7 +355,8 @@ dependencies."
 		-sdk iphonesimulator \
 		SKIP_INSTALL=NO \
 		GCC_PREPROCESSOR_DEFINITIONS="\$(inherited) DEBUG_ENABLED=1" \
-		GODOT_DIR="$GODOT_DIR"
+		GODOT_DIR="$GODOT_DIR" \
+		SWIFT_VERSION="$SWIFT_VERSION"
 
 	mv "$LIB_DIR/ios_debug.xcarchive/Products/usr/local/lib/lib${SCHEME}.a" \
 		"$LIB_DIR/ios_debug.xcarchive/Products/usr/local/lib/${PLUGIN_NAME}.a"
@@ -376,7 +408,8 @@ dependencies."
 		-derivedDataPath "$DERIVED_DATA_DIR/ios_release" \
 		-sdk iphoneos \
 		SKIP_INSTALL=NO \
-		GODOT_DIR="$GODOT_DIR"
+		GODOT_DIR="$GODOT_DIR" \
+		SWIFT_VERSION="$SWIFT_VERSION"
 
 	display_status "Building iOS simulator release"
 	xcodebuild archive \
@@ -386,7 +419,8 @@ dependencies."
 		-derivedDataPath "$DERIVED_DATA_DIR/ios_simulator_release" \
 		-sdk iphonesimulator \
 		SKIP_INSTALL=NO \
-		GODOT_DIR="$GODOT_DIR"
+		GODOT_DIR="$GODOT_DIR" \
+		SWIFT_VERSION="$SWIFT_VERSION"
 
 	mv "$LIB_DIR/ios_release.xcarchive/Products/usr/local/lib/lib${SCHEME}.a" \
 		"$LIB_DIR/ios_release.xcarchive/Products/usr/local/lib/${PLUGIN_NAME}.a"
@@ -532,6 +566,10 @@ fi
 if [[ "$do_resolve_spm_dependencies" == true ]]
 then
 	resolve_spm_dependencies
+fi
+
+if [[ "$do_debug_build" == true ]] || [[ "$do_release_build" == true ]]; then
+	sync_swift_version_to_pbxproj
 fi
 
 if [[ "$do_debug_build" == true ]]
