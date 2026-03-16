@@ -1,3 +1,7 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
 name: Install Node
 description: Installs Node.js manually when running under act, or via actions/setup-node on GitHub.
 

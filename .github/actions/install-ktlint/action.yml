@@ -1,3 +1,7 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
 name: Install ktlint
 description: Installs a pinned version of ktlint, caches it, and places it on PATH.
 

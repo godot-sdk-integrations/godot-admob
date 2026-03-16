@@ -151,7 +151,34 @@ embedded_frameworks=res://ios/framework/*.xcframework,...
 
 # Linker flags
 flags=-ObjC,-Wl,...
+```
 
-# SPM dependencies (format: https://github.com/owner/repo.git|version|PackageName)
-dependencies=https://github.com/googleads/swift-package-manager-google-mobile-ads.git|12.14.0|GoogleMobileAds
+SPM dependencies are configured in the `ios/config/spm_dependencies.json` file in the following format:
+
+```json
+[
+  {
+    "url": "https://github.com/Alamofire/Alamofire",
+    "version": "5.8.1",
+    "products": [
+      "Alamofire",
+      "AlamofireImage"
+    ]
+  },
+  {
+    "url": "https://github.com/kishikawakatsumi/KeychainAccess",
+    "version": "4.2.2",
+    "products": [
+      "KeychainAccess"
+    ]
+  }
+]
+```
+
+If the plugin has no SPM dependencies:
+
+```json
+[
+
+]
 ```

@@ -46,6 +46,7 @@ body:
       - 4.5.stable
       - 4.5.1.stable
       - 4.6.stable
+      - 4.6.1.stable
       - 4.x
       - Other
     default: 2

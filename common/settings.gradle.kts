@@ -3,6 +3,8 @@
 //
 
 pluginManagement {
+    // Make convention plugins from build-logic available during plugin resolution
+    includeBuild("build-logic")
     repositories {
         gradlePluginPortal()
         google()
@@ -19,8 +21,20 @@ val localProperties =
             ?.use { props.load(it) }
     }
 
+val configProperties =
+    java.util.Properties().also { props ->
+        rootDir
+            .resolve("config/config.properties")
+            .takeIf { it.exists() }
+            ?.inputStream()
+            ?.use { props.load(it) }
+    }
+
 gradle.extra["libDir"] = localProperties.getProperty("lib.dir")
     ?: "$rootDir/../android/libs"
+
+gradle.extra["godotDir"] = localProperties.getProperty("godot.dir")
+    ?: "$rootDir/../ios/godot"
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
@@ -48,9 +62,11 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "godot-admob-plugin"
-include(":android")
+rootProject.name = configProperties.getProperty("gradleProjectName", "godot-plugin")
 include(":addon")
+include(":android")
+include(":ios")
 
-project(":android").projectDir = file("../android")
 project(":addon").projectDir = file("../addon")
+project(":android").projectDir = file("../android")
+project(":ios").projectDir = file("../ios")

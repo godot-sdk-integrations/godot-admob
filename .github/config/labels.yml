@@ -1,0 +1,51 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
+- name: android
+  color: '#a4c639'
+  description: Related to the Android platform
+
+- name: ios
+  color: '#808080'
+  description: Related to the iOS platform
+
+- name: gdscript
+  color: '#0075ca'
+  description: Related to the GDScript interface
+
+- name: build system
+  color: '#e4dcb4'
+  description: Issue related to the build system
+
+- name: documentation
+  color: '#b587f3'
+  description: Issue related to documentation
+
+- name: confirmed bug
+  color: '#f60202'
+  description: Reported issue has been confirmed as a bug
+
+- name: feature request
+  color: '#a2eeef'
+  description: Request for a new feature
+
+- name: invalid
+  color: '#d73a4a'
+  description: Issue is invalid
+
+- name: not reproducible
+  color: '#f9d0c4'
+  description: Issue is not reproducible
+
+- name: duplicate
+  color: '#ffffff'
+  description: Issue is a duplicate of another issue
+
+- name: question
+  color: '#e99695'
+  description: Issue is a question or request for clarification
+
+- name: help wanted
+  color: '#008672'
+  description: Issue that requires help from the community
