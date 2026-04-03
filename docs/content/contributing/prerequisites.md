@@ -50,8 +50,19 @@ godot.dir=/path/to/your/shared/godot
 ## iOS Development (macOS only)
 - **Xcode** - Latest stable version recommended
 - **Xcode Command Line Tools** - Install via: `xcode-select --install`
-- **SCons** - Install via: `pip3 install scons` or `brew install scons`
-- **Python 3** - Required for SCons
+- **Ruby** - Required for SPM dependency management via `spm_manager.rb` (macOS system Ruby is sufficient)
+- **xcodeproj gem** - Installed automatically by the build system if missing, or manually via: `gem install xcodeproj --user-install`
+
+## Developer Tools (Optional - required for format checking)
+
+These tools are needed when running `checkFormat` or `applyFormat` tasks:
+
+- **ktlint** - Kotlin/KTS formatter: `brew install ktlint`
+- **shellcheck** - Shell script linter: `brew install shellcheck`
+- **editorconfig-checker** - EditorConfig compliance: `brew install editorconfig-checker`
+- **clang-format** - ObjC/C++ formatter: `brew install clang-format` (iOS only)
+- **swiftlint** - Swift linter/formatter: `brew install swiftlint` (iOS only)
+- **gdformat** - GDScript formatter: install via the Godot toolchain
 
 ## Verifying Prerequisites
 
@@ -61,5 +72,6 @@ java -version
 
 # macOS/iOS only
 xcodebuild -version
-scons --version
+ruby --version
+gem list xcodeproj
 ```
