@@ -7,6 +7,12 @@ configure:
     tabSize: 4
     indentSize: 4
     continuationIndent: 8
+  org.openrewrite.java.style.WrappingAndBracesStyle:
+    ifStatement:
+      elseOnNewLine: false     # keeps `} else {` on one line
+    tryStatement:
+      catchOnNewLine: false    # keeps `} catch {` on one line
+      finallyOnNewLine: false  # keeps `} finally {` on one line
   org.openrewrite.java.style.ImportLayoutStyle:
     classCountToUseStarImport: 999
     nameCountToUseStarImport: 999

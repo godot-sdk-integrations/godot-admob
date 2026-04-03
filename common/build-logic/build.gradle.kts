@@ -3,8 +3,8 @@
 //
 
 // Compiles all convention plugins (precompiled script plugins) in
-// src/main/kotlin/*.gradle.kts and makes them — together with their
-// runtime dependencies — available to every subproject that applies them.
+// src/main/kotlin/*.gradle.kts and makes them - together with their
+// runtime dependencies - available to every subproject that applies them.
 //
 // Versions are kept in sync with gradle/libs.versions.toml via the
 // version catalog re-export in settings.gradle.kts:
@@ -19,4 +19,10 @@ plugins {
 
 dependencies {
     implementation(libs.kotlinx.serialization.json)
+}
+
+sourceSets {
+    main {
+        java.srcDirs("src/main/kotlin")
+    }
 }

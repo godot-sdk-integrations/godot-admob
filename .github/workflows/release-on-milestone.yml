@@ -7,6 +7,12 @@ name: Draft Release on Milestone Close
 on:
   milestone:
     types: [closed]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., 1.0)'
+        required: true
+        type: string
 
 permissions:
   contents: write   # required to create releases and upload assets
@@ -14,10 +20,12 @@ permissions:
 jobs:
   draft-release:
     name: Build archives & create draft release
+    if: ${{ !github.event.repository.is_template }}
     runs-on: macos-latest
 
     env:
-      TAG_NAME: v${{ github.event.milestone.title }}
+      TAG_NAME: v${{ inputs.version || github.event.milestone.title }}
+      EXPECTED_VERSION: ${{ inputs.version || github.event.milestone.title }}
 
     steps:
       # ── Checkout ────────────────────────────────────────────────────────────
@@ -25,6 +33,36 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
+      # ── Read plugin config ───────────────────────────────────────────────────
+      - name: Read plugin config
+        id: plugin_config
+        uses: ActionCommons/read-properties-action@v1
+        with:
+          files: |
+            common/config/plugin.properties
+            common/config/godot.properties
+          properties: |
+            pluginNodeName
+            pluginVersion
+            godotVersion
+
+      # ── Validate plugin version ──────────────────────────────────────────────
+      - name: Validate plugin version matches milestone or input
+        run: |
+          PLUGIN_VERSION="${{ steps.plugin_config.outputs['plugin.pluginVersion'] }}"
+          
+          echo "Plugin Version: '${PLUGIN_VERSION}'"
+          echo "Expected Version (Input/Milestone): '${EXPECTED_VERSION}'"
+          
+          if [ "${PLUGIN_VERSION}" != "${EXPECTED_VERSION}" ]; then
+            echo "::error::Validation Failed."
+            echo "The pluginVersion '${PLUGIN_VERSION}' in plugin.properties does not match the triggered version '${EXPECTED_VERSION}'."
+            exit 1
+          fi
+          
+          echo "Validation Successful."
+          echo "The pluginVersion '${PLUGIN_VERSION}' correctly matches the triggered version '${EXPECTED_VERSION}'."
 
       # ── Node ────────────────────────────────────────────────────────────────
       - name: Install Node
@@ -41,11 +79,6 @@ jobs:
       # ── Gradle ──────────────────────────────────────────────────────────────
       - name: Grant execute permission for Gradle wrapper
         run: chmod +x common/gradlew
-
-      # ── Prepare for iOS build ───────────────────────────────────────────────
-      - name: Install SCons
-        if: env.ACT != 'true'
-        run: pip install scons
 
       # ── Prepare for Android build ───────────────────────────────────────────
       - name: Setup Android SDK
@@ -79,18 +112,26 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Using EXPECTED_VERSION here to map to the milestone title. 
+          # "|| echo" ensures that manual triggers without an exact milestone match don't fail the pipeline.
+          ISSUE_LINES=$(gh issue list \
+            --milestone "${EXPECTED_VERSION}" \
+            --state closed \
+            --json number \
+            --jq '.[].number | "          - #\(.)"' || echo "          - (No milestone issues linked)")
+
           gh release create "$TAG_NAME" \
             --draft \
-            --title "Plugin $TAG_NAME" \
+            --title "${{ steps.plugin_config.outputs['plugin.pluginNodeName'] }} Plugin $TAG_NAME" \
             --notes "## New in this release:
 
-          - ...
+          ${ISSUE_LINES}
 
           <br />
 
           _This version..._
 
-          -  _has been tested against and supports Godot version ...._" \
+          -  _has been tested against and supports Godot version ${{ steps.plugin_config.outputs['godot.godotVersion'] }}._" \
             "${{ steps.archives.outputs.android_zip }}" \
             "${{ steps.archives.outputs.ios_zip }}" \
             "${{ steps.archives.outputs.multi_zip }}"

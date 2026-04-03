@@ -1,0 +1,125 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
+name: Auto Label Issues
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write  # Required to apply labels to the issue
+      contents: read # Required to read the labels.yml file
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Install Dependencies
+        run: pip install pyyaml google-genai requests
+
+      - name: Analyze Issue and Apply Labels
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          REPO: ${{ github.repository }}
+        run: |
+          python - <<'EOF'
+          import os, yaml, json, requests
+          from google import genai
+          from google.genai import types
+
+          # 1. Load configured labels
+          try:
+              with open('.github/config/labels.yml', 'r') as f:
+                  labels_data = yaml.safe_load(f)
+          except Exception as e:
+              print(f"Error reading labels.yml: {e}")
+              exit(1)
+
+          valid_labels = {item['name']: item['description'] for item in labels_data if item and 'name' in item}
+          valid_label_names = list(valid_labels.keys())
+
+          # 2. Configure Gemini
+          client = genai.Client(api_key=os.environ['GEMINI_API_KEY'])
+
+          prompt = f"""
+          You are an automated triage assistant for a Godot game engine plugin GitHub repository dealing with Android,
+          iOS, and GDScript.
+          Your task is to analyze the following GitHub issue and return the most appropriate label names.
+          
+          Valid Labels and their descriptions:
+          {json.dumps(valid_labels, indent=2)}
+
+          Issue Title: {os.environ.get('ISSUE_TITLE', '')}
+          Issue Body:
+          {os.environ.get('ISSUE_BODY', '')}
+          """
+
+          print("Sending prompt to Gemini...")
+          try:
+              # Enforcing Structured Outputs using a JSON schema
+              response = client.models.generate_content(
+                  model='gemini-2.5-flash',
+                  contents=prompt,
+                  config=types.GenerateContentConfig(
+                      response_mime_type="application/json",
+                      response_schema={
+                          "type": "ARRAY",
+                          "items": {
+                              "type": "STRING",
+                              "enum": valid_label_names
+                          }
+                      }
+                  )
+              )
+              output = response.text.strip()
+          except Exception as e:
+              print(f"Error calling Gemini API: {e}")
+              exit(1)
+
+          # 3. Parse labels (Filtering is no longer strictly necessary, but good for sanity)
+          try:
+              selected_labels = json.loads(output)
+          except json.JSONDecodeError:
+              print(f"Failed to parse Gemini output as JSON.\nRaw Output:\n{output}")
+              exit(1)
+
+          if not selected_labels:
+              print("Gemini determined no labels are applicable.")
+              exit(0)
+
+          print(f"Applying labels: {selected_labels}")
+
+          # 4. Apply to GitHub Issue via GitHub REST API
+          repo = os.environ['REPO']
+          issue_number = os.environ['ISSUE_NUMBER']
+          token = os.environ['GITHUB_TOKEN']
+
+          url = f"https://api.github.com/repos/{repo}/issues/{issue_number}/labels"
+          headers = {
+              "Accept": "application/vnd.github+json",
+              "Authorization": f"Bearer {token}",
+              "X-GitHub-Api-Version": "2022-11-28"
+          }
+
+          res = requests.post(url, headers=headers, json={"labels": selected_labels})
+          
+          if res.status_code != 200:
+              print(f"Failed to apply labels: {res.text}")
+              exit(1)
+              
+          print("Labels successfully applied to the issue.")
+          EOF

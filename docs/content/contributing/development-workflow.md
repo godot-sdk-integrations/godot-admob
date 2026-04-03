@@ -9,7 +9,7 @@ icon: fontawesome/solid/diagram-project
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/godot-sdk-integrations/godot-admob.git
+   git clone https://github.com/godot-mobile-plugins/godot-admob.git
    cd godot-admob
    ```
 

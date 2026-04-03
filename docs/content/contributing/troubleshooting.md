@@ -32,39 +32,47 @@ rm -rf ~/.gradle/caches/
 ./script/build_ios.sh -pP
 ```
 
-**Problem:** Header generation timeout
-```bash
-# Solution: Increase timeout
-./script/build_ios.sh -H -t 120
-```
-
 **Problem:** Xcode build fails
 ```bash
-# Solution: Clean derived data
+# Solution: Clean derived data and rebuild
 rm -rf ios/build/DerivedData
 ./script/build_ios.sh -cb
 ```
 
-**Problem:** Godot version mismatch when using a custom `godot.dir`
-```
-# The GODOT_VERSION file in the configured directory must match
-# the godotVersion property in common/config/config.properties.
-# Solution: remove and re-download Godot into the configured directory
+**Problem:** Godot version mismatch (headers directory contains the wrong version)
+```bash
+# The GODOT_VERSION file in the headers directory must match
+# the godotVersion property in common/config/godot.properties.
+# Solution: remove the existing headers directory and re-download
 ./script/build_ios.sh -gG
 ```
 
-**Problem:** Build cannot find Godot headers after setting `godot.dir`
+**Problem:** Build cannot find Godot headers after setting a custom `godot.dir`
 ```bash
 # Verify the path is set correctly in common/local.properties:
 #   godot.dir=/your/custom/path
-# Then re-generate headers:
-./script/build_ios.sh -H
+# Then download the headers into that directory:
+./script/build_ios.sh -G
+```
+
+**Problem:** Build fails with "swift_version not configured"
+```bash
+# Solution: add swift_version to ios/config/ios.properties, e.g.:
+#   swift_version=5.9
+# Then retry the build.
 ```
 
 **Problem:** "No such module" errors
 ```bash
 # Solution: Ensure packages are added and resolved
 ./script/build_ios.sh -pP
+```
+
+**Problem:** `xcodeproj` gem missing (Ruby gem required for SPM management)
+```bash
+# Solution: install the gem manually
+gem install xcodeproj --user-install
+# The build system will also install it automatically if Ruby is available.
 ```
 
 ## Getting Help

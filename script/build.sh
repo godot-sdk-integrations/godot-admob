@@ -19,6 +19,8 @@ do_install=false
 do_android_release=false
 do_ios_release=false
 do_full_release=false
+do_check_format=false
+do_apply_format=false
 
 
 function display_help()
@@ -37,11 +39,13 @@ function display_help()
 	echo_yellow "	C	remove existing builds and release archives"
 	echo_yellow "	d	uninstall plugin from demo app"
 	echo_yellow "	D	install plugin to demo app"
+	echo_yellow "	f	fix source code format issues"
 	echo_yellow "	h	display usage information"
 	echo_yellow "	i	build plugin for the iOS platform"
 	echo_yellow "	I	build and create iOS release archive (assumes Godot is already downloaded)"
 	echo_yellow "	M	build and create multi-platform release archive (assumes Godot is already downloaded)"
 	echo_yellow "	R	build and create all release archives (assumes Godot is already downloaded)"
+	echo_yellow "	v	verify source code format compliance"
 	echo
 	"$SCRIPT_DIR"/echocolor.sh -Y "Examples:"
 	echo_yellow "	* clean existing build, do a release build for Android, and create archive"
@@ -138,7 +142,7 @@ function run_ios_build()
 }
 
 
-while getopts "aAcCdDhiIMR" option; do
+while getopts "aAcCdDfhiIMRv" option; do
 	case $option in
 		h)
 			display_help
@@ -161,6 +165,9 @@ while getopts "aAcCdDhiIMR" option; do
 		D)
 			do_install=true
 			;;
+		f)
+			do_apply_format=true
+			;;
 		i)
 			do_build_ios=true
 			;;
@@ -172,6 +179,9 @@ while getopts "aAcCdDhiIMR" option; do
 			;;
 		R)
 			do_full_release=true
+			;;
+		v)
+			do_check_format=true
 			;;
 		\?)
 			display_error "Invalid option $option"
@@ -242,6 +252,18 @@ if [[ "$do_full_release" == true ]]
 then
 	display_status "Creating all release archives"
 	"$SCRIPT_DIR"/run_gradle_task.sh "createArchives"
+fi
+
+if [[ "$do_check_format" == true ]]
+then
+	display_status "Verifying source code format compliance"
+	"$SCRIPT_DIR"/run_gradle_task.sh "checkFormat"
+fi
+
+if [[ "$do_apply_format" == true ]]
+then
+	display_status "Fixing source code format issues"
+	"$SCRIPT_DIR"/run_gradle_task.sh "applyFormat"
 fi
 
 if [[ "$do_install" == true ]]

@@ -12,7 +12,7 @@ runs:
       if: env.ACT == 'true'
       shell: bash
       run: |
-        NODE_VERSION=22.13.1
+        NODE_VERSION=24.14.1
 
         OS=$(uname -s)
         ARCH=$(uname -m)
@@ -49,6 +49,6 @@ runs:
 
     - name: Setup Node (GitHub)
       if: env.ACT != 'true'
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
-        node-version: 22
+        node-version: 24

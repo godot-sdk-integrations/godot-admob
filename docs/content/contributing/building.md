@@ -11,7 +11,7 @@ There are three main build scripts located in the `script` directory.
 - `build_android.sh` - build script for Android platform
 - `build_ios.sh` - build script for iOS platform
 
-## <img src="../images/icon.png" width="20"> Cross-Platform Builds
+## <img src="../images/icon.png" width="24">  Cross-Platform Builds
 
 Cross-platform builds with the `build.sh` script.
 
@@ -25,10 +25,12 @@ Cross-platform builds with the `build.sh` script.
 | `-C` | Remove existing builds and archives |
 | `-d` | Uninstall plugin from demo app |
 | `-D` | Install plugin to demo app |
-| `-A` | Create Android relese archive |
-| `-I` | Create iOS relese archive |
-| `-M` | Create multi-platform relese archive |
-| `-R` | Create all relese archives |
+| `-f` | Fix source code format issues |
+| `-A` | Create Android release archive |
+| `-I` | Create iOS release archive |
+| `-M` | Create multi-platform release archive |
+| `-R` | Create all release archives |
+| `-v` | Verify source code format compliance |
 
 ### Output Locations
 
@@ -38,7 +40,7 @@ Cross-platform builds with the `build.sh` script.
 - **Built plugin:** `common/build/plugin/`
 - **Release archive:** `release/AdmobPlugin-*-v*.zip`
 
-## <img src="../images/icon.png" width="20"> Android Builds
+## <img src="../images/icon.png" width="20">  Android Builds
 
 ### Quick Reference
 
@@ -46,7 +48,8 @@ Cross-platform builds with the `build.sh` script.
 # Clean and build Android debug
 ./script/build.sh -a -- -cb
 
-**Note:** Options after `--` are passed to `build_android.sh`
+!!! note
+   Options after `--` are passed to `build_android.sh`
 
 # Clean and build Android release
 ./script/build.sh -a -- -cbr
@@ -71,13 +74,13 @@ Cross-platform builds with the `build.sh` script.
 | `-D` | Install Android plugin to demo app |
 | `-h` | Display script usage information |
 | `-r` | Build Android plugin with release build variant |
-| `-R` | Create Android relese archive |
+| `-R` | Create Android release archive |
 
 ### Android Studio
 
 If using Android Studio, make sure to open the root Gradle project from the `common` directory.
 
-## <img src="../images/icon.png" width="20"> iOS Builds
+## <img src="../images/icon.png" width="24">  iOS Builds
 
 ### Quick Reference
 
@@ -85,70 +88,100 @@ If using Android Studio, make sure to open the root Gradle project from the `com
 # Clean and run iOS debug build
 ./script/build.sh -i -- -cb
 
-**Note:** Options after `--` are passed to `build_ios.sh`
+!!! note
+   Options after `--` are passed to `build_ios.sh`
 
-# Full build (first time - downloads Godot)
+# Full build (first time - downloads Godot headers automatically)
 ./script/build_ios.sh -A
 
-# Clean and rebuild (reuses Godot)
+# Clean and rebuild (reuses existing Godot headers)
 ./script/build_ios.sh -ca
 
-# Full clean rebuild (removes Godot)
+# Full clean rebuild (removes Godot headers directory first)
 ./script/build_ios.sh -cgA
 
 # Clean, build and create archive
-./script/build_ios.sh -cbBR
+./script/build_ios.sh -cR
 
-# Custom timeout for header generation (seconds)
-./script/build_ios.sh -H -t 60
+# Debug build for simulator
+./script/build_ios.sh -bs
+
+# Release build for simulator
+./script/build_ios.sh -Bs
+
+# Install iOS plugin to demo app
+./script/build_ios.sh -D
+
+# Uninstall iOS plugin from demo app
+./script/build_ios.sh -d
+
+# Resolve SPM dependencies only
+./script/build_ios.sh -r
 ```
 
 ### Build Options
 
 | Option | Description |
 |--------|-------------|
-| `-a` | Generate headers, add packages, and build |
-| `-A` | Download Godot + full build |
-| `-b` | Run debug build |
-| `-B` | Run release build |
+| `-a` | Update SPM packages and build both debug and release variants |
+| `-A` | Download Godot headers, update SPM packages, and build both debug and release variants |
+| `-b` | Run debug build (device); combine with `-s` for simulator |
+| `-B` | Run release build (device); combine with `-s` for simulator |
 | `-c` | Clean existing build |
-| `-g` | Remove Godot directory |
-| `-G` | Download Godot |
+| `-d` | Uninstall iOS plugin from demo app |
+| `-D` | Install iOS plugin to demo app |
+| `-g` | Remove Godot headers directory |
+| `-G` | Download Godot headers |
 | `-h` | Display help |
-| `-H` | Generate Godot headers |
-| `-p` | Remove SPM packages |
-| `-P` | Add SPM packages |
+| `-p` | Remove SPM packages and build artifacts |
+| `-P` | Add SPM packages from configuration |
+| `-r` | Resolve SPM dependencies |
 | `-R` | Create release archive |
-| `-t <seconds>` | Set header generation timeout |
+| `-s` | Simulator build; use with `-b` for simulator debug, `-B` for simulator release |
 
 ### Build Process Explained
 
-The iOS build process involves several steps:
+The iOS build process involves several steps that are orchestrated automatically:
 
-1. **Download Godot** (if needed):
-   - Downloads the official Godot binary from GitHub
-   - Version specified in `config.properties`
+1. **Download Godot Headers** (if needed):
+   - Downloads a pre-built Godot headers archive from `github.com/godot-mobile-plugins/godot-headers`
+   - Version is determined by `godotVersion` and `godotReleaseType` in `godot.properties`
    - Extracted to `ios/godot/` by default, or to the path set by `godot.dir` in `common/local.properties`
+   - The download is skipped if the correct version is already present (checked via a `GODOT_VERSION` file)
+   - If the directory exists but contains a different version, the build fails with a clear error - run `./script/build_ios.sh -gG` to switch versions
 
-2. **Generate Headers**:
-   - Starts a Godot build to generate C++ headers
-   - Timeout prevents full Godot build (we only need headers)
-   - Default timeout: 40 seconds (increase if needed)
+2. **Validate Swift Version**:
+   - Reads `swift_version` from `ios/config/ios.properties`
+   - Fails early with a clear error if the property is missing or blank
+   - Syncs the version into `plugin.xcodeproj/project.pbxproj` automatically
 
-3. **Add Swift Packages**:
-   - Downloads ad network SDKs via Swift Package Manager
-   - Adds mediation adapters as package dependencies
-   - Resolves package dependencies for Xcode
+3. **Validate Godot Version**:
+   - Confirms the `GODOT_VERSION` file in the Godot headers directory matches `godotVersion` in `godot.properties`
 
-4. **Build XCFrameworks**:
-   - Builds for iOS device (arm64)
-   - Builds for iOS simulator (arm64, x86_64)
-   - Creates universal XCFrameworks for debug and release
+4. **Update & Resolve SPM Packages**:
+   - Reads dependency definitions from `ios/config/spm_dependencies.json`
+   - Injects package references into the Xcode project via `script/spm_manager.rb` (requires Ruby and the `xcodeproj` gem)
+   - Resolves the packages with `xcodebuild -resolvePackageDependencies`
+
+5. **Build XCFrameworks**:
+   - Builds up to four variants via `xcodebuild archive`:
+     - `buildiOSDebug` - device (arm64), debug
+     - `buildiOSRelease` - device (arm64), release
+     - `buildiOSDebugSimulator` - simulator (arm64/x86_64), debug
+     - `buildiOSReleaseSimulator` - simulator (arm64/x86_64), release
+   - The `-s` flag selects simulator variants; without it, device variants are built
+   - Archives are created as `.xcarchive` bundles under `ios/build/lib/`
+   - XCFrameworks combining device and simulator slices are assembled in `ios/build/framework/`
+   - **Only the plugin's own xcframeworks** (`PluginName.debug.xcframework`, `PluginName.release.xcframework`) are copied into the plugin directory and included in release archives
+   - SPM dependency xcframeworks produced in `ios/build/DerivedData/` are **not** bundled in the archive; they are resolved by Xcode at Godot iOS export time using the `Package.resolved` file that is committed alongside the Xcode project
 
 ### Output Locations
 
-- **Godot source:** `ios/godot/` (default) or path set by `godot.dir` in `common/local.properties`
+- **Godot headers:** `ios/godot/` (default) or path set by `godot.dir` in `common/local.properties`
 - **Build artifacts:** `ios/build/`
-- **Frameworks:** `ios/build/framework/`
-- **Archives:** `ios/build/lib/*.xcarchive`
+- **xcarchives:** `ios/build/lib/ios_debug.xcarchive`, `ios_release.xcarchive`, `sim_debug.xcarchive`, `sim_release.xcarchive`
+- **Plugin XCFrameworks:** `ios/build/framework/AdmobPlugin.debug.xcframework`, `AdmobPlugin.release.xcframework`
 - **Release archive:** `release/AdmobPlugin-iOS-v*.zip`
+
+!!! note
+   Release archives (iOS and Multi) contain only the plugin's own xcframeworks. SPM dependency xcframeworks are intentionally excluded — they are fetched and linked by Xcode at Godot iOS export time using the `Package.resolved` committed with the Xcode project.

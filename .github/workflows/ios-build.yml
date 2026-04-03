@@ -39,11 +39,6 @@ jobs:
       - name: Grant execute permission for Gradle wrapper
         run: chmod +x common/gradlew
 
-      # ── Prepare for iOS build ───────────────────────────────────────────────
-      - name: Install SCons
-        if: env.ACT != 'true'
-        run: pip install scons
-
       # ── Run iOS build ───────────────────────────────────────────────────────
       - name: Build iOS debug
         working-directory: common

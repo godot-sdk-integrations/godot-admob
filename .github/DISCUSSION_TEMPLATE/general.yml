@@ -1,0 +1,45 @@
+title: "💬 "
+body:
+
+- type: checkboxes
+  attributes:
+    label: Is there an existing issue for this?
+    description: Please search to see if an issue already exists for the bug you encountered.
+    options:
+    - label: I have searched the existing open and closed issues
+      required: true
+    - label: I have searched all discussions
+      required: true
+    - label: I have starred the repository
+      required: true
+
+- type: dropdown
+  id: category
+  attributes:
+    label: 📂 Catetory
+    description: Select at least one category
+    options:
+      - ❔ Question
+      - 💡 Idea
+      - 🗣️ Feedback
+    default: 0
+  validations:
+    required: true
+
+- type: textarea
+  id: topic
+  attributes:
+    label: 📌 Topic
+    description: What would you like to discuss?
+    placeholder: Short description of your question, feedback or idea
+  validations:
+    required: true
+
+- type: textarea
+  id: details
+  attributes:
+    label: ℹ️ Details
+    description: Provide more context or background
+    placeholder: Add any relevant details here
+  validations:
+    required: true
