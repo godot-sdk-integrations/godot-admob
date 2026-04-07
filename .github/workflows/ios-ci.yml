@@ -6,23 +6,31 @@ name: iOS CI
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
     paths:
       - 'common/config/**'
+      - 'common/**/*.gradle.kts'
       - 'ios/config/**'
       - 'ios/src/**'
       - 'ios/test/**'
+      - 'ios/**/*.gradle.kts'
+      - 'ios/*.xcodeproj/**'
 
 jobs:
-  ios-tests:
-    name: iOS tests
+  ios-build-and-test:
+    name: iOS Build & Tests
     runs-on: macos-latest
 
     steps:
+      # -- Checkout ------------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      # -- Node ----------------------------------------------------------------
+      - name: Install Node
+        uses: ./.github/actions/install-node
+
+      # -- Read iOS config -----------------------------------------------------
       - name: Read iOS config
         id: ios_config
         uses: ActionCommons/read-properties@v1
@@ -32,21 +40,30 @@ jobs:
           properties: |
             test_destination_name
 
+      # -- Run iOS simulator ---------------------------------------------------
       - name: Boot iOS Simulator
         run: |
-          xcrun simctl boot "${{ steps.ios_config.outputs['test_destination_name'] }}" 2>/dev/null || true
-          xcrun simctl bootstatus "${{ steps.ios_config.outputs['test_destination_name'] }}" -b
+          xcrun simctl boot "${{ steps.ios_config.outputs['ios.test_destination_name'] }}" 2>/dev/null || true
+          xcrun simctl bootstatus "${{ steps.ios_config.outputs['ios.test_destination_name'] }}" -b
 
+      # -- Java ----------------------------------------------------------------
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          distribution: temurin
+          java-version: 17
           cache: gradle
 
+      # -- Gradle --------------------------------------------------------------
       - name: Make Gradle wrapper executable
         run: chmod +x common/gradlew
 
+      # -- Run iOS build -------------------------------------------------------
+      - name: Build iOS debug
+        working-directory: common
+        run: ./gradlew buildiOSDebug --no-daemon --stacktrace
+
+      # -- Run iOS tests -------------------------------------------------------
       # printTestSummaryiOS:
       #   • depends on testiOS  → runs xcodebuild test (fails on test failures)
       #   • testiOS is finalized by printTestSummaryiOS, so the summary is
