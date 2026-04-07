@@ -141,7 +141,6 @@ fun TaskContainerScope.registerIosBuildTask(
     }
 }
 
-
 /**
  * Registers an xcodebuild-test task that runs the iOS unit-test scheme on an
  * iOS Simulator.
@@ -185,19 +184,26 @@ fun TaskContainerScope.registerIosTestTask(
         }
 
         commandLine(
-            "xcodebuild", "test",
-            "-workspace", workspace.absolutePath,
-            "-scheme", scheme,
-            "-destination", destination,
-            "-derivedDataPath", derivedDataDir.absolutePath,
-            "-resultBundlePath", testResultsDir.resolve("${name}.xcresult").absolutePath,
-            "-enableCodeCoverage", "YES",
+            "xcodebuild",
+            "test",
+            "-workspace",
+            workspace.absolutePath,
+            "-scheme",
+            scheme,
+            "-destination",
+            destination,
+            "-derivedDataPath",
+            derivedDataDir.absolutePath,
+            "-resultBundlePath",
+            testResultsDir.resolve("$name.xcresult").absolutePath,
+            "-enableCodeCoverage",
+            "YES",
             "GODOT_DIR=$godotDir",
             "SWIFT_VERSION=${iosConfig.swiftVersion}",
         )
 
         doFirst {
-            testResultsDir.mkdirs()                // only side-effect belongs here
+            testResultsDir.mkdirs() // only side-effect belongs here
         }
 
         finalizedBy("printTestSummaryiOS")
@@ -889,9 +895,9 @@ tasks {
         group = "clean"
         description = "Cleans iOS build outputs and test results"
 
-       dependsOn(
+        dependsOn(
             "cleaniOSBuild",
-            "cleaniOSTest"
+            "cleaniOSTest",
         )
     }
 
@@ -944,7 +950,8 @@ tasks {
 
             execOps.exec {
                 commandLine(
-                    "sh", "-c",
+                    "sh",
+                    "-c",
                     """
                     BUNDLE="${'$'}(echo '$bundlePath')"
 
@@ -955,11 +962,14 @@ tasks {
                         --path "${'$'}BUNDLE" --format json 2>/dev/null || echo '{}')
 
                     echo "${'$'}JSON" | jq -r '
-                        "Total Tests : \(.passedTests + .failedTests + (.skippedTests // 0))",
+                        (.passedTests + .failedTests + (.skippedTests // 0)) as ${'$'}total |
+                        (.passedTests * 100 / (if ${'$'}total > 0 then ${'$'}total else 1 end) | round) as ${'$'}rate |
+
+                        "Total Tests : \( ${'$'}total )",
                         "Passed      : \(.passedTests)",
                         "Failed      : \(.failedTests)",
                         "Skipped     : \(.skippedTests // 0)",
-                        "Pass Rate   : \(if (.passedTests + .failedTests) > 0 then (.passedTests * 100 / (.passedTests + .failedTests) | round | tostring) + "%" else "N/A" end)",
+                        "Pass Rate   : \(if ${'$'}total > 0 then (${'$'}rate | tostring) + "%" else "N/A" end)",
                         "",
                         "Environment : \(.environmentDescription // "Unknown")",
                         "Result      : \(.result // "Unknown")",
@@ -967,7 +977,8 @@ tasks {
                         "Configurations:",
                         "───────────────",
                         (.devicesAndConfigurations[]? |
-                            "  • \(.device.deviceName) (\(.device.osVersion)) | Passed: \(.passedTests) | Failed: \(.failedTests)"
+                            "  • \(.device.deviceName) (\(.device.osVersion))" +
+                            " | Passed: \(.passedTests) | Failed: \(.failedTests)"
                         )
                     ' 2>/dev/null || echo "⚠️  Could not parse test summary JSON"
 
@@ -978,7 +989,7 @@ tasks {
                         --path "${'$'}BUNDLE" --format json 2>/dev/null \
                     | jq -r '
                         .testNodes[]? | .children[]? |
-                        "  \(.name): passed=\(.result)" 
+                        "  \(.name): passed=\(.result)"
                     ' 2>/dev/null || echo "  (suite breakdown unavailable)"
 
                     echo ""
@@ -987,7 +998,8 @@ tasks {
                     xcrun xccov view --report --json "${'$'}BUNDLE" 2>/dev/null \
                     | jq -r '
                         (.targets // [])[] |
-                        "  \(.name): \(.lineCoverage * 100 | round)% line coverage  (\(.coveredLines)/\(.executableLines) lines)"
+                        "  \(.name): \(.lineCoverage * 100 | round)% line coverage " +
+                        " (\(.coveredLines)/\(.executableLines) lines)"
                     ' 2>/dev/null || echo "  (coverage data unavailable — was -enableCodeCoverage YES set?)"
                     """.trimIndent(),
                 )

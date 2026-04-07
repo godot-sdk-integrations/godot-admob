@@ -5,10 +5,10 @@
 import com.android.build.gradle.internal.api.LibraryVariantOutputImpl
 import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.npm.task.NpxTask
+import org.w3c.dom.Element
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.xml.parsers.DocumentBuilderFactory
-import org.w3c.dom.Element
 
 plugins {
     id("base-conventions")
@@ -36,7 +36,11 @@ data class SuiteResult(
     val skipped: Int,
 )
 
-data class CoverageCounter(val type: String, val covered: Long, val missed: Long) {
+data class CoverageCounter(
+    val type: String,
+    val covered: Long,
+    val missed: Long,
+) {
     val total: Long = covered + missed
     val pct: Double = if (total == 0L) 100.0 else covered * 100.0 / total
 }
@@ -84,8 +88,7 @@ fun parseSuiteResults(resultsDir: File): List<SuiteResult> {
                 val failed = failures + errors
                 SuiteResult(name, tests, maxOf(0, tests - failed - skipped), failed, skipped)
             }.getOrNull()
-        }
-        .sortedBy { it.name }
+        }.sortedBy { it.name }
 }
 
 /**
@@ -110,8 +113,7 @@ fun parseCoverage(reportXml: File): List<CoverageCounter> {
                     el.getAttribute("covered").toLongOrNull() ?: 0L,
                     el.getAttribute("missed").toLongOrNull() ?: 0L,
                 )
-            }
-            .sortedBy { order.indexOf(it.type) }
+            }.sortedBy { order.indexOf(it.type) }
     }.getOrDefault(emptyList())
 }
 
@@ -174,17 +176,21 @@ fun printTestResultsTable(suites: List<SuiteResult>): Boolean {
  * Lines, Methods, Classes) to standard output. If [counters] is empty a
  * one-line notice is printed instead.
  */
-fun printCoverageSummary(counters: List<CoverageCounter>, reportDir: File) {
+fun printCoverageSummary(
+    counters: List<CoverageCounter>,
+    reportDir: File,
+) {
     val bar = "=".repeat(80)
     val sep = "-".repeat(80)
 
-    val labelMap = mapOf(
-        "INSTRUCTION" to "Instructions",
-        "BRANCH" to "Branches",
-        "LINE" to "Lines",
-        "METHOD" to "Methods",
-        "CLASS" to "Classes",
-    )
+    val labelMap =
+        mapOf(
+            "INSTRUCTION" to "Instructions",
+            "BRANCH" to "Branches",
+            "LINE" to "Lines",
+            "METHOD" to "Methods",
+            "CLASS" to "Classes",
+        )
 
     println(bar)
     println(" CODE COVERAGE")
@@ -548,7 +554,10 @@ tasks {
         dependsOn("createDebugUnitTestCoverageReport")
 
         doLast {
-            val buildDir = project.layout.buildDirectory.get().asFile
+            val buildDir =
+                project.layout.buildDirectory
+                    .get()
+                    .asFile
             val resultsDir = File(buildDir, "test-results/testDebugUnitTest")
             val coverageXml = File(buildDir, "reports/coverage/test/debug/report.xml")
             val coverageDir = coverageXml.parentFile

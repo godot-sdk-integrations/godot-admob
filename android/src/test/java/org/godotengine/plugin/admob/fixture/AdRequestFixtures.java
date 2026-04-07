@@ -16,7 +16,8 @@ public final class AdRequestFixtures {
 	/** Google test ad-unit ID (safe to use in tests – never generates real traffic). */
 	public static final String TEST_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111";
 
-	private AdRequestFixtures() {}
+	private AdRequestFixtures() {
+	}
 
 	// -- Banner ----------------------------------------------------------------
 
@@ -114,7 +115,9 @@ public final class AdRequestFixtures {
 
 	// -- Edge-cases ------------------------------------------------------------
 
-	/** A dictionary with no keys – {@link org.godotengine.plugin.admob.model.LoadAdRequest#isValid()} must return false. */
+	/**
+	 * A dictionary with no keys – {@link org.godotengine.plugin.admob.model.LoadAdRequest#isValid()} must return false.
+	 */
 	public static Dictionary emptyRequest() {
 		return new Dictionary();
 	}

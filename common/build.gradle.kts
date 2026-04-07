@@ -154,7 +154,7 @@ tasks {
             ).joinToString(" -o ") { "-name \"$it\"" }
 
         val excludePatterns =
-            listOf("node_modules", ".git", "build", ".gradle", ".idea")
+            listOf("node_modules", ".git", "build", ".gradle", ".idea", "bin")
                 .joinToString(" ") { "-not -path \"*/$it/*\"" }
 
         commandLine(

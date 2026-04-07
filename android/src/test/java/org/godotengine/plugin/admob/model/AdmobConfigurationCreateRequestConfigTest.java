@@ -23,7 +23,6 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 
-import org.godotengine.godot.Dictionary;
 import org.godotengine.plugin.admob.fixture.ConfigFixtures;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -99,7 +98,7 @@ public class AdmobConfigurationCreateRequestConfigTest {
 		try (MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
 				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)) {
 			secureMock.when(() -> Settings.Secure.getString(any(), any())).thenReturn("mock_id");
-			
+
 			new AdmobConfiguration(ConfigFixtures.testConfig())
 					.createRequestConfiguration(activity);
 			verify(configBuilder).setMaxAdContentRating("G");
@@ -117,10 +116,12 @@ public class AdmobConfigurationCreateRequestConfigTest {
 
 	@Test
 	void createRequestConfiguration_ratingMA_passesMAToBuilder() {
-		try (MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)) {
+		try (
+				MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)
+		) {
 			secureMock.when(() -> Settings.Secure.getString(any(), any())).thenReturn("mock_id");
-			
+
 			new AdmobConfiguration(ConfigFixtures.configWithRating("MA"))
 					.createRequestConfiguration(activity);
 			verify(configBuilder).setMaxAdContentRating("MA");
@@ -195,10 +196,12 @@ public class AdmobConfigurationCreateRequestConfigTest {
 
 	@Test
 	void createRequestConfiguration_personalizationDefault_setsDefaultState() {
-		try (MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)) {
+		try (
+				MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)
+		) {
 			secureMock.when(() -> Settings.Secure.getString(any(), any())).thenReturn("mock_id");
-			
+
 			new AdmobConfiguration(ConfigFixtures.testConfig())
 					.createRequestConfiguration(activity);
 			verify(configBuilder).setPublisherPrivacyPersonalizationState(
@@ -212,7 +215,8 @@ public class AdmobConfigurationCreateRequestConfigTest {
 			new AdmobConfiguration(ConfigFixtures.minimalConfig(true))
 					.createRequestConfiguration(activity);
 			verify(configBuilder, never())
-					.setPublisherPrivacyPersonalizationState(any(RequestConfiguration.PublisherPrivacyPersonalizationState.class));
+					.setPublisherPrivacyPersonalizationState(
+							any(RequestConfiguration.PublisherPrivacyPersonalizationState.class));
 		}
 	}
 
@@ -246,8 +250,10 @@ public class AdmobConfigurationCreateRequestConfigTest {
 
 	@Test
 	void createRequestConfiguration_nonReal_includesEmulatorId() {
-		try (MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)) {
+		try (
+				MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)
+		) {
 
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
 					.thenReturn("mock_android_id");
@@ -264,8 +270,10 @@ public class AdmobConfigurationCreateRequestConfigTest {
 
 	@Test
 	void createRequestConfiguration_nonReal_includesHashedDeviceId() {
-		try (MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)) {
+		try (
+				MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)
+		) {
 
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
 					.thenReturn("abc"); // MD5("abc") = 900150983CD24FB0D6963F7D28E17F72
@@ -284,9 +292,11 @@ public class AdmobConfigurationCreateRequestConfigTest {
 
 	@Test
 	void createRequestConfiguration_nonReal_advertisingIdAvailable_includesAdId() {
-		try (MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class);
-			 MockedStatic<AdvertisingIdClient> adIdMock = mockStatic(AdvertisingIdClient.class)) {
+		try (
+				MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class);
+				MockedStatic<AdvertisingIdClient> adIdMock = mockStatic(AdvertisingIdClient.class)
+		) {
 
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
 					.thenReturn("mock_id");
@@ -309,9 +319,11 @@ public class AdmobConfigurationCreateRequestConfigTest {
 
 	@Test
 	void createRequestConfiguration_nonReal_limitAdTrackingEnabled_excludesAdId() {
-		try (MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class);
-			 MockedStatic<AdvertisingIdClient> adIdMock = mockStatic(AdvertisingIdClient.class)) {
+		try (
+				MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class);
+				MockedStatic<AdvertisingIdClient> adIdMock = mockStatic(AdvertisingIdClient.class)
+		) {
 
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
 					.thenReturn("mock_id");
@@ -336,9 +348,11 @@ public class AdmobConfigurationCreateRequestConfigTest {
 
 	@Test
 	void createRequestConfiguration_nonReal_advertisingIdIsNull_doesNotAddNull() {
-		try (MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class);
-			 MockedStatic<AdvertisingIdClient> adIdMock = mockStatic(AdvertisingIdClient.class)) {
+		try (
+				MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class);
+				MockedStatic<AdvertisingIdClient> adIdMock = mockStatic(AdvertisingIdClient.class)
+		) {
 
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
 					.thenReturn("mock_id");
@@ -360,9 +374,11 @@ public class AdmobConfigurationCreateRequestConfigTest {
 	@Test
 	void createRequestConfiguration_nonReal_illegalStateExceptionFromAdId_recoversGracefully() {
 		// Simulates being called on the main thread (the expected prod scenario).
-		try (MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class);
-			 MockedStatic<AdvertisingIdClient> adIdMock = mockStatic(AdvertisingIdClient.class)) {
+		try (
+				MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class);
+				MockedStatic<AdvertisingIdClient> adIdMock = mockStatic(AdvertisingIdClient.class)
+		) {
 
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
 					.thenReturn("mock_id");
@@ -380,9 +396,11 @@ public class AdmobConfigurationCreateRequestConfigTest {
 
 	@Test
 	void createRequestConfiguration_nonReal_genericExceptionFromAdId_recoversGracefully() {
-		try (MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class);
-			 MockedStatic<AdvertisingIdClient> adIdMock = mockStatic(AdvertisingIdClient.class)) {
+		try (
+				MockedStatic<MobileAds> mobileAdsMock = openMobileAdsMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class);
+				MockedStatic<AdvertisingIdClient> adIdMock = mockStatic(AdvertisingIdClient.class)
+		) {
 
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
 					.thenReturn("mock_id");

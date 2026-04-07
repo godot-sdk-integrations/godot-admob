@@ -23,7 +23,6 @@ import org.godotengine.godot.Dictionary;
 import org.godotengine.plugin.admob.fixture.AdRequestFixtures;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.MockedConstruction;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -137,9 +136,10 @@ public class LoadAdRequestCreateAdRequestTest {
 
 	@Test
 	void createAdRequest_collapsibleBottom_putsCorrectValueInBundle() {
-		try (MockedConstruction<AdRequest.Builder> builderMock = openBuilderMock();
-			 MockedConstruction<Bundle> bundleMock = mockConstruction(Bundle.class)) {
-
+		try (
+				MockedConstruction<AdRequest.Builder> builderMock = openBuilderMock();
+				MockedConstruction<Bundle> bundleMock = mockConstruction(Bundle.class)
+		) {
 			new LoadAdRequest(AdRequestFixtures.collapsibleBannerRequest("BOTTOM"))
 					.createAdRequest();
 
@@ -150,8 +150,10 @@ public class LoadAdRequestCreateAdRequestTest {
 
 	@Test
 	void createAdRequest_collapsibleBottom_callsAddNetworkExtrasBundleWithAdMobAdapter() {
-		try (MockedConstruction<AdRequest.Builder> builderMock = openBuilderMock();
-			 MockedConstruction<Bundle> bundleMock = mockConstruction(Bundle.class)) {
+		try (
+				MockedConstruction<AdRequest.Builder> builderMock = openBuilderMock();
+				MockedConstruction<Bundle> bundleMock = mockConstruction(Bundle.class)
+		) {
 
 			new LoadAdRequest(AdRequestFixtures.collapsibleBannerRequest("BOTTOM"))
 					.createAdRequest();
@@ -164,8 +166,10 @@ public class LoadAdRequestCreateAdRequestTest {
 
 	@Test
 	void createAdRequest_collapsibleTop_putsTopValueInBundle() {
-		try (MockedConstruction<AdRequest.Builder> builderMock = openBuilderMock();
-			 MockedConstruction<Bundle> bundleMock = mockConstruction(Bundle.class)) {
+		try (
+				MockedConstruction<AdRequest.Builder> builderMock = openBuilderMock();
+				MockedConstruction<Bundle> bundleMock = mockConstruction(Bundle.class)
+		) {
 
 			new LoadAdRequest(AdRequestFixtures.collapsibleBannerRequest("TOP"))
 					.createAdRequest();

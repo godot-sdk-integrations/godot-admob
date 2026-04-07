@@ -85,8 +85,10 @@ public class ConsentConfigurationCreateParamsTest {
 
 	@Test
 	void createConsentRequestParameters_realConfig_doesNotCreateDebugBuilder() {
-		try (MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
-			 MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock()) {
+		try (
+				MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
+				MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock()
+		) {
 
 			new ConsentConfiguration(PrivacyFixtures.realConsentConfig())
 					.createConsentRequestParameters(activity);
@@ -111,8 +113,10 @@ public class ConsentConfigurationCreateParamsTest {
 	void createConsentRequestParameters_noIsRealKey_doesNotCreateDebugBuilder() {
 		// The guard is: containsKey(IS_REAL_PROPERTY) && !isReal()
 		// Without the key, the debug block is skipped even though isReal() defaults to false.
-		try (MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
-			 MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock()) {
+		try (
+				MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
+				MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock()
+		) {
 
 			new ConsentConfiguration(new Dictionary())
 					.createConsentRequestParameters(activity);
@@ -155,9 +159,11 @@ public class ConsentConfigurationCreateParamsTest {
 
 	@Test
 	void createConsentRequestParameters_debugConfig_createsDebugSettingsBuilder() {
-		try (MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
-			 MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)) {
+		try (
+				MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
+				MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)
+		) {
 
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
 					.thenReturn("mock_id");
@@ -171,9 +177,11 @@ public class ConsentConfigurationCreateParamsTest {
 
 	@Test
 	void createConsentRequestParameters_debugConfig_callsSetConsentDebugSettings() {
-		try (MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
-			 MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)) {
+		try (
+				MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
+				MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)
+		) {
 
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
 					.thenReturn("mock_id");
@@ -189,9 +197,11 @@ public class ConsentConfigurationCreateParamsTest {
 
 	@Test
 	void createConsentRequestParameters_debugConfigWithGeography_callsSetDebugGeography() {
-		try (MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
-			 MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)) {
+		try (
+				MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
+				MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)
+		) {
 
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
 					.thenReturn("mock_id");
@@ -206,9 +216,11 @@ public class ConsentConfigurationCreateParamsTest {
 
 	@Test
 	void createConsentRequestParameters_debugConfigWithGeography2_setsCorrectValue() {
-		try (MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
-			 MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)) {
+		try (
+				MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
+				MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)
+		) {
 
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
 					.thenReturn("mock_id");
@@ -224,9 +236,11 @@ public class ConsentConfigurationCreateParamsTest {
 
 	@Test
 	void createConsentRequestParameters_debugConfigWithDeviceIds_addsEachId() {
-		try (MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
-			 MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)) {
+		try (
+				MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
+				MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)
+		) {
 
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
 					.thenReturn("mock_id");
@@ -245,9 +259,11 @@ public class ConsentConfigurationCreateParamsTest {
 	void createConsentRequestParameters_debugConfig_alwaysAddsCurrentDeviceHashedId() {
 		// The current device's hashed ID (via getAdMobDeviceId) is always appended
 		// regardless of whether test device IDs are configured.
-		try (MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
-			 MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)) {
+		try (
+				MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
+				MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)
+		) {
 
 			// MD5("abc") = 900150983CD24FB0D6963F7D28E17F72
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
@@ -263,9 +279,11 @@ public class ConsentConfigurationCreateParamsTest {
 
 	@Test
 	void createConsentRequestParameters_debugConfig_noConfiguredIds_stillAddsCurrentDevice() {
-		try (MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
-			 MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)) {
+		try (
+				MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
+				MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)
+		) {
 
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
 					.thenReturn("abc");
@@ -289,9 +307,11 @@ public class ConsentConfigurationCreateParamsTest {
 		d.put("tag_for_under_age_of_consent", true);
 		d.put("debug_geography", 1L);
 
-		try (MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
-			 MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
-			 MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)) {
+		try (
+				MockedConstruction<ConsentRequestParameters.Builder> paramsMock = openParamsMock();
+				MockedConstruction<ConsentDebugSettings.Builder> debugMock = openDebugMock();
+				MockedStatic<Settings.Secure> secureMock = mockStatic(Settings.Secure.class)
+		) {
 
 			secureMock.when(() -> Settings.Secure.getString(any(), any()))
 					.thenReturn("mock_id");

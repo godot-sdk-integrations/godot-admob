@@ -11,7 +11,8 @@ import org.godotengine.godot.Dictionary;
  */
 public final class ConfigFixtures {
 
-	private ConfigFixtures() {}
+	private ConfigFixtures() {
+	}
 
 	/** Full test/debug configuration. */
 	public static Dictionary testConfig() {

@@ -29,9 +29,11 @@ import OSLog
 		let userDefaults = Self.userDefaults
 
 		// Safely extract via NSNumber to avoid Double -> Float strict casting failures
-		let volume = (userDefaults.object(forKey: prefKeyAdVolume) as? NSNumber)?.floatValue ?? AdSettings.defaultAdVolume
+		let volume = (userDefaults.object(forKey: prefKeyAdVolume) as? NSNumber)?.floatValue
+				?? AdSettings.defaultAdVolume
 		let muted = (userDefaults.object(forKey: prefKeyAdsMuted) as? NSNumber)?.boolValue ?? AdSettings.defaultAdsMuted
-		let applyAtStartup = (userDefaults.object(forKey: prefKeyApplyAtStartup) as? NSNumber)?.boolValue ?? AdSettings.defaultApplyAtStartup
+		let applyAtStartup = (userDefaults.object(forKey: prefKeyApplyAtStartup) as? NSNumber)?.boolValue
+				?? AdSettings.defaultApplyAtStartup
 
 		return AdSettings(
 			adVolume: NSNumber(value: volume),

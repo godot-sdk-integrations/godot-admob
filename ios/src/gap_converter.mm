@@ -15,9 +15,11 @@
 // FROM GODOT
 
 + (NSString *)toNsString:(String)godot {
-    if (godot.is_empty()) return @"";
-    // Let NSString infer the length safely using the null-terminated C-string
-    return [NSString stringWithUTF8String:godot.utf8().get_data()];
+	if (godot.is_empty()) {
+		return @"";
+	}
+	// Let NSString infer the length safely using the null-terminated C-string
+	return [NSString stringWithUTF8String:godot.utf8().get_data()];
 }
 
 + (NSString *)toAdId:(NSString *)unitId withSequence:(int)value {

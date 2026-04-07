@@ -13,7 +13,8 @@ import org.godotengine.godot.Dictionary;
  */
 public final class PrivacyFixtures {
 
-	private PrivacyFixtures() {}
+	private PrivacyFixtures() {
+	}
 
 	// -- PrivacySettings dictionaries ------------------------------------------
 

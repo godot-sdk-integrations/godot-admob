@@ -144,7 +144,7 @@ function run_ios_build()
 }
 
 
-while getopts "aAcCdDfhiIMRv" option; do
+while getopts "aAcCdDfhiIMRtv" option; do
 	case $option in
 		h)
 			display_help

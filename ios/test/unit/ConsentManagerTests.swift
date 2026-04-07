@@ -41,7 +41,7 @@ final class ConsentManagerTests: XCTestCase {
 		let validStatuses: Set<String> = ["UNKNOWN", "REQUIRED", "NOT_REQUIRED", "OBTAINED"]
 		let result = sut.getConsentStatusString()
 		XCTAssertTrue(validStatuses.contains(result),
-		              "Unexpected consent status string: '\(result)'")
+					"Unexpected consent status string: '\(result)'")
 	}
 
 	func testGetConsentStatusString_isNonEmpty() {
@@ -83,7 +83,7 @@ final class ConsentManagerTests: XCTestCase {
 		sut.reset()
 		let status = sut.getConsentStatusString()
 		XCTAssertEqual(status, "UNKNOWN",
-		               "Consent status should be UNKNOWN immediately after reset()")
+					"Consent status should be UNKNOWN immediately after reset()")
 	}
 
 	func testReset_isCallableMultipleTimes() {
@@ -113,7 +113,7 @@ final class ConsentManagerTests: XCTestCase {
 
 		sut.requestConsentInfoUpdate(with: params) { error in
 			XCTAssertTrue(Thread.isMainThread || !Thread.isMainThread,
-			              "Completion must be called regardless of thread")
+						"Completion must be called regardless of thread")
 			expectation.fulfill()
 		}
 
@@ -156,8 +156,8 @@ final class ConsentManagerTests: XCTestCase {
 		freshManager.showForm(from: vc) { error in
 			XCTAssertNotNil(error, "showForm without a loaded form must return an error")
 			XCTAssertEqual((error as NSError?)?.domain,
-			               "org.godotengine.plugin.admob",
-			               "Error domain should be the plugin domain")
+						"org.godotengine.plugin.admob",
+						"Error domain should be the plugin domain")
 			expectation.fulfill()
 		}
 

@@ -66,25 +66,25 @@ final class GlobalSettingsTests: XCTestCase {
 		clearSettings()
 		let settings = GlobalSettings.loadSettings()
 		XCTAssertEqual(settings.adVolume?.floatValue ?? -1,
-		               AdSettings.defaultAdVolume,
-		               accuracy: 1e-4,
-		               "Default volume should match AdSettings.defaultAdVolume")
+					AdSettings.defaultAdVolume,
+					accuracy: 1e-4,
+					"Default volume should match AdSettings.defaultAdVolume")
 	}
 
 	func testLoadSettings_defaultMuted_whenNoValueStored() {
 		clearSettings()
 		let settings = GlobalSettings.loadSettings()
 		XCTAssertEqual(settings.areAdsMuted?.boolValue ?? !AdSettings.defaultAdsMuted,
-		               AdSettings.defaultAdsMuted,
-		               "Default muted should match AdSettings.defaultAdsMuted")
+					AdSettings.defaultAdsMuted,
+					"Default muted should match AdSettings.defaultAdsMuted")
 	}
 
 	func testLoadSettings_defaultApplyAtStartup_whenNoValueStored() {
 		clearSettings()
 		let settings = GlobalSettings.loadSettings()
 		XCTAssertEqual(settings.applyAtStartup?.boolValue ?? !AdSettings.defaultApplyAtStartup,
-		               AdSettings.defaultApplyAtStartup,
-		               "Default applyAtStartup should match AdSettings.defaultApplyAtStartup")
+					AdSettings.defaultApplyAtStartup,
+					"Default applyAtStartup should match AdSettings.defaultApplyAtStartup")
 	}
 
 	// -----------------------------------------------------------------------
@@ -159,7 +159,7 @@ final class GlobalSettingsTests: XCTestCase {
 
 		let loaded = GlobalSettings.loadSettings()
 		XCTAssertEqual(loaded.adVolume?.floatValue ?? -1, 0.7, accuracy: 1e-3,
-		               "Existing volume must survive a save with nil volume")
+					"Existing volume must survive a save with nil volume")
 	}
 
 	// -----------------------------------------------------------------------
@@ -170,7 +170,7 @@ final class GlobalSettingsTests: XCTestCase {
 		let settings = AdSettings(adVolume: 1.0, areAdsMuted: true, applyAtStartup: false)
 		GlobalSettings.applyToGADMobileAds(settings)
 		XCTAssertTrue(MobileAds.shared.isApplicationMuted,
-		              "MobileAds.shared.isApplicationMuted should be true after applying muted=true")
+					"MobileAds.shared.isApplicationMuted should be true after applying muted=true")
 	}
 
 	func testApplyToGADMobileAds_setsMutedFalse() {

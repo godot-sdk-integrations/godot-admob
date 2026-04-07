@@ -76,7 +76,7 @@ import UserMessagingPlatform
 		from viewController: UIViewController,
 		completion: @escaping (NSError?) -> Void
 	) {
-		runOnMain { 
+		runOnMain {
 			guard let form = self.umpForm else {
 				let error = NSError(
 					domain: "org.godotengine.plugin.admob",

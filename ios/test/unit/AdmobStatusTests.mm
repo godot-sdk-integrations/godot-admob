@@ -124,7 +124,8 @@
 	XCTAssertTrue(raw.has(String([expectedTag UTF8String])));
 
 	Dictionary adapterDict = raw[String([expectedTag UTF8String])];
-	NSString *stateStr = [NSString stringWithUTF8String:((String)adapterDict[String("initialization_state")]).utf8().get_data()];
+	NSString *stateStr = [NSString stringWithUTF8String:((String)adapterDict[String("initialization_state")])
+			.utf8().get_data()];
 	XCTAssertEqualObjects(stateStr, @"READY");
 }
 
