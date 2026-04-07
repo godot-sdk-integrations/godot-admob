@@ -25,7 +25,7 @@
 // (addon.gradle.kts, android.gradle.kts, common.gradle.kts, ios.gradle.kts)
 // have been deleted; their logic lives here.
 
-// ── Load all configs ──────────────────────────────────────────────────────────
+// -- Load all configs ----------------------------------------------------------
 //
 // These calls are safe here because this IS a precompiled script plugin -
 // the build-logic compiled classes are on this file's own classpath.
@@ -35,7 +35,7 @@ val godotConfig  = GodotConfig.load(rootProject.rootDir)
 val iosConfig    = IosConfig.load(rootProject.rootDir)
 val buildConfig  = BuildConfig.load(rootProject.rootDir)
 
-// ── PluginConfig → project.extra ─────────────────────────────────────────────
+// -- PluginConfig -> project.extra ---------------------------------------------
 
 project.extra["pluginNodeName"]            = pluginConfig.pluginNodeName
 project.extra["pluginName"]                = pluginConfig.pluginName
@@ -45,14 +45,14 @@ project.extra["pluginModuleName"]          = pluginConfig.pluginModuleName
 project.extra["iosInitializationMethod"]   = pluginConfig.iosInitializationMethod
 project.extra["iosDeinitializationMethod"] = pluginConfig.iosDeinitializationMethod
 
-// ── GodotConfig → project.extra ──────────────────────────────────────────────
+// -- GodotConfig -> project.extra ----------------------------------------------
 
 project.extra["godotVersion"]     = godotConfig.godotVersion
 project.extra["godotReleaseType"] = godotConfig.godotReleaseType
 project.extra["godotAarUrl"]      = godotConfig.godotAarUrl
 project.extra["godotAarFile"]     = godotConfig.godotAarFile
 
-// ── IosConfig → project.extra ─────────────────────────────────────────────────
+// -- IosConfig -> project.extra -------------------------------------------------
 //
 // Bridged here so task lambdas that cannot reference IosConfig by type can still
 // reach the values via project.extra.  frameworks, embeddedFrameworks, linkerFlags,
@@ -65,7 +65,7 @@ project.extra["iosEmbeddedFrameworks"] = iosConfig.embeddedFrameworks // List<St
 project.extra["iosLinkerFlags"]        = iosConfig.linkerFlags        // List<String>
 project.extra["iosSpmDependencies"]    = iosConfig.spmDependencies    // List<SpmDependency>
 
-// ── Shared directory layout (replaces common.gradle.kts) ─────────────────────
+// -- Shared directory layout (replaces common.gradle.kts) ---------------------
 //
 // rootProject.rootDir == gradle/
 // rootProject.rootDir.parentFile == repo root
@@ -79,7 +79,7 @@ project.extra["demoDir"]           = "$repoRoot/demo"
 project.extra["pluginArchiveMulti"] =
     "${pluginConfig.pluginName}-Multi-v${pluginConfig.pluginVersion}.zip"
 
-// ── Addon source / output layout ──────────────────────────────────────────────
+// -- Addon source / output layout ----------------------------------------------
 //
 // projectDir resolves to the correct module directory for each sub-project
 // (e.g. addon/, android/, ios/) so templateDir / outputDir are always right.
@@ -90,7 +90,7 @@ project.extra["templateDir"]       = "$projectDir/src/main"
 project.extra["sharedTemplateDir"] = "$projectDir/src/shared"
 project.extra["outputDir"]         = "$projectDir/build/output"
 
-// ── Per-module archive names and user-defined extras ─────────────────────────
+// -- Per-module archive names and user-defined extras -------------------------
 //
 // Conditional on project.path so each module only receives its own extras.
 // The root project receives rootExtraProperties / rootExtraGradle.

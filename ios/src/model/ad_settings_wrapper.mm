@@ -4,6 +4,8 @@
 
 #import "ad_settings_wrapper.h"
 
+#import "admob_plugin-Swift.h"
+
 static String const kAdVolumeProperty = "ad_volume";
 static String const kAdsAreMutedProperty = "ads_muted";
 static String const kApplyAtStartupProperty = "apply_at_startup";

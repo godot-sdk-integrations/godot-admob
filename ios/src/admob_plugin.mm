@@ -11,6 +11,8 @@
 
 #import <objc/message.h>
 
+#import "admob_plugin-Swift.h"
+
 #import "ad_settings_wrapper.h"
 #import "admob_ad_info.h"
 #import "admob_ad_size.h"

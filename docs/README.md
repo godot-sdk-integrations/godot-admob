@@ -15,7 +15,7 @@
 
 <br>
 
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Godot Admob Plugin
+# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/main/icon.png" width="24"> Godot Admob Plugin
 
 A Godot plugin that provides a unified GDScript interface for integrating **Google Mobile Ads SDK** on **Android** and **iOS**.
 
@@ -32,24 +32,24 @@ A Godot plugin that provides a unified GDScript interface for integrating **Goog
 
 <a name="installation"></a>
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Installation
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/main/icon.png" width="20"> Installation
 
 > **Before installing:** uninstall any previous version of this plugin. If installing both Android and iOS versions in the same project, ensure both use the same addon interface version.
 
 **Via AssetLib (recommended)**
 1. Search for `Admob` in the Godot Editor's AssetLib and click **Download**. (AssetLib Links: [Android](https://godotengine.org/asset-library/asset/2548), [iOS](https://godotengine.org/asset-library/asset/3178))
 2. In the install dialog, keep the default install folder (project root) and **Ignore asset root** checked, then click **Install**.
-3. Enable the plugin under **Project → Project Settings → Plugins**.
+3. Enable the plugin under **Project -> Project Settings -> Plugins**.
 
 > If the installer warns about conflicting files when adding a second platform, you can safely ignore it — both platforms share the same addon code.
 
 **Manually**
 1. Download the release archive from [GitHub](https://github.com/godot-sdk-integrations/godot-admob/releases) and unzip it into your project's root directory.
-2. Enable the plugin under **Project → Project Settings → Plugins**.
+2. Enable the plugin under **Project -> Project Settings -> Plugins**.
 
 <a name="quick-start"></a>
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> Quick Start
+## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/main/icon.png" width="20"> Quick Start
 
 ### 1. Add the Admob node
 
@@ -112,7 +112,7 @@ Available show methods: `show_banner_ad(ad_id)`, `show_interstitial_ad(ad_id)`, 
 
 <a name="documentation"></a>
 
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Documentation
+# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/main/icon.png" width="24"> Documentation
 
 Explore the plugin documentation for a deep dive into features:
 
@@ -122,7 +122,7 @@ Explore the plugin documentation for a deep dive into features:
 
 <a name="video-tutorials"></a>
 
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Video Tutorials
+# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/main/icon.png" width="24"> Video Tutorials
 
 | Tutorial For Android | Consent Management | Displaying Ads on Android |
 | :---: | :---: | :---: |
@@ -138,11 +138,11 @@ Explore the plugin documentation for a deep dive into features:
 
 <a name="all-plugins"></a>
 
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> All Plugins
+# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/main/icon.png" width="24"> All Plugins
 
 | ✦ | Plugin | Android | iOS | Latest Release | Downloads | Stars |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="20"> | [Admob](https://github.com/godot-sdk-integrations/godot-admob) | ✅ | ✅ | <a href="https://github.com/godot-sdk-integrations/godot-admob/releases"><img src="https://img.shields.io/github/release-date/godot-sdk-integrations/godot-admob?label=%20" /> <img src="https://img.shields.io/github/v/release/godot-sdk-integrations/godot-admob?label=%20" /></a> | <img src="https://img.shields.io/github/downloads/godot-sdk-integrations/godot-admob/latest/total?label=latest" /> <img src="https://img.shields.io/github/downloads/godot-sdk-integrations/godot-admob/total?label=total" /> | <img src="https://img.shields.io/github/stars/godot-sdk-integrations/godot-admob?style=plastic&label=%20" /> |
+| <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/main/icon.png" width="20"> | [Admob](https://github.com/godot-sdk-integrations/godot-admob) | ✅ | ✅ | <a href="https://github.com/godot-sdk-integrations/godot-admob/releases"><img src="https://img.shields.io/github/release-date/godot-sdk-integrations/godot-admob?label=%20" /> <img src="https://img.shields.io/github/v/release/godot-sdk-integrations/godot-admob?label=%20" /></a> | <img src="https://img.shields.io/github/downloads/godot-sdk-integrations/godot-admob/latest/total?label=latest" /> <img src="https://img.shields.io/github/downloads/godot-sdk-integrations/godot-admob/total?label=total" /> | <img src="https://img.shields.io/github/stars/godot-sdk-integrations/godot-admob?style=plastic&label=%20" /> |
 | <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-connection-state/main/addon/src/icon.png" width="20"> | [Connection State](https://github.com/godot-mobile-plugins/godot-connection-state) | ✅ | ✅ | <a href="https://github.com/godot-mobile-plugins/godot-connection-state/releases"><img src="https://img.shields.io/github/release-date/godot-mobile-plugins/godot-connection-state?label=%20" /> <img src="https://img.shields.io/github/v/release/godot-mobile-plugins/godot-connection-state?label=%20" /></a> | <img src="https://img.shields.io/github/downloads/godot-mobile-plugins/godot-connection-state/latest/total?label=latest" /> <img src="https://img.shields.io/github/downloads/godot-mobile-plugins/godot-connection-state/total?label=total" /> | <img src="https://img.shields.io/github/stars/godot-mobile-plugins/godot-connection-state?style=plastic&label=%20" /> |
 | <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-deeplink/main/addon/src/icon.png" width="20"> | [Deeplink](https://github.com/godot-mobile-plugins/godot-deeplink) | ✅ | ✅ | <a href="https://github.com/godot-mobile-plugins/godot-deeplink/releases"><img src="https://img.shields.io/github/release-date/godot-mobile-plugins/godot-deeplink?label=%20" /> <img src="https://img.shields.io/github/v/release/godot-mobile-plugins/godot-deeplink?label=%20" /></a> | <img src="https://img.shields.io/github/downloads/godot-mobile-plugins/godot-deeplink/latest/total?label=latest" /> <img src="https://img.shields.io/github/downloads/godot-mobile-plugins/godot-deeplink/total?label=total" /> | <img src="https://img.shields.io/github/stars/godot-mobile-plugins/godot-deeplink?style=plastic&label=%20" /> |
 | <img src="https://raw.githubusercontent.com/godot-mobile-plugins/godot-firebase/main/addon/src/icon.png" width="20"> | [Firebase](https://github.com/godot-mobile-plugins/godot-firebase) | ⏰  | ⏰  | 🔜 <!-- <a href="https://github.com/godot-mobile-plugins/godot-firebase/releases"><img src="https://img.shields.io/github/release-date/godot-mobile-plugins/godot-firebase?label=%20" /> <img src="https://img.shields.io/github/v/release/godot-mobile-plugins/godot-firebase?label=%20" /></a> --> | - <!-- <img src="https://img.shields.io/github/downloads/godot-mobile-plugins/godot-firebase/latest/total?label=latest" /> <img src="https://img.shields.io/github/downloads/godot-mobile-plugins/godot-firebase/total?label=%20" /> --> | <img src="https://img.shields.io/github/stars/godot-mobile-plugins/godot-firebase?style=plastic&label=%20" /> |
@@ -157,7 +157,7 @@ Explore the plugin documentation for a deep dive into features:
 
 <a name="credits"></a>
 
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Credits
+# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/main/icon.png" width="24"> Credits
 
 Developed by [Cengiz](https://github.com/cengiz-pz)
 
@@ -169,7 +169,7 @@ Original repository: [Godot Admob Plugin](https://github.com/godot-sdk-integrati
 
 <a name="contributing"></a>
 
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="24"> Contributing
+# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/main/icon.png" width="24"> Contributing
 
 See [our guide](https://godot-sdk-integrations.github.io/godot-admob/contributing/) if you would like to contribute to this project.
 
@@ -188,4 +188,4 @@ If this plugin has helped you, consider supporting its development! Every bit of
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/image?repos=godot-sdk-integrations/godot-admob&type=date&legend=top-left)](https://www.star-history.com/?repos=godot-sdk-integrations%2Fgodot-admob&type=date&legend=top-left)
+[![Star History Chart](https://api.star-history.com/image?repos=godot-sdk-integrations/godot-admob&type=date&theme=dark&legend=top-left)](https://www.star-history.com/?repos=godot-sdk-integrations%2Fgodot-admob&type=date&theme=dark&legend=top-left)

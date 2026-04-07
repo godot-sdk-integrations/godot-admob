@@ -10,7 +10,7 @@ import android.content.Context;
 public class MaioMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "maio";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.maio.MaioMediationAdapter";
+	public static final String ADAPTER_CLASS = "com.google.ads.mediation.maio.MaioMediationAdapter";
 
 	public MaioMediationNetwork() {
 		super(TAG);

@@ -59,7 +59,7 @@ jobs:
           You are an automated triage assistant for a Godot game engine plugin GitHub repository dealing with Android,
           iOS, and GDScript.
           Your task is to analyze the following GitHub issue and return the most appropriate label names.
-          
+
           Valid Labels and their descriptions:
           {json.dumps(valid_labels, indent=2)}
 
@@ -116,10 +116,10 @@ jobs:
           }
 
           res = requests.post(url, headers=headers, json={"labels": selected_labels})
-          
+
           if res.status_code != 200:
               print(f"Failed to apply labels: {res.text}")
               exit(1)
-              
+
           print("Labels successfully applied to the issue.")
           EOF

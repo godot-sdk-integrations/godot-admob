@@ -3,10 +3,14 @@
 #
 
 [versions]
+
+# -- Android -------------------------------------------------------------------
 compileSdk = "35"
 minSdk = "24"
 buildTools = "35.0.0"
 android-lib-plugin = "8.6.1"
+
+# -- Build tool dependencies ---------------------------------------------------
 kotlin-android-plugin = "2.0.21"
 undercouch-download-plugin = "5.6.0"
 checkstyle = "12.3.1"
@@ -15,18 +19,39 @@ rewrite-static-analysis = "1.22.0"
 node-plugin = "7.1.0"
 node-env = "22.0.0"
 kotlinx-serialization = "1.6.3"
+
+# -- Test dependencies ---------------------------------------------------------
+junit-jupiter = "6.0.3"
+mockito = "5.23.0"
+
+# -- Godot plugin dependencies -------------------------------------------------
 appcompat = "1.7.1"
 lifecycle = "2.8.3"
 playads = "24.9.0"
 
+
 [libraries]
+
+# -- Build tool ----------------------------------------------------------------
 rewrite-static-analysis = { module = "org.openrewrite.recipe:rewrite-static-analysis", version.ref = "rewrite-static-analysis" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+
+# -- Test libraries (aliases starting with "test-" are loaded as testImplementation) --
+test-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
+test-mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+test-mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+
+# -- Runtime-only test libraries (aliases starting with "test-runtime-" -> testRuntimeOnly) --
+test-runtime-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-jupiter" }
+
+# -- Godot plugin --------------------------------------------------------------
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-lifecycle = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playads" }
 
+
 [plugins]
+
 android-library = { id = "com.android.library", version.ref = "android-lib-plugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-android-plugin" }
 undercouch-download = { id = "de.undercouch.download", version.ref = "undercouch-download-plugin" }

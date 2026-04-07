@@ -28,16 +28,16 @@ jobs:
       EXPECTED_VERSION: ${{ inputs.version || github.event.milestone.title }}
 
     steps:
-      # ── Checkout ────────────────────────────────────────────────────────────
+      # -- Checkout ------------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      # ── Read plugin config ───────────────────────────────────────────────────
+      # -- Read plugin config ---------------------------------------------------
       - name: Read plugin config
         id: plugin_config
-        uses: ActionCommons/read-properties-action@v1
+        uses: ActionCommons/read-properties@v1
         with:
           files: |
             common/config/plugin.properties
@@ -47,28 +47,28 @@ jobs:
             pluginVersion
             godotVersion
 
-      # ── Validate plugin version ──────────────────────────────────────────────
+      # -- Validate plugin version ----------------------------------------------
       - name: Validate plugin version matches milestone or input
         run: |
           PLUGIN_VERSION="${{ steps.plugin_config.outputs['plugin.pluginVersion'] }}"
-          
+
           echo "Plugin Version: '${PLUGIN_VERSION}'"
           echo "Expected Version (Input/Milestone): '${EXPECTED_VERSION}'"
-          
+
           if [ "${PLUGIN_VERSION}" != "${EXPECTED_VERSION}" ]; then
             echo "::error::Validation Failed."
             echo "The pluginVersion '${PLUGIN_VERSION}' in plugin.properties does not match the triggered version '${EXPECTED_VERSION}'."
             exit 1
           fi
-          
+
           echo "Validation Successful."
           echo "The pluginVersion '${PLUGIN_VERSION}' correctly matches the triggered version '${EXPECTED_VERSION}'."
 
-      # ── Node ────────────────────────────────────────────────────────────────
+      # -- Node ----------------------------------------------------------------
       - name: Install Node
         uses: ./.github/actions/install-node
 
-      # ── Java ────────────────────────────────────────────────────────────────
+      # -- Java ----------------------------------------------------------------
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -76,24 +76,24 @@ jobs:
           java-version: 17
           cache: gradle
 
-      # ── Gradle ──────────────────────────────────────────────────────────────
+      # -- Gradle --------------------------------------------------------------
       - name: Grant execute permission for Gradle wrapper
         run: chmod +x common/gradlew
 
-      # ── Prepare for Android build ───────────────────────────────────────────
+      # -- Prepare for Android build -------------------------------------------
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      # ── Create archives ─────────────────────────────────────────────────────
+      # -- Create archives -----------------------------------------------------
       - name: Run createArchives
         working-directory: common
         run: ./gradlew createArchives --no-daemon --stacktrace
 
-      # ── Collect archives ────────────────────────────────────────────────────
+      # -- Collect archives ----------------------------------------------------
       - name: Locate release archives
         id: archives
         run: |
-          # archiveDir is $rootDir/../release  →  <repo-root>/release/
+          # archiveDir is $rootDir/../release  ->  <repo-root>/release/
           ANDROID_ZIP=$(ls release/*-Android-v*.zip)
           IOS_ZIP=$(ls release/*-iOS-v*.zip)
           MULTI_ZIP=$(ls release/*-Multi-v*.zip)
@@ -107,12 +107,12 @@ jobs:
           echo "  iOS     : ${IOS_ZIP}"
           echo "  Multi   : ${MULTI_ZIP}"
 
-      # ── Draft release ────────────────────────────────────────────────────────
+      # -- Draft release --------------------------------------------------------
       - name: Create draft release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Using EXPECTED_VERSION here to map to the milestone title. 
+          # Using EXPECTED_VERSION here to map to the milestone title.
           # "|| echo" ensures that manual triggers without an exact milestone match don't fail the pipeline.
           ISSUE_LINES=$(gh issue list \
             --milestone "${EXPECTED_VERSION}" \

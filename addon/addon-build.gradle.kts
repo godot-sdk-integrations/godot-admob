@@ -6,7 +6,7 @@ plugins {
     id("base-conventions")
 }
 
-// ── Load config data class ────────────────────────────────────────────────────
+// -- Load config data class ----------------------------------------------------
 //
 // All project.extra values (templateDir, outputDir, iosFrameworks, etc.) are
 // already set by base-conventions.  pluginConfig is loaded here for typed
@@ -15,7 +15,7 @@ plugins {
 
 val pluginConfig = loadPluginConfig()
 
-// ── Collect all catalog library aliases (used in @androidDependencies@ token) ─
+// -- Collect all catalog library aliases (used in @androidDependencies@ token) -
 
 val androidDependencies =
     extensions
@@ -23,7 +23,7 @@ val androidDependencies =
         .named("libs")
         .run { libraryAliases.map { findLibrary(it).get().get() } }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 
 /** Wraps each item in a [List] in double-quotes and joins with ", ". */
 fun List<String>.toQuotedString(): String = joinToString(", ") { "\"$it\"" }
@@ -131,7 +131,7 @@ fun TaskContainerScope.registerGdscriptFormatTask(
     }
 }
 
-// ── Tasks ─────────────────────────────────────────────────────────────────────
+// -- Tasks ---------------------------------------------------------------------
 
 tasks {
     // Capture project.extra values at TaskContainerScope level - before any

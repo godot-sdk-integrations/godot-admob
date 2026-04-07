@@ -6,7 +6,7 @@ import java.io.File
 import kotlinx.serialization.json.Json
 import org.gradle.api.Project
 
-// ── Config loaders ────────────────────────────────────────────────────────────
+// -- Config loaders ------------------------------------------------------------
 //
 // These Project extension functions are the public API for loading config data
 // classes in any project build script that applies id("base-conventions").
@@ -58,7 +58,7 @@ fun Project.loadIosConfig(): IosConfig =
 fun Project.loadBuildConfig(): BuildConfig =
     BuildConfig.load(rootProject.rootDir)
 
-// ── SPM helpers ───────────────────────────────────────────────────────────────
+// -- SPM helpers ---------------------------------------------------------------
 
 /**
  * Reads SPM dependency entries from an `spm_dependencies.json` config file.
@@ -74,7 +74,7 @@ fun Project.readSpmDependencies(configFile: File): List<SpmDependency> {
     return Json.decodeFromString<List<SpmDependency>>(configFile.readText())
 }
 
-// ── BuildConfig convenience helper ───────────────────────────────────────────
+// -- BuildConfig convenience helper -------------------------------------------
 
 /**
  * Forwards all entries from [extraProperties] into this project's extra-properties

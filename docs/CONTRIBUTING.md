@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="28"> Contributing
+# <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/main/icon.png" width="28"> Contributing
 
 Thank you for your interest in contributing to the Godot AdMob Plugin!
 

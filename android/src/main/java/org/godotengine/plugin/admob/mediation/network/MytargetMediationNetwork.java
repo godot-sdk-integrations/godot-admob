@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 public class MytargetMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "mytarget";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.mytarget.MyTargetMediationAdapter";
+	public static final String ADAPTER_CLASS = "com.google.ads.mediation.mytarget.MyTargetMediationAdapter";
 
 	public MytargetMediationNetwork() {
 		super(TAG);

@@ -1,0 +1,52 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
+name: iOS CI
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'common/config/**'
+      - 'ios/config/**'
+      - 'ios/src/**'
+      - 'ios/test/**'
+
+jobs:
+  ios-tests:
+    name: iOS tests
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      # printTestSummaryiOS:
+      #   • depends on testiOS  → runs xcodebuild test (fails on test failures)
+      #   • testiOS is finalized by printTestSummaryiOS, so the summary is
+      #     always printed regardless of whether tests passed or failed
+      #   • the summary script uses isIgnoreExitValue = true, so it never
+      #     masks the non-zero exit that xcodebuild already produced
+      - name: Run iOS unit tests
+        run: ./gradlew :ios:testiOS
+
+      # Upload the xcresult bundle so failures can be investigated offline.
+      - name: Upload iOS test results
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: ios-test-results
+          path: ios/build/TestResults/
+          if-no-files-found: ignore

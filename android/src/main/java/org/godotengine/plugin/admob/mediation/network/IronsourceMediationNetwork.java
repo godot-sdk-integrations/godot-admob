@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 public class IronsourceMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "ironsource";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.ironsource.IronSourceMediationAdapter";
+	public static final String ADAPTER_CLASS = "com.google.ads.mediation.ironsource.IronSourceMediationAdapter";
 
 	public IronsourceMediationNetwork() {
 		super(TAG);

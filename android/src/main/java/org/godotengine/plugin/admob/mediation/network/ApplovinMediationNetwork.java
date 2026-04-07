@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 public class ApplovinMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "applovin";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.applovin.AppLovinMediationAdapter";
+	public static final String ADAPTER_CLASS = "com.google.ads.mediation.applovin.AppLovinMediationAdapter";
 
 	public ApplovinMediationNetwork() {
 		super(TAG);

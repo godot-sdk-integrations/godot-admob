@@ -10,7 +10,7 @@ import android.content.Context;
 public class LineMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "line";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.line.LineMediationAdapter";
+	public static final String ADAPTER_CLASS = "com.google.ads.mediation.line.LineMediationAdapter";
 
 	public LineMediationNetwork() {
 		super(TAG);

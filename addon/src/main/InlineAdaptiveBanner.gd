@@ -219,7 +219,7 @@ func update_banner_position() -> void:
 				var parent_rect: Rect2 = parent.get_global_rect()
 				var intersection := visible_region.intersection(parent_rect)
 
-				# No intersection → fully clipped (100%)
+				# No intersection -> fully clipped (100%)
 				if intersection.get_area() <= 0:
 					is_clipped_out = true
 					break

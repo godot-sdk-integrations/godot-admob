@@ -9,33 +9,33 @@ The build files are static and shared across all GMP plugins. Any plugin-specifi
 
 ```text
 .
-├── addon/
-│   ├── ?.gradle.kts                       # Any extra addon-specific Gradle configuration (configured in
+├-- addon/
+│   ├-- ?.gradle.kts                       # Any extra addon-specific Gradle configuration (configured in
 │   │                                      # addon/config/addon-build.properties) for the plugin goes here
-│   └── config/
-│       └── addon-build.properties         # Gradle build customization for addon module
+│   └-- config/
+│       └-- addon-build.properties         # Gradle build customization for addon module
 │
-├── android/
-│   ├── android-build.gradle.kts           # Android build configuration
-│   ├── ?.gradle.kts                       # Any extra Android-specific Gradle configuration (configured in
+├-- android/
+│   ├-- android-build.gradle.kts           # Android build configuration
+│   ├-- ?.gradle.kts                       # Any extra Android-specific Gradle configuration (configured in
 │   │                                      # android/config/android-build.properties) for the plugin goes here
-│   └── config/
-│       └── android-build.properties       # Gradle build customization for android module
+│   └-- config/
+│       └-- android-build.properties       # Gradle build customization for android module
 │
-├── common/
-│   ├── config/
-│   │   ├── build.properties               # Build-related property configuration & customization
-│   │   ├── godot.properties               # Godot version configuration
-│   │   └── plugin.properties              # Plugin configuration
+├-- common/
+│   ├-- config/
+│   │   ├-- build.properties               # Build-related property configuration & customization
+│   │   ├-- godot.properties               # Godot version configuration
+│   │   └-- plugin.properties              # Plugin configuration
 │   │
-│   └── gradle/
-│       └── libs.versions.toml             # Android dependencies and versions
+│   └-- gradle/
+│       └-- libs.versions.toml             # Android dependencies and versions
 │
-└── ios/
-    └── config/
-        ├── ios.properties                 # iOS configuration
-        ├── ios-build.properties           # Gradle build customization for ios module
-        └── spm_dependencies.json          # SPM dependency configuration
+└-- ios/
+    └-- config/
+        ├-- ios.properties                 # iOS configuration
+        ├-- ios-build.properties           # Gradle build customization for ios module
+        └-- spm_dependencies.json          # SPM dependency configuration
 ```
 
 ## <img src="../images/icon.png" width="20"> Common Configuration

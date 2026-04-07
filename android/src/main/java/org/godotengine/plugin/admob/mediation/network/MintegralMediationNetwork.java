@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 public class MintegralMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "mintegral";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.mintegral.MintegralMediationAdapter";
+	public static final String ADAPTER_CLASS = "com.google.ads.mediation.mintegral.MintegralMediationAdapter";
 
 	public MintegralMediationNetwork() {
 		super(TAG);

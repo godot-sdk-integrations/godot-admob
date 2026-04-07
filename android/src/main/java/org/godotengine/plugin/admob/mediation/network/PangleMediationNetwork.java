@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 public class PangleMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "pangle";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.pangle.PangleMediationAdapter";
+	public static final String ADAPTER_CLASS = "com.google.ads.mediation.pangle.PangleMediationAdapter";
 
 	public PangleMediationNetwork() {
 		super(TAG);

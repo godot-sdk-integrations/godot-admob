@@ -10,7 +10,7 @@ import android.content.Context;
 public class ImobileMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "imobile";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.imobile.IMobileMediationAdapter";
+	public static final String ADAPTER_CLASS = "com.google.ads.mediation.imobile.IMobileMediationAdapter";
 
 	public ImobileMediationNetwork() {
 		super(TAG);

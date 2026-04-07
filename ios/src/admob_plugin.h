@@ -7,14 +7,13 @@
 
 #import <Foundation/Foundation.h>
 
-#import "admob_plugin-Swift.h"
-
 #import "app_open.h"
 #import "banner.h"
 #import "interstitial.h"
 #import "rewarded.h"
 #import "rewarded_interstitial.h"
 
+@class AdmobNativeAd;
 @class ConsentManager;
 
 extern const String INITIALIZATION_COMPLETED_SIGNAL;

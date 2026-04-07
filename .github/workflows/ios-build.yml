@@ -20,14 +20,14 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      # ── Checkout ────────────────────────────────────────────────────────────
+      # -- Checkout ------------------------------------------------------------
       - uses: actions/checkout@v6
 
-      # ── Node ────────────────────────────────────────────────────────────────
+      # -- Node ----------------------------------------------------------------
       - name: Install Node
         uses: ./.github/actions/install-node
 
-      # ── Java ────────────────────────────────────────────────────────────────
+      # -- Java ----------------------------------------------------------------
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -35,11 +35,11 @@ jobs:
           java-version: 17
           cache: gradle
 
-      # ── Gradle ──────────────────────────────────────────────────────────────
+      # -- Gradle --------------------------------------------------------------
       - name: Grant execute permission for Gradle wrapper
         run: chmod +x common/gradlew
 
-      # ── Run iOS build ───────────────────────────────────────────────────────
+      # -- Run iOS build -------------------------------------------------------
       - name: Build iOS debug
         working-directory: common
         run: ./gradlew buildiOSDebug --no-daemon --stacktrace

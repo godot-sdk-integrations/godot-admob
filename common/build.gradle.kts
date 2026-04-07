@@ -12,7 +12,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
 }
 
-// ── Load config data class ────────────────────────────────────────────────────
+// -- Load config data class ----------------------------------------------------
 //
 // pluginDir, repositoryRootDir, archiveDir, and all other shared extras are
 // already set on project.extra by base-conventions.  pluginConfig is loaded
@@ -27,7 +27,7 @@ allprojects {
     }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 
 /** Returns all *.gradle.kts files under addon/, android/, common/, and ios/. */
 fun ktsSourceFiles(): List<String> {
@@ -39,7 +39,7 @@ fun ktsSourceFiles(): List<String> {
         .sorted()
 }
 
-// ── Tasks ─────────────────────────────────────────────────────────────────────
+// -- Tasks ---------------------------------------------------------------------
 
 tasks {
     val pluginDir: String by project.extra
@@ -79,7 +79,7 @@ tasks {
         dependsOn(
             project(":addon").tasks.named("cleanOutput"),
             project(":android").tasks.named("clean"),
-            project(":ios").tasks.named("cleaniOSBuild"),
+            project(":ios").tasks.named("cleaniOS"),
         )
         delete(layout.projectDirectory.dir(archiveDir))
     }
@@ -117,6 +117,17 @@ tasks {
             project(":android").tasks.named("createAndroidArchive"),
             project(":ios").tasks.named("createiOSArchive"),
             "createMultiArchive",
+        )
+    }
+
+    register("test") {
+        description = "Runs all tests with coverage and prints a formatted summary"
+        group = "verification"
+        // printTestSummary runs testDebugUnitTest and createDebugUnitTestCoverageReport
+        // internally, then prints per-suite pass/fail counts and overall coverage.
+        dependsOn(
+            project(":android").tasks.named("printTestSummary"),
+            project(":ios").tasks.named("testiOS"),
         )
     }
 

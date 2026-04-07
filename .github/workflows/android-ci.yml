@@ -1,0 +1,52 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
+name: Android CI
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'common/config/**'
+      - 'android/config/**'
+      - 'android/src/main/**'
+      - 'android/src/test/**'
+
+jobs:
+  android-tests:
+    name: Android tests
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      # printTestSummary:
+      #   • runs testDebugUnitTest (ignoreFailures = true so coverage can follow)
+      #   • runs createDebugUnitTestCoverageReport
+      #   • prints a formatted TEST RESULTS + CODE COVERAGE table
+      #   • throws GradleException (non-zero exit) only when failed > 0
+      - name: Run Android unit tests
+        run: ./gradlew :android:printTestSummary
+
+      # Upload the JUnit XML reports so GitHub can annotate the PR even when
+      # the step above fails (always: true keeps this step active on failure).
+      - name: Upload Android test results
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: android-test-results
+          path: android/build/test-results/testDebugUnitTest/
+          if-no-files-found: ignore

@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 public class InmobiMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "inmobi";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.inmobi.InMobiMediationAdapter";
+	public static final String ADAPTER_CLASS = "com.google.ads.mediation.inmobi.InMobiMediationAdapter";
 
 	public InmobiMediationNetwork() {
 		super(TAG);
