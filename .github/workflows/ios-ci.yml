@@ -31,7 +31,7 @@ jobs:
           cache: gradle
 
       - name: Make Gradle wrapper executable
-        run: chmod +x ./gradlew
+        run: chmod +x common/gradlew
 
       # printTestSummaryiOS:
       #   • depends on testiOS  → runs xcodebuild test (fails on test failures)
@@ -40,7 +40,8 @@ jobs:
       #   • the summary script uses isIgnoreExitValue = true, so it never
       #     masks the non-zero exit that xcodebuild already produced
       - name: Run iOS unit tests
-        run: ./gradlew :ios:testiOS
+        working-directory: common
+        run: ./gradlew :ios:testiOS --no-daemon --stacktrace
 
       # Upload the xcresult bundle so failures can be investigated offline.
       - name: Upload iOS test results

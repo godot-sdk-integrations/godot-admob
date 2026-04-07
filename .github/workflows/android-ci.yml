@@ -31,7 +31,7 @@ jobs:
           cache: gradle
 
       - name: Make Gradle wrapper executable
-        run: chmod +x ./gradlew
+        run: chmod +x common/gradlew
 
       # printTestSummary:
       #   • runs testDebugUnitTest (ignoreFailures = true so coverage can follow)
@@ -39,7 +39,8 @@ jobs:
       #   • prints a formatted TEST RESULTS + CODE COVERAGE table
       #   • throws GradleException (non-zero exit) only when failed > 0
       - name: Run Android unit tests
-        run: ./gradlew :android:printTestSummary
+        working-directory: common
+        run: ./gradlew :android:printTestSummary --no-daemon --stacktrace
 
       # Upload the JUnit XML reports so GitHub can annotate the PR even when
       # the step above fails (always: true keeps this step active on failure).
