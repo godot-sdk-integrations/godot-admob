@@ -23,6 +23,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Read iOS config
+        id: ios_config
+        uses: ActionCommons/read-properties@v1
+        with:
+          files: |
+            ios/config/ios.properties
+          properties: |
+            test_destination_name
+
+      - name: Boot iOS Simulator
+        run: |
+          xcrun simctl boot "${{ steps.ios_config.outputs['test_destination_name'] }}" 2>/dev/null || true
+          xcrun simctl bootstatus "${{ steps.ios_config.outputs['test_destination_name'] }}" -b
+
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -40,10 +54,12 @@ jobs:
       #   • the summary script uses isIgnoreExitValue = true, so it never
       #     masks the non-zero exit that xcodebuild already produced
       - name: Run iOS unit tests
+        id: ios_tests
         working-directory: common
-        run: ./gradlew :ios:testiOS --no-daemon --stacktrace
+        # Exit code is preserved; summary + artifact upload use 'if: always()'
+        run: ./gradlew :ios:testiOS --no-daemon
+        continue-on-error: true
 
-      # Upload the xcresult bundle so failures can be investigated offline.
       - name: Upload iOS test results
         if: always()
         uses: actions/upload-artifact@v6
@@ -51,3 +67,8 @@ jobs:
           name: ios-test-results
           path: ios/build/TestResults/
           if-no-files-found: ignore
+
+      # Re-fail the job after the artifact is safely uploaded
+      - name: Fail job if tests failed
+        if: steps.ios_tests.outcome == 'failure'
+        run: exit 1

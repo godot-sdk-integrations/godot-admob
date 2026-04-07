@@ -39,8 +39,10 @@ jobs:
       #   • prints a formatted TEST RESULTS + CODE COVERAGE table
       #   • throws GradleException (non-zero exit) only when failed > 0
       - name: Run Android unit tests
+        id: android_tests
         working-directory: common
-        run: ./gradlew :android:printTestSummary --no-daemon --stacktrace
+        run: ./gradlew :android:printTestSummary --no-daemon
+        continue-on-error: true
 
       # Upload the JUnit XML reports so GitHub can annotate the PR even when
       # the step above fails (always: true keeps this step active on failure).
@@ -51,3 +53,8 @@ jobs:
           name: android-test-results
           path: android/build/test-results/testDebugUnitTest/
           if-no-files-found: ignore
+
+      # Re-fail the job after the artifact is safely uploaded
+      - name: Fail job if tests failed
+        if: steps.android_tests.outcome == 'failure'
+        run: exit 1

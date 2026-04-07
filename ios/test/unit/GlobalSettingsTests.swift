@@ -18,6 +18,16 @@ final class GlobalSettingsTests: XCTestCase {
 	// Test-suite name that avoids any collision with the production suite.
 	private let testSuiteName = "org.godotengine.plugin.admob.test.\(UUID().uuidString)"
 
+    // Start the SDK exactly once for the whole test class.
+    // class setUp is synchronous; a semaphore lets us await the async
+    // completion handler without changing the method signature.
+    override class func setUp() {
+        super.setUp()
+        let semaphore = DispatchSemaphore(value: 0)
+        MobileAds.shared.start { _ in semaphore.signal() }
+        semaphore.wait()
+    }
+
 	override func setUp() {
 		super.setUp()
 
