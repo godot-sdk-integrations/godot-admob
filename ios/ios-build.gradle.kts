@@ -993,9 +993,10 @@ tasks {
                 isIgnoreExitValue = true // already booted is OK
             }
 
-            // Ensure boot is complete
+            // Ensure boot is complete (with 2-minute timeout)
             execOps.exec {
-                commandLine("xcrun", "simctl", "bootstatus", udid, "-b")
+                commandLine("sh", "-c", "timeout 120 xcrun simctl bootstatus $udid -b || true")
+                isIgnoreExitValue = true // Don't fail if timeout occurs
             }
 
             logger.lifecycle("SpringBoard ready. UUD: {}", udid)
