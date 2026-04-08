@@ -20,6 +20,7 @@ jobs:
   ios-build-and-test:
     name: iOS Build & Tests
     runs-on: macos-latest
+    timeout-minutes: 60  # <- hard job-level ceiling; prevents long ghost runs
 
     steps:
       # -- Checkout ------------------------------------------------------------
@@ -40,12 +41,6 @@ jobs:
           properties: |
             test_destination_name
 
-      # -- Run iOS simulator ---------------------------------------------------
-      - name: Boot iOS Simulator
-        run: |
-          xcrun simctl boot "${{ steps.ios_config.outputs['ios.test_destination_name'] }}" 2>/dev/null || true
-          xcrun simctl bootstatus "${{ steps.ios_config.outputs['ios.test_destination_name'] }}" -b
-
       # -- Java ----------------------------------------------------------------
       - name: Set up JDK
         uses: actions/setup-java@v5
@@ -60,20 +55,44 @@ jobs:
 
       # -- Run iOS build -------------------------------------------------------
       - name: Build iOS debug
+        timeout-minutes: 20
         working-directory: common
         run: ./gradlew buildiOSDebug --no-daemon --stacktrace
 
+      # -- Run iOS simulator ---------------------------------------------------
+      - name: Boot iOS Simulator
+        timeout-minutes: 10  # <- bootstatus -b can hang; cap it
+        run: |
+          # Resolve name → UDID for a stable, unambiguous reference
+          UDID=$(xcrun simctl list devices available -j \
+            | python3 -c "
+          import sys, json
+          devs = json.load(sys.stdin)['devices']
+          name = '${{ steps.ios_config.outputs['ios.test_destination_name'] }}'
+          match = next(
+            (d for rts in devs.values() for d in rts
+             if d.get('name') == name and d.get('isAvailable', False)),
+            None
+          )
+          print(match['udid'] if match else '', end='')
+          ")
+
+          if [ -z "$UDID" ]; then
+            echo "ERROR: Simulator '${{ steps.ios_config.outputs['ios.test_destination_name'] }}' not found." >&2
+            xcrun simctl list devices available   # print available list for debugging
+            exit 1
+          fi
+
+          echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
+          echo "Booting simulator UDID: $UDID"
+          xcrun simctl boot "$UDID" 2>/dev/null || true
+          xcrun simctl bootstatus "$UDID" -b
+
       # -- Run iOS tests -------------------------------------------------------
-      # printTestSummaryiOS:
-      #   • depends on testiOS  → runs xcodebuild test (fails on test failures)
-      #   • testiOS is finalized by printTestSummaryiOS, so the summary is
-      #     always printed regardless of whether tests passed or failed
-      #   • the summary script uses isIgnoreExitValue = true, so it never
-      #     masks the non-zero exit that xcodebuild already produced
       - name: Run iOS unit tests
         id: ios_tests
+        timeout-minutes: 20  # <- prevents long hangs
         working-directory: common
-        # Exit code is preserved; summary + artifact upload use 'if: always()'
         run: ./gradlew :ios:testiOS --no-daemon
         continue-on-error: true
 
