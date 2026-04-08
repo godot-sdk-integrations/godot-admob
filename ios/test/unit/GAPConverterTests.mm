@@ -67,7 +67,7 @@
 }
 
 // ---------------------------------------------------------------------------
-// toNsObject: — variant type coverage
+// toNsObject: - variant type coverage
 // ---------------------------------------------------------------------------
 
 - (void)testToNsObject_nil {
@@ -303,7 +303,7 @@
 }
 
 // ---------------------------------------------------------------------------
-// godotDictionaryToUMPDebugSettings: — geography branches
+// godotDictionaryToUMPDebugSettings: - geography branches
 // ---------------------------------------------------------------------------
 
 - (void)testUmpDebug_geographyDisabled {
@@ -354,7 +354,7 @@
 }
 
 // ---------------------------------------------------------------------------
-// nsStringToGodotString: — round-trip
+// nsStringToGodotString: - round-trip
 // ---------------------------------------------------------------------------
 
 - (void)testNsStringToGodotString_roundTrip {
@@ -462,7 +462,7 @@
 }
 
 // ---------------------------------------------------------------------------
-// convertTrackingStatusToString: — all branches
+// convertTrackingStatusToString: - all branches
 // ---------------------------------------------------------------------------
 
 - (void)testTrackingStatus_denied API_AVAILABLE(ios(14)) {

@@ -155,7 +155,7 @@ public class ConsentConfigurationCreateParamsTest {
 		}
 	}
 
-	// -- debug config — debug settings builder is created ---------------------
+	// -- debug config - debug settings builder is created ---------------------
 
 	@Test
 	void createConsentRequestParameters_debugConfig_createsDebugSettingsBuilder() {

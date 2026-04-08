@@ -69,7 +69,7 @@ final class GlobalSettingsTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// GlobalSettings.loadSettings — default values
+	// GlobalSettings.loadSettings - default values
 	// -----------------------------------------------------------------------
 
 	func testLoadSettings_defaultVolume_whenNoValueStored() {
@@ -98,7 +98,7 @@ final class GlobalSettingsTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// GlobalSettings.saveSettings + loadSettings — round-trips
+	// GlobalSettings.saveSettings + loadSettings - round-trips
 	// -----------------------------------------------------------------------
 
 	func testSaveAndLoadSettings_volumeRoundTrip() {
@@ -156,14 +156,14 @@ final class GlobalSettingsTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// GlobalSettings.saveSettings — nil fields are not stored
+	// GlobalSettings.saveSettings - nil fields are not stored
 	// -----------------------------------------------------------------------
 
 	func testSaveSettings_nilVolumeDoesNotOverwriteExistingValue() {
 		// Write a known volume first
 		writeSettings(volume: 0.7, muted: false, applyAtStartup: false)
 
-		// Save with nil volume — must not clear the previously stored volume
+		// Save with nil volume - must not clear the previously stored volume
 		let nilVolume = AdSettings(adVolume: nil, areAdsMuted: nil, applyAtStartup: nil)
 		GlobalSettings.saveSettings(nilVolume)
 
@@ -173,7 +173,7 @@ final class GlobalSettingsTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// GlobalSettings.applyToGADMobileAds — functional checks
+	// GlobalSettings.applyToGADMobileAds - functional checks
 	// -----------------------------------------------------------------------
 
 	func testApplyToGADMobileAds_setsMutedTrue() {
@@ -226,7 +226,7 @@ final class GlobalSettingsTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// AdSettings default values — accessed via static properties
+	// AdSettings default values - accessed via static properties
 	// -----------------------------------------------------------------------
 
 	func testAdSettingsDefaultAdVolume_isInValidRange() {

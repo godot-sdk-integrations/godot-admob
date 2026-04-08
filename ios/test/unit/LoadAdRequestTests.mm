@@ -230,7 +230,7 @@ typedef struct {
 }
 
 // ---------------------------------------------------------------------------
-// getGADAdSize — standard sizes
+// getGADAdSize - standard sizes
 // ---------------------------------------------------------------------------
 
 - (void)testGetGADAdSize_banner {

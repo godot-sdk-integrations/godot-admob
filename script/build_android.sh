@@ -173,10 +173,10 @@ if [[ "$do_run_tests" == true ]]
 then
 	display_status "Running Android tests"
 	# printTestSummary orchestrates the full pipeline:
-	#   1. testDebugUnitTest      — runs all JUnit tests (ignoreFailures=true so
+	#   1. testDebugUnitTest      - runs all JUnit tests (ignoreFailures=true so
 	#                               coverage always runs even when tests fail)
-	#   2. createDebugUnitTestCoverageReport — generates the JaCoCo XML/HTML report
-	#   3. printTestSummary       — prints the per-suite pass/fail table and the
+	#   2. createDebugUnitTestCoverageReport - generates the JaCoCo XML/HTML report
+	#   3. printTestSummary       - prints the per-suite pass/fail table and the
 	#                               coverage summary, then exits non-zero if any
 	#                               tests failed
 	"$SCRIPT_DIR"/run_gradle_task.sh ":android:printTestSummary"

@@ -69,7 +69,7 @@ iosConfig.spmDependencies   // [SpmDependency(url="https://...", version="1.2.3"
 
 `base-conventions` bridges this list onto `project.extra["iosSpmDependencies"]` so it is accessible from any task lambda that cannot reference `IosConfig` by type directly.
 
-The `addon-build.gradle.kts` `generateGDScript` and `generateSharedGDScript` tasks expose the list via the `@spmDependencies@` token. Each dependency is rendered as a GDScript dictionary literal using [StringName](https://docs.godotengine.org/en/stable/classes/class_stringname.html) key syntax (`&"key"`), and multiple entries are joined with `, ` — without outer brackets, because they are supplied by the surrounding GDScript constant:
+The `addon-build.gradle.kts` `generateGDScript` and `generateSharedGDScript` tasks expose the list via the `@spmDependencies@` token. Each dependency is rendered as a GDScript dictionary literal using [StringName](https://docs.godotengine.org/en/stable/classes/class_stringname.html) key syntax (`&"key"`), and multiple entries are joined with `, ` - without outer brackets, because they are supplied by the surrounding GDScript constant:
 
 ```gdscript
 # Template source:

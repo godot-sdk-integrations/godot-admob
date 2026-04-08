@@ -5,7 +5,7 @@ icon: fontawesome/solid/user-shield
 
 # <img src="../images/icon.png" width="20"> User Consent
 
-The consent status indicates that the user has been presented with the consent form and has submitted a choice (either consent or withhold consent), making the consent information available for use. It does not indicate that the user has specifically consented to personalized ads — only that consent information has been obtained. Therefore, the plugin will return a status of "OBTAINED" even when the user selects "Do Not Consent" on the consent form.
+The consent status indicates that the user has been presented with the consent form and has submitted a choice (either consent or withhold consent), making the consent information available for use. It does not indicate that the user has specifically consented to personalized ads - only that consent information has been obtained. Therefore, the plugin will return a status of "OBTAINED" even when the user selects "Do Not Consent" on the consent form.
 
 The UMP SDK handles propagation of the user's actual consent choice to the Google Mobile Ads SDK automatically. Ad requests made after consent is obtained will respect the user's selection (e.g., non-personalized ads if they did not consent).
 

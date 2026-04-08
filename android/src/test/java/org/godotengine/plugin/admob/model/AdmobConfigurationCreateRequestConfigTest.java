@@ -386,7 +386,7 @@ public class AdmobConfigurationCreateRequestConfigTest {
 			adIdMock.when(() -> AdvertisingIdClient.getAdvertisingIdInfo(any()))
 					.thenThrow(new IllegalStateException("must not be called on the main thread"));
 
-			// Must not throw — the code has an explicit catch for IllegalStateException.
+			// Must not throw - the code has an explicit catch for IllegalStateException.
 			new AdmobConfiguration(ConfigFixtures.minimalConfig(false))
 					.createRequestConfiguration(activity);
 

@@ -59,39 +59,10 @@ jobs:
         working-directory: common
         run: ./gradlew buildiOSDebug --no-daemon --stacktrace
 
-      # -- Run iOS simulator ---------------------------------------------------
-      - name: Boot iOS Simulator
-        timeout-minutes: 10  # <- bootstatus -b can hang; cap it
-        run: |
-          # Resolve name → UDID for a stable, unambiguous reference
-          UDID=$(xcrun simctl list devices available -j \
-            | python3 -c "
-          import sys, json
-          devs = json.load(sys.stdin)['devices']
-          name = '${{ steps.ios_config.outputs['ios.test_destination_name'] }}'
-          match = next(
-            (d for rts in devs.values() for d in rts
-             if d.get('name') == name and d.get('isAvailable', False)),
-            None
-          )
-          print(match['udid'] if match else '', end='')
-          ")
-
-          if [ -z "$UDID" ]; then
-            echo "ERROR: Simulator '${{ steps.ios_config.outputs['ios.test_destination_name'] }}' not found." >&2
-            xcrun simctl list devices available   # print available list for debugging
-            exit 1
-          fi
-
-          echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
-          echo "Booting simulator UDID: $UDID"
-          xcrun simctl boot "$UDID" 2>/dev/null || true
-          xcrun simctl bootstatus "$UDID" -b
-
       # -- Run iOS tests -------------------------------------------------------
       - name: Run iOS unit tests
         id: ios_tests
-        timeout-minutes: 20  # <- prevents long hangs
+        timeout-minutes: 20
         working-directory: common
         run: ./gradlew :ios:testiOS --no-daemon
         continue-on-error: true

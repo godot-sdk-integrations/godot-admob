@@ -20,15 +20,15 @@
 A Godot plugin that provides a unified GDScript interface for integrating **Google Mobile Ads SDK** on **Android** and **iOS**.
 
 **Key Features:**
-- **All ad formats** — Banner (fixed, adaptive, inline-adaptive, collapsible), Interstitial, Rewarded, Rewarded Interstitial, App Open, and Native ads
-- **Rich signal coverage** — signals for load, impression, click, open, close, dismiss, reward, and failure events across all ad types
-- **Node-based configuration** — all ad settings (position, size, content rating, volume, COPPA/TFUA tags, personalization state) configurable directly in the Godot Inspector
-- **Ad caching** — built-in cache management with configurable cache sizes per ad type
-- **Mediation support** — AdMob by default, with support for up to 15 additional ad networks
-- **UMP consent flow** — built-in support for Google's User Messaging Platform for GDPR/privacy compliance
-- **iOS tracking authorization** — handles ATT prompts and emits `tracking_authorization_granted` / `tracking_authorization_denied` signals
-- **Flexible export configuration** — configure your AdMob app IDs via Inspector node or config files
-- **Debug/production mode** — separate debug and real ad unit IDs; toggle with a single `is_real` flag
+- **All ad formats** - Banner (fixed, adaptive, inline-adaptive, collapsible), Interstitial, Rewarded, Rewarded Interstitial, App Open, and Native ads
+- **Rich signal coverage** - signals for load, impression, click, open, close, dismiss, reward, and failure events across all ad types
+- **Node-based configuration** - all ad settings (position, size, content rating, volume, COPPA/TFUA tags, personalization state) configurable directly in the Godot Inspector
+- **Ad caching** - built-in cache management with configurable cache sizes per ad type
+- **Mediation support** - AdMob by default, with support for up to 15 additional ad networks
+- **UMP consent flow** - built-in support for Google's User Messaging Platform for GDPR/privacy compliance
+- **iOS tracking authorization** - handles ATT prompts and emits `tracking_authorization_granted` / `tracking_authorization_denied` signals
+- **Flexible export configuration** - configure your AdMob app IDs via Inspector node or config files
+- **Debug/production mode** - separate debug and real ad unit IDs; toggle with a single `is_real` flag
 
 <a name="installation"></a>
 
@@ -41,7 +41,7 @@ A Godot plugin that provides a unified GDScript interface for integrating **Goog
 2. In the install dialog, keep the default install folder (project root) and **Ignore asset root** checked, then click **Install**.
 3. Enable the plugin under **Project -> Project Settings -> Plugins**.
 
-> If the installer warns about conflicting files when adding a second platform, you can safely ignore it — both platforms share the same addon code.
+> If the installer warns about conflicting files when adding a second platform, you can safely ignore it - both platforms share the same addon code.
 
 **Manually**
 1. Download the release archive from [GitHub](https://github.com/godot-sdk-integrations/godot-admob/releases) and unzip it into your project's root directory.

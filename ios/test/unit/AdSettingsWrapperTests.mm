@@ -149,7 +149,7 @@
 }
 
 // ---------------------------------------------------------------------------
-// -initWithAdSettings: — round-trip through AdSettings
+// -initWithAdSettings: - round-trip through AdSettings
 // ---------------------------------------------------------------------------
 
 - (void)testInitWithAdSettings_roundTrip_volume {

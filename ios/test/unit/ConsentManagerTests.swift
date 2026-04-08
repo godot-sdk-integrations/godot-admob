@@ -29,13 +29,13 @@ final class ConsentManagerTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// getConsentStatusString — exhaustive mapping
+	// getConsentStatusString - exhaustive mapping
 	// -----------------------------------------------------------------------
 
 	// Note: ConsentInformation.shared.consentStatus is read-only in tests and
 	// reflects the device/simulator state at the time the test runs.
 	// We verify that getConsentStatusString() always returns one of the known
-	// valid strings — never an unexpected value.
+	// valid strings - never an unexpected value.
 
 	func testGetConsentStatusString_returnsKnownValue() {
 		let validStatuses: Set<String> = ["UNKNOWN", "REQUIRED", "NOT_REQUIRED", "OBTAINED"]
@@ -74,7 +74,7 @@ final class ConsentManagerTests: XCTestCase {
 	// -----------------------------------------------------------------------
 
 	func testReset_doesNotThrow() {
-		// reset() calls ConsentInformation.shared.reset() — verify no crash
+		// reset() calls ConsentInformation.shared.reset() - verify no crash
 		XCTAssertNoThrow(sut.reset())
 	}
 
@@ -95,7 +95,7 @@ final class ConsentManagerTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// requestConsentInfoUpdate — offline / test-only guard
+	// requestConsentInfoUpdate - offline / test-only guard
 	// -----------------------------------------------------------------------
 
 	func testRequestConsentInfoUpdate_completionCalledOnMainThread() {
@@ -121,7 +121,7 @@ final class ConsentManagerTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// loadForm — without a prior info update the form is typically unavailable
+	// loadForm - without a prior info update the form is typically unavailable
 	// -----------------------------------------------------------------------
 
 	func testLoadForm_whenFormUnavailable_completionCalledWithError() {
@@ -140,7 +140,7 @@ final class ConsentManagerTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// showForm — without a loaded form, must call back with error
+	// showForm - without a loaded form, must call back with error
 	// -----------------------------------------------------------------------
 
 	func testShowForm_withoutLoadedForm_returnsError() {
@@ -165,7 +165,7 @@ final class ConsentManagerTests: XCTestCase {
 	}
 
 	// -----------------------------------------------------------------------
-	// Thread safety — simultaneous calls should not crash
+	// Thread safety - simultaneous calls should not crash
 	// -----------------------------------------------------------------------
 
 	func testConcurrentGetConsentStatusString_doesNotCrash() {

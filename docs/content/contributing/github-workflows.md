@@ -55,10 +55,10 @@ Builds a debug Android AAR by invoking the `buildAndroidDebug` Gradle task from 
 
 Enforces code style on all Android source files. Four independent checks are run in sequence:
 
-1. **ktlint** — validates Kotlin source files against the project's ktlint rules.
-2. **Checkstyle** — validates Java source files using the project's Checkstyle configuration at `.github/config/checkstyle.xml`. Checkstyle is downloaded directly from its GitHub releases at version 13.3.0.
-3. **Prettier + XML plugin** — validates Android XML resource files using Prettier with the `@prettier/plugin-xml` plugin, configured by `.github/config/prettier.xml.json`.
-4. **editorconfig-checker** — verifies that all `.java`, `.kt`, and `.xml` files comply with the repository's EditorConfig rules (final newlines, no trailing whitespace).
+1. **ktlint** - validates Kotlin source files against the project's ktlint rules.
+2. **Checkstyle** - validates Java source files using the project's Checkstyle configuration at `.github/config/checkstyle.xml`. Checkstyle is downloaded directly from its GitHub releases at version 13.3.0.
+3. **Prettier + XML plugin** - validates Android XML resource files using Prettier with the `@prettier/plugin-xml` plugin, configured by `.github/config/prettier.xml.json`.
+4. **editorconfig-checker** - verifies that all `.java`, `.kt`, and `.xml` files comply with the repository's EditorConfig rules (final newlines, no trailing whitespace).
 
 **Steps summary:**
 
@@ -122,8 +122,8 @@ Builds and deploys the project's documentation site to GitHub Pages using the [Z
 
 Validates GDScript formatting across the addon and demo directories using two tools:
 
-1. **gdformat** (from [gdtoolkit](https://github.com/Scony/godot-gdscript-toolkit)) — checks formatting compliance with `--check` (dry run). The `.gdformatrc` configuration file is copied from `.github/config/` to the working directory before checking. Certain auto-generated files are excluded: `AdmobPlugin.gd` and `MediationNetwork.gd` in the addon, and `Main.gd` in the demo. Files under `demo/addons/` are also excluded.
-2. **editorconfig-checker** — verifies final newlines and no trailing whitespace on all `.gd` files (same exclusion for `demo/addons/`).
+1. **gdformat** (from [gdtoolkit](https://github.com/Scony/godot-gdscript-toolkit)) - checks formatting compliance with `--check` (dry run). The `.gdformatrc` configuration file is copied from `.github/config/` to the working directory before checking. Certain auto-generated files are excluded: `AdmobPlugin.gd` and `MediationNetwork.gd` in the addon, and `Main.gd` in the demo. Files under `demo/addons/` are also excluded.
+2. **editorconfig-checker** - verifies final newlines and no trailing whitespace on all `.gd` files (same exclusion for `demo/addons/`).
 
 **Steps summary:**
 
@@ -151,8 +151,8 @@ Validates GDScript formatting across the addon and demo directories using two to
 
 Validates formatting of all Gradle Kotlin DSL build files using two tools:
 
-1. **ktlint 1.8.0** — checks all `*.gradle.kts` files at the root of `addon/`, `android/`, and `common/`.
-2. **editorconfig-checker 3.6.1** — verifies final newlines and no trailing whitespace on the same set of files.
+1. **ktlint 1.8.0** - checks all `*.gradle.kts` files at the root of `addon/`, `android/`, and `common/`.
+2. **editorconfig-checker 3.6.1** - verifies final newlines and no trailing whitespace on the same set of files.
 
 **Steps summary:**
 
@@ -217,9 +217,9 @@ Builds a debug iOS xcframework. The workflow first downloads the Godot engine so
 
 Validates code style on all iOS source files. Three independent checks are run:
 
-1. **SwiftLint** — lints Swift files under `ios/src/` using the configuration at `.github/config/.swiftlint.yml`. Output is formatted for GitHub Actions annotations.
-2. **clang-format** — performs a dry-run check (`--dry-run --Werror`) on all Objective-C and Objective-C++ files (`.m`, `.mm`, `.h`) using the style rules in `.github/config/.clang-format`.
-3. **editorconfig-checker** — verifies final newlines and no trailing whitespace on all `.m`, `.mm`, `.h`, and `.swift` files (installed via Homebrew).
+1. **SwiftLint** - lints Swift files under `ios/src/` using the configuration at `.github/config/.swiftlint.yml`. Output is formatted for GitHub Actions annotations.
+2. **clang-format** - performs a dry-run check (`--dry-run --Werror`) on all Objective-C and Objective-C++ files (`.m`, `.mm`, `.h`) using the style rules in `.github/config/.clang-format`.
+3. **editorconfig-checker** - verifies final newlines and no trailing whitespace on all `.m`, `.mm`, `.h`, and `.swift` files (installed via Homebrew).
 
 **Steps summary:**
 
@@ -271,9 +271,9 @@ Validates that all `.properties` configuration files comply with the repository'
 
 Validates coding style for all shell and Ruby scripts under `script/`. Three tools are run in sequence:
 
-1. **ShellCheck** (v0.10.0) — static analysis for shell scripts (`*.sh`). Downloaded as a pre-built binary.
-2. **RuboCop** (1.85.0) — lints Ruby scripts using the configuration at `.github/config/.rubocop.yml`.
-3. **editorconfig-checker** — verifies final newlines and no trailing whitespace on all `.sh` and `.rb` files.
+1. **ShellCheck** (v0.10.0) - static analysis for shell scripts (`*.sh`). Downloaded as a pre-built binary.
+2. **RuboCop** (1.85.0) - lints Ruby scripts using the configuration at `.github/config/.rubocop.yml`.
+3. **editorconfig-checker** - verifies final newlines and no trailing whitespace on all `.sh` and `.rb` files.
 
 **Steps summary:**
 

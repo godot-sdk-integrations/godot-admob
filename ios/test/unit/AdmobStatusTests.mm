@@ -62,7 +62,7 @@
 @implementation AdmobStatusTests
 
 // ---------------------------------------------------------------------------
-// adapterStatusToString: — all branches
+// adapterStatusToString: - all branches
 // ---------------------------------------------------------------------------
 
 - (void)testAdapterStatusToString_ready {
@@ -81,7 +81,7 @@
 }
 
 // ---------------------------------------------------------------------------
-// buildRawData — empty status map
+// buildRawData - empty status map
 // ---------------------------------------------------------------------------
 
 - (void)testBuildRawData_emptyAdapterMap {
@@ -94,7 +94,7 @@
 }
 
 // ---------------------------------------------------------------------------
-// buildRawData — known adapter mapped to network tag
+// buildRawData - known adapter mapped to network tag
 // ---------------------------------------------------------------------------
 
 - (void)testBuildRawData_knownAdapterUsesNetworkTag {
@@ -105,7 +105,7 @@
 
 	// If the adapter class is not registered yet (dynamic load), skip gracefully
 	if (!expectedTag) {
-		XCTSkip(@"Unity adapter class not in factory map — skipping tag-mapping test");
+		XCTSkip(@"Unity adapter class not in factory map - skipping tag-mapping test");
 		return;
 	}
 
@@ -130,7 +130,7 @@
 }
 
 // ---------------------------------------------------------------------------
-// buildRawData — unknown adapter falls back to class name as key
+// buildRawData - unknown adapter falls back to class name as key
 // ---------------------------------------------------------------------------
 
 - (void)testBuildRawData_unknownAdapterUsesClassName {
@@ -153,7 +153,7 @@
 }
 
 // ---------------------------------------------------------------------------
-// buildRawData — adapter entry contains required sub-keys
+// buildRawData - adapter entry contains required sub-keys
 // ---------------------------------------------------------------------------
 
 - (void)testBuildRawData_adapterEntryHasRequiredKeys {

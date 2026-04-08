@@ -41,7 +41,7 @@ import kotlinx.serialization.decodeFromString
  * | `flags`               | [linkerFlags]           | Extra linker flags, e.g. `["-ObjC"]`                   |
  *
  * Comma-separated properties (`frameworks`, `embedded_frameworks`, `flags`) are
- * split into [List]s at load time — blank entries are dropped — so consumers never
+ * split into [List]s at load time - blank entries are dropped - so consumers never
  * need to parse delimiters themselves.
  *
  * ## SPM dependencies reference (`spm_dependencies.json`)
@@ -121,14 +121,14 @@ data class IosConfig(
     val testOs: String,
 ) {
     companion object {
-        /** Lenient [Json] instance — tolerates unknown keys added to the JSON in future. */
+        /** Lenient [Json] instance - tolerates unknown keys added to the JSON in future. */
         private val json = Json { ignoreUnknownKeys = true }
 
         /**
          * Loads an [IosConfig] from `ios/config/ios.properties` and
          * (optionally) `ios/config/spm_dependencies.json`.
          *
-         * @param gradleRootDir `rootProject.rootDir` — the `gradle/` directory.
+         * @param gradleRootDir `rootProject.rootDir` - the `gradle/` directory.
          *   The repository root is resolved as `gradleRootDir.parentFile`, and the
          *   config files are expected under `<repoRoot>/ios/config/`.
          */

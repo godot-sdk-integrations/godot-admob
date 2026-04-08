@@ -27,7 +27,7 @@ static NSString *const kMintegralAdapterClass = @"GADMMintegralBannerAdAdapter";
 @implementation MediationNetworkFactoryTests
 
 // ---------------------------------------------------------------------------
-// createNetwork: — every supported tag
+// createNetwork: - every supported tag
 // ---------------------------------------------------------------------------
 
 - (void)assertCreateNetworkTag:(NSString *)tag description:(NSString *)description {
@@ -101,7 +101,7 @@ static NSString *const kMintegralAdapterClass = @"GADMMintegralBannerAdAdapter";
 }
 
 // ---------------------------------------------------------------------------
-// createNetwork: — error / edge cases
+// createNetwork: - error / edge cases
 // ---------------------------------------------------------------------------
 
 - (void)testCreateNetwork_nil {
@@ -145,7 +145,7 @@ static NSString *const kMintegralAdapterClass = @"GADMMintegralBannerAdAdapter";
 }
 
 // ---------------------------------------------------------------------------
-// getTagForAdapterClass: — adapter class -> tag lookups
+// getTagForAdapterClass: - adapter class -> tag lookups
 // ---------------------------------------------------------------------------
 
 - (void)testGetTagForAdapterClass_unknownClass {
@@ -166,7 +166,7 @@ static NSString *const kMintegralAdapterClass = @"GADMMintegralBannerAdAdapter";
 - (void)testGetTagForAdapterClass_whitespaceIsTrimmed {
 	// Adapter class with leading/trailing spaces should still resolve if known
 	// (uses trimming in the factory). If the class after trimming is unknown,
-	// nil is expected — this test asserts trimming is applied.
+	// nil is expected - this test asserts trimming is applied.
 	NSString *knownClass = @"GADUnityAdapter"; // Use the real Unity class name
 	NSString *paddedClass = [NSString stringWithFormat:@"  %@  ", knownClass];
 	NSString *tagFromPadded = [MediationNetworkFactory getTagForAdapterClass:paddedClass];

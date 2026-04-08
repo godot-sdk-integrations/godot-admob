@@ -68,7 +68,7 @@
 			return [GAPConverter toNsString:godotValue.operator String()];
 
 		default:
-			// Unsupported or complex type — convert to string fallback
+			// Unsupported or complex type - convert to string fallback
 			return [GAPConverter toNsString:godotValue.operator String()];
 	}
 }

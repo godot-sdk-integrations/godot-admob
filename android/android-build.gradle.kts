@@ -570,7 +570,7 @@ tasks {
 
             if (hasFailures) {
                 val n = suites.sumOf { it.failed }
-                throw GradleException("$n test(s) failed — see the TEST RESULTS table above.")
+                throw GradleException("$n test(s) failed - see the TEST RESULTS table above.")
             }
         }
     }

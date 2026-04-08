@@ -167,6 +167,7 @@ fun TaskContainerScope.registerIosTestTask(
             "validateSwiftVersion",
             "syncSwiftVersionToPbxproj",
             "resolveSPMDependencies",
+            "bootiOSSimulator",
         )
 
         val godotDir: String by gradle.extra
@@ -177,33 +178,49 @@ fun TaskContainerScope.registerIosTestTask(
         inputs.dir("$projectDir/test")
         outputs.dir(testResultsDir)
 
-        // Allow the task to be skipped when the test scheme has not been
-        // created in the Xcode project yet (CI guards against this separately).
         onlyIf("iOS test scheme exists") {
             workspace.exists()
         }
 
-        commandLine(
-            "xcodebuild",
-            "test",
-            "-workspace",
-            workspace.absolutePath,
-            "-scheme",
-            scheme,
-            "-destination",
-            destination,
-            "-derivedDataPath",
-            derivedDataDir.absolutePath,
-            "-resultBundlePath",
-            testResultsDir.resolve("$name.xcresult").absolutePath,
-            "-enableCodeCoverage",
-            "YES",
-            "GODOT_DIR=$godotDir",
-            "SWIFT_VERSION=${iosConfig.swiftVersion}",
-        )
-
         doFirst {
-            testResultsDir.mkdirs() // only side-effect belongs here
+            testResultsDir.mkdirs()
+
+            // Try pulling from Gradle extra properties first (set by bootiOSSimulator), then fallback to env
+            val simulatorUdid = if (project.extra.has("SIMULATOR_UDID")) {
+                project.extra["SIMULATOR_UDID"] as String
+            } else {
+                System.getenv("SIMULATOR_UDID")?.takeIf { it.isNotBlank() }
+            }
+
+            val resolvedDestination = if (simulatorUdid != null) {
+                logger.lifecycle("testiOS: using SIMULATOR_UDID destination: id:{}", simulatorUdid)
+                "id=$simulatorUdid"
+            } else {
+                logger.lifecycle("testiOS: local mode - using configured destination: {}", destination)
+                destination
+            }
+
+            commandLine(
+                "xcodebuild",
+                "test",
+                "-workspace",
+                workspace.absolutePath,
+                "-scheme",
+                scheme,
+                "-destination",
+                resolvedDestination,
+                "-derivedDataPath",
+                derivedDataDir.absolutePath,
+                "-resultBundlePath",
+                testResultsDir.resolve("$name.xcresult").absolutePath,
+                "-enableCodeCoverage",
+                "YES",
+                "GODOT_DIR=$godotDir",
+                "SWIFT_VERSION=${iosConfig.swiftVersion}",
+            )
+
+            // Set a timeout to prevent infinite hangs (30 minutes)
+            timeout = java.time.Duration.ofMinutes(30)
         }
 
         finalizedBy("printTestSummaryiOS")
@@ -406,10 +423,19 @@ tasks {
         val simulatorLib = godotDirectory.resolve("bin/libgodot.ios.template_debug.arm64.simulator.a")
         val archiveFile = godotDirectory.resolve(godotConfig.godotIosSimulatorLibZip)
 
+        // Skip when the target library already exists
+        onlyIf("Godot iOS Simulator library does not already exist") {
+            if (simulatorLib.exists()) {
+                logger.lifecycle("Godot iOS Simulator library already exists at ${simulatorLib.absolutePath}. Skipping download.")
+                false
+            } else {
+                true
+            }
+        }
+
         inputs.property("godotVersion", godotConfig.godotVersion)
         inputs.property("godotReleaseType", godotConfig.godotReleaseType)
         inputs.property("godotDir", godotDir)
-        outputs.file(simulatorLib)
 
         src(godotConfig.godotIosSimulatorLibUrl)
         dest(archiveFile)
@@ -435,7 +461,7 @@ tasks {
             if (!simulatorLib.exists()) {
                 throw GradleException(
                     "Extraction succeeded but expected library not found: ${simulatorLib.absolutePath}\n" +
-                        "Check that the ZIP contains a bin/ directory with the .a file.",
+                        "Check that the ZIP contains a bin/ directory with the .a file."
                 )
             }
 
@@ -443,7 +469,7 @@ tasks {
 
             println(
                 "Godot iOS Simulator library ${godotConfig.godotVersion}-${godotConfig.godotReleaseType} " +
-                    "successfully downloaded and extracted to ${simulatorLib.absolutePath}",
+                    "successfully downloaded and extracted to ${simulatorLib.absolutePath}"
             )
         }
     }
@@ -921,6 +947,64 @@ tasks {
         doLast { println("iOS zip archive created at: ${archiveFile.get().asFile.path}") }
     }
 
+    register("bootiOSSimulator") {
+        description = "Boots the configured iOS Simulator (headless) and waits for SpringBoard"
+        group = "setup"
+
+        val execOps = objects.newInstance<Injected>().execOps
+
+        doLast {
+            val destName = iosConfig.testDestinationName
+
+            val listOutput = java.io.ByteArrayOutputStream()
+            execOps.exec {
+                commandLine("xcrun", "simctl", "list", "devices", "available", "-j")
+                standardOutput = listOutput
+            }
+
+            // Parse xcrun JSON output
+            val jsonSlurper = groovy.json.JsonSlurper()
+            @Suppress("UNCHECKED_CAST")
+            val parsed = jsonSlurper.parseText(listOutput.toString("UTF-8")) as Map<String, Any>
+            @Suppress("UNCHECKED_CAST")
+            val devices = parsed["devices"] as Map<String, List<Map<String, Any>>>
+
+            var udid: String? = null
+            for ((_, devs) in devices) {
+                for (dev in devs) {
+                    if (dev["name"] == destName && dev["isAvailable"] == true) {
+                        udid = dev["udid"] as String
+                        break
+                    }
+                }
+                if (udid != null) break
+            }
+
+            if (udid.isNullOrBlank()) {
+                execOps.exec { commandLine("xcrun", "simctl", "list", "devices", "available") }
+                throw GradleException("ERROR: Simulator '$destName' not found.")
+            }
+
+            logger.lifecycle("Booting simulator UDID: {}", udid)
+
+            // Headless simulator boot
+            execOps.exec {
+                commandLine("xcrun", "simctl", "boot", udid)
+                isIgnoreExitValue = true // already booted is OK
+            }
+
+            // Ensure boot is complete
+            execOps.exec {
+                commandLine("xcrun", "simctl", "bootstatus", udid, "-b")
+            }
+
+            logger.lifecycle("SpringBoard ready. UUD: {}", udid)
+
+            // Save UDID for the testiOS task to consume
+            project.extra.set("SIMULATOR_UDID", udid)
+        }
+    }
+
     val pluginModuleTestScheme = "${pluginConfig.pluginModuleName}_plugin_tests"
     val testDestination =
         "platform=${iosConfig.testPlatform},name=${iosConfig.testDestinationName},OS=${iosConfig.testOs}"
@@ -942,66 +1026,67 @@ tasks {
 
         doLast {
             if (!resultBundle.exists()) {
-                println("❌ No xcresult bundle found — testiOS may have been skipped.")
+                println("❌ No xcresult bundle found - testiOS may have been skipped.")
                 return@doLast
             }
 
             val bundlePath = resultBundle.absolutePath
+            var reportScript = """
+                BUNDLE="${'$'}(echo '$bundlePath')"
+
+                echo "📋 iOS Test Summary"
+                echo "═══════════════════════════════════════════════════════════════"
+
+                JSON=${'$'}(xcrun xcresulttool get test-results summary \
+                    --path "${'$'}BUNDLE" --format json 2>/dev/null || echo '{}')
+
+                echo "${'$'}JSON" | jq -r '
+                    (.passedTests + .failedTests + (.skippedTests // 0)) as ${'$'}total |
+                    (.passedTests * 100 / (if ${'$'}total > 0 then ${'$'}total else 1 end) | round) as ${'$'}rate |
+
+                    "Total Tests : \( ${'$'}total )",
+                    "Passed      : \(.passedTests)",
+                    "Failed      : \(.failedTests)",
+                    "Skipped     : \(.skippedTests // 0)",
+                    "Pass Rate   : \(if ${'$'}total > 0 then (${'$'}rate | tostring) + "%" else "N/A" end)",
+                    "",
+                    "Environment : \(.environmentDescription // "Unknown")",
+                    "Result      : \(.result // "Unknown")",
+                    "",
+                    "Configurations:",
+                    "───────────────",
+                    (.devicesAndConfigurations[]? |
+                        "  • \(.device.deviceName) (\(.device.osVersion))" +
+                        " | Passed: \(.passedTests) | Failed: \(.failedTests)"
+                    )
+                ' 2>/dev/null || echo "⚠️  Could not parse test summary JSON"
+
+                echo ""
+                echo "📦 Test Suites"
+                echo "───────────────"
+                xcrun xcresulttool get test-results tests \
+                    --path "${'$'}BUNDLE" --format json 2>/dev/null \
+                | jq -r '
+                    .testNodes[]? | .children[]? |
+                    "  \(.name): passed=\(.result)"
+                ' 2>/dev/null || echo "  (suite breakdown unavailable)"
+
+                echo ""
+                echo "🧪 Code Coverage"
+                echo "───────────────"
+                xcrun xccov view --report --json "${'$'}BUNDLE" 2>/dev/null \
+                | jq -r '
+                    (.targets // [])[] |
+                    "  \(.name): \(.lineCoverage * 100 | round)% line coverage " +
+                    " (\(.coveredLines)/\(.executableLines) lines)"
+                ' 2>/dev/null || echo "  (coverage data unavailable - was -enableCodeCoverage YES set?)"
+                """.trimIndent()
 
             execOps.exec {
                 commandLine(
                     "sh",
                     "-c",
-                    """
-                    BUNDLE="${'$'}(echo '$bundlePath')"
-
-                    echo "📋 iOS Test Summary"
-                    echo "═══════════════════════════════════════════════════════════════"
-
-                    JSON=${'$'}(xcrun xcresulttool get test-results summary \
-                        --path "${'$'}BUNDLE" --format json 2>/dev/null || echo '{}')
-
-                    echo "${'$'}JSON" | jq -r '
-                        (.passedTests + .failedTests + (.skippedTests // 0)) as ${'$'}total |
-                        (.passedTests * 100 / (if ${'$'}total > 0 then ${'$'}total else 1 end) | round) as ${'$'}rate |
-
-                        "Total Tests : \( ${'$'}total )",
-                        "Passed      : \(.passedTests)",
-                        "Failed      : \(.failedTests)",
-                        "Skipped     : \(.skippedTests // 0)",
-                        "Pass Rate   : \(if ${'$'}total > 0 then (${'$'}rate | tostring) + "%" else "N/A" end)",
-                        "",
-                        "Environment : \(.environmentDescription // "Unknown")",
-                        "Result      : \(.result // "Unknown")",
-                        "",
-                        "Configurations:",
-                        "───────────────",
-                        (.devicesAndConfigurations[]? |
-                            "  • \(.device.deviceName) (\(.device.osVersion))" +
-                            " | Passed: \(.passedTests) | Failed: \(.failedTests)"
-                        )
-                    ' 2>/dev/null || echo "⚠️  Could not parse test summary JSON"
-
-                    echo ""
-                    echo "📦 Test Suites"
-                    echo "───────────────"
-                    xcrun xcresulttool get test-results tests \
-                        --path "${'$'}BUNDLE" --format json 2>/dev/null \
-                    | jq -r '
-                        .testNodes[]? | .children[]? |
-                        "  \(.name): passed=\(.result)"
-                    ' 2>/dev/null || echo "  (suite breakdown unavailable)"
-
-                    echo ""
-                    echo "🧪 Code Coverage"
-                    echo "───────────────"
-                    xcrun xccov view --report --json "${'$'}BUNDLE" 2>/dev/null \
-                    | jq -r '
-                        (.targets // [])[] |
-                        "  \(.name): \(.lineCoverage * 100 | round)% line coverage " +
-                        " (\(.coveredLines)/\(.executableLines) lines)"
-                    ' 2>/dev/null || echo "  (coverage data unavailable — was -enableCodeCoverage YES set?)"
-                    """.trimIndent(),
+                    reportScript,
                 )
                 isIgnoreExitValue = true
             }

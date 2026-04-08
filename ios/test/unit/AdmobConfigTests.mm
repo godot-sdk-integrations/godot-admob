@@ -62,7 +62,7 @@
 }
 
 // ---------------------------------------------------------------------------
-// childDirectedTreatment — unspecified (-1), false (0), true (1)
+// childDirectedTreatment - unspecified (-1), false (0), true (1)
 // ---------------------------------------------------------------------------
 
 - (void)testChildDirectedTreatment_unspecified {
@@ -255,7 +255,7 @@
 	AdmobConfig *config = [[AdmobConfig alloc] initWithDictionary:d];
 	GADRequestConfiguration *reqConfig = [GADMobileAds sharedInstance].requestConfiguration;
 	[config applyToGADRequestConfiguration:reqConfig];
-	// If set to YES, must be @YES — just verify it doesn't raise
+	// If set to YES, must be @YES - just verify it doesn't raise
 	XCTAssertNotNil(reqConfig.tagForChildDirectedTreatment);
 }
 
