@@ -62,7 +62,7 @@ jobs:
       # -- Run iOS tests -------------------------------------------------------
       - name: Run iOS unit tests
         id: ios_tests
-        timeout-minutes: 20
+        timeout-minutes: 30
         working-directory: common
         run: ./gradlew :ios:testiOS --no-daemon
         continue-on-error: true

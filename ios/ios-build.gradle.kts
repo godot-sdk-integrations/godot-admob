@@ -186,19 +186,21 @@ fun TaskContainerScope.registerIosTestTask(
             testResultsDir.mkdirs()
 
             // Try pulling from Gradle extra properties first (set by bootiOSSimulator), then fallback to env
-            val simulatorUdid = if (project.extra.has("SIMULATOR_UDID")) {
-                project.extra["SIMULATOR_UDID"] as String
-            } else {
-                System.getenv("SIMULATOR_UDID")?.takeIf { it.isNotBlank() }
-            }
+            val simulatorUdid =
+                if (project.extra.has("SIMULATOR_UDID")) {
+                    project.extra["SIMULATOR_UDID"] as String
+                } else {
+                    System.getenv("SIMULATOR_UDID")?.takeIf { it.isNotBlank() }
+                }
 
-            val resolvedDestination = if (simulatorUdid != null) {
-                logger.lifecycle("testiOS: using SIMULATOR_UDID destination: id:{}", simulatorUdid)
-                "id=$simulatorUdid"
-            } else {
-                logger.lifecycle("testiOS: local mode - using configured destination: {}", destination)
-                destination
-            }
+            val resolvedDestination =
+                if (simulatorUdid != null) {
+                    logger.lifecycle("testiOS: using SIMULATOR_UDID destination: id:{}", simulatorUdid)
+                    "id=$simulatorUdid"
+                } else {
+                    logger.lifecycle("testiOS: local mode - using configured destination: {}", destination)
+                    destination
+                }
 
             commandLine(
                 "xcodebuild",
@@ -426,7 +428,10 @@ tasks {
         // Skip when the target library already exists
         onlyIf("Godot iOS Simulator library does not already exist") {
             if (simulatorLib.exists()) {
-                logger.lifecycle("Godot iOS Simulator library already exists at ${simulatorLib.absolutePath}. Skipping download.")
+                logger.lifecycle(
+                    "Godot iOS Simulator library already exists at ${simulatorLib.absolutePath}." +
+                        " Skipping download.",
+                )
                 false
             } else {
                 true
@@ -461,7 +466,7 @@ tasks {
             if (!simulatorLib.exists()) {
                 throw GradleException(
                     "Extraction succeeded but expected library not found: ${simulatorLib.absolutePath}\n" +
-                        "Check that the ZIP contains a bin/ directory with the .a file."
+                        "Check that the ZIP contains a bin/ directory with the .a file.",
                 )
             }
 
@@ -469,7 +474,7 @@ tasks {
 
             println(
                 "Godot iOS Simulator library ${godotConfig.godotVersion}-${godotConfig.godotReleaseType} " +
-                    "successfully downloaded and extracted to ${simulatorLib.absolutePath}"
+                    "successfully downloaded and extracted to ${simulatorLib.absolutePath}",
             )
         }
     }
@@ -964,8 +969,10 @@ tasks {
 
             // Parse xcrun JSON output
             val jsonSlurper = groovy.json.JsonSlurper()
+
             @Suppress("UNCHECKED_CAST")
             val parsed = jsonSlurper.parseText(listOutput.toString("UTF-8")) as Map<String, Any>
+
             @Suppress("UNCHECKED_CAST")
             val devices = parsed["devices"] as Map<String, List<Map<String, Any>>>
 
@@ -994,8 +1001,16 @@ tasks {
             }
 
             // Ensure boot is complete (with 2-minute timeout)
+            val bashTimeoutScript =
+                """
+                xcrun simctl bootstatus $udid -b &
+                BOOT_PID=$!;
+                (sleep 120 && kill ${'$'}BOOT_PID 2>/dev/null) &
+                wait ${'$'}BOOT_PID
+                """.trimIndent().replace("\n", " ")
+
             execOps.exec {
-                commandLine("sh", "-c", "timeout 120 xcrun simctl bootstatus $udid -b || true")
+                commandLine("sh", "-c", bashTimeoutScript)
                 isIgnoreExitValue = true // Don't fail if timeout occurs
             }
 
@@ -1032,7 +1047,8 @@ tasks {
             }
 
             val bundlePath = resultBundle.absolutePath
-            var reportScript = """
+            var reportScript =
+                """
                 BUNDLE="${'$'}(echo '$bundlePath')"
 
                 echo "📋 iOS Test Summary"
