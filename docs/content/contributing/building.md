@@ -184,4 +184,4 @@ The iOS build process involves several steps that are orchestrated automatically
 - **Release archive:** `release/AdmobPlugin-iOS-v*.zip`
 
 !!! note
-   Release archives (iOS and Multi) contain only the plugin's own xcframeworks. SPM dependency xcframeworks are intentionally excluded — they are fetched and linked by Xcode at Godot iOS export time using the `Package.resolved` committed with the Xcode project.
+   Release archives (iOS and Multi) contain only the plugin's own xcframeworks. SPM dependency xcframeworks are intentionally excluded - they are fetched and linked by Xcode at Godot iOS export time using the `Package.resolved` committed with the Xcode project.

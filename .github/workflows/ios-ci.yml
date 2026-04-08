@@ -1,0 +1,81 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
+name: iOS CI
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'common/config/**'
+      - 'common/**/*.gradle.kts'
+      - 'ios/config/**'
+      - 'ios/src/**'
+      - 'ios/test/**'
+      - 'ios/**/*.gradle.kts'
+      - 'ios/*.xcodeproj/**'
+
+jobs:
+  ios-build-and-test:
+    name: iOS Build & Tests
+    runs-on: macos-latest
+    timeout-minutes: 60  # <- hard job-level ceiling; prevents long ghost runs
+
+    steps:
+      # -- Checkout ------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # -- Node ----------------------------------------------------------------
+      - name: Install Node
+        uses: ./.github/actions/install-node
+
+      # -- Read iOS config -----------------------------------------------------
+      - name: Read iOS config
+        id: ios_config
+        uses: ActionCommons/read-properties@v1
+        with:
+          files: |
+            ios/config/ios.properties
+          properties: |
+            test_destination_name
+
+      # -- Java ----------------------------------------------------------------
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      # -- Gradle --------------------------------------------------------------
+      - name: Make Gradle wrapper executable
+        run: chmod +x common/gradlew
+
+      # -- Run iOS build -------------------------------------------------------
+      - name: Build iOS debug
+        timeout-minutes: 20
+        working-directory: common
+        run: ./gradlew buildiOSDebug --no-daemon --stacktrace
+
+      # -- Run iOS tests -------------------------------------------------------
+      - name: Run iOS unit tests
+        id: ios_tests
+        timeout-minutes: 30
+        working-directory: common
+        run: ./gradlew :ios:testiOS --no-daemon
+        continue-on-error: true
+
+      - name: Upload iOS test results
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: ios-test-results
+          path: ios/build/TestResults/
+          if-no-files-found: ignore
+
+      # Re-fail the job after the artifact is safely uploaded
+      - name: Fail job if tests failed
+        if: steps.ios_tests.outcome == 'failure'
+        run: exit 1

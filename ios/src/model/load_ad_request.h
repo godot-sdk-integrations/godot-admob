@@ -21,6 +21,10 @@
 - (NSString *)adUnitId;
 - (NSString *)requestAgent;
 - (NSString *)adSize;
+- (BOOL)hasAdaptiveWidth;
+- (CGFloat)adaptiveWidth;
+- (BOOL)hasAdaptiveMaxHeight;
+- (CGFloat)adaptiveMaxHeight;
 - (NSString *)adPosition;
 - (BOOL)hasCollapsiblePosition;
 - (NSString *)collapsiblePosition;

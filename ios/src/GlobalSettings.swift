@@ -18,17 +18,22 @@ import OSLog
 	private static let prefKeyAdsMuted = "ads_muted"
 	private static let prefKeyApplyAtStartup = "apply_at_startup"
 
+	// Expose defaults so tests can inject a custom suite
+	@objc public static var userDefaults: UserDefaults = .standard
+
 	@objc override public init() {
 		super.init()
 	}
 
 	@objc public static func loadSettings() -> AdSettings {
-		let userDefaults = UserDefaults.standard
+		let userDefaults = Self.userDefaults
 
-		let volume = userDefaults.object(forKey: prefKeyAdVolume) as? Float ?? AdSettings.defaultAdVolume
-		let muted = userDefaults.object(forKey: prefKeyAdsMuted) as? Bool ?? AdSettings.defaultAdsMuted
-		let applyAtStartup = userDefaults.object(forKey: prefKeyApplyAtStartup) as? Bool
-			?? AdSettings.defaultApplyAtStartup
+		// Safely extract via NSNumber to avoid Double -> Float strict casting failures
+		let volume = (userDefaults.object(forKey: prefKeyAdVolume) as? NSNumber)?.floatValue
+				?? AdSettings.defaultAdVolume
+		let muted = (userDefaults.object(forKey: prefKeyAdsMuted) as? NSNumber)?.boolValue ?? AdSettings.defaultAdsMuted
+		let applyAtStartup = (userDefaults.object(forKey: prefKeyApplyAtStartup) as? NSNumber)?.boolValue
+				?? AdSettings.defaultApplyAtStartup
 
 		return AdSettings(
 			adVolume: NSNumber(value: volume),
@@ -38,7 +43,7 @@ import OSLog
 	}
 
 	@objc public static func saveSettings(_ settings: AdSettings) {
-		let userDefaults = UserDefaults.standard
+		let userDefaults = Self.userDefaults
 
 		if let volume = settings.adVolume {
 			userDefaults.set(volume, forKey: GlobalSettings.prefKeyAdVolume)

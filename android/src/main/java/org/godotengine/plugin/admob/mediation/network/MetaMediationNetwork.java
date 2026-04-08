@@ -10,7 +10,7 @@ import android.content.Context;
 public class MetaMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "meta";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.facebook.FacebookMediationAdapter";
+	public static final String ADAPTER_CLASS = "com.google.ads.mediation.facebook.FacebookMediationAdapter";
 
 	public MetaMediationNetwork() {
 		super(TAG);

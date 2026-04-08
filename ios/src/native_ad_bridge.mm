@@ -4,6 +4,8 @@
 
 #import "native_ad_bridge.h"
 
+#import "admob_plugin-Swift.h"
+
 #import "admob_ad_error.h"
 #import "admob_ad_info.h"
 #import "admob_load_ad_error.h"

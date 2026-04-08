@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 public class LiftoffMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "liftoff";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.vungle.VungleMediationAdapter";
+	public static final String ADAPTER_CLASS = "com.google.ads.mediation.vungle.VungleMediationAdapter";
 
 	public LiftoffMediationNetwork() {
 		super(TAG);

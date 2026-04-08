@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 public class UnityMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "unity";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.unity.UnityMediationAdapter";
+	public static final String ADAPTER_CLASS = "com.google.ads.mediation.unity.UnityMediationAdapter";
 
 	public UnityMediationNetwork() {
 		super(TAG);

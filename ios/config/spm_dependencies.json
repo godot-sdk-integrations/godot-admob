@@ -1,7 +1,7 @@
 [
-    {
-        "url": "https://github.com/googleads/swift-package-manager-google-mobile-ads.git",
-        "version": "12.14.0",
-        "products": ["GoogleMobileAds"]
-    }
+	{
+		"url": "https://github.com/googleads/swift-package-manager-google-mobile-ads.git",
+		"version": "12.14.0",
+		"products": ["GoogleMobileAds"]
+	}
 ]

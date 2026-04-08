@@ -41,7 +41,7 @@ import kotlinx.serialization.decodeFromString
  * | `flags`               | [linkerFlags]           | Extra linker flags, e.g. `["-ObjC"]`                   |
  *
  * Comma-separated properties (`frameworks`, `embedded_frameworks`, `flags`) are
- * split into [List]s at load time — blank entries are dropped — so consumers never
+ * split into [List]s at load time - blank entries are dropped - so consumers never
  * need to parse delimiters themselves.
  *
  * ## SPM dependencies reference (`spm_dependencies.json`)
@@ -99,28 +99,48 @@ data class IosConfig(
      * Empty when the JSON file is absent or contains an empty array.
      */
     val spmDependencies: List<SpmDependency>,
+    /**
+     * xcodebuild `-destination` platform value for unit tests, e.g. `iOS Simulator`.
+     *
+     * Read from the `test_platform` key in `ios/config/ios.properties`.
+     */
+    val testPlatform: String,
+    /**
+     * Simulator or device name used as the xcodebuild `-destination` `name` for unit
+     * tests, e.g. `iPhone 17`.
+     *
+     * Read from the `test_destination_name` key in `ios/config/ios.properties`.
+     */
+    val testDestinationName: String,
+    /**
+     * OS version constraint passed as the xcodebuild `-destination` `OS` value,
+     * e.g. `latest`.
+     *
+     * Read from the `test_os` key in `ios/config/ios.properties`.
+     */
+    val testOs: String,
 ) {
     companion object {
-        /** Lenient [Json] instance — tolerates unknown keys added to the JSON in future. */
+        /** Lenient [Json] instance - tolerates unknown keys added to the JSON in future. */
         private val json = Json { ignoreUnknownKeys = true }
 
         /**
          * Loads an [IosConfig] from `ios/config/ios.properties` and
          * (optionally) `ios/config/spm_dependencies.json`.
          *
-         * @param gradleRootDir `rootProject.rootDir` — the `gradle/` directory.
+         * @param gradleRootDir `rootProject.rootDir` - the `gradle/` directory.
          *   The repository root is resolved as `gradleRootDir.parentFile`, and the
          *   config files are expected under `<repoRoot>/ios/config/`.
          */
         fun load(gradleRootDir: File): IosConfig {
             val iosConfigDir = gradleRootDir.parentFile.resolve("ios/config")
 
-            // ── ios.properties ────────────────────────────────────────────────
+            // -- ios.properties ------------------------------------------------
             val propsFile = iosConfigDir.resolve("ios.properties")
             check(propsFile.exists()) { "iOS properties file not found: ${propsFile.absolutePath}" }
             val props = Properties().also { it.load(propsFile.inputStream()) }
 
-            // ── spm_dependencies.json ─────────────────────────────────────────
+            // -- spm_dependencies.json -----------------------------------------
             val spmFile = iosConfigDir.resolve("spm_dependencies.json")
             val spmDependencies: List<SpmDependency> =
                 if (spmFile.exists()) {
@@ -130,12 +150,15 @@ data class IosConfig(
                 }
 
             return IosConfig(
-                platformVersion    = props.require("platform_version"),
-                swiftVersion       = props.getProperty("swift_version")?.trim() ?: "",
-                frameworks         = props.splitList("frameworks"),
-                embeddedFrameworks = props.splitList("embedded_frameworks"),
-                linkerFlags        = props.splitList("flags"),
-                spmDependencies    = spmDependencies,
+                platformVersion     = props.require("platform_version"),
+                swiftVersion        = props.getProperty("swift_version")?.trim() ?: "",
+                frameworks          = props.splitList("frameworks"),
+                embeddedFrameworks  = props.splitList("embedded_frameworks"),
+                linkerFlags         = props.splitList("flags"),
+                spmDependencies     = spmDependencies,
+                testPlatform        = props.require("test_platform"),
+                testDestinationName = props.require("test_destination_name"),
+                testOs              = props.require("test_os"),
             )
         }
     }

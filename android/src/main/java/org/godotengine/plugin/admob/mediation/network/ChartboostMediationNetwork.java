@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 public class ChartboostMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "chartboost";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.chartboost.ChartboostMediationAdapter";
+	public static final String ADAPTER_CLASS = "com.google.ads.mediation.chartboost.ChartboostMediationAdapter";
 
 
 	public ChartboostMediationNetwork() {

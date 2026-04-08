@@ -32,27 +32,27 @@ runs:
         # Determine OS and Architecture
         OS_TYPE=$(echo "${{ runner.os }}" | tr '[:upper:]' '[:lower:]')
         ARCH_TYPE=$(uname -m)
-        
+
         # Map architecture to release naming conventions
-        if [ "$ARCH_TYPE" = "x86_64" ]; then 
+        if [ "$ARCH_TYPE" = "x86_64" ]; then
           ARCH="amd64"
-        elif [ "$ARCH_TYPE" = "aarch64" ] || [ "$ARCH_TYPE" = "arm64" ]; then 
+        elif [ "$ARCH_TYPE" = "aarch64" ] || [ "$ARCH_TYPE" = "arm64" ]; then
           ARCH="arm64"
         else
           echo "Unsupported architecture: $ARCH_TYPE"
           exit 1
         fi
-        
+
         ASSET="ec-${OS_TYPE}-${ARCH}"
 
         echo "Downloading ${ASSET}..."
         curl -sSLO "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v${{ inputs.version }}/${ASSET}.tar.gz"
-        
+
         tar xzf "${ASSET}.tar.gz"
         mkdir -p "$HOME/.local/bin"
         mv "bin/${ASSET}" "$HOME/.local/bin/editorconfig-checker"
         chmod +x "$HOME/.local/bin/editorconfig-checker"
-        
+
         # Clean up
         rm -rf "${ASSET}.tar.gz" bin/
 

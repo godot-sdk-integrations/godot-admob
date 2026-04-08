@@ -47,6 +47,33 @@ data class GodotConfig(
     val godotAarFile: String
         get() = "godot-lib-$godotVersion.$godotReleaseType.aar"
 
+    /**
+     * ZIP archive name for the iOS Simulator debug library,
+     * e.g. `godot-ios-simulator-debug-4.6-stable.zip`.
+     */
+    val godotIosSimulatorLibZip: String
+        get() = "godot-ios-simulator-debug-$godotVersion-$godotReleaseType.zip"
+
+    /**
+     * Full download URL for the iOS Simulator debug static library on GitHub Releases.
+     *
+     * Pattern:
+     * ```
+     * https://github.com/godot-mobile-plugins/godot-ios-builds/releases/download/<version>-<releaseType>/
+     *     godot-ios-simulator-debug-<version>-<releaseType>.zip
+     * ```
+     *
+     * Example:
+     * ```
+     * https://github.com/godot-mobile-plugins/godot-ios-builds/releases/download/4.6-stable/
+     *     godot-ios-simulator-debug-4.6-stable.zip
+     * ```
+     */
+    val godotIosSimulatorLibUrl: String
+        get() =
+            "https://github.com/godot-mobile-plugins/godot-ios-builds/releases/download/" +
+                "$godotVersion-$godotReleaseType/$godotIosSimulatorLibZip"
+
     companion object {
         /**
          * Loads a [GodotConfig] from `config/godot.properties` inside [gradleRootDir]

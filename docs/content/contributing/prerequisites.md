@@ -21,13 +21,13 @@ Your Android SDK directory should contain:
 
 ```text
 android-sdk/
-├── build-tools/
-├── cmdline-tools/
-├── licenses/
-├── ndk/
-├── platform-tools/
-├── platforms/
-└── tools/
+├-- build-tools/
+├-- cmdline-tools/
+├-- licenses/
+├-- ndk/
+├-- platform-tools/
+├-- platforms/
+└-- tools/
 ```
 
 - Create `local.properties` file inside `./common` directory that locates the Android SDK installation directory

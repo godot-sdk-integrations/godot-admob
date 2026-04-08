@@ -13,6 +13,7 @@ gradle_build_task="buildAndroidDebug"
 do_create_archive=false
 do_uninstall=false
 do_install=false
+do_run_tests=false
 
 
 function display_help()
@@ -22,7 +23,7 @@ function display_help()
 	echo_yellow "libraries and configuration."
 	echo
 	"$SCRIPT_DIR"/echocolor.sh -Y "Syntax:"
-	echo_yellow "	$0 [-b|c|d|D|h|r|R]"
+	echo_yellow "	$0 [-b|c|d|D|h|r|R|t]"
 	echo
 	"$SCRIPT_DIR"/echocolor.sh -Y "Options:"
 	echo_yellow "	b	build plugin for the Android platform"
@@ -32,6 +33,7 @@ function display_help()
 	echo_yellow "	h	display usage information"
 	echo_yellow "	r	build Android plugin with release build variant"
 	echo_yellow "	R	create Android release archive"
+	echo_yellow "	t	run Android tests (shows per-suite pass/fail table and code coverage)"
 	echo
 	"$SCRIPT_DIR"/echocolor.sh -Y "Examples:"
 	echo_yellow "	* clean existing build, do a release build for Android, and create archive"
@@ -48,6 +50,9 @@ function display_help()
 	echo
 	echo_yellow "	* clean, build, and create Android release archive"
 	echo_yellow "		$> $0 -R"
+	echo
+	echo_yellow "	* run all Android tests and display coverage summary"
+	echo_yellow "		$> $0 -t"
 	echo
 }
 
@@ -95,7 +100,7 @@ function display_warning()
 }
 
 
-while getopts "bcdDhrR" option; do
+while getopts "bcdDhrRt" option; do
 	case $option in
 		h)
 			display_help
@@ -117,6 +122,9 @@ while getopts "bcdDhrR" option; do
 			;;
 		R)
 			do_create_archive=true
+			;;
+		t)
+			do_run_tests=true
 			;;
 		\?)
 			display_error "Invalid option $option"
@@ -159,4 +167,17 @@ if [[ "$do_install" == true ]]
 then
 	display_status "Installing Android plugin to demo app"
 	"$SCRIPT_DIR"/run_gradle_task.sh "installToDemoAndroid"
+fi
+
+if [[ "$do_run_tests" == true ]]
+then
+	display_status "Running Android tests"
+	# printTestSummary orchestrates the full pipeline:
+	#   1. testDebugUnitTest      - runs all JUnit tests (ignoreFailures=true so
+	#                               coverage always runs even when tests fail)
+	#   2. createDebugUnitTestCoverageReport - generates the JaCoCo XML/HTML report
+	#   3. printTestSummary       - prints the per-suite pass/fail table and the
+	#                               coverage summary, then exits non-zero if any
+	#                               tests failed
+	"$SCRIPT_DIR"/run_gradle_task.sh ":android:printTestSummary"
 fi

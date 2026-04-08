@@ -19,6 +19,7 @@ do_install=false
 do_android_release=false
 do_ios_release=false
 do_full_release=false
+do_run_tests=false
 do_check_format=false
 do_apply_format=false
 
@@ -30,7 +31,7 @@ function display_help()
 	echo_yellow "libraries and configuration."
 	echo
 	"$SCRIPT_DIR"/echocolor.sh -Y "Syntax:"
-	echo_yellow "	$0 [-a|A|c|C|d|D|h|i|I|M|R|z|Z]"
+	echo_yellow "	$0 [-a|A|c|C|d|D|h|i|I|M|R|t|z|Z]"
 	echo
 	"$SCRIPT_DIR"/echocolor.sh -Y "Options:"
 	echo_yellow "	a	build plugin for the Android platform"
@@ -45,6 +46,7 @@ function display_help()
 	echo_yellow "	I	build and create iOS release archive (assumes Godot is already downloaded)"
 	echo_yellow "	M	build and create multi-platform release archive (assumes Godot is already downloaded)"
 	echo_yellow "	R	build and create all release archives (assumes Godot is already downloaded)"
+	echo_yellow "	t	run tests"
 	echo_yellow "	v	verify source code format compliance"
 	echo
 	"$SCRIPT_DIR"/echocolor.sh -Y "Examples:"
@@ -142,7 +144,7 @@ function run_ios_build()
 }
 
 
-while getopts "aAcCdDfhiIMRv" option; do
+while getopts "aAcCdDfhiIMRtv" option; do
 	case $option in
 		h)
 			display_help
@@ -179,6 +181,9 @@ while getopts "aAcCdDfhiIMRv" option; do
 			;;
 		R)
 			do_full_release=true
+			;;
+		t)
+			do_run_tests=true
 			;;
 		v)
 			do_check_format=true
@@ -252,6 +257,12 @@ if [[ "$do_full_release" == true ]]
 then
 	display_status "Creating all release archives"
 	"$SCRIPT_DIR"/run_gradle_task.sh "createArchives"
+fi
+
+if [[ "$do_run_tests" == true ]]
+then
+	display_status "Running tests"
+	"$SCRIPT_DIR"/run_gradle_task.sh "test"
 fi
 
 if [[ "$do_check_format" == true ]]

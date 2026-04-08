@@ -8,8 +8,8 @@
 //
 // Versions are kept in sync with gradle/libs.versions.toml via the
 // version catalog re-export in settings.gradle.kts:
-//   kotlin-android-plugin  →  kotlin("plugin.serialization")
-//   kotlinx-serialization  →  kotlinx-serialization-json runtime
+//   kotlin-android-plugin  ->  kotlin("plugin.serialization")
+//   kotlinx-serialization  ->  kotlinx-serialization-json runtime
 //
 
 plugins {

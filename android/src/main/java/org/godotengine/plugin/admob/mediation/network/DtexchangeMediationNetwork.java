@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 public class DtexchangeMediationNetwork extends MediationNetwork {
 
 	public static final String TAG = "dtexchange";
-	static final String ADAPTER_CLASS = "com.google.ads.mediation.fyber.FyberMediationAdapter";
+	public static final String ADAPTER_CLASS = "com.google.ads.mediation.fyber.FyberMediationAdapter";
 
 	public DtexchangeMediationNetwork() {
 		super(TAG);

@@ -3,10 +3,24 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0721C6992F82623F00A9BA75 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 83E3E131FA04D8177E4E41D1 /* GoogleMobileAds */; };
+		0721C6A22F82629000A9BA75 /* libadmob_plugin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90CAAA9424E71FF10013969F /* libadmob_plugin.a */; };
+		0721C6C12F82639B00A9BA75 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0721C6C02F82639B00A9BA75 /* XCTest.framework */; platformFilter = ios; };
+		0721C6C32F8263C300A9BA75 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 0721C6C22F8263C300A9BA75 /* GoogleMobileAds */; };
+		073E18712F835E0400D42B57 /* MediationNetworkFactoryTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 073E186E2F835E0400D42B57 /* MediationNetworkFactoryTests.mm */; };
+		073E18722F835E0400D42B57 /* GlobalSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073E186C2F835E0400D42B57 /* GlobalSettingsTests.swift */; };
+		073E18732F835E0400D42B57 /* LoadAdRequestTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 073E186D2F835E0400D42B57 /* LoadAdRequestTests.mm */; };
+		073E18742F835E0400D42B57 /* AdmobAdSizeTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 073E18662F835E0400D42B57 /* AdmobAdSizeTests.mm */; };
+		073E18752F835E0400D42B57 /* AdmobTestFixtures.mm in Sources */ = {isa = PBXBuildFile; fileRef = 073E18642F835E0400D42B57 /* AdmobTestFixtures.mm */; };
+		073E18762F835E0400D42B57 /* GAPConverterTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 073E186B2F835E0400D42B57 /* GAPConverterTests.mm */; };
+		073E18772F835E0400D42B57 /* AdmobStatusTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 073E18682F835E0400D42B57 /* AdmobStatusTests.mm */; };
+		073E18782F835E0400D42B57 /* AdmobConfigTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 073E18672F835E0400D42B57 /* AdmobConfigTests.mm */; };
+		073E18792F835E0400D42B57 /* AdSettingsWrapperTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 073E18692F835E0400D42B57 /* AdSettingsWrapperTests.mm */; };
+		073E187A2F835E0400D42B57 /* ConsentManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073E186A2F835E0400D42B57 /* ConsentManagerTests.swift */; };
 		07787D512EDA6C22009B6F5F /* gap_converter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07787D0F2EDA6C22009B6F5F /* gap_converter.mm */; };
 		07787D592EDA6C22009B6F5F /* admob_logger.m in Sources */ = {isa = PBXBuildFile; fileRef = 07787D0D2EDA6C22009B6F5F /* admob_logger.m */; };
 		07A9A9322EFD654F00F8335A /* admob_status.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07A9A92E2EFD654F00F8335A /* admob_status.mm */; };
@@ -53,6 +67,16 @@
 		90CAAA9924E71FF10013969F /* admob_plugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 90CAAA9824E71FF10013969F /* admob_plugin.mm */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		0721C6A32F82629000A9BA75 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 90CAAA8C24E71FF10013969F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 90CAAA9324E71FF10013969F;
+			remoteInfo = admob_plugin;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		90CAAA9224E71FF10013969F /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -66,7 +90,20 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0721C69E2F82629000A9BA75 /* admob_plugin_tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = admob_plugin_tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0721C6C02F82639B00A9BA75 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		073B52C32ECF241C0063663B /* admob_plugin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "admob_plugin-Bridging-Header.h"; sourceTree = "<group>"; };
+		073E18632F835E0400D42B57 /* AdmobTestFixtures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AdmobTestFixtures.h; sourceTree = "<group>"; };
+		073E18642F835E0400D42B57 /* AdmobTestFixtures.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AdmobTestFixtures.mm; sourceTree = "<group>"; };
+		073E18662F835E0400D42B57 /* AdmobAdSizeTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AdmobAdSizeTests.mm; sourceTree = "<group>"; };
+		073E18672F835E0400D42B57 /* AdmobConfigTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AdmobConfigTests.mm; sourceTree = "<group>"; };
+		073E18682F835E0400D42B57 /* AdmobStatusTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AdmobStatusTests.mm; sourceTree = "<group>"; };
+		073E18692F835E0400D42B57 /* AdSettingsWrapperTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AdSettingsWrapperTests.mm; sourceTree = "<group>"; };
+		073E186A2F835E0400D42B57 /* ConsentManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentManagerTests.swift; sourceTree = "<group>"; };
+		073E186B2F835E0400D42B57 /* GAPConverterTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GAPConverterTests.mm; sourceTree = "<group>"; };
+		073E186C2F835E0400D42B57 /* GlobalSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalSettingsTests.swift; sourceTree = "<group>"; };
+		073E186D2F835E0400D42B57 /* LoadAdRequestTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadAdRequestTests.mm; sourceTree = "<group>"; };
+		073E186E2F835E0400D42B57 /* MediationNetworkFactoryTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediationNetworkFactoryTests.mm; sourceTree = "<group>"; };
 		07787D0C2EDA6C22009B6F5F /* admob_logger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = admob_logger.h; sourceTree = "<group>"; };
 		07787D0D2EDA6C22009B6F5F /* admob_logger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = admob_logger.m; sourceTree = "<group>"; };
 		07787D0E2EDA6C22009B6F5F /* gap_converter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gap_converter.h; sourceTree = "<group>"; };
@@ -156,16 +193,61 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0721C69B2F82629000A9BA75 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0721C6C32F8263C300A9BA75 /* GoogleMobileAds in Frameworks */,
+				0721C6C12F82639B00A9BA75 /* XCTest.framework in Frameworks */,
+				0721C6A22F82629000A9BA75 /* libadmob_plugin.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		90CAAA9124E71FF10013969F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0721C6992F82623F00A9BA75 /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		073E18652F835E0400D42B57 /* fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				073E18632F835E0400D42B57 /* AdmobTestFixtures.h */,
+				073E18642F835E0400D42B57 /* AdmobTestFixtures.mm */,
+			);
+			path = fixtures;
+			sourceTree = "<group>";
+		};
+		073E186F2F835E0400D42B57 /* unit */ = {
+			isa = PBXGroup;
+			children = (
+				073E18662F835E0400D42B57 /* AdmobAdSizeTests.mm */,
+				073E18672F835E0400D42B57 /* AdmobConfigTests.mm */,
+				073E18682F835E0400D42B57 /* AdmobStatusTests.mm */,
+				073E18692F835E0400D42B57 /* AdSettingsWrapperTests.mm */,
+				073E186A2F835E0400D42B57 /* ConsentManagerTests.swift */,
+				073E186B2F835E0400D42B57 /* GAPConverterTests.mm */,
+				073E186C2F835E0400D42B57 /* GlobalSettingsTests.swift */,
+				073E186D2F835E0400D42B57 /* LoadAdRequestTests.mm */,
+				073E186E2F835E0400D42B57 /* MediationNetworkFactoryTests.mm */,
+			);
+			path = unit;
+			sourceTree = "<group>";
+		};
+		073E18702F835E0400D42B57 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				073E18652F835E0400D42B57 /* fixtures */,
+				073E186F2F835E0400D42B57 /* unit */,
+			);
+			path = test;
+			sourceTree = "<group>";
+		};
 		07A9A8F42EFD654F00F8335A /* adformat */ = {
 			isa = PBXGroup;
 			children = (
@@ -263,6 +345,7 @@
 		90CAAA8B24E71FF10013969F = {
 			isa = PBXGroup;
 			children = (
+				073E18702F835E0400D42B57 /* test */,
 				90CAAA9624E71FF10013969F /* src */,
 				90CAAA9524E71FF10013969F /* Products */,
 				90CAAAA824E72A8A0013969F /* Frameworks */,
@@ -273,6 +356,7 @@
 			isa = PBXGroup;
 			children = (
 				90CAAA9424E71FF10013969F /* libadmob_plugin.a */,
+				0721C69E2F82629000A9BA75 /* admob_plugin_tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -303,6 +387,7 @@
 		90CAAAA824E72A8A0013969F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0721C6C02F82639B00A9BA75 /* XCTest.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -310,6 +395,27 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0721C69D2F82629000A9BA75 /* admob_plugin_tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0721C6A72F82629000A9BA75 /* Build configuration list for PBXNativeTarget "admob_plugin_tests" */;
+			buildPhases = (
+				0721C69A2F82629000A9BA75 /* Sources */,
+				0721C69B2F82629000A9BA75 /* Frameworks */,
+				0721C69C2F82629000A9BA75 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0721C6A42F82629000A9BA75 /* PBXTargetDependency */,
+			);
+			name = admob_plugin_tests;
+			packageProductDependencies = (
+				0721C6C22F8263C300A9BA75 /* GoogleMobileAds */,
+			);
+			productName = admob_plugin_tests;
+			productReference = 0721C69E2F82629000A9BA75 /* admob_plugin_tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		90CAAA9324E71FF10013969F /* admob_plugin */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 90CAAA9D24E71FF10013969F /* Build configuration list for PBXNativeTarget "admob_plugin" */;
@@ -336,9 +442,14 @@
 		90CAAA8C24E71FF10013969F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1160;
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
 				ORGANIZATIONNAME = Godot;
 				TargetAttributes = {
+					0721C69D2F82629000A9BA75 = {
+						CreatedOnToolsVersion = 26.0;
+					};
 					90CAAA9324E71FF10013969F = {
 						CreatedOnToolsVersion = 11.6;
 						LastSwiftMigration = 1230;
@@ -362,11 +473,39 @@
 			projectRoot = "";
 			targets = (
 				90CAAA9324E71FF10013969F /* admob_plugin */,
+				0721C69D2F82629000A9BA75 /* admob_plugin_tests */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		0721C69C2F82629000A9BA75 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		0721C69A2F82629000A9BA75 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				073E18712F835E0400D42B57 /* MediationNetworkFactoryTests.mm in Sources */,
+				073E18722F835E0400D42B57 /* GlobalSettingsTests.swift in Sources */,
+				073E18732F835E0400D42B57 /* LoadAdRequestTests.mm in Sources */,
+				073E18742F835E0400D42B57 /* AdmobAdSizeTests.mm in Sources */,
+				073E18752F835E0400D42B57 /* AdmobTestFixtures.mm in Sources */,
+				073E18762F835E0400D42B57 /* GAPConverterTests.mm in Sources */,
+				073E18772F835E0400D42B57 /* AdmobStatusTests.mm in Sources */,
+				073E18782F835E0400D42B57 /* AdmobConfigTests.mm in Sources */,
+				073E18792F835E0400D42B57 /* AdSettingsWrapperTests.mm in Sources */,
+				073E187A2F835E0400D42B57 /* ConsentManagerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		90CAAA9024E71FF10013969F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -420,7 +559,207 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		0721C6A42F82629000A9BA75 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 90CAAA9324E71FF10013969F /* admob_plugin */;
+			targetProxy = 0721C6A32F82629000A9BA75 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		0721C6A52F82629000A9BA75 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UC9RM2H3ML;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				GODOT_DIR = "$(SRCROOT)/godot";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(CONFIGURATION_TEMP_DIR)/admob_plugin.build/DerivedSources",
+					"$(SRCROOT)/test/fixtures",
+					"$(SRCROOT)/src",
+					"$(SRCROOT)/src/adformat",
+					"$(SRCROOT)/src/mediation",
+					"$(SRCROOT)/src/model",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(GODOT_DIR)/bin",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"$(GODOT_DIR)/bin/libgodot.ios.template_debug.$(CURRENT_ARCH).simulator.a",
+				);
+				OTHER_CFLAGS = (
+					"-g",
+					"-DDEBUG",
+					"-DDEBUG_ENABLED",
+					"-DDEBUG_MEMORY_ALLOC",
+					"-DDISABLE_FORCED_INLINE",
+					"-DTYPED_METHOD_BIND",
+					"-fmodules",
+					"-fobjc-arc",
+					"-fmessage-length=0",
+					"-fno-strict-aliasing",
+					"-fdiagnostics-print-source-range-info",
+					"-fdiagnostics-show-category=id",
+					"-fdiagnostics-parseable-fixits",
+					"-fpascal-strings",
+					"-fblocks",
+					"-fvisibility=hidden",
+					"-MMD",
+					"-fno-exceptions",
+					"-Wno-ambiguous-macro",
+					"-Wall",
+					"-Werror=return-type",
+					"-DPTRCALL_ENABLED",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-fcxx-modules",
+					"-gdwarf-2",
+					"-O0",
+					"-DDEBUG_MEMORY_ALLOC",
+					"-DDISABLE_FORCED_INLINE",
+					"-D_DEBUG",
+					"-DDEBUG=1",
+					"-DDEBUG_ENABLED",
+					"-DVERSION_4_0",
+					"-DIOS_ENABLED",
+					"-DNEED_LONG_INT",
+					"-DLIBYUV_DISABLE_NEON",
+					"-DIPHONE_ENABLED",
+					"-DUNIX_ENABLED",
+					"-DCOREAUDIO_ENABLED",
+					"-DAPPLE_EMBEDDED_ENABLED",
+					"-isystem",
+					"$(GODOT_DIR)",
+					"-isystem",
+					"$(GODOT_DIR)/drivers/apple_embedded",
+					"-isystem",
+					"$(GODOT_DIR)/platform/ios",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.godotengine.plugin.admob-unit-tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0721C6A62F82629000A9BA75 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UC9RM2H3ML;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				GODOT_DIR = "$(SRCROOT)/godot";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(CONFIGURATION_TEMP_DIR)/admob_plugin.build/DerivedSources",
+					"$(SRCROOT)/test/fixtures",
+					"$(SRCROOT)/src",
+					"$(SRCROOT)/src/adformat",
+					"$(SRCROOT)/src/mediation",
+					"$(SRCROOT)/src/model",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(GODOT_DIR)/bin",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"$(GODOT_DIR)/bin/libgodot.ios.template_debug.$(CURRENT_ARCH).simulator.a",
+				);
+				OTHER_CFLAGS = (
+					"-fmodules",
+					"-fobjc-arc",
+					"-fmessage-length=0",
+					"-fno-strict-aliasing",
+					"-fdiagnostics-print-source-range-info",
+					"-fdiagnostics-show-category=id",
+					"-fdiagnostics-parseable-fixits",
+					"-fpascal-strings",
+					"-fblocks",
+					"-fvisibility=hidden",
+					"-MMD",
+					"-fno-exceptions",
+					"-Wno-ambiguous-macro",
+					"-Wall",
+					"-Werror=return-type",
+					"-DPTRCALL_ENABLED",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-fcxx-modules",
+					"-O2",
+					"-ftree-vectorize",
+					"-DNDEBUG",
+					"-DNS_BLOCK_ASSERTIONS=1",
+					"-DVERSION_4_0",
+					"-DIOS_ENABLED",
+					"-DNEED_LONG_INT",
+					"-DLIBYUV_DISABLE_NEON",
+					"-DIPHONE_ENABLED",
+					"-DUNIX_ENABLED",
+					"-DCOREAUDIO_ENABLED",
+					"-DAPPLE_EMBEDDED_ENABLED",
+					"-isystem",
+					"$(GODOT_DIR)",
+					"-isystem",
+					"$(GODOT_DIR)/drivers/apple_embedded",
+					"-isystem",
+					"$(GODOT_DIR)/platform/ios",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.godotengine.plugin.admob-unit-tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		90CAAA9B24E71FF10013969F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -447,6 +786,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -455,6 +795,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -471,7 +812,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -505,6 +846,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -513,6 +855,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -527,6 +870,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -535,12 +879,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				ENABLE_MODULE_VERIFIER = YES;
 				GODOT_DIR = "$(SRCROOT)/godot";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/adformat",
-					"$(SRCROOT)/mediation",
-					"$(SRCROOT)/model",
+					"$(SRCROOT)/src",
+					"$(SRCROOT)/src/adformat",
+					"$(SRCROOT)/src/mediation",
+					"$(SRCROOT)/src/model",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -552,6 +899,7 @@
 					"$(inherited)",
 					"$(GODOT_DIR)/bin",
 				);
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++17";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-g",
@@ -602,9 +950,11 @@
 					"$(GODOT_DIR)/platform/ios",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_MODULE_NAME = admob_plugin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "src/admob_plugin-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "admob_plugin-Swift.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -615,12 +965,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				ENABLE_MODULE_VERIFIER = YES;
 				GODOT_DIR = "$(SRCROOT)/godot";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/adformat",
-					"$(SRCROOT)/mediation",
-					"$(SRCROOT)/model",
+					"$(SRCROOT)/src",
+					"$(SRCROOT)/src/adformat",
+					"$(SRCROOT)/src/mediation",
+					"$(SRCROOT)/src/model",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -632,6 +985,7 @@
 					"$(inherited)",
 					"$(GODOT_DIR)/bin",
 				);
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++17";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-fmodules",
@@ -673,9 +1027,11 @@
 					"$(GODOT_DIR)/platform/ios",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_MODULE_NAME = admob_plugin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "src/admob_plugin-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "admob_plugin-Swift.h";
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -684,6 +1040,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0721C6A72F82629000A9BA75 /* Build configuration list for PBXNativeTarget "admob_plugin_tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0721C6A52F82629000A9BA75 /* Debug */,
+				0721C6A62F82629000A9BA75 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		90CAAA8F24E71FF10013969F /* Build configuration list for PBXProject "plugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -716,6 +1081,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0721C6C22F8263C300A9BA75 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 66BC1B7F84DCA496E305B184 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
 		83E3E131FA04D8177E4E41D1 /* GoogleMobileAds */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 66BC1B7F84DCA496E305B184 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;

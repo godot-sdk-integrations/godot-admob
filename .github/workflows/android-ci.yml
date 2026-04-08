@@ -1,0 +1,77 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
+name: Android CI
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'common/config/**'
+      - 'common/**/*.gradle.kts'
+      - 'android/config/**'
+      - 'android/src/**'
+      - 'android/**/*.gradle.kts'
+
+jobs:
+  android-build-and-test:
+    name: Android Build & Tests
+    runs-on: ubuntu-22.04
+
+    steps:
+      # -- Checkout ------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # -- Node ----------------------------------------------------------------
+      - name: Install Node
+        uses: ./.github/actions/install-node
+
+      # -- Java ----------------------------------------------------------------
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      # -- Android SDK ---------------------------------------------------------
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      # -- Gradle --------------------------------------------------------------
+      - name: Make Gradle wrapper executable
+        run: chmod +x common/gradlew
+
+      # -- Run Android build ---------------------------------------------------
+      - name: Build Android debug
+        working-directory: common
+        run: ./gradlew buildAndroidDebug --no-daemon --stacktrace
+
+      # -- Run Android tests ---------------------------------------------------
+      # printTestSummary:
+      #   • runs testDebugUnitTest (ignoreFailures = true so coverage can follow)
+      #   • runs createDebugUnitTestCoverageReport
+      #   • prints a formatted TEST RESULTS + CODE COVERAGE table
+      #   • throws GradleException (non-zero exit) only when failed > 0
+      - name: Run Android unit tests
+        id: android_tests
+        working-directory: common
+        run: ./gradlew :android:printTestSummary --no-daemon
+        continue-on-error: true
+
+      # Upload the JUnit XML reports so GitHub can annotate the PR even when
+      # the step above fails (always: true keeps this step active on failure).
+      - name: Upload Android test results
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: android-test-results
+          path: android/build/test-results/testDebugUnitTest/
+          if-no-files-found: ignore
+
+      # Re-fail the job after the artifact is safely uploaded
+      - name: Fail job if tests failed
+        if: steps.android_tests.outcome == 'failure'
+        run: exit 1

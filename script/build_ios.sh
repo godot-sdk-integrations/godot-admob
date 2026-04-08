@@ -19,6 +19,7 @@ do_simulator_build=false
 do_create_archive=false
 do_uninstall=false
 do_install=false
+do_run_tests=false
 
 
 function display_help()
@@ -30,7 +31,7 @@ function display_help()
 	echo_yellow "If plugin version is not set with the -z option, then Godot version will be used."
 	echo
 	"$SCRIPT_DIR"/echocolor.sh -Y "Syntax:"
-	echo_yellow "	$0 [-a|A|b|B|c|d|D|g|G|h|p|P|r|R|s]"
+	echo_yellow "	$0 [-a|A|b|B|c|d|D|g|G|h|p|P|r|R|s|t]"
 	echo
 	"$SCRIPT_DIR"/echocolor.sh -Y "Options:"
 	echo_yellow "	a	update SPM and build both variants of plugin"
@@ -49,6 +50,7 @@ function display_help()
 	echo_yellow "	r	resolve SPM dependencies"
 	echo_yellow "	R	create iOS release archive"
 	echo_yellow "	s	simulator build; use with -b for simulator debug, -B for simulator release"
+	echo_yellow "	t	run iOS tests (shows per-suite pass/fail table and code coverage)"
 	echo
 	"$SCRIPT_DIR"/echocolor.sh -Y "Examples:"
 	echo_yellow "	* clean existing build, remove godot, and rebuild all"
@@ -115,7 +117,7 @@ function display_error()
 }
 
 
-while getopts "aAbBcdDgGhpPrRs" option; do
+while getopts "aAbBcdDgGhpPrRst" option; do
 	case $option in
 		h)
 			display_help
@@ -167,6 +169,9 @@ while getopts "aAbBcdDgGhpPrRs" option; do
 		s)
 			do_simulator_build=true
 			;;
+		t)
+			do_run_tests=true
+			;;
 		\?)
 			display_error "invalid option"
 			echo
@@ -184,7 +189,7 @@ fi
 
 if [[ "$do_clean" == true ]]
 then
-	"$SCRIPT_DIR"/run_gradle_task.sh "cleaniOSBuild"
+	"$SCRIPT_DIR"/run_gradle_task.sh "cleaniOS"
 fi
 
 if [[ "$do_reset_spm" == true ]]
@@ -240,4 +245,10 @@ if [[ "$do_install" == true ]]
 then
 	display_status "Installing iOS plugin to demo app"
 	"$SCRIPT_DIR"/run_gradle_task.sh "installToDemoiOS"
+fi
+
+if [[ "$do_run_tests" == true ]]
+then
+	display_status "Running iOS tests"
+	"$SCRIPT_DIR"/run_gradle_task.sh ":ios:testiOS"
 fi
