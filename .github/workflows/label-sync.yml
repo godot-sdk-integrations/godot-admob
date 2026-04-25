@@ -6,7 +6,8 @@ name: Sync Labels
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
     paths:
       - '.github/config/labels.yml'
 
@@ -18,10 +19,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout 
+        uses: actions/checkout@v6
         with:
           sparse-checkout: .github/config/labels.yml
 
+      - name: Label Sync 
       - uses: EndBug/label-sync@v2
         with:
           config-file: .github/config/labels.yml

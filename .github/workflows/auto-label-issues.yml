@@ -6,7 +6,8 @@ name: Auto Label Issues
 
 on:
   issues:
-    types: [opened]
+    types:
+        - opened
 
 jobs:
   triage:
@@ -16,13 +17,13 @@ jobs:
       contents: read # Required to read the labels.yml file
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout 
         uses: actions/checkout@v6
 
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.14'
+          python-version: 3.x
 
       - name: Install Dependencies
         run: pip install pyyaml google-genai requests

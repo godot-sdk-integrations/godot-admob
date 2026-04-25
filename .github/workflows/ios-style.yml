@@ -6,7 +6,8 @@ name: iOS Code Style
 
 on:
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
     paths:
       - 'ios/src/**/*.m'
       - 'ios/src/**/*.mm'
@@ -18,7 +19,8 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout 
+        uses: actions/checkout@v6
 
       - name: Install SwiftLint
         run: brew install swiftlint

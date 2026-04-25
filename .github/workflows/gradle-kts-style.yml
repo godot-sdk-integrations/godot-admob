@@ -6,7 +6,8 @@ name: Gradle Kotlin DSL Style
 
 on:
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
     paths:
       - '**/*.gradle.kts'
 
@@ -15,7 +16,8 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout 
+        uses: actions/checkout@v6
 
       - name: Install Node
         uses: ./.github/actions/install-node
