@@ -6,7 +6,8 @@ name: GDScript Code Style
 
 on:
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
     paths:
       - 'addon/src/**/*.gd'
       - 'demo/**/*.gd'
@@ -16,7 +17,8 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout 
+        uses: actions/checkout@v6
 
       - name: Install gdtoolkit
         run: |

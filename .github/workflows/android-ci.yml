@@ -6,7 +6,8 @@ name: Android CI
 
 on:
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
     paths:
       - 'common/config/**'
       - 'common/**/*.gradle.kts'
@@ -21,7 +22,7 @@ jobs:
 
     steps:
       # -- Checkout ------------------------------------------------------------
-      - name: Checkout repository
+      - name: Checkout 
         uses: actions/checkout@v6
 
       # -- Node ----------------------------------------------------------------
@@ -38,7 +39,7 @@ jobs:
 
       # -- Android SDK ---------------------------------------------------------
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       # -- Gradle --------------------------------------------------------------
       - name: Make Gradle wrapper executable
@@ -65,7 +66,7 @@ jobs:
       # the step above fails (always: true keeps this step active on failure).
       - name: Upload Android test results
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: android-test-results
           path: android/build/test-results/testDebugUnitTest/

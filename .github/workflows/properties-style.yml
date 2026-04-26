@@ -6,7 +6,8 @@ name: Properties File Style
 
 on:
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
     paths:
       - 'common/config/*.properties'
       - 'ios/config/*.properties'
@@ -16,7 +17,8 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout 
+        uses: actions/checkout@v6
 
       - name: Install editorconfig-checker
         uses: ./.github/actions/install-ec
