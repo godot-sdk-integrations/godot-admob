@@ -7,9 +7,11 @@ icon: fontawesome/solid/hammer
 
 There are three main build scripts located in the `script` directory.
 
-- `build.sh` - the main build script
-- `build_android.sh` - build script for Android platform
-- `build_ios.sh` - build script for iOS platform
+| Script | Description |
+|--------|-------------|
+| `build.sh` | the main build script |
+| `build_android.sh` | build script for Android platform |
+| `build_ios.sh` | build script for iOS platform |
 
 ## <img src="../images/icon.png" width="24">  Cross-Platform Builds
 
@@ -34,11 +36,13 @@ Cross-platform builds with the `build.sh` script.
 
 ### Output Locations
 
-- **GDScript code:** `addon/build/output/`
-- **Debug AAR:** `android/build/outputs/aar/*-debug.aar`
-- **Release AAR:** `android/build/outputs/aar/*-release.aar`
-- **Built plugin:** `common/build/plugin/`
-- **Release archive:** `release/AdmobPlugin-*-v*.zip`
+| Output | Location |
+|--------|----------|
+| **GDScript code:** | `addon/build/output/`|
+| **Debug AAR:** | `android/build/outputs/aar/*-debug.aar` |
+| **Release AAR:** | `android/build/outputs/aar/*-release.aar` |
+| **Built plugin:** | `common/build/plugin/` |
+| **Release archive:** | `release/AdmobPlugin-*-v*.zip` |
 
 ## <img src="../images/icon.png" width="20">  Android Builds
 
@@ -47,10 +51,12 @@ Cross-platform builds with the `build.sh` script.
 ```bash
 # Clean and build Android debug
 ./script/build.sh -a -- -cb
+```
 
 !!! note
-   Options after `--` are passed to `build_android.sh`
+    Options after `--` are passed to `build_android.sh`
 
+```bash
 # Clean and build Android release
 ./script/build.sh -a -- -cbr
 
@@ -87,10 +93,12 @@ If using Android Studio, make sure to open the root Gradle project from the `com
 ```bash
 # Clean and run iOS debug build
 ./script/build.sh -i -- -cb
+```
 
 !!! note
-   Options after `--` are passed to `build_ios.sh`
+    Options after `--` are passed to `build_ios.sh`
 
+```bash
 # Full build (first time - downloads Godot headers automatically)
 ./script/build_ios.sh -A
 
@@ -144,31 +152,34 @@ If using Android Studio, make sure to open the root Gradle project from the `com
 The iOS build process involves several steps that are orchestrated automatically:
 
 1. **Download Godot Headers** (if needed):
-   - Downloads a pre-built Godot headers archive from `github.com/godot-mobile-plugins/godot-headers`
-   - Version is determined by `godotVersion` and `godotReleaseType` in `godot.properties`
-   - Extracted to `ios/godot/` by default, or to the path set by `godot.dir` in `common/local.properties`
-   - The download is skipped if the correct version is already present (checked via a `GODOT_VERSION` file)
-   - If the directory exists but contains a different version, the build fails with a clear error - run `./script/build_ios.sh -gG` to switch versions
+    - Downloads a pre-built Godot headers archive from `github.com/godot-mobile-plugins/godot-headers`
+    - Version is determined by `godotVersion` and `godotReleaseType` in `godot.properties`
+    - Extracted to `ios/godot/` by default, or to the path set by `godot.dir` in `common/local.properties`
+    - The download is skipped if the correct version is already present (checked via a `GODOT_VERSION` file)
+    - If the directory exists but contains a different version, the build fails with a clear error - run `./script/build_ios.sh -gG` to switch versions
 
 2. **Validate Swift Version**:
-   - Reads `swift_version` from `ios/config/ios.properties`
-   - Fails early with a clear error if the property is missing or blank
-   - Syncs the version into `plugin.xcodeproj/project.pbxproj` automatically
+    - Reads `swift_version` from `ios/config/ios.properties`
+    - Fails early with a clear error if the property is missing or blank
+    - Syncs the version into `plugin.xcodeproj/project.pbxproj` automatically
 
 3. **Validate Godot Version**:
-   - Confirms the `GODOT_VERSION` file in the Godot headers directory matches `godotVersion` in `godot.properties`
+    - Confirms the `GODOT_VERSION` file in the Godot headers directory matches `godotVersion` in `godot.properties`
 
 4. **Update & Resolve SPM Packages**:
-   - Reads dependency definitions from `ios/config/spm_dependencies.json`
-   - Injects package references into the Xcode project via `script/spm_manager.rb` (requires Ruby and the `xcodeproj` gem)
-   - Resolves the packages with `xcodebuild -resolvePackageDependencies`
-
+    - Reads dependency definitions from `ios/config/spm_dependencies.json`
+    - Injects package references into the Xcode project via `script/spm_manager.rb` (requires Ruby and the `xcodeproj` gem)
+    - Resolves the packages with `xcodebuild -resolvePackageDependencies`
 5. **Build XCFrameworks**:
-   - Builds up to four variants via `xcodebuild archive`:
-     - `buildiOSDebug` - device (arm64), debug
-     - `buildiOSRelease` - device (arm64), release
-     - `buildiOSDebugSimulator` - simulator (arm64/x86_64), debug
-     - `buildiOSReleaseSimulator` - simulator (arm64/x86_64), release
+    - Builds up to four variants via `xcodebuild archive`:
+     
+   | Build Target                 | Platform  | Architecture       | Configuration |
+   |-----------------------------|-----------|--------------------|---------------|
+   | `buildiOSDebug`             | Device    | `arm64`            | Debug         |
+   | `buildiOSRelease`           | Device    | `arm64`            | Release       |
+   | `buildiOSDebugSimulator`    | Simulator | `arm64` / `x86_64` | Debug         |
+   | `buildiOSReleaseSimulator`  | Simulator | `arm64` / `x86_64` | Release       |
+
    - The `-s` flag selects simulator variants; without it, device variants are built
    - Archives are created as `.xcarchive` bundles under `ios/build/lib/`
    - XCFrameworks combining device and simulator slices are assembled in `ios/build/framework/`
@@ -184,4 +195,4 @@ The iOS build process involves several steps that are orchestrated automatically
 - **Release archive:** `release/AdmobPlugin-iOS-v*.zip`
 
 !!! note
-   Release archives (iOS and Multi) contain only the plugin's own xcframeworks. SPM dependency xcframeworks are intentionally excluded - they are fetched and linked by Xcode at Godot iOS export time using the `Package.resolved` committed with the Xcode project.
+    Release archives (iOS and Multi) contain only the plugin's own xcframeworks. SPM dependency xcframeworks are intentionally excluded - they are fetched and linked by Xcode at Godot iOS export time using the `Package.resolved` committed with the Xcode project.

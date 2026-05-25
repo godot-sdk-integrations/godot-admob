@@ -19,7 +19,7 @@ The UMP SDK handles propagation of the user's actual consent choice to the Googl
 - `show_consent_form()` - To be called after `consent_form_loaded` signal has been emitted or `is_consent_form_available()` returns `true`.
 
 
-## <img src="https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/addon/src/icon.png" width="18"> Testing User Consent Logic
+## <img src="../images/icon.png" width="18"> Testing User Consent Logic
 
 In order to test user consent logic for your app, you need to add your test device's hashed identifier to the `test_device_hashed_ids` array of your `Admob` node (or set it programmatically). If you don't know your test device hashed identifier, then run your app with `is_real` set to `false` and look for a log entry such as the following that is logged on iOS.
 

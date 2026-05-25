@@ -55,12 +55,12 @@ nav = [
       { "Installation" = "contributing/installation.md" },
       { "Troubleshooting" = "contributing/troubleshooting.md" },
       { "GitHub Workflows" = "contributing/github-workflows.md" },
+      { "Documentation Guidelines" = "contributing/documentation-guidelines.md" },
       { "Guidelines" = "contributing/guidelines.md" }
     ]},
   { "Links" = "links.md" }
 ]
 [project.theme]
-language = "en"
 favicon = "images/icon.png"
 logo = "https://godotengine.org/assets/press/icon_color.svg"
 features = [

@@ -34,7 +34,6 @@ att_text = "My ATT text."
 ```
 
 !!! note
-
     The `is_real` and `app_id` configuration items are mandatory and if not found in the `export.cfg` file, then the plugin will fall back to node-based configuration.
 
 ## <img src="./images/icon.png" width="18"> Node-based Export Configuration
@@ -50,5 +49,4 @@ During export, the plugin searches for an `Admob` node in the following order:
 
 !!! note
     If an `Admob` node is not found, then the app will fail due to missing AdMob application identifier.
-
     Therefore; make sure that at least one `Admob` node is present in any one of the scenes in your Godot project.

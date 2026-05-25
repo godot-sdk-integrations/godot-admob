@@ -26,7 +26,7 @@ Banner position can be set to the following values:
 - CENTER
 
 !!! note
-     Use `LoadAdRequest`'s `set_anchor_to_safe_area` method to position banner ads within the device’s safe area, leaving space at the top or bottom to avoid UI elements such as notches, rounded corners, and home indicator bars. When set to `false`, the banner will be anchored directly to the top or bottom edge of the screen, ignoring safe area insets._
+    Use `LoadAdRequest`'s `set_anchor_to_safe_area` method to position banner ads within the device’s safe area, leaving space at the top or bottom to avoid UI elements such as notches, rounded corners, and home indicator bars. When set to `false`, the banner will be anchored directly to the top or bottom edge of the screen, ignoring safe area insets._
 
 ## <img src="../images/icon.png" width="18"> Banner Size
 
