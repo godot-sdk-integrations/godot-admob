@@ -102,7 +102,7 @@ Builds and deploys the project's documentation site to GitHub Pages using the [Z
 | Configure Pages | Configures the GitHub Pages environment |
 | Checkout | Checks out the repository |
 | Setup Python | Installs Python 3.x |
-| Install Dependencies | Upgrades pip and installs `zensical` |
+| Install Dependencies | installs `zensical` |
 | Build Documentation | Runs `zensical build --clean --config-file docs/zensical.toml` |
 | Upload Pages | Uploads `docs/site` as a Pages artifact |
 | Deploy Pages | Deploys the uploaded artifact to GitHub Pages |
