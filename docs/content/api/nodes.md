@@ -11,12 +11,16 @@ icon: fontawesome/solid/circle-nodes
 
 **Properties:**
 
-- `ad_unit_id` - Ad unit ID of the inline adaptive banner ad to be loaded.
-- `max_ad_height` - Maximum pixel height of the requested ad. If set to -1, height will be determined automatically.
-- `clip_threshold` - Minimum portion of the banner’s area (as a percentage) that must be clipped before the banner is considered hidden.
-- `resize_threshold` - Width-change threshold (in pixels) that triggers a banner reload when the ad container is resized by this amount or more.
-- `admob_path` - Path to `Admob` node. Alternatively, the `initialize()` method can be used to provide a reference to the `Admob` node.
+| Property | Description |
+|----------|-------------|
+| `ad_unit_id` | Ad unit ID of the inline adaptive banner ad to be loaded. |
+| `max_ad_height` | Maximum pixel height of the requested ad. If set to -1, height will be determined automatically. |
+| `clip_threshold` | Minimum portion of the banner’s area (as a percentage) that must be clipped before the banner is considered hidden. |
+| `resize_threshold` | Width-change threshold (in pixels) that triggers a banner reload when the ad container is resized by this amount or more. |
+| `admob_path` | Path to `Admob` node. Alternatively, the `initialize()` method can be used to provide a reference to the `Admob` node. |
 
 **Methods:**
 
-- `initialize(admob_node)` - An alternative to initializing with the `admob_path` property.
+| Method | Description |
+|--------|-------------|
+| `initialize(admob_node)` | An alternative to initializing with the `admob_path` property. |
