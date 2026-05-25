@@ -7,9 +7,11 @@ icon: fontawesome/solid/hammer
 
 There are three main build scripts located in the `script` directory.
 
-- `build.sh` - the main build script
-- `build_android.sh` - build script for Android platform
-- `build_ios.sh` - build script for iOS platform
+| Script | Description |
+|--------|-------------|
+| `build.sh` | the main build script |
+| `build_android.sh` | build script for Android platform |
+| `build_ios.sh` | build script for iOS platform |
 
 ## <img src="../images/icon.png" width="24">  Cross-Platform Builds
 
@@ -34,11 +36,13 @@ Cross-platform builds with the `build.sh` script.
 
 ### Output Locations
 
-- **GDScript code:** `addon/build/output/`
-- **Debug AAR:** `android/build/outputs/aar/*-debug.aar`
-- **Release AAR:** `android/build/outputs/aar/*-release.aar`
-- **Built plugin:** `common/build/plugin/`
-- **Release archive:** `release/AdmobPlugin-*-v*.zip`
+| Output | Location |
+|--------|----------|
+| **GDScript code:** | `addon/build/output/`|
+| **Debug AAR:** | `android/build/outputs/aar/*-debug.aar` |
+| **Release AAR:** | `android/build/outputs/aar/*-release.aar` |
+| **Built plugin:** | `common/build/plugin/` |
+| **Release archive:** | `release/AdmobPlugin-*-v*.zip` |
 
 ## <img src="../images/icon.png" width="20">  Android Builds
 
@@ -165,10 +169,14 @@ The iOS build process involves several steps that are orchestrated automatically
 
 5. **Build XCFrameworks**:
    - Builds up to four variants via `xcodebuild archive`:
-     - `buildiOSDebug` - device (arm64), debug
-     - `buildiOSRelease` - device (arm64), release
-     - `buildiOSDebugSimulator` - simulator (arm64/x86_64), debug
-     - `buildiOSReleaseSimulator` - simulator (arm64/x86_64), release
+     
+     | Build Target               | Platform  | Architecture   | Configuration |
+|---------------------------|-----------|----------------|---------------|
+| `buildiOSDebug`           | device    | arm64          | debug         |
+| `buildiOSRelease`         | device    | arm64          | release       |
+| `buildiOSDebugSimulator`  | simulator | arm64/x86_64  | debug         |
+| `buildiOSReleaseSimulator`| simulator | arm64/x86_64  | release       |
+
    - The `-s` flag selects simulator variants; without it, device variants are built
    - Archives are created as `.xcarchive` bundles under `ios/build/lib/`
    - XCFrameworks combining device and simulator slices are assembled in `ios/build/framework/`
