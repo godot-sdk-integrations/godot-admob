@@ -73,10 +73,13 @@ root.gradle.another=another.gradle.kts
 Per-module extra properties and scripts are configured in each module's own `*-build.properties` file (see [Build Customization](#build-customization) below).
 
 **Key Properties:**
-- `pluginNodeName` - The name of the main plugin node used in Godot
-- `pluginVersion` - Semantic version for releases
-- `godotVersion` - Must match your target Godot version
-- `godotReleaseType` - Determines which Godot binary to download
+
+| Property | Description |
+|----------|-------------|
+| `pluginNodeName` | The name of the main plugin node used in Godot |
+| `pluginVersion` | Semantic version for releases |
+| `godotVersion` | Must match your target Godot version |
+| `godotReleaseType` | Determines which Godot binary to download |
 
 ## <img src="../images/icon.png" width="20"> Build Customization
 

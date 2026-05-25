@@ -30,9 +30,9 @@ icon: fontawesome/solid/diagram-project
 ## Making Changes
 
 1. **Edit source code:**
-   - Android: `android/src/main/`
-   - iOS: `ios/src/`
-   - GDScript templates: `addon/src/`
+    - Android: `android/src/main/`
+    - iOS: `ios/src/`
+    - GDScript templates: `addon/src/`
 
 2. **Build and test:**
    ```bash
@@ -48,7 +48,7 @@ icon: fontawesome/solid/diagram-project
    ```
 
 3. **Iterate:**
-   - Make changes
-   - Rebuild with `./script/build.sh -a -- -cb` or  `./script/build.sh -i -- -cb`
-   - Test in demo app
-   - Repeat until tests pass
+    - Make changes
+    - Rebuild with `./script/build.sh -a -- -cb` or  `./script/build.sh -i -- -cb`
+    - Test in demo app
+    - Repeat until tests pass

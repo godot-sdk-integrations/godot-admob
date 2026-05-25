@@ -43,10 +43,10 @@ docs: update installation instructions
 5. Commit with descriptive messages
 6. Push to your fork
 7. Open a Pull Request with:
-   - Clear description of changes
-   - Related issue numbers
-   - Testing performed
-   - Screenshots (if UI changes)
+    - Clear description of changes
+    - Related issue numbers
+    - Testing performed
+    - Screenshots (if UI changes)
 
 ## Reporting Issues
 

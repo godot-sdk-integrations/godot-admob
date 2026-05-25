@@ -19,15 +19,15 @@ icon: fontawesome/solid/vial
    ```
 
 3. **Configure test ads:**
-   - Use test ad unit IDs from Google AdMob documentation
-   - Edit `demo/main.gd` or relevant scene scripts
+    - Use test ad unit IDs from Google AdMob documentation
+    - Edit `demo/main.gd` or relevant scene scripts
 
 4. **Run and test features:**
-   - Banner ads
-   - Interstitial ads
-   - Rewarded ads
-   - App open ads
-   - Native ads
+    - Banner ads
+    - Interstitial ads
+    - Rewarded ads
+    - App open ads
+    - Native ads
 
 ## Android Testing
 
@@ -59,6 +59,7 @@ open ios/demo.xcodeproj
 ## Automated Testing
 
 Consider adding:
+
 - Unit tests for native code
 - Integration tests for ad loading
 - UI tests for demo app
