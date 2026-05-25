@@ -51,10 +51,12 @@ Cross-platform builds with the `build.sh` script.
 ```bash
 # Clean and build Android debug
 ./script/build.sh -a -- -cb
+```
 
 !!! note
-   Options after `--` are passed to `build_android.sh`
+    Options after `--` are passed to `build_android.sh`
 
+```bash
 # Clean and build Android release
 ./script/build.sh -a -- -cbr
 
@@ -91,10 +93,12 @@ If using Android Studio, make sure to open the root Gradle project from the `com
 ```bash
 # Clean and run iOS debug build
 ./script/build.sh -i -- -cb
+```
 
 !!! note
-   Options after `--` are passed to `build_ios.sh`
+    Options after `--` are passed to `build_ios.sh`
 
+```bash
 # Full build (first time - downloads Godot headers automatically)
 ./script/build_ios.sh -A
 
@@ -191,4 +195,4 @@ The iOS build process involves several steps that are orchestrated automatically
 - **Release archive:** `release/AdmobPlugin-iOS-v*.zip`
 
 !!! note
-   Release archives (iOS and Multi) contain only the plugin's own xcframeworks. SPM dependency xcframeworks are intentionally excluded - they are fetched and linked by Xcode at Godot iOS export time using the `Package.resolved` committed with the Xcode project.
+    Release archives (iOS and Multi) contain only the plugin's own xcframeworks. SPM dependency xcframeworks are intentionally excluded - they are fetched and linked by Xcode at Godot iOS export time using the `Package.resolved` committed with the Xcode project.

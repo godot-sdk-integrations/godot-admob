@@ -167,7 +167,7 @@ lib.dir=/path/to/your/shared/aar
 When `lib.dir` is not set, the build uses the `android/libs/` directory. The path supports `~` and environment variable expansion.
 
 !!! note
-  The Godot headers directory must contain a `GODOT_VERSION` file whose content matches the `godotVersion` property in `common/config/godot.properties`. The `downloadGodotHeaders` Gradle task creates this file automatically when it downloads the headers. If the directory already exists but contains a different version, the build will fail with a clear error message - run `./script/build_ios.sh -gG` to remove the old directory and re-download the correct version.
+    The Godot headers directory must contain a `GODOT_VERSION` file whose content matches the `godotVersion` property in `common/config/godot.properties`. The `downloadGodotHeaders` Gradle task creates this file automatically when it downloads the headers. If the directory already exists but contains a different version, the build will fail with a clear error message - run `./script/build_ios.sh -gG` to remove the old directory and re-download the correct version.
 
 ## <img src="../images/icon.png" width="20"> iOS Configuration
 

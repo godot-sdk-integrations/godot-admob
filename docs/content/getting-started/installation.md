@@ -32,7 +32,6 @@ There are 2 ways to install the `Admob` plugin into your project:
 - Enable the plugin via the `Plugins` tab of `Project -> Project Settings...` menu in Godot Editor
 
 !!! note "Installing both Android and iOS versions of the plugin in the same project"
-
     When installing via AssetLib, the installer may display a warning that states
     "_\[x number of\]_ files conflict with your project and won't be installed."
     You can ignore this warning since both versions use the same addon code.
