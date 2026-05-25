@@ -35,4 +35,4 @@ cd common
 ./gradlew :addon:checkGdscriptFormat
 ```
 
-Sub-tasks that require external tools (`ktlint`, `shellcheck`, `editorconfig-checker`, `clang-format`, `swiftlint`, `gdformat`) will fail with a clear error if the tool is not found on `PATH`. See [Prerequisites](#-prerequisites) for installation instructions.
+Sub-tasks that require external tools (`ktlint`, `shellcheck`, `editorconfig-checker`, `clang-format`, `swiftlint`, `gdformat`) will fail with a clear error if the tool is not found on `PATH`. See [Prerequisites](prerequisites.md) for installation instructions.

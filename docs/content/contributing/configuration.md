@@ -70,7 +70,7 @@ root.extra.anotherProperty=property value
 root.gradle.another=another.gradle.kts
 ```
 
-Per-module extra properties and scripts are configured in each module's own `*-build.properties` file (see [Build Customization](#-build-customization) below).
+Per-module extra properties and scripts are configured in each module's own `*-build.properties` file (see [Build Customization](#build-customization) below).
 
 **Key Properties:**
 - `pluginNodeName` - The name of the main plugin node used in Godot
@@ -200,7 +200,7 @@ GDScript templates may reference the following tokens for iOS values set in `ios
 | `@iosLinkerFlags@`       | `flags`                       | quoted strings |
 | `@spmDependencies@`      | `spm_dependencies.json`       | GDScript dicts |
 
-The `@spmDependencies@` token produces GDScript dictionary literals with StringName keys and no outer brackets (see [`IosConfig` SPM Dependencies](#iosconfig-spm-dependencies) for the exact format).
+The `@spmDependencies@` token produces GDScript dictionary literals with StringName keys and no outer brackets (see [`IosConfig` SPM Dependencies](build-system-architecture.md#iosconfig-spm-dependencies) for the exact format).
 
 SPM dependencies are configured in the `ios/config/spm_dependencies.json` file in the following format:
 
