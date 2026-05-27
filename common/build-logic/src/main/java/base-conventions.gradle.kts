@@ -63,6 +63,7 @@ project.extra["iosSwiftVersion"]       = iosConfig.swiftVersion
 project.extra["iosFrameworks"]         = iosConfig.frameworks         // List<String>
 project.extra["iosEmbeddedFrameworks"] = iosConfig.embeddedFrameworks // List<String>
 project.extra["iosLinkerFlags"]        = iosConfig.linkerFlags        // List<String>
+project.extra["iosBundleFiles"]        = iosConfig.bundleFiles        // List<String>
 project.extra["iosSpmDependencies"]    = iosConfig.spmDependencies    // List<SpmDependency>
 
 // -- Shared directory layout (replaces common.gradle.kts) ---------------------

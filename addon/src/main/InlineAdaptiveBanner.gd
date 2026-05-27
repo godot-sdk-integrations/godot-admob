@@ -137,7 +137,7 @@ func load_ad() -> void:
 	req.set_ad_size(LoadAdRequest.RequestedAdSize.INLINE_ADAPTIVE)
 
 	if custom_minimum_size.x < MINIMUM_VALID_WIDTH:
-		admob.log_warn("Can't load ad. Invalid inline adaptive banner width: %.1f" % custom_minimum_size.x)
+		GmpLogger.log_warn("Can't load ad. Invalid inline adaptive banner width: %.1f" % custom_minimum_size.x)
 		return
 
 	req.set_adaptive_width(round(custom_minimum_size.x))

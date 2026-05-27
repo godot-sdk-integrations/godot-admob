@@ -39,6 +39,7 @@ import kotlinx.serialization.decodeFromString
  * | `frameworks`          | [frameworks]            | System framework names to link, e.g. `["Foundation.framework"]` |
  * | `embedded_frameworks` | [embeddedFrameworks]    | Frameworks to embed in the app bundle (may be empty)    |
  * | `flags`               | [linkerFlags]           | Extra linker flags, e.g. `["-ObjC"]`                   |
+ * | `bundle_files`        | [bundleFiles]           | Files to include in the app bundle, e.g. `["res://afile.task"]` |
  *
  * Comma-separated properties (`frameworks`, `embedded_frameworks`, `flags`) are
  * split into [List]s at load time - blank entries are dropped - so consumers never
@@ -91,6 +92,13 @@ data class IosConfig(
      * Empty when no extra flags are required.
      */
     val linkerFlags: List<String>,
+    /**
+     * Files to include in the app bundle.
+     *
+     * Parsed from the comma-separated `bundle_files` key in `ios.properties`.
+     * Empty when no extra files are required.
+     */
+    val bundleFiles: List<String>,
     /**
      * Swift Package Manager dependencies decoded from `ios/config/spm_dependencies.json`.
      *
@@ -155,6 +163,7 @@ data class IosConfig(
                 frameworks          = props.splitList("frameworks"),
                 embeddedFrameworks  = props.splitList("embedded_frameworks"),
                 linkerFlags         = props.splitList("flags"),
+                bundleFiles         = props.splitList("bundle_files"),
                 spmDependencies     = spmDependencies,
                 testPlatform        = props.require("test_platform"),
                 testDestinationName = props.require("test_destination_name"),

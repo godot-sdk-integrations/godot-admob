@@ -22,9 +22,14 @@
   color: '#b587f3'
   description: Issue related to documentation
 
+- name: reported bug
+  color: '#c60202'
+  description:
+    Reported issue has been reported as a bug but has not yet been investigated
+
 - name: confirmed bug
   color: '#f60202'
-  description: Reported issue has been confirmed as a bug
+  description: Reported issue has been confirmed as a bug after investigation
 
 - name: feature request
   color: '#a2eeef'

@@ -113,6 +113,100 @@ public final class AdRequestFixtures {
 		return d;
 	}
 
+	// -- Native ad options -----------------------------------------------------
+
+	/**
+	 * Minimal native request with no option keys set — all native ad options should
+	 * use their SDK defaults.
+	 */
+	public static Dictionary minimalNativeRequest() {
+		Dictionary d = new Dictionary();
+		d.put("ad_unit_id", TEST_AD_UNIT_ID);
+		return d;
+	}
+
+	/**
+	 * Native request with a specific {@code native_media_aspect_ratio} value.
+	 *
+	 * @param ratio one of "UNKNOWN", "ANY", "LANDSCAPE", "PORTRAIT", "SQUARE"
+	 */
+	public static Dictionary nativeRequestWithMediaAspectRatio(String ratio) {
+		Dictionary d = minimalNativeRequest();
+		d.put("native_media_aspect_ratio", ratio);
+		return d;
+	}
+
+	/**
+	 * Native request with {@code native_return_urls_for_image_assets} set.
+	 *
+	 * @param value true → SDK returns URLs; false → SDK returns pre-fetched Drawables (default)
+	 */
+	public static Dictionary nativeRequestWithReturnUrlsForImageAssets(boolean value) {
+		Dictionary d = minimalNativeRequest();
+		d.put("native_return_urls_for_image_assets", value);
+		return d;
+	}
+
+	/**
+	 * Native request with {@code native_request_multiple_images} set.
+	 *
+	 * @param value true → allow multiple images per slot; false → one image per slot (default)
+	 */
+	public static Dictionary nativeRequestWithRequestMultipleImages(boolean value) {
+		Dictionary d = minimalNativeRequest();
+		d.put("native_request_multiple_images", value);
+		return d;
+	}
+
+	/**
+	 * Native request with a specific {@code native_ad_choices_placement} value.
+	 *
+	 * @param placement one of "TOP_LEFT", "TOP_RIGHT", "BOTTOM_RIGHT", "BOTTOM_LEFT"
+	 */
+	public static Dictionary nativeRequestWithAdChoicesPlacement(String placement) {
+		Dictionary d = minimalNativeRequest();
+		d.put("native_ad_choices_placement", placement);
+		return d;
+	}
+
+	/**
+	 * Native request with a specific {@code native_image_scale_type} value.
+	 *
+	 * @param scaleType one of "MATRIX", "FIT_XY", "FIT_START", "FIT_CENTER",
+	 *                  "FIT_END", "CENTER", "CENTER_CROP", "CENTER_INSIDE"
+	 */
+	public static Dictionary nativeRequestWithImageScaleType(String scaleType) {
+		Dictionary d = minimalNativeRequest();
+		d.put("native_image_scale_type", scaleType);
+		return d;
+	}
+
+	/**
+	 * Native request with {@code native_disable_validator} set.
+	 *
+	 * @param value true → flag is set; false → flag is explicitly off
+	 */
+	public static Dictionary nativeRequestWithValidatorDisabled(boolean value) {
+		Dictionary d = minimalNativeRequest();
+		d.put("native_disable_validator", value);
+		return d;
+	}
+
+	/**
+	 * Native request with every native-ad option key populated — used to verify that
+	 * all setters are called together without interfering with each other.
+	 */
+	public static Dictionary fullNativeRequest() {
+		Dictionary d = minimalNativeRequest();
+		d.put("native_media_aspect_ratio", "LANDSCAPE");
+		d.put("native_return_urls_for_image_assets", true);
+		d.put("native_request_multiple_images", true);
+		d.put("native_ad_choices_placement", "BOTTOM_LEFT");
+		d.put("native_image_scale_type", "CENTER_CROP");
+		d.put("native_disable_validator", true);
+		return d;
+	}
+
 	// -- Edge-cases ------------------------------------------------------------
 
 	/**

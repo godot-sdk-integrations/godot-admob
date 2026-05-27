@@ -1,3 +1,7 @@
+#
+# © 2026-present https://github.com/cengiz-pz
+#
+
 included:
   - ios/src
 
@@ -16,6 +20,7 @@ opt_in_rules:
   - private_action
   - redundant_nil_coalescing
   - sorted_imports
+  - indentation_width
 
 disabled_rules:
   - empty_parameters
@@ -33,6 +38,11 @@ type_body_length:
 file_length:
   warning: 500
   error: 700
+
+indentation_width:
+  indentation_style: tab
+  width: 4
+  unindent_closure_body: true
 
 identifier_name:
   min_length: 2

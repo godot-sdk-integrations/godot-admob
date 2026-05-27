@@ -39,7 +39,7 @@ func cache(a_ad_id: String, a_ad_data: Object) -> void:
 	_ad_queue.push_front(a_ad_id)
 	while _ads.size() > limit:
 		(
-			Admob
+			GmpLogger
 			. log_warn(
 				(
 					"%s: %s cache size (%d) has exceeded maximum (%d)"

@@ -6,10 +6,12 @@ icon: fontawesome/solid/list-check
 # <img src="../images/icon.png" width="24"> Prerequisites
 
 ## General Requirements
+
 - **Git** - For version control
 - **Bash** - For running build scripts (macOS/Linux native, Windows via WSL or Git Bash)
 
 ## Android Development
+
 - **Java Development Kit (JDK)** - Version 17 or higher
 - **Android SDK** - With the following components:
   - Android SDK Platform Tools
@@ -48,6 +50,7 @@ godot.dir=/path/to/your/shared/godot
 ```
 
 ## iOS Development (macOS only)
+
 - **Xcode** - Latest stable version recommended
 - **Xcode Command Line Tools** - Install via: `xcode-select --install`
 - **Ruby** - Required for SPM dependency management via `spm_manager.rb` (macOS system Ruby is sufficient)

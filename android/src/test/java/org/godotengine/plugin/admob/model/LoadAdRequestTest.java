@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import android.widget.ImageView;
+
 import org.godotengine.godot.Dictionary;
 import org.godotengine.plugin.admob.fixture.AdRequestFixtures;
 import org.junit.jupiter.api.Test;
@@ -255,5 +257,153 @@ public class LoadAdRequestTest {
 		assertEquals("BANNER", request.getAdSize());
 		assertEquals("BOTTOM", request.getAdPosition());
 		assertTrue(request.doAnchorToSafeArea());
+	}
+
+	// -- hasNativeImageScaleType -----------------------------------------------
+
+	@Test
+	public void hasNativeImageScaleType_whenAbsent_returnsFalse() {
+		LoadAdRequest request = new LoadAdRequest(AdRequestFixtures.minimalNativeRequest());
+		assertFalse(request.hasNativeImageScaleType());
+	}
+
+	@Test
+	public void hasNativeImageScaleType_whenPresent_returnsTrue() {
+		LoadAdRequest request = new LoadAdRequest(
+				AdRequestFixtures.nativeRequestWithImageScaleType("CENTER_CROP"));
+		assertTrue(request.hasNativeImageScaleType());
+	}
+
+	@Test
+	public void hasNativeImageScaleType_nativeFlagsDoNotAffectResult_forBannerRequest() {
+		// Banner requests never carry native option keys; the predicate must return false.
+		LoadAdRequest request = new LoadAdRequest(AdRequestFixtures.minimalBannerRequest());
+		assertFalse(request.hasNativeImageScaleType());
+	}
+
+	// -- getNativeImageScaleType -----------------------------------------------
+
+	@Test
+	public void getNativeImageScaleType_whenAbsent_returnsFitCenter() {
+		LoadAdRequest request = new LoadAdRequest(AdRequestFixtures.minimalNativeRequest());
+		assertEquals("FIT_CENTER", request.getNativeImageScaleType().name());
+	}
+
+	@Test
+	public void getNativeImageScaleType_fitCenter_returnsFitCenter() {
+		LoadAdRequest request = new LoadAdRequest(
+				AdRequestFixtures.nativeRequestWithImageScaleType("FIT_CENTER"));
+		assertEquals(ImageView.ScaleType.FIT_CENTER, request.getNativeImageScaleType());
+	}
+
+	@Test
+	public void getNativeImageScaleType_matrix_returnsMatrix() {
+		LoadAdRequest request = new LoadAdRequest(
+				AdRequestFixtures.nativeRequestWithImageScaleType("MATRIX"));
+		assertEquals(ImageView.ScaleType.MATRIX, request.getNativeImageScaleType());
+	}
+
+	@Test
+	public void getNativeImageScaleType_fitXy_returnsFitXy() {
+		LoadAdRequest request = new LoadAdRequest(
+				AdRequestFixtures.nativeRequestWithImageScaleType("FIT_XY"));
+		assertEquals(ImageView.ScaleType.FIT_XY, request.getNativeImageScaleType());
+	}
+
+	@Test
+	public void getNativeImageScaleType_fitStart_returnsFitStart() {
+		LoadAdRequest request = new LoadAdRequest(
+				AdRequestFixtures.nativeRequestWithImageScaleType("FIT_START"));
+		assertEquals(ImageView.ScaleType.FIT_START, request.getNativeImageScaleType());
+	}
+
+	@Test
+	public void getNativeImageScaleType_fitEnd_returnsFitEnd() {
+		LoadAdRequest request = new LoadAdRequest(
+				AdRequestFixtures.nativeRequestWithImageScaleType("FIT_END"));
+		assertEquals(ImageView.ScaleType.FIT_END, request.getNativeImageScaleType());
+	}
+
+	@Test
+	public void getNativeImageScaleType_center_returnsCenter() {
+		LoadAdRequest request = new LoadAdRequest(
+				AdRequestFixtures.nativeRequestWithImageScaleType("CENTER"));
+		assertEquals(ImageView.ScaleType.CENTER, request.getNativeImageScaleType());
+	}
+
+	@Test
+	public void getNativeImageScaleType_centerCrop_returnsCenterCrop() {
+		LoadAdRequest request = new LoadAdRequest(
+				AdRequestFixtures.nativeRequestWithImageScaleType("CENTER_CROP"));
+		assertEquals(ImageView.ScaleType.CENTER_CROP, request.getNativeImageScaleType());
+	}
+
+	@Test
+	public void getNativeImageScaleType_centerInside_returnsCenterInside() {
+		LoadAdRequest request = new LoadAdRequest(
+				AdRequestFixtures.nativeRequestWithImageScaleType("CENTER_INSIDE"));
+		assertEquals(ImageView.ScaleType.CENTER_INSIDE, request.getNativeImageScaleType());
+	}
+
+	@Test
+	public void getNativeImageScaleType_unknownValue_fallsBackToFitCenter() {
+		// The production switch has a default branch that falls back to FIT_CENTER.
+		Dictionary d = AdRequestFixtures.minimalNativeRequest();
+		d.put("native_image_scale_type", "NOT_A_REAL_SCALE_TYPE");
+		LoadAdRequest request = new LoadAdRequest(d);
+		assertEquals("FIT_CENTER", request.getNativeImageScaleType().name());
+	}
+
+	@Test
+	public void getNativeImageScaleType_allValidValues_neverThrow() {
+		// Smoke test: every documented enum string must parse without exception.
+		String[] values = {"MATRIX", "FIT_XY", "FIT_START", "FIT_CENTER",
+				"FIT_END", "CENTER", "CENTER_CROP", "CENTER_INSIDE"};
+		for (String value : values) {
+			LoadAdRequest request = new LoadAdRequest(
+					AdRequestFixtures.nativeRequestWithImageScaleType(value));
+			// getNativeImageScaleType() must not throw and must return a non-null value.
+			assertTrue(request.hasNativeImageScaleType());
+		}
+	}
+
+	// -- isNativeValidatorDisabled ---------------------------------------------
+
+	@Test
+	public void isNativeValidatorDisabled_whenAbsent_returnsFalse() {
+		LoadAdRequest request = new LoadAdRequest(AdRequestFixtures.minimalNativeRequest());
+		assertFalse(request.isNativeValidatorDisabled());
+	}
+
+	@Test
+	public void isNativeValidatorDisabled_whenExplicitlyTrue_returnsTrue() {
+		LoadAdRequest request = new LoadAdRequest(
+				AdRequestFixtures.nativeRequestWithValidatorDisabled(true));
+		assertTrue(request.isNativeValidatorDisabled());
+	}
+
+	@Test
+	public void isNativeValidatorDisabled_whenExplicitlyFalse_returnsFalse() {
+		LoadAdRequest request = new LoadAdRequest(
+				AdRequestFixtures.nativeRequestWithValidatorDisabled(false));
+		assertFalse(request.isNativeValidatorDisabled());
+	}
+
+	@Test
+	public void isNativeValidatorDisabled_bannerRequestWithoutKey_returnsFalse() {
+		// Native option keys are only meaningful for native ads, but the predicate
+		// must always be safe to call on any request type.
+		LoadAdRequest request = new LoadAdRequest(AdRequestFixtures.minimalBannerRequest());
+		assertFalse(request.isNativeValidatorDisabled());
+	}
+
+	// -- combined native options scenario -------------------------------------
+
+	@Test
+	public void fullNativeRequest_nativeOptionPredicatesReturnCorrectValues() {
+		LoadAdRequest request = new LoadAdRequest(AdRequestFixtures.fullNativeRequest());
+		assertTrue(request.isValid());
+		assertTrue(request.hasNativeImageScaleType());
+		assertTrue(request.isNativeValidatorDisabled());
 	}
 }

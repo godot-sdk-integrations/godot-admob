@@ -51,7 +51,6 @@ icon: fontawesome/solid/bolt
 
 ## <img src="../images/icon.png" width="16"> iOS-only Methods
 
-
 | Method | Description |
 | --- | --- |
 | `request_tracking_authorization()` | display App Tracking Transparency (ATT) dialog |

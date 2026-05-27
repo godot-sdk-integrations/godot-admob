@@ -13,7 +13,7 @@ There are three main build scripts located in the `script` directory.
 | `build_android.sh` | build script for Android platform |
 | `build_ios.sh` | build script for iOS platform |
 
-## <img src="../images/icon.png" width="24">  Cross-Platform Builds
+## <img src="../images/icon.png" width="20"> Cross-Platform Builds
 
 Cross-platform builds with the `build.sh` script.
 
@@ -86,7 +86,7 @@ Cross-platform builds with the `build.sh` script.
 
 If using Android Studio, make sure to open the root Gradle project from the `common` directory.
 
-## <img src="../images/icon.png" width="24">  iOS Builds
+## <img src="../images/icon.png" width="20"> iOS Builds
 
 ### Quick Reference
 

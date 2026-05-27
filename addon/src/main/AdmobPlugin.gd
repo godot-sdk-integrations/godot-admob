@@ -11,6 +11,7 @@ const IOS_PLATFORM_VERSION: String = "@iosPlatformVersion@"
 const IOS_FRAMEWORKS: Array = [ @iosFrameworks@ ]
 const IOS_EMBEDDED_FRAMEWORKS: Array = [ @iosEmbeddedFrameworks@ ]
 const IOS_LINKER_FLAGS: Array = [ @iosLinkerFlags@ ]
+const IOS_BUNDLE_FILES: Array = [ @iosBundleFiles@ ]
 const SPM_DEPENDENCIES: Array = [ @spmDependencies@ ]
 
 var android_export_plugin: AndroidExportPlugin
@@ -72,7 +73,7 @@ class AndroidExportPlugin extends EditorExportPlugin:
 				for __dependency in __network.android_dependencies:
 					deps.append(__dependency)
 
-		Admob.log_info("Android dependencies: %s" % str(deps))
+		GmpLogger.log_info("Android dependencies: %s" % str(deps))
 
 		return deps
 
@@ -84,7 +85,7 @@ class AndroidExportPlugin extends EditorExportPlugin:
 			for network in _export_config.enabled_mediation_networks:
 				if network.android_custom_maven_repo and not network.android_custom_maven_repo.is_empty():
 					__custom_repos.append(network.android_custom_maven_repo)
-					Admob.log_info(
+					GmpLogger.log_info(
 						"Added custom Maven repo for %s mediation: %s" %
 						[network.tag, network.android_custom_maven_repo],
 					)
@@ -99,7 +100,7 @@ class AndroidExportPlugin extends EditorExportPlugin:
 			__contents = APP_ID_META_TAG % (_export_config.real_application_id if _export_config.is_real \
 				else _export_config.debug_application_id )
 		else:
-			Admob.log_warn("Export config not found for %s!" % _plugin_name)
+			GmpLogger.log_warn("Export config not found for %s!" % _plugin_name)
 			__contents = ""
 
 		return __contents
@@ -163,6 +164,9 @@ class IosExportPlugin extends EditorExportPlugin:
 
 			for __flag in IOS_LINKER_FLAGS:
 				add_apple_embedded_platform_linker_flags(__flag)
+
+			for __bundle_file in IOS_BUNDLE_FILES:
+				add_apple_embedded_platform_bundle_file(__bundle_file)
 
 			for __spm_dep in SPM_DEPENDENCIES:
 				_spm_dependencies.append(SpmDependency.new(__spm_dep))

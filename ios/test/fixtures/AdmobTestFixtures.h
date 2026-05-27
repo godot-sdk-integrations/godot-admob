@@ -41,6 +41,41 @@
                                         adaptiveWidth:(CGFloat)width
                                             maxHeight:(CGFloat)maxHeight;
 
+// -- Native ad option dictionaries -------------------------------------------
+
+/// Minimal native ad-request dictionary: ad_unit_id only, no option keys set.
++ (Dictionary)makeMinimalNativeRequest;
+
+/// Native ad-request dictionary with @c native_media_aspect_ratio set.
+/// @param ratio one of "UNKNOWN", "ANY", "LANDSCAPE", "PORTRAIT", "SQUARE"
++ (Dictionary)makeNativeRequestWithMediaAspectRatio:(NSString *)ratio;
+
+/// Native ad-request dictionary with @c native_return_urls_for_image_assets set.
+/// @param value when @c YES, the SDK returns image URLs instead of pre-fetched images
++ (Dictionary)makeNativeRequestWithReturnUrlsForImageAssets:(BOOL)value;
+
+/// Native ad-request dictionary with @c native_request_multiple_images set.
+/// @param value when @c YES, the SDK may return multiple images per asset slot
++ (Dictionary)makeNativeRequestWithRequestMultipleImages:(BOOL)value;
+
+/// Native ad-request dictionary with @c native_ad_choices_placement set.
+/// @param placement one of "TOP_LEFT", "TOP_RIGHT", "BOTTOM_RIGHT", "BOTTOM_LEFT"
++ (Dictionary)makeNativeRequestWithAdChoicesPlacement:(NSString *)placement;
+
+/// Native ad-request dictionary with @c native_image_scale_type set.
+/// @param scaleType one of "MATRIX", "FIT_XY", "FIT_START", "FIT_CENTER",
+///                  "FIT_END", "CENTER", "CENTER_CROP", "CENTER_INSIDE"
++ (Dictionary)makeNativeRequestWithImageScaleType:(NSString *)scaleType;
+
+/// Native ad-request dictionary with @c native_disable_validator set.
+/// @param value when @c YES the validator-disable flag is present
++ (Dictionary)makeNativeRequestWithValidatorDisabled:(BOOL)value;
+
+/// Native ad-request dictionary with every native option key set.
+/// Values: media_aspect_ratio=LANDSCAPE, return_urls=YES, multiple_images=YES,
+/// ad_choices_placement=BOTTOM_LEFT, image_scale_type=CENTER_CROP, disable_validator=YES.
++ (Dictionary)makeFullNativeRequest;
+
 // -- AdmobConfig dictionaries ------------------------------------------------
 
 /// Full config dictionary.

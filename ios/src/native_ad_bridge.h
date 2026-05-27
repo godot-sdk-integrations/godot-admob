@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class AdmobNativeAdDelegate;
+#import "admob_plugin-Swift.h"
 
 // Forward declarations
 class AdmobPlugin;

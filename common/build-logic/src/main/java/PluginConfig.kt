@@ -23,24 +23,24 @@ import java.util.Properties
  * are computed from the raw values and are never stored in the `.properties` file.
  */
 data class PluginConfig(
-    /** Human-readable node name, e.g. `PluginTemplate`. */
+    /** Human-readable node name, e.g. `MyNode`. */
     val pluginNodeName: String,
-    /** Snake-case native module name, e.g. `plugin_template`. */
+    /** Snake-case native module name, e.g. `my_node`. */
     val pluginModuleName: String,
-    /** Fully-qualified Java/Kotlin package, e.g. `org.godotengine.plugin.plugintemplate`. */
+    /** Fully-qualified Java/Kotlin package, e.g. `org.godotengine.plugin.mynode`. */
     val pluginPackageName: String,
     /** Semantic version string, e.g. `1.0`. */
     val pluginVersion: String,
 ) {
-    /** Full plugin name used for AAR filenames and GDScript class names, e.g. `PluginTemplatePlugin`. */
+    /** Full plugin name used for AAR filenames and GDScript class names, e.g. `MyPlugin`. */
     val pluginName: String
         get() = "${pluginNodeName}Plugin"
 
-    /** iOS gdnlib initialisation symbol, e.g. `plugin_template_plugin_init`. */
+    /** iOS gdnlib initialisation symbol, e.g. `my_node_plugin_init`. */
     val iosInitializationMethod: String
         get() = "${pluginModuleName}_plugin_init"
 
-    /** iOS gdnlib de-initialisation symbol, e.g. `plugin_template_plugin_deinit`. */
+    /** iOS gdnlib de-initialisation symbol, e.g. `my_node_plugin_deinit`. */
     val iosDeinitializationMethod: String
         get() = "${pluginModuleName}_plugin_deinit"
 

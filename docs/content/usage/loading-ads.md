@@ -14,7 +14,8 @@ icon: fontawesome/solid/spinner
 	- `load_interstitial_ad(ad_request: LoadAdRequest)`
 	- `load_rewarded_ad(ad_request: LoadAdRequest)`
 	- `load_rewarded_interstitial_ad(ad_request: LoadAdRequest)`
-	- `load_app_open_ad(ad_request: LoadAdRequest, auto_show_on_resume: boolean)`
+	- `load_app_open_ad(ad_request: LoadAdRequest, auto_show_on_resume: bool)`
+	- `load_native_ad(ad_request: LoadAdRequest)`
 
 - the `Admob` node will emit the following signals once ads have been loaded or failed to load:
 	- `banner_ad_loaded(ad_info: AdInfo)`
@@ -27,6 +28,8 @@ icon: fontawesome/solid/spinner
 	- `rewarded_interstitial_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)`
 	- `app_open_ad_loaded(ad_info: AdInfo)`
 	- `app_open_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)`
+	- `native_ad_loaded(ad_info: AdInfo)`
+	- `native_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)`
 
 - once ads have been loaded, call corresponding `show_*()` method from the `Admob` node with the `ad_id` received:
 	- `show_banner_ad(ad_id: String)`
@@ -34,3 +37,4 @@ icon: fontawesome/solid/spinner
 	- `show_rewarded_ad(ad_id: String)`
 	- `show_rewarded_interstitial_ad(ad_id: String)`
 	- `show_app_open_ad()`
+	- `show_native_ad(ad_id: String)` — also call `attach_native_ad_to_control(ad_id, control)` to position the ad
