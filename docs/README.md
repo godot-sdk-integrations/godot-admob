@@ -1,6 +1,6 @@
 <div align="center">
 
-![](https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/plugin-template-android.png) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ![](https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/plugin-template-ios.png)
+![](https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-android.png) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ![](https://raw.githubusercontent.com/godot-sdk-integrations/godot-admob/main/demo/assets/admob-ios.png)
 
 </div>
 
