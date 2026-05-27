@@ -228,6 +228,7 @@ fun printCoverageSummary(
 
 configure<org.openrewrite.gradle.RewriteExtension> {
     activeRecipe(
+        "org.openrewrite.java.format.TabsAndIndents",
         "org.openrewrite.java.RemoveUnusedImports",
         "org.openrewrite.java.format.AutoFormat",
         "org.openrewrite.java.format.EmptyNewlineAtEndOfFile",
@@ -308,13 +309,13 @@ node {
 
 // -- Dependencies --------------------------------------------------------------
 
-val androidDependencies =
+val runtimeDependencies =
     extensions
         .getByType<VersionCatalogsExtension>()
         .named("libs")
         .run {
             libraryAliases
-                .filter { it != "rewrite.static.analysis" && !it.startsWith("test.") }
+                .filter { it.startsWith("runtime.") }
                 .map { findLibrary(it).get().get() }
         }
 
@@ -335,12 +336,46 @@ val testRuntimeOnlyDependencies =
             .map { findLibrary(it).get().get() }
     }
 
+val artifactType = Attribute.of("artifactType", String::class.java)
+
 dependencies {
-    "rewrite"(libs.rewrite.static.analysis)
+    "rewrite"(libs.style.rewrite.static.analysis)
     implementation("godot:godot-lib:${godotConfig.godotVersion}.${godotConfig.godotReleaseType}@aar")
-    androidDependencies.forEach { implementation(it) }
-    testDependencies.forEach { testImplementation(it) }
-    testRuntimeOnlyDependencies.forEach { testRuntimeOnly(it) }
+
+    println("DEBUG: Runtime Dependencies")
+    runtimeDependencies.forEach {
+        println("DEBUG: Adding to runtime: $it")
+        implementation(it)
+    }
+
+    println("DEBUG: Test Dependencies")
+    testDependencies.forEach { dependency ->
+        println("DEBUG: Adding to test: $dependency")
+        testImplementation(dependency)
+    }
+
+    println("DEBUG: Test Runtime Only Dependencies")
+    testRuntimeOnlyDependencies.forEach {
+        println("DEBUG: Adding to testRuntimeOnly: $it")
+        testRuntimeOnly(it)
+    }
+
+    attributesSchema {
+        attribute(artifactType) {
+            disambiguationRules.add(JarFirstRule::class.java)
+        }
+    }
+}
+
+// Helper class to prioritize JARs when multiple variants match
+abstract class JarFirstRule : AttributeDisambiguationRule<String> {
+    override fun execute(details: MultipleCandidatesDetails<String>) {
+        if (details.candidateValues.contains("jar")) {
+            details.closestMatch("jar")
+        } else if (details.candidateValues.contains("android-classes-jar")) {
+            details.closestMatch("android-classes-jar")
+        }
+    }
 }
 
 // -- Helpers -------------------------------------------------------------------
@@ -539,6 +574,50 @@ tasks {
         overwrite(false)
     }
 
+    val kotlinSourceFiles =
+        fileTree("src") {
+            include("**/*.kt")
+            exclude("**/*Plugin.kt")
+        }.files
+            .map { it.relativeTo(projectDir).path }
+            .sorted()
+
+    register<Exec>("checkKotlinFormat") {
+        description = "Checks ktlint compliance of Kotlin source files under \$projectDir/src"
+        group = "verification"
+        workingDir = projectDir
+
+        doFirst {
+            if (kotlinSourceFiles.isNotEmpty()) {
+                commandLine(listOf("ktlint") + kotlinSourceFiles)
+            } else {
+                logger.lifecycle("checkKotlinFormat: No source files found to format.")
+
+                // Set commandLine to something harmless so Exec doesn't fail
+                // if it expects a command to be set
+                commandLine("true")
+            }
+        }
+    }
+
+    register<Exec>("formatKotlinSource") {
+        description = "Formats Kotlin source files under $projectDir/src in-place using ktlint"
+        group = "formatting"
+        workingDir = projectDir
+
+        doFirst {
+            if (kotlinSourceFiles.isNotEmpty()) {
+                commandLine(listOf("ktlint", "--format") + kotlinSourceFiles)
+            } else {
+                logger.lifecycle("formatKotlinSource: No source files found to format.")
+
+                // Set commandLine to something harmless so Exec doesn't fail
+                // if it expects a command to be set
+                commandLine("true")
+            }
+        }
+    }
+
     named("preBuild") {
         dependsOn("downloadGodotAar")
     }
@@ -585,7 +664,7 @@ tasks.withType<Test> {
     ignoreFailures = true
 }
 
-// 🔥 Final fix: afterEvaluate guarantees the test task exists when we configure it
+// afterEvaluate guarantees the test task exists when configured
 afterEvaluate {
     tasks.named<Test>("testDebugUnitTest") {
         // This tells Gradle: coverage report MUST run AFTER the test task finishes

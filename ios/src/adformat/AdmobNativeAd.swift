@@ -40,6 +40,22 @@ import UIKit
 	private var lastHeight: CGFloat = -1
 	private var lastVisible: Bool = true
 
+	// -- Native ad options ----------------------------------------------------
+
+	/// The `GADAdLoaderOptions` array used when constructing the `AdLoader`.
+	///
+	/// Set this **before** calling `load()`. Built by `LoadAdRequest.createNativeAdLoaderOptions()`.
+	/// When empty (the default) the SDK uses its own defaults for all loader options.
+	@objc public var adLoaderOptions: [GADAdLoaderOptions] = []
+
+	/// The `UIView.ContentMode` applied to the icon `UIImageView` when the native ad view is built.
+	///
+	/// Set this **before** calling `load()`. Defaults to `.scaleAspectFit`, which matches both the
+	/// Android fallback (`FIT_CENTER`) and the UIImageView system default.
+	@objc public var imageContentMode: UIView.ContentMode = .scaleAspectFit
+
+	// -- Initialiser ----------------------------------------------------------
+
 	@objc public init(adInfo: AdmobAdInfo, adRequest: Request, parentView: UIView, delegate: AdmobNativeAdDelegate) {
 		self.adInfo = adInfo
 		self.adRequest = adRequest
@@ -48,6 +64,8 @@ import UIKit
 
 		super.init()
 	}
+
+	// -- Public API -----------------------------------------------------------
 
 	@objc public func load() {
 		guard parentView != nil else {
@@ -66,11 +84,14 @@ import UIKit
 				return
 			}
 
+			// Pass the caller-configured loader options to AdLoader so that media
+			// aspect ratio, image loading behaviour, multiple-image requests, and
+			// AdChoices placement are all applied before the network request is made.
 			self.adLoader = AdLoader(
 				adUnitID: adUnitId,
 				rootViewController: rootVC,
 				adTypes: [.native],
-				options: []
+				options: self.adLoaderOptions
 			)
 
 			self.adLoader?.delegate = self
@@ -134,6 +155,8 @@ import UIKit
 		}
 	}
 
+	// -- Private helpers ------------------------------------------------------
+
 	private func getRootViewController() -> UIViewController? {
 		if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
 			let rootViewController = windowScene.windows.first?.rootViewController {
@@ -142,6 +165,8 @@ import UIKit
 		return nil
 	}
 }
+
+// MARK: - View construction
 
 private extension AdmobNativeAd {
 
@@ -217,7 +242,12 @@ private extension AdmobNativeAd {
 
 		if nativeAd.icon != nil {
 			let iconView = UIImageView()
-			iconView.contentMode = .scaleAspectFit
+			// Apply the caller-requested content mode so that icon scaling
+			// matches the GDScript NativeImageScaleType the caller chose.
+			// When no scale type was set, this defaults to .scaleAspectFit,
+			// which is both the iOS UIImageView default and the Android
+			// FIT_CENTER fallback.
+			iconView.contentMode = imageContentMode
 			iconView.translatesAutoresizingMaskIntoConstraints = false
 			NSLayoutConstraint.activate([
 				iconView.widthAnchor.constraint(equalToConstant: 40),
@@ -266,8 +296,9 @@ private extension AdmobNativeAd {
 		}
 
 		if nativeAd.starRating != nil {
-			adView.starRatingView = createStarRatingView()
-			mainStack.addArrangedSubview(adView.starRatingView!)
+			let starView = createStarRatingView()
+			adView.starRatingView = starView
+			mainStack.addArrangedSubview(starView)
 		}
 
 		if nativeAd.store != nil || nativeAd.price != nil {
@@ -373,6 +404,8 @@ private extension AdmobNativeAd {
 		}
 		if let iconView = adView.iconView as? UIImageView, let icon = nativeAd.icon {
 			iconView.image = icon.image
+			// contentMode was already applied in createAdViewElements when the
+			// iconView was created; no second assignment is needed here.
 		}
 		if let bodyView = adView.bodyView as? UILabel {
 			bodyView.text = nativeAd.body
@@ -413,6 +446,8 @@ private extension AdmobNativeAd {
 	}
 }
 
+// MARK: - NativeAdLoaderDelegate
+
 extension AdmobNativeAd: NativeAdLoaderDelegate {
 	public func adLoader(_ adLoader: AdLoader, didReceive nativeAd: NativeAd) {
 		Self.logger.debug("AdmobNativeAd: Ad loaded successfully")
@@ -430,6 +465,8 @@ extension AdmobNativeAd: NativeAdLoaderDelegate {
 		delegate?.nativeAdDidFailToLoad(self.adInfo, error: error)
 	}
 }
+
+// MARK: - NativeAdDelegate
 
 extension AdmobNativeAd: NativeAdDelegate {
 

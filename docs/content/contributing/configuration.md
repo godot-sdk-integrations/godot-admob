@@ -131,7 +131,7 @@ Each `extra.*` key sets a Gradle extra property on the corresponding module's pr
 
 Create `common/local.properties` to configure machine-specific paths. This file is gitignored and must be created locally.
 
-#### Android SDK Location
+### Android SDK Location
 
 ```properties
 # Windows

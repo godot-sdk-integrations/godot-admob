@@ -23,6 +23,7 @@ nav = [
       { "Loading Ads" = "usage/loading-ads.md" },
       { "Banner Ads" = "usage/banner-ads.md" },
       { "App Open Ads" = "usage/app-open-ads.md" },
+      { "Native Ads" = "usage/native-ads.md" },
       { "User Consent" = "usage/user-consent.md" },
       { "Multi Scene" = "usage/multi-scene.md" }
     ]},
@@ -60,6 +61,7 @@ nav = [
     ]},
   { "Links" = "links.md" }
 ]
+
 [project.theme]
 favicon = "images/icon.png"
 logo = "https://godotengine.org/assets/press/icon_color.svg"

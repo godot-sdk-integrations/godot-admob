@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.undercouch.download) apply false
     alias(libs.plugins.openrewrite) apply false
     alias(libs.plugins.node) apply false
-    alias(libs.plugins.kotlin.serialization) apply false
 }
 
 // -- Load config data class ----------------------------------------------------
@@ -154,7 +153,7 @@ tasks {
             ).joinToString(" -o ") { "-name \"$it\"" }
 
         val excludePatterns =
-            listOf("node_modules", ".git", "build", ".gradle", ".idea", "bin")
+            listOf("node_modules", ".git", "build", ".gradle", ".idea", "bin", "release", "framework")
                 .joinToString(" ") { "-not -path \"*/$it/*\"" }
 
         commandLine(
@@ -269,17 +268,85 @@ tasks {
         }
     }
 
+    val rubySourceFiles =
+        fileTree("$repositoryRootDir/script") { include("**/*.rb") }
+            .files
+            .map { it.absolutePath }
+            .sorted()
+
+    fun checkRubocop(project: Project) {
+        val rubocopAvailable =
+            project
+                .exec {
+                    commandLine("which", "rubocop")
+                    isIgnoreExitValue = true
+                }.exitValue == 0
+        if (!rubocopAvailable) {
+            throw GradleException("rubocop is not installed or not on PATH.")
+        }
+    }
+
+    register("checkRubyScriptFormat") {
+        description = "Checks Rubocop compliance of all Ruby scripts under script/"
+        group = "verification"
+
+        doLast {
+            checkRubocop(project)
+            if (rubySourceFiles.isEmpty()) {
+                throw GradleException("checkRubyScriptFormat: no *.rb files found.")
+            }
+
+            project.exec {
+                workingDir = file(repositoryRootDir)
+                commandLine(
+                    listOf(
+                        "rubocop",
+                        "--config",
+                        "$repositoryRootDir/.github/config/.rubocop.yml",
+                    ) + rubySourceFiles,
+                )
+            }
+        }
+    }
+
+    register("applyRubyScriptFormat") {
+        description = "Applies Rubocop suggested fixes to Ruby scripts under script/"
+        group = "formatting"
+
+        doLast {
+            checkRubocop(project)
+            if (rubySourceFiles.isEmpty()) {
+                throw GradleException("applyRubyScriptFormat: no *.rb files found.")
+            }
+
+            project.exec {
+                workingDir = file(repositoryRootDir)
+                isIgnoreExitValue = true
+                commandLine(
+                    listOf(
+                        "rubocop",
+                        "--config",
+                        "$repositoryRootDir/.github/config/.rubocop.yml",
+                        "--autocorrect",
+                    ) + rubySourceFiles,
+                )
+            }
+        }
+    }
+
     register("checkFormat") {
         description = "Validates format in all source code"
         group = "verification"
         dependsOn(
             project(":addon").tasks.named("checkGdscriptFormat"),
             project(":android").tasks.named("checkJavaFormat"),
+            project(":android").tasks.named("checkKotlinFormat"),
             project(":android").tasks.named("checkXmlFormat"),
             project(":ios").tasks.named("checkObjCFormat"),
             project(":ios").tasks.named("checkSwiftFormat"),
             "checkKtsFormat",
             "checkBashScriptFormat",
+            "checkRubyScriptFormat",
             "checkEditorConfig",
         )
     }
@@ -290,11 +357,13 @@ tasks {
         dependsOn(
             project(":addon").tasks.named("formatGdscriptSource"),
             project(":android").tasks.named("rewriteRun"),
+            project(":android").tasks.named("formatKotlinSource"),
             project(":android").tasks.named("formatXml"),
             project(":ios").tasks.named("formatObjCSource"),
             project(":ios").tasks.named("formatSwiftSource"),
             "formatKtsSource",
             "applyBashScriptFormat",
+            "applyRubyScriptFormat",
         )
     }
 }

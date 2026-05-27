@@ -21,7 +21,11 @@ val androidDependencies =
     extensions
         .getByType<VersionCatalogsExtension>()
         .named("libs")
-        .run { libraryAliases.map { findLibrary(it).get().get() } }
+        .run {
+            libraryAliases
+                .filter { it.startsWith("runtime.") }
+                .map { findLibrary(it).get().get() }
+        }
 
 // -- Helpers -------------------------------------------------------------------
 
@@ -106,6 +110,8 @@ fun TaskContainerScope.registerGdscriptFormatTask(
                         fileTree("${rootProject.projectDir}/../demo") {
                             include("**/*.gd")
                             exclude("addons/**")
+                            exclude("android/**")
+                            exclude("ios/**")
                         }.files,
                     )
                 }.map { it.relativeTo(addonSrcDir).path }
@@ -153,6 +159,9 @@ tasks {
     val iosLinkerFlags = extra["iosLinkerFlags"] as List<String>
 
     @Suppress("UNCHECKED_CAST")
+    val iosBundleFiles = extra["iosBundleFiles"] as List<String>
+
+    @Suppress("UNCHECKED_CAST")
     val iosSpmDependencies = extra["iosSpmDependencies"] as List<SpmDependency>
 
     register<Delete>("cleanOutput") {
@@ -178,6 +187,28 @@ tasks {
         inputs.files(fileTree(addonSrcDir) { include("**/*.png") })
     }
 
+    val allTokens: Map<String, String> by lazy {
+        buildMap {
+            project.extra.properties.forEach { (k, v) ->
+                val raw = v.toString()
+                put(
+                    k,
+                    if (raw.contains(",")) {
+                        raw.split(",").joinToString(", ") { "\"${it.trim()}\"" }
+                    } else {
+                        raw
+                    },
+                )
+            }
+            put("androidDependencies", androidDependencies.joinToString(", ") { "\"$it\"" })
+            put("iosFrameworks", iosFrameworks.toQuotedString())
+            put("iosEmbeddedFrameworks", iosEmbeddedFrameworks.toQuotedString())
+            put("iosLinkerFlags", iosLinkerFlags.toQuotedString())
+            put("iosBundleFiles", iosBundleFiles.toQuotedString())
+            put("spmDependencies", iosSpmDependencies.toGdscriptFormat())
+        }
+    }
+
     register<Copy>("generateSharedGDScript") {
         description = "Copies shared GDScript templates to the GMPShared output directory and replaces tokens"
         group = "generate"
@@ -191,26 +222,6 @@ tasks {
         include("**/*.gd", "**/*.cfg")
 
         eachFile { println("[DEBUG] Processing shared file $relativePath") }
-
-        val allTokens: Map<String, String> =
-            buildMap {
-                project.extra.properties.forEach { (k, v) ->
-                    val raw = v.toString()
-                    put(
-                        k,
-                        if (raw.contains(",")) {
-                            raw.split(",").joinToString(", ") { "\"${it.trim()}\"" }
-                        } else {
-                            raw
-                        },
-                    )
-                }
-                put("androidDependencies", androidDependencies.joinToString(", ") { "\"$it\"" })
-                put("iosFrameworks", iosFrameworks.toQuotedString())
-                put("iosEmbeddedFrameworks", iosEmbeddedFrameworks.toQuotedString())
-                put("iosLinkerFlags", iosLinkerFlags.toQuotedString())
-                put("spmDependencies", iosSpmDependencies.toGdscriptFormat())
-            }
 
         filter { line: String ->
             allTokens.entries.fold(line) { acc, (key, value) ->
@@ -227,6 +238,7 @@ tasks {
         if (sharedSrcDir.exists()) inputs.dir(sharedSrcDir)
         inputs.files(
             rootProject.file("config/plugin.properties"),
+            rootProject.file("../addon/config/addon-build.properties"),
             rootProject.file("../ios/config/ios.properties"),
             rootProject.file("../ios/config/spm_dependencies.json"),
         )
@@ -239,6 +251,7 @@ tasks {
         inputs.property("iosFrameworks", iosFrameworks.joinToString())
         inputs.property("iosEmbeddedFrameworks", iosEmbeddedFrameworks.joinToString())
         inputs.property("iosLinkerFlags", iosLinkerFlags.joinToString())
+        inputs.property("iosBundleFiles", iosBundleFiles.joinToString())
         inputs.property("iosSpmDependencies", iosSpmDependencies.joinToString())
 
         outputs.dir("$outputDir/addons/GMPShared")
@@ -256,26 +269,6 @@ tasks {
 
         eachFile { println("[DEBUG] Processing file: $relativePath") }
 
-        val allTokens: Map<String, String> =
-            buildMap {
-                project.extra.properties.forEach { (k, v) ->
-                    val raw = v.toString()
-                    put(
-                        k,
-                        if (raw.contains(",")) {
-                            raw.split(",").joinToString(", ") { "\"${it.trim()}\"" }
-                        } else {
-                            raw
-                        },
-                    )
-                }
-                put("androidDependencies", androidDependencies.joinToString(", ") { "\"$it\"" })
-                put("iosFrameworks", iosFrameworks.toQuotedString())
-                put("iosEmbeddedFrameworks", iosEmbeddedFrameworks.toQuotedString())
-                put("iosLinkerFlags", iosLinkerFlags.toQuotedString())
-                put("spmDependencies", iosSpmDependencies.toGdscriptFormat())
-            }
-
         filter { line: String ->
             allTokens.entries.fold(line) { acc, (key, value) ->
                 val token = "@$key@"
@@ -291,6 +284,7 @@ tasks {
         inputs.dir(addonSrcDir)
         inputs.files(
             rootProject.file("config/plugin.properties"),
+            rootProject.file("../addon/config/addon-build.properties"),
             rootProject.file("../ios/config/ios.properties"),
             rootProject.file("../ios/config/spm_dependencies.json"),
         )
@@ -303,6 +297,7 @@ tasks {
         inputs.property("iosFrameworks", iosFrameworks.joinToString())
         inputs.property("iosEmbeddedFrameworks", iosEmbeddedFrameworks.joinToString())
         inputs.property("iosLinkerFlags", iosLinkerFlags.joinToString())
+        inputs.property("iosBundleFiles", iosBundleFiles.joinToString())
         inputs.property("iosSpmDependencies", iosSpmDependencies.joinToString())
 
         outputs.dir("$outputDir/addons/${pluginConfig.pluginName}")

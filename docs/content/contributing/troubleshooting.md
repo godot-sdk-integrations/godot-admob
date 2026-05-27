@@ -39,11 +39,11 @@ rm -rf ios/build/DerivedData
 ./script/build_ios.sh -cb
 ```
 
-**Problem:** Godot version mismatch (headers directory contains the wrong version)
+**Problem:** Godot version mismatch when using a custom `godot.dir`
 ```bash
-# The GODOT_VERSION file in the headers directory must match
+# The GODOT_VERSION file in the configured directory must match
 # the godotVersion property in common/config/godot.properties.
-# Solution: remove the existing headers directory and re-download
+# Solution: remove and re-download Godot into the configured directory
 ./script/build_ios.sh -gG
 ```
 

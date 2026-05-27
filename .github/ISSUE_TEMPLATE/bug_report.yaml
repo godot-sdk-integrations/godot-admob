@@ -43,14 +43,16 @@ body:
     label: Godot Version
     description: What version of Godot are you running?
     options:
-      - 4.5.stable
-      - 4.5.1.stable
-      - 4.6.stable
-      - 4.6.1.stable
+      - 4.7.stable
+      - 4.6.3.stable
       - 4.6.2.stable
+      - 4.6.1.stable
+      - 4.6.stable
+      - 4.5.1.stable
+      - 4.5.stable
       - 4.x
       - Other
-    default: 2
+    default: 0
   validations:
     required: true
 - type: dropdown
@@ -61,12 +63,12 @@ body:
     options:
       - Windows 11
       - Windows (other)
-      - macOS 15
       - macOS 26
+      - macOS 15
       - macOS (other)
-      - Android 14
-      - Android 15
       - Android 16
+      - Android 15
+      - Android 14
       - Android (other)
       - Other OS
     default: 0
@@ -78,13 +80,14 @@ body:
     label: Plugin Version
     description: What version of the plugin are you running?
     options:
-      - "5.0"
-      - "5.1"
-      - "5.2"
-      - "5.3"
+      - "7.0"
       - "6.0"
+      - "5.3"
+      - "5.2"
+      - "5.1"
+      - "5.0"
       - Other
-    default: 4
+    default: 0
   validations:
     required: true
 - type: dropdown
@@ -93,15 +96,15 @@ body:
     label: OS Plugin Is Running On
     description: What operating system is the plugin (and your app) running on?
     options:
-      - Android 13
-      - Android 14
-      - Android 15
       - Android 16
+      - Android 15
+      - Android 14
+      - Android 13
       - Android (other)
-      - iOS 18.x
       - iOS 26.x
+      - iOS 18.x
       - iOS (other)
-    default: 3
+    default: 0
   validations:
     required: true
 - type: textarea

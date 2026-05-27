@@ -790,6 +790,28 @@ Error AdmobPlugin::load_native_ad(Dictionary adData) {
 														 parentView:parentView
 														   delegate:nativeAdBridge];
 
+	// Apply native ad loader options (media aspect ratio, image loading behaviour,
+	// multiple-image requests, AdChoices placement).  Options are built from
+	// only the keys that were explicitly set by the caller; absent keys leave
+	// their SDK defaults untouched.
+	nativeAd.adLoaderOptions = [loadAdRequest createNativeAdLoaderOptions];
+
+	// Apply icon image content mode when the caller set native_image_scale_type.
+	if ([loadAdRequest hasNativeImageScaleType]) {
+		nativeAd.imageContentMode = [loadAdRequest nativeImageContentMode];
+		os_log_debug(admob_log, "%@ load_native_ad: applying imageContentMode %ld", kLogTag,
+				(long)nativeAd.imageContentMode);
+	}
+
+	// The native_disable_validator flag has no equivalent public API in the iOS
+	// Google Mobile Ads SDK.  Log it so developers can see the flag was received.
+	if ([loadAdRequest isNativeValidatorDisabled]) {
+		os_log_debug(admob_log,
+				"%@ load_native_ad: native_disable_validator is set "
+				"(no iOS SDK API available — flag recorded for future use)",
+				kLogTag);
+	}
+
 	// Store the native ad
 	[nativeAds setObject:nativeAd forKey:adId];
 

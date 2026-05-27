@@ -20,3 +20,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "build-logic"
+rootProject.buildFileName = "logic.gradle.kts"

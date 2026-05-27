@@ -27,7 +27,7 @@ enum RequestedAdSize {
 	## size of 468x60 density-independent pixels (dp).
 	LEADERBOARD,  ## A banner ad with dimensions of 728 pixels wide by 90 pixels tall. This is a standard display ad
 	## size that is designed for tablet screens.
-	ADAPTIVE,  ## An ad that automatically adjusts its width and height to fit the device’s available screen space,
+	ADAPTIVE,  ## An ad that automatically adjusts its width and height to fit the device's available screen space,
 	## providing the best-performing banner size for that specific layout.
 	INLINE_ADAPTIVE,  ## An ad that dynamically optimizes its height for the available inline content width, ensuring a
 	## smoothly integrated banner that fits naturally within scrollable or in-feed layouts.
@@ -39,6 +39,38 @@ enum CollapsiblePosition {
 	DISABLED,  ## The banner ad will not be collapsible.
 	TOP,  ## The banner ad will be collapsible from bottom to top.
 	BOTTOM,  ## The banner ad will be collapsible from top to bottom.
+}
+
+## Controls which aspect ratios the SDK should prefer when requesting native ad media.
+## Maps to NativeAdOptions.NATIVE_MEDIA_ASPECT_RATIO_* constants.
+enum NativeMediaAspectRatio {
+	UNKNOWN = 0,  ## No preference for aspect ratio (SDK default).
+	ANY = 1,  ## Any aspect ratio is acceptable.
+	LANDSCAPE = 2,  ## Prefer landscape (wider than tall) media.
+	PORTRAIT = 3,  ## Prefer portrait (taller than wide) media.
+	SQUARE = 4,  ## Prefer square (1:1) media.
+}
+
+## Controls where the AdChoices icon is placed within the native ad view.
+## Maps to NativeAdOptions.ADCHOICES_* constants.
+enum NativeAdChoicesPlacement {
+	TOP_LEFT = 0,  ## AdChoices icon in the top-left corner.
+	TOP_RIGHT = 1,  ## AdChoices icon in the top-right corner (SDK default).
+	BOTTOM_RIGHT = 2,  ## AdChoices icon in the bottom-right corner.
+	BOTTOM_LEFT = 3,  ## AdChoices icon in the bottom-left corner.
+}
+
+## Controls how icon/image assets are scaled inside their ImageView.
+## Maps directly to Android's ImageView.ScaleType enum.
+enum NativeImageScaleType {
+	MATRIX = 0,  ## Scale using the image Matrix.
+	FIT_XY = 1,  ## Scale to fill the view bounds, ignoring aspect ratio.
+	FIT_START = 2,  ## Scale to fit within bounds, aligned to top-left.
+	FIT_CENTER = 3,  ## Scale to fit within bounds, centered (Android default).
+	FIT_END = 4,  ## Scale to fit within bounds, aligned to bottom-right.
+	CENTER = 5,  ## Center image without scaling.
+	CENTER_CROP = 6,  ## Scale so shorter dimension fits; crop the longer one.
+	CENTER_INSIDE = 7,  ## Scale to fit within bounds if larger; center otherwise.
 }
 
 const COLLAPSIBLE_POSITION_NAMES: Dictionary = {
@@ -58,6 +90,14 @@ const DATA_KEY_KEYWORDS := &"keywords"
 const DATA_KEY_USER_ID := &"user_id"
 const DATA_KEY_CUSTOM_DATA := &"custom_data"
 const DATA_KEY_NETWORK_EXTRAS := &"network_extras"
+
+# Native ad option keys — sent to the Java layer inside the ad-request dictionary.
+const DATA_KEY_NATIVE_MEDIA_ASPECT_RATIO := &"native_media_aspect_ratio"
+const DATA_KEY_NATIVE_RETURN_URLS_FOR_IMAGE_ASSETS := &"native_return_urls_for_image_assets"
+const DATA_KEY_NATIVE_REQUEST_MULTIPLE_IMAGES := &"native_request_multiple_images"
+const DATA_KEY_NATIVE_AD_CHOICES_PLACEMENT := &"native_ad_choices_placement"
+const DATA_KEY_NATIVE_IMAGE_SCALE_TYPE := &"native_image_scale_type"
+const DATA_KEY_NATIVE_DISABLE_VALIDATOR := &"native_disable_validator"
 
 const DEFAULT_DATA: Dictionary = {
 	DATA_KEY_KEYWORDS: [],
@@ -193,6 +233,99 @@ func set_network_extras(a_value: Array) -> LoadAdRequest:
 
 func get_network_extras() -> Array:
 	return _data[DATA_KEY_NETWORK_EXTRAS] if _data.has(DATA_KEY_NETWORK_EXTRAS) else []
+
+
+# ---------------------------------------------------------------------------
+# Native Ad Options
+# ---------------------------------------------------------------------------
+
+
+## Sets a preferred media aspect ratio for native ads.
+## Has no effect when used for non-native ad types.
+func set_native_media_aspect_ratio(a_value: NativeMediaAspectRatio) -> LoadAdRequest:
+	_data[DATA_KEY_NATIVE_MEDIA_ASPECT_RATIO] = NativeMediaAspectRatio.keys()[a_value]
+	return self
+
+
+func get_native_media_aspect_ratio() -> NativeMediaAspectRatio:
+	return (
+		NativeMediaAspectRatio[_data[DATA_KEY_NATIVE_MEDIA_ASPECT_RATIO]]
+		if _data.has(DATA_KEY_NATIVE_MEDIA_ASPECT_RATIO)
+		else NativeMediaAspectRatio.UNKNOWN
+	)
+
+
+## When true the SDK returns image asset URLs instead of pre-fetched Drawable
+## objects, allowing the app to download and manage images itself.
+## Has no effect when used for non-native ad types.
+func set_native_return_urls_for_image_assets(a_value: bool) -> LoadAdRequest:
+	_data[DATA_KEY_NATIVE_RETURN_URLS_FOR_IMAGE_ASSETS] = a_value
+	return self
+
+
+func get_native_return_urls_for_image_assets() -> bool:
+	return (
+		_data[DATA_KEY_NATIVE_RETURN_URLS_FOR_IMAGE_ASSETS]
+		if _data.has(DATA_KEY_NATIVE_RETURN_URLS_FOR_IMAGE_ASSETS)
+		else false
+	)
+
+
+## When true the SDK may return ads that contain multiple images for a single
+## asset slot.  By default only one image per slot is returned.
+## Has no effect when used for non-native ad types.
+func set_native_request_multiple_images(a_value: bool) -> LoadAdRequest:
+	_data[DATA_KEY_NATIVE_REQUEST_MULTIPLE_IMAGES] = a_value
+	return self
+
+
+func get_native_request_multiple_images() -> bool:
+	return (
+		_data[DATA_KEY_NATIVE_REQUEST_MULTIPLE_IMAGES] if _data.has(DATA_KEY_NATIVE_REQUEST_MULTIPLE_IMAGES) else false
+	)
+
+
+## Sets where the AdChoices icon is placed inside the native ad view.
+## Has no effect when used for non-native ad types.
+func set_native_ad_choices_placement(a_value: NativeAdChoicesPlacement) -> LoadAdRequest:
+	_data[DATA_KEY_NATIVE_AD_CHOICES_PLACEMENT] = NativeAdChoicesPlacement.keys()[a_value]
+	return self
+
+
+func get_native_ad_choices_placement() -> NativeAdChoicesPlacement:
+	return (
+		NativeAdChoicesPlacement[_data[DATA_KEY_NATIVE_AD_CHOICES_PLACEMENT]]
+		if _data.has(DATA_KEY_NATIVE_AD_CHOICES_PLACEMENT)
+		else NativeAdChoicesPlacement.TOP_RIGHT
+	)
+
+
+## Sets how icon and image assets are scaled inside their Android ImageView.
+## Has no effect when used for non-native ad types.
+func set_native_image_scale_type(a_value: NativeImageScaleType) -> LoadAdRequest:
+	_data[DATA_KEY_NATIVE_IMAGE_SCALE_TYPE] = NativeImageScaleType.keys()[a_value]
+	return self
+
+
+func get_native_image_scale_type() -> NativeImageScaleType:
+	return (
+		NativeImageScaleType[_data[DATA_KEY_NATIVE_IMAGE_SCALE_TYPE]]
+		if _data.has(DATA_KEY_NATIVE_IMAGE_SCALE_TYPE)
+		else NativeImageScaleType.FIT_CENTER
+	)
+
+
+## When true the SDK's native ad validator is disabled.  The validator normally
+## logs warnings when required view bindings are missing; disabling it suppresses
+## those warnings in test / custom-layout scenarios.
+## Has no effect when used for non-native ad types.
+func set_native_disable_validator(a_value: bool) -> LoadAdRequest:
+	_data[DATA_KEY_NATIVE_DISABLE_VALIDATOR] = a_value
+	return self
+
+
+func get_native_disable_validator() -> bool:
+	return _data[DATA_KEY_NATIVE_DISABLE_VALIDATOR] if _data.has(DATA_KEY_NATIVE_DISABLE_VALIDATOR) else false
 
 
 func get_raw_data() -> Dictionary:

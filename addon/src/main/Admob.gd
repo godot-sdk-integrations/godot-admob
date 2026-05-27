@@ -47,14 +47,14 @@ signal app_open_ad_clicked(ad_info: AdInfo)
 signal app_open_ad_showed_full_screen_content(ad_info: AdInfo)
 signal app_open_ad_failed_to_show_full_screen_content(ad_info: AdInfo, error_data: AdError)
 signal app_open_ad_dismissed_full_screen_content(ad_info: AdInfo)
-signal native_ad_loaded(ad_data, response)
-signal native_ad_failed_to_load(ad_data, error)
-signal native_ad_impression(ad_data)
-signal native_ad_size_measured(ad_data)
-signal native_ad_clicked(ad_data)
-signal native_ad_swipe_gesture_clicked(ad_data)
-signal native_ad_opened(ad_data)
-signal native_ad_closed(ad_data)
+signal native_ad_loaded(ad_info: AdInfo, response_info: ResponseInfo)
+signal native_ad_failed_to_load(ad_info: AdInfo, error_data: LoadAdError)
+signal native_ad_impression(ad_info: AdInfo)
+signal native_ad_size_measured(ad_info: AdInfo)
+signal native_ad_clicked(ad_info: AdInfo)
+signal native_ad_swipe_gesture_clicked(ad_info: AdInfo)
+signal native_ad_opened(ad_info: AdInfo)
+signal native_ad_closed(ad_info: AdInfo)
 signal consent_form_loaded
 signal consent_form_dismissed(error_data: FormError)
 signal consent_form_failed_to_load(error_data: FormError)
@@ -438,7 +438,7 @@ func _update_plugin() -> void:
 			_plugin_singleton = Engine.get_singleton(PLUGIN_SINGLETON_NAME)
 			_connect_signals()
 		elif not Engine.is_editor_hint():
-			Admob.log_error("%s singleton not found!" % PLUGIN_SINGLETON_NAME)
+			GmpLogger.log_error("%s singleton not found!" % PLUGIN_SINGLETON_NAME)
 
 
 func _connect_signals() -> void:
@@ -569,7 +569,7 @@ func _connect_signals() -> void:
 
 func initialize() -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		_plugin_singleton.initialize()
 
@@ -578,7 +578,7 @@ func get_initialization_status() -> InitializationStatus:
 	var __status: InitializationStatus
 
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		__status = InitializationStatus.new(_plugin_singleton.get_initialization_status())
 
@@ -682,14 +682,14 @@ func set_request_configuration(a_config: AdmobConfig = null) -> void:
 
 		_plugin_singleton.set_request_configuration(a_config.get_raw_data())
 	else:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 
 func set_app_pause_on_background(a_pause: bool) -> void:
 	if _plugin_singleton != null:
 		_plugin_singleton.set_app_pause_on_background(a_pause)
 	else:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 
 func get_global_settings() -> AdmobSettings:
@@ -698,7 +698,7 @@ func get_global_settings() -> AdmobSettings:
 	if _plugin_singleton != null:
 		__settings = AdmobSettings.new(_plugin_singleton.get_global_settings())
 	else:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 	return __settings
 
@@ -711,7 +711,7 @@ func set_global_settings(a_settings: AdmobSettings = null) -> void:
 
 		_plugin_singleton.set_global_settings(a_settings.get_raw_data())
 	else:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 
 func create_basic_ad_request() -> LoadAdRequest:
@@ -738,57 +738,57 @@ func load_banner_ad(a_request: LoadAdRequest = null) -> void:
 			a_request = create_banner_ad_request()
 		_plugin_singleton.load_banner_ad(a_request.get_raw_data())
 	else:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 
 func is_banner_ad_loaded() -> bool:
 	if _plugin_singleton != null:
 		return _active_banner_ads.is_empty() == false
 	else:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 	return false
 
 
 func show_banner_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_banner_ads.is_empty():
-				Admob.log_error("Cannot show banner ad. No banner ads loaded.")
+				GmpLogger.log_error("Cannot show banner ad. No banner ads loaded.")
 			else:
 				_plugin_singleton.show_banner_ad(_active_banner_ads.last_key())  # show last ad to load
 		else:
 			if _active_banner_ads.has_key(a_ad_id):
 				_plugin_singleton.show_banner_ad(a_ad_id)
 			else:
-				Admob.log_error("Cannot show banner. Ad with ID '%s' not found." % a_ad_id)
+				GmpLogger.log_error("Cannot show banner. Ad with ID '%s' not found." % a_ad_id)
 
 
 func hide_banner_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_banner_ads.is_empty():
-				Admob.log_error("Cannot hide banner ad. No banner ads loaded.")
+				GmpLogger.log_error("Cannot hide banner ad. No banner ads loaded.")
 			else:
 				_plugin_singleton.hide_banner_ad(_active_banner_ads.last_key())  # hide last ad to load
 		else:
 			if _active_banner_ads.has_key(a_ad_id):
 				_plugin_singleton.hide_banner_ad(a_ad_id)
 			else:
-				Admob.log_error("Cannot hide banner. Ad with ID '%s' not found." % a_ad_id)
+				GmpLogger.log_error("Cannot hide banner. Ad with ID '%s' not found." % a_ad_id)
 
 
 func remove_banner_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_banner_ads.is_empty():
-				Admob.log_error("Cannot remove banner ad. No banner ads loaded.")
+				GmpLogger.log_error("Cannot remove banner ad. No banner ads loaded.")
 			else:
 				_plugin_singleton.remove_banner_ad(_active_banner_ads.erase_last())  # remove last ad to load
 		else:
@@ -796,23 +796,23 @@ func remove_banner_ad(a_ad_id: String = "") -> void:
 				_active_banner_ads.erase(a_ad_id)
 				_plugin_singleton.remove_banner_ad(a_ad_id)
 			else:
-				Admob.log_error("Cannot remove banner ad. Ad with ID '%s' not found." % a_ad_id)
+				GmpLogger.log_error("Cannot remove banner ad. Ad with ID '%s' not found." % a_ad_id)
 
 
 func move_banner_ad(a_ad_id: String, a_x: float, a_y: float) -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		_plugin_singleton.move_banner_ad(a_ad_id, a_x, a_y)
 
 
 func get_banner_dimension(a_ad_id: String = "") -> Vector2:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_banner_ads.is_empty():
-				Admob.log_error("Cannot get banner ad dimensions. No banner ads loaded.")
+				GmpLogger.log_error("Cannot get banner ad dimensions. No banner ads loaded.")
 			else:
 				var last_loaded_banner_ad_id = _active_banner_ads.last_key()
 				return Vector2(
@@ -830,11 +830,11 @@ func get_banner_dimension(a_ad_id: String = "") -> Vector2:
 
 func get_banner_dimension_in_pixels(a_ad_id: String = "") -> Vector2:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_banner_ads.is_empty():
-				Admob.log_error("Cannot get banner ad dimensions. No banner ads loaded.")
+				GmpLogger.log_error("Cannot get banner ad dimensions. No banner ads loaded.")
 			else:
 				var last_loaded_banner_ad_id = _active_banner_ads.last_key()
 				return Vector2(
@@ -854,7 +854,7 @@ func get_current_adaptive_banner_size(a_width: int) -> AdSize:
 	var __ad_size: AdSize
 
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		return AdSize.new(_plugin_singleton.get_current_adaptive_banner_size(a_width))
 
@@ -865,7 +865,7 @@ func get_portrait_adaptive_banner_size(a_width: int) -> AdSize:
 	var __ad_size: AdSize
 
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		return AdSize.new(_plugin_singleton.get_portrait_adaptive_banner_size(a_width))
 
@@ -876,7 +876,7 @@ func get_landscape_adaptive_banner_size(a_width: int) -> AdSize:
 	var __ad_size: AdSize
 
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		return AdSize.new(_plugin_singleton.get_landscape_adaptive_banner_size(a_width))
 
@@ -893,25 +893,25 @@ func load_interstitial_ad(a_request: LoadAdRequest = null) -> void:
 			a_request = create_interstitial_ad_request()
 		_plugin_singleton.load_interstitial_ad(a_request.get_raw_data())
 	else:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 
 func is_interstitial_ad_loaded() -> bool:
 	if _plugin_singleton != null:
 		return _active_interstitial_ads.is_empty() == false
 	else:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 	return false
 
 
 func show_interstitial_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_interstitial_ads.is_empty():
-				Admob.log_error("Cannot show interstitial ad. No interstitial ads loaded.")
+				GmpLogger.log_error("Cannot show interstitial ad. No interstitial ads loaded.")
 			else:
 				_plugin_singleton.show_interstitial_ad(_active_interstitial_ads.last_key())  # show last ad to load
 		else:
@@ -920,11 +920,11 @@ func show_interstitial_ad(a_ad_id: String = "") -> void:
 
 func remove_interstitial_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_interstitial_ads.is_empty():
-				Admob.log_error("Cannot remove interstitial ad. No interstitial ads loaded.")
+				GmpLogger.log_error("Cannot remove interstitial ad. No interstitial ads loaded.")
 			else:
 				_plugin_singleton.remove_interstitial_ad(_active_interstitial_ads.erase_last())  # remove last ad to load
 		else:
@@ -932,7 +932,7 @@ func remove_interstitial_ad(a_ad_id: String = "") -> void:
 				_active_interstitial_ads.erase(a_ad_id)
 				_plugin_singleton.remove_interstitial_ad(a_ad_id)
 			else:
-				Admob.log_error("Cannot remove interstitial ad. Ad with ID '%s' not found." % a_ad_id)
+				GmpLogger.log_error("Cannot remove interstitial ad. Ad with ID '%s' not found." % a_ad_id)
 
 
 func create_rewarded_ad_request() -> LoadAdRequest:
@@ -945,25 +945,25 @@ func load_rewarded_ad(a_request: LoadAdRequest = null) -> void:
 			a_request = create_rewarded_ad_request()
 		_plugin_singleton.load_rewarded_ad(a_request.get_raw_data())
 	else:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 
 func is_rewarded_ad_loaded() -> bool:
 	if _plugin_singleton != null:
 		return _active_rewarded_ads.is_empty() == false
 	else:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 	return false
 
 
 func show_rewarded_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_rewarded_ads.is_empty():
-				Admob.log_error("Cannot show rewarded ad. No rewarded ads loaded.")
+				GmpLogger.log_error("Cannot show rewarded ad. No rewarded ads loaded.")
 			else:
 				_plugin_singleton.show_rewarded_ad(_active_rewarded_ads.last_key())  # show last ad to load
 		else:
@@ -972,11 +972,11 @@ func show_rewarded_ad(a_ad_id: String = "") -> void:
 
 func remove_rewarded_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_rewarded_ads.is_empty():
-				Admob.log_error("Cannot remove rewarded ad. No rewarded ads loaded.")
+				GmpLogger.log_error("Cannot remove rewarded ad. No rewarded ads loaded.")
 			else:
 				_plugin_singleton.remove_rewarded_ad(_active_rewarded_ads.erase_last())  # remove last ad to load
 		else:
@@ -984,7 +984,7 @@ func remove_rewarded_ad(a_ad_id: String = "") -> void:
 				_active_rewarded_ads.erase(a_ad_id)
 				_plugin_singleton.remove_rewarded_ad(a_ad_id)
 			else:
-				Admob.log_error("Cannot remove rewarded ad. Ad with ID '%s' not found." % a_ad_id)
+				GmpLogger.log_error("Cannot remove rewarded ad. Ad with ID '%s' not found." % a_ad_id)
 
 
 func create_rewarded_interstitial_ad_request() -> LoadAdRequest:
@@ -997,25 +997,25 @@ func load_rewarded_interstitial_ad(a_request: LoadAdRequest = null) -> void:
 			a_request = create_rewarded_interstitial_ad_request()
 		_plugin_singleton.load_rewarded_interstitial_ad(a_request.get_raw_data())
 	else:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 
 func is_rewarded_interstitial_ad_loaded() -> bool:
 	if _plugin_singleton != null:
 		return _active_rewarded_interstitial_ads.is_empty() == false
 	else:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 	return false
 
 
 func show_rewarded_interstitial_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_rewarded_interstitial_ads.is_empty():
-				Admob.log_error("Cannot show rewarded interstitial ad. No rewarded interstitial ads loaded.")
+				GmpLogger.log_error("Cannot show rewarded interstitial ad. No rewarded interstitial ads loaded.")
 			else:
 				# show last ad to load
 				_plugin_singleton.show_rewarded_interstitial_ad(_active_rewarded_interstitial_ads.last_key())
@@ -1025,11 +1025,11 @@ func show_rewarded_interstitial_ad(a_ad_id: String = "") -> void:
 
 func remove_rewarded_interstitial_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_rewarded_interstitial_ads.is_empty():
-				Admob.log_error("Cannot remove rewarded interstitial ad. No rewarded interstitial ads loaded.")
+				GmpLogger.log_error("Cannot remove rewarded interstitial ad. No rewarded interstitial ads loaded.")
 			else:
 				# remove last ad to load
 				_plugin_singleton.remove_rewarded_interstitial_ad(_active_rewarded_interstitial_ads.erase_last())
@@ -1038,12 +1038,12 @@ func remove_rewarded_interstitial_ad(a_ad_id: String = "") -> void:
 				_active_rewarded_interstitial_ads.erase(a_ad_id)
 				_plugin_singleton.remove_rewarded_interstitial_ad(a_ad_id)
 			else:
-				Admob.log_error("Cannot remove rewarded interstitial ad. Ad with ID '%s' not found." % a_ad_id)
+				GmpLogger.log_error("Cannot remove rewarded interstitial ad. Ad with ID '%s' not found." % a_ad_id)
 
 
 func load_app_open_ad(a_request: LoadAdRequest = null) -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_request == null:
 			a_request = LoadAdRequest.new().set_ad_unit_id(_app_open_id).set_request_agent(request_agent)
@@ -1054,14 +1054,14 @@ func load_app_open_ad(a_request: LoadAdRequest = null) -> void:
 
 func show_app_open_ad() -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		_plugin_singleton.show_app_open_ad()
 
 
 func is_app_open_ad_available() -> bool:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 		return false
 	else:
 		return _plugin_singleton.is_app_open_ad_available()
@@ -1077,57 +1077,57 @@ func load_native_ad(a_request: LoadAdRequest = null) -> void:
 			a_request = create_native_ad_request()
 		_plugin_singleton.load_native_ad(a_request.get_raw_data())
 	else:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 
 func is_native_ad_loaded() -> bool:
 	if _plugin_singleton != null:
 		return _active_native_ads.is_empty() == false
 	else:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 
 	return false
 
 
 func show_native_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_native_ads.is_empty():
-				Admob.log_error("Cannot show native ad. No native ads loaded.")
+				GmpLogger.log_error("Cannot show native ad. No native ads loaded.")
 			else:
 				_plugin_singleton.show_native_ad(_active_native_ads.last_key())
 		else:
 			if _active_native_ads.has_key(a_ad_id):
 				_plugin_singleton.show_native_ad(a_ad_id)
 			else:
-				Admob.log_error("Cannot show native ad. Ad with ID '%s' not found." % a_ad_id)
+				GmpLogger.log_error("Cannot show native ad. Ad with ID '%s' not found." % a_ad_id)
 
 
 func hide_native_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_native_ads.is_empty():
-				Admob.log_error("Cannot hide native ad. No native ads loaded.")
+				GmpLogger.log_error("Cannot hide native ad. No native ads loaded.")
 			else:
 				_plugin_singleton.hide_native_ad(_active_native_ads.last_key())
 		else:
 			if _active_native_ads.has_key(a_ad_id):
 				_plugin_singleton.hide_native_ad(a_ad_id)
 			else:
-				Admob.log_error("Cannot hide native ad. Ad with ID '%s' not found." % a_ad_id)
+				GmpLogger.log_error("Cannot hide native ad. Ad with ID '%s' not found." % a_ad_id)
 
 
 func remove_native_ad(a_ad_id: String = "") -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_ad_id.is_empty():
 			if _active_native_ads.is_empty():
-				Admob.log_error("Cannot remove native ad. No native ads loaded.")
+				GmpLogger.log_error("Cannot remove native ad. No native ads loaded.")
 			else:
 				var _ad_id = _active_native_ads.erase_last()
 				detach_native_ad(_ad_id)
@@ -1138,24 +1138,24 @@ func remove_native_ad(a_ad_id: String = "") -> void:
 				detach_native_ad(a_ad_id)
 				_plugin_singleton.remove_native_ad(a_ad_id)
 			else:
-				Admob.log_error("Cannot remove native ad. Ad with ID '%s' not found." % a_ad_id)
+				GmpLogger.log_error("Cannot remove native ad. Ad with ID '%s' not found." % a_ad_id)
 
 
 ## Attaches a native ad to a Control node. The native ad will follow the Control's position, size and visibility.
 func attach_native_ad_to_control(ad_id: String, control: Control) -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if ad_id.is_empty() or control == null:
 			(
-				Admob
+				GmpLogger
 				. log_error(
 					"Cannot attach native ad to control. Either Ad with ID '%s' not found, or control is null" % ad_id,
 				)
 			)
 		else:
 			if _native_control_bindings.has(ad_id):
-				Admob.log_info("Native ad %s re-attached to new control" % ad_id)
+				GmpLogger.log_info("Native ad %s re-attached to new control" % ad_id)
 			_native_control_bindings[ad_id] = control
 			_sync_native_ad_with_control(ad_id, control)  # Initial sync
 
@@ -1205,14 +1205,14 @@ func _process(_delta):
 
 func load_consent_form() -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		_plugin_singleton.load_consent_form()
 
 
 func show_consent_form() -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		_plugin_singleton.show_consent_form()
 
@@ -1221,7 +1221,7 @@ func get_consent_status() -> UserConsent:
 	var __result: String
 
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		__result = _plugin_singleton.get_consent_status()
 
@@ -1230,7 +1230,7 @@ func get_consent_status() -> UserConsent:
 
 func is_consent_form_available() -> bool:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		return _plugin_singleton.is_consent_form_available()
 	return false
@@ -1238,7 +1238,7 @@ func is_consent_form_available() -> bool:
 
 func update_consent_info(a_parameters: ConsentRequestParameters = null) -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if a_parameters == null:
 			a_parameters = ConsentRequestParameters.new()
@@ -1260,14 +1260,14 @@ func update_consent_info(a_parameters: ConsentRequestParameters = null) -> void:
 
 func reset_consent_info() -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		_plugin_singleton.reset_consent_info()
 
 
 func set_mediation_privacy_settings(privacySettings: NetworkPrivacySettings) -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		var __tags := MediationNetwork.get_all_enabled_tags(enabled_networks)
 		_plugin_singleton.set_mediation_privacy_settings(privacySettings.set_enabled_networks(__tags).get_raw_data())
@@ -1275,22 +1275,22 @@ func set_mediation_privacy_settings(privacySettings: NetworkPrivacySettings) -> 
 
 func request_tracking_authorization() -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if _plugin_singleton.has_method("request_tracking_authorization"):
 			_plugin_singleton.request_tracking_authorization()
 		else:
-			Admob.log_error("request_tracking_authorization() method is not supported")
+			GmpLogger.log_error("request_tracking_authorization() method is not supported")
 
 
 func open_app_settings() -> void:
 	if _plugin_singleton == null:
-		Admob.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
 	else:
 		if _plugin_singleton.has_method("open_app_settings"):
 			_plugin_singleton.open_app_settings()
 		else:
-			Admob.log_error("open_app_settings() method is not supported")
+			GmpLogger.log_error("open_app_settings() method is not supported")
 
 
 func _on_initialization_completed(status_data: Dictionary) -> void:
@@ -1489,31 +1489,31 @@ func _on_native_ad_loaded(a_ad_data: Dictionary, a_response_info: Dictionary) ->
 
 
 func _on_native_ad_failed_to_load(ad_data: Dictionary, error: Dictionary) -> void:
-	emit_signal("native_ad_failed_to_load", ad_data, error)
+	emit_signal("native_ad_failed_to_load", AdInfo.new(ad_data), LoadAdError.new(error))
 
 
 func _on_native_ad_size_measured(ad_data: Dictionary) -> void:
-	emit_signal("native_ad_size_measured", ad_data)
+	emit_signal("native_ad_size_measured", AdInfo.new(ad_data))
 
 
 func _on_native_ad_impression(ad_data: Dictionary) -> void:
-	emit_signal("native_ad_impression", ad_data)
+	emit_signal("native_ad_impression", AdInfo.new(ad_data))
 
 
 func _on_native_ad_clicked(ad_data: Dictionary) -> void:
-	emit_signal("native_ad_clicked", ad_data)
+	emit_signal("native_ad_clicked", AdInfo.new(ad_data))
 
 
 func _on_native_ad_swipe_gesture_clicked(ad_data: Dictionary) -> void:
-	emit_signal("native_ad_swipe_gesture_clicked", ad_data)
+	emit_signal("native_ad_swipe_gesture_clicked", AdInfo.new(ad_data))
 
 
 func _on_native_ad_opened(ad_data: Dictionary) -> void:
-	emit_signal("native_ad_opened", ad_data)
+	emit_signal("native_ad_opened", AdInfo.new(ad_data))
 
 
 func _on_native_ad_closed(ad_data: Dictionary) -> void:
-	emit_signal("native_ad_closed", ad_data)
+	emit_signal("native_ad_closed", AdInfo.new(ad_data))
 
 
 func _on_consent_form_loaded() -> void:
@@ -1542,15 +1542,3 @@ func _on_tracking_authorization_granted() -> void:
 
 func _on_tracking_authorization_denied() -> void:
 	tracking_authorization_denied.emit()
-
-
-static func log_error(a_description: String) -> void:
-	push_error("%s: %s" % [PLUGIN_SINGLETON_NAME, a_description])
-
-
-static func log_warn(a_description: String) -> void:
-	push_warning("%s: %s" % [PLUGIN_SINGLETON_NAME, a_description])
-
-
-static func log_info(a_description: String) -> void:
-	print_rich("[color=lime]%s: INFO: %s[/color]" % [PLUGIN_SINGLETON_NAME, a_description])

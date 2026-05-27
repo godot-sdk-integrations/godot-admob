@@ -19,7 +19,7 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout 
+      - name: Checkout
         uses: actions/checkout@v6
 
       - name: Install SwiftLint

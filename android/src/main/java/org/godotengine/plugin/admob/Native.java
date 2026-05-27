@@ -85,13 +85,26 @@ public class Native {
 
 	void load() {
 		activity.runOnUiThread(() -> {
+			// Build NativeAdOptions from whatever the caller included in the request dictionary.
+			// createNativeAdOptions() only calls setter methods for keys that were explicitly set,
+			// so all unset options remain at their SDK defaults.
+			NativeAdOptions nativeAdOptions = loadRequest.createNativeAdOptions();
+
+			if (loadRequest.isNativeValidatorDisabled()) {
+				// The GMS Ads SDK does not expose a public API to disable the native ad validator.
+				// This flag is recorded here for forward-compatibility; if Google adds a public
+				// API it can be wired in by calling the appropriate builder method above.
+				Log.d(LOG_TAG, "load(): native_disable_validator is set "
+						+ "(no public SDK API available — flag recorded for future use)");
+			}
+
 			AdLoader adLoader = new AdLoader.Builder(activity, loadRequest.getAdUnitId())
 					.forNativeAd(ad -> {
 						nativeAd = ad;
 						createView();
 						nativeListener.onAdLoaded(adInfo, ad.getResponseInfo());
 					})
-					.withNativeAdOptions(new NativeAdOptions.Builder().build())
+					.withNativeAdOptions(nativeAdOptions)
 					.withAdListener(new AdListener() {
 						@Override
 						public void onAdFailedToLoad(@NonNull LoadAdError error) {
@@ -196,6 +209,14 @@ public class Native {
 		});
 	}
 
+	/**
+	 * Binds all available native ad assets to the view hierarchy and applies per-request
+	 * display options such as the image scale type.
+	 *
+	 * <p>The image scale type is applied to both the icon {@link ImageView} and — where the
+	 * SDK exposes a suitable setter — the {@link MediaView}.  If the caller did not set a scale
+	 * type the Android view defaults ({@code FIT_CENTER}) are left in place.
+	 */
 	private void bindNativeAd(NativeAdView adView, NativeAd ad) {
 		TextView headline = adView.findViewById(R.id.ad_headline);
 		MediaView media = adView.findViewById(R.id.ad_media);
@@ -218,6 +239,15 @@ public class Native {
 		if (ad.getIcon() != null) {
 			icon.setImageDrawable(ad.getIcon().getDrawable());
 			adView.setIconView(icon);
+		}
+
+		// Apply caller-specified image scale type to the icon ImageView.
+		// This must be called after the drawable is set so the view measures correctly.
+		if (loadRequest.hasNativeImageScaleType()) {
+			ImageView.ScaleType scaleType = loadRequest.getNativeImageScaleType();
+			icon.setScaleType(scaleType);
+			Log.d(LOG_TAG, "bindNativeAd(): applying image scale type " + scaleType.name()
+					+ " to icon view");
 		}
 
 		adView.setNativeAd(ad);
@@ -251,4 +281,3 @@ public class Native {
 	}
 
 }
-

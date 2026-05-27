@@ -17,7 +17,7 @@ jobs:
       contents: read # Required to read the labels.yml file
 
     steps:
-      - name: Checkout 
+      - name: Checkout
         uses: actions/checkout@v6
 
       - name: Set up Python

@@ -37,7 +37,7 @@ func load_platform_specific_export_config_from_node(a_node: Admob) -> Error:
 
 func print_loaded_config() -> void:
 	super.print_loaded_config()
-	Admob.log_info("... debug_application_id: %s" % debug_application_id)
-	Admob.log_info("... real_application_id: %s" % real_application_id)
-	Admob.log_info("... att_enabled: %s" % ("true" if att_enabled else "false"))
-	Admob.log_info("... att_text: %s" % att_text)
+	GmpLogger.log_info("... debug_application_id: %s" % debug_application_id)
+	GmpLogger.log_info("... real_application_id: %s" % real_application_id)
+	GmpLogger.log_info("... att_enabled: %s" % ("true" if att_enabled else "false"))
+	GmpLogger.log_info("... att_text: %s" % att_text)

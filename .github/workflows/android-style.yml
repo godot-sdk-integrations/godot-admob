@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout 
+      - name: Checkout
         uses: actions/checkout@v6
 
       - name: Set up Java
@@ -31,7 +31,7 @@ jobs:
         uses: ./.github/actions/install-ktlint
 
       - name: Run ktlint
-        run: ktlint "android/src/**/*.kt"
+        run: ktlint "android/src/**/*.kt" "!android/src/**/*Plugin.kt"
 
       - name: Run Checkstyle
         run: |

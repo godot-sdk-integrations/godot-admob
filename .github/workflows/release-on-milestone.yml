@@ -30,7 +30,7 @@ jobs:
 
     steps:
       # -- Checkout ------------------------------------------------------------
-      - name: Checkout 
+      - name: Checkout
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
@@ -119,7 +119,7 @@ jobs:
             --milestone "${EXPECTED_VERSION}" \
             --state closed \
             --json number \
-            --jq '.[].number | "          - #\(.)"' || echo "          - (No milestone issues linked)")
+            --jq '.[].number | "- #\(.)"' || echo "- (No milestone issues linked)")
 
           gh release create "$TAG_NAME" \
             --draft \

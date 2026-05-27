@@ -4,6 +4,11 @@
 
 #import "AdmobTestFixtures.h"
 
+// Test ad-unit ID used by all native fixtures.
+// Google's public test ID for native ads is safe to use without generating
+// real traffic.
+static NSString *const kNativeTestAdUnitId = @"ca-app-pub-3940256099942544/3986624511";
+
 @implementation AdmobTestFixtures
 
 // -- Load-ad-request helpers -------------------------------------------------
@@ -64,6 +69,61 @@
 	if (maxHeight > 0) {
 		dict["adaptive_max_height"] = (double)maxHeight;
 	}
+	return dict;
+}
+
+// -- Native ad option helpers ------------------------------------------------
+
++ (Dictionary)makeMinimalNativeRequest {
+	Dictionary dict;
+	dict["ad_unit_id"] = String([kNativeTestAdUnitId UTF8String]);
+	return dict;
+}
+
++ (Dictionary)makeNativeRequestWithMediaAspectRatio:(NSString *)ratio {
+	Dictionary dict = [self makeMinimalNativeRequest];
+	dict["native_media_aspect_ratio"] = String([ratio UTF8String]);
+	return dict;
+}
+
++ (Dictionary)makeNativeRequestWithReturnUrlsForImageAssets:(BOOL)value {
+	Dictionary dict = [self makeMinimalNativeRequest];
+	dict["native_return_urls_for_image_assets"] = (bool)value;
+	return dict;
+}
+
++ (Dictionary)makeNativeRequestWithRequestMultipleImages:(BOOL)value {
+	Dictionary dict = [self makeMinimalNativeRequest];
+	dict["native_request_multiple_images"] = (bool)value;
+	return dict;
+}
+
++ (Dictionary)makeNativeRequestWithAdChoicesPlacement:(NSString *)placement {
+	Dictionary dict = [self makeMinimalNativeRequest];
+	dict["native_ad_choices_placement"] = String([placement UTF8String]);
+	return dict;
+}
+
++ (Dictionary)makeNativeRequestWithImageScaleType:(NSString *)scaleType {
+	Dictionary dict = [self makeMinimalNativeRequest];
+	dict["native_image_scale_type"] = String([scaleType UTF8String]);
+	return dict;
+}
+
++ (Dictionary)makeNativeRequestWithValidatorDisabled:(BOOL)value {
+	Dictionary dict = [self makeMinimalNativeRequest];
+	dict["native_disable_validator"] = (bool)value;
+	return dict;
+}
+
++ (Dictionary)makeFullNativeRequest {
+	Dictionary dict = [self makeMinimalNativeRequest];
+	dict["native_media_aspect_ratio"] = String("LANDSCAPE");
+	dict["native_return_urls_for_image_assets"] = true;
+	dict["native_request_multiple_images"] = true;
+	dict["native_ad_choices_placement"] = String("BOTTOM_LEFT");
+	dict["native_image_scale_type"] = String("CENTER_CROP");
+	dict["native_disable_validator"] = true;
 	return dict;
 }
 
