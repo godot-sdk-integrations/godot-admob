@@ -175,7 +175,7 @@ The `ios/config/ios.properties` file contains iOS-specific settings:
 
 ```properties
 # iOS deployment target
-platform_version=14.3
+platform_version=15.0
 
 # Swift language version (required - must match your Xcode project)
 swift_version=5.9

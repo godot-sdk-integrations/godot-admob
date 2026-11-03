@@ -18,7 +18,7 @@ import kotlinx.serialization.decodeFromString
  * plugins { id("base-conventions") }
  *
  * val iosConfig = loadIosConfig()
- * println(iosConfig.platformVersion)    // "14.3"
+ * println(iosConfig.platformVersion)    // "15.0"
  * println(iosConfig.swiftVersion)       // "5.9"
  * println(iosConfig.frameworks)         // ["Foundation.framework", "Network.framework"]
  * println(iosConfig.spmDependencies)    // [SpmDependency(url=..., version=..., products=[...])]
@@ -34,7 +34,7 @@ import kotlinx.serialization.decodeFromString
  *
  * | Property key          | Kotlin field            | Description                                             |
  * |-----------------------|-------------------------|---------------------------------------------------------|
- * | `platform_version`    | [platformVersion]       | Minimum iOS deployment target, e.g. `14.3`              |
+ * | `platform_version`    | [platformVersion]       | Minimum iOS deployment target, e.g. `15.0`              |
  * | `swift_version`       | [swiftVersion]          | Swift language version used by Xcode, e.g. `5.9`        |
  * | `frameworks`          | [frameworks]            | System framework names to link, e.g. `["Foundation.framework"]` |
  * | `embedded_frameworks` | [embeddedFrameworks]    | Frameworks to embed in the app bundle (may be empty)    |
@@ -61,7 +61,7 @@ import kotlinx.serialization.decodeFromString
  * | `products`  | [SpmDependency.products]| SPM product names to link against            |
  */
 data class IosConfig(
-    /** Minimum iOS deployment target, e.g. `14.3`. */
+    /** Minimum iOS deployment target, e.g. `15.0`. */
     val platformVersion: String,
     /**
      * Swift language version required by the plugin, e.g. `5.9`.
