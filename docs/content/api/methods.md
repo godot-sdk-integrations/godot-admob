@@ -45,6 +45,8 @@ icon: fontawesome/solid/bolt
 | `get_consent_status() -> UserConsent` | get the status of user's privacy consent | 
 | `is_consent_form_available()` | true if the user consent form has been loaded |
 | `update_consent_info(a_parameters: ConsentRequestParameters)` | update user consent parameters |
+| `is_privacy_options_required()` | true if the user must be given a way to change their consent choices (valid after `consent_info_updated`) |
+| `show_privacy_options_form()` | present the privacy options form so the user can change their consent choices |
 | `reset_consent_info()` | reset the user's privacy consent status
 | `set_mediation_privacy_settings(NetworkPrivacySettings)` | set privacy settings for enabled ad mediation networks |
 | `open_app_settings()` | open the system dialog for app-specific settings |

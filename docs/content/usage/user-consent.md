@@ -17,6 +17,8 @@ The UMP SDK handles propagation of the user's actual consent choice to the Googl
 - `is_consent_form_available()`
 - `load_consent_form()` - To be called if `get_consent_status()` returns status REQUIRED and `is_consent_form_available()` returns `false`.
 - `show_consent_form()` - To be called after `consent_form_loaded` signal has been emitted or `is_consent_form_available()` returns `true`.
+- `is_privacy_options_required()` - Returns `true` when the user must be able to change their consent choices (e.g. in the EEA and UK). Valid after `consent_info_updated` has been emitted.
+- `show_privacy_options_form()` - Presents the privacy options form so the user can change their consent choices; emits `privacy_options_form_dismissed` when it closes. Show an entry point that calls it (for example a row in your settings screen) whenever `is_privacy_options_required()` returns `true`.
 
 
 ## <img src="../images/icon.png" width="18"> Testing User Consent Logic

@@ -123,6 +123,7 @@ public class AdmobPlugin extends GodotPlugin {
 	static final String SIGNAL_CONSENT_FORM_DISMISSED = "consent_form_dismissed";
 	static final String SIGNAL_CONSENT_INFO_UPDATED = "consent_info_updated";
 	static final String SIGNAL_CONSENT_INFO_UPDATE_FAILED = "consent_info_update_failed";
+	static final String SIGNAL_PRIVACY_OPTIONS_FORM_DISMISSED = "privacy_options_form_dismissed";
 
 	private static final String PREFS_NAME = "godot_admob_settings";
 	private static final String PREF_KEY_AD_VOLUME = "ad_volume";
@@ -257,6 +258,7 @@ public class AdmobPlugin extends GodotPlugin {
 
 		signals.add(new SignalInfo(SIGNAL_CONSENT_INFO_UPDATED));
 		signals.add(new SignalInfo(SIGNAL_CONSENT_INFO_UPDATE_FAILED, Dictionary.class));
+		signals.add(new SignalInfo(SIGNAL_PRIVACY_OPTIONS_FORM_DISMISSED, Dictionary.class));
 
 		return signals;
 	}
@@ -1018,6 +1020,25 @@ public class AdmobPlugin extends GodotPlugin {
 							requestConsentError.getMessage()));
 				}
 		);
+	}
+
+	@UsedByGodot
+	public boolean is_privacy_options_required() {
+		ConsentInformation.PrivacyOptionsRequirementStatus status =
+				UserMessagingPlatform.getConsentInformation(activity).getPrivacyOptionsRequirementStatus();
+		Log.d(LOG_TAG, String.format("is_privacy_options_required(): %s", status));
+		return status == ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED;
+	}
+
+	@UsedByGodot
+	public void show_privacy_options_form() {
+		Log.d(LOG_TAG, "show_privacy_options_form()");
+		activity.runOnUiThread(() -> {
+			UserMessagingPlatform.showPrivacyOptionsForm(activity,
+					(ConsentForm.OnConsentFormDismissedListener) formError -> {
+						emitSignal(SIGNAL_PRIVACY_OPTIONS_FORM_DISMISSED, GodotConverter.convert(formError));
+					});
+		});
 	}
 
 	@UsedByGodot

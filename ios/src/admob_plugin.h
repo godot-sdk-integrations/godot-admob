@@ -68,6 +68,7 @@ extern const String CONSENT_FORM_FAILED_TO_LOAD_SIGNAL;
 extern const String CONSENT_FORM_DISMISSED_SIGNAL;
 extern const String CONSENT_INFO_UPDATED_SIGNAL;
 extern const String CONSENT_INFO_UPDATE_FAILED_SIGNAL;
+extern const String PRIVACY_OPTIONS_FORM_DISMISSED_SIGNAL;
 extern const String TRACKING_AUTHORIZATION_GRANTED;
 extern const String TRACKING_AUTHORIZATION_DENIED;
 
@@ -143,6 +144,8 @@ private:
 	bool is_consent_form_available();
 	void update_consent_info(Dictionary consentRequestParameters);
 	void reset_consent_info();
+	bool is_privacy_options_required();
+	Error show_privacy_options_form();
 
 	void set_mediation_privacy_settings(Dictionary settings);
 

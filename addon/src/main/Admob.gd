@@ -60,6 +60,7 @@ signal consent_form_dismissed(error_data: FormError)
 signal consent_form_failed_to_load(error_data: FormError)
 signal consent_info_updated
 signal consent_info_update_failed(error_data: FormError)
+signal privacy_options_form_dismissed(error_data: FormError)
 signal tracking_authorization_granted
 signal tracking_authorization_denied
 
@@ -561,6 +562,8 @@ func _connect_signals() -> void:
 	_plugin_singleton.connect("consent_form_failed_to_load", _on_consent_form_failed_to_load)
 	_plugin_singleton.connect("consent_info_updated", _on_consent_info_updated)
 	_plugin_singleton.connect("consent_info_update_failed", _on_consent_info_update_failed)
+	if _plugin_singleton.has_signal("privacy_options_form_dismissed"):
+		_plugin_singleton.connect("privacy_options_form_dismissed", _on_privacy_options_form_dismissed)
 	if _plugin_singleton.has_signal("tracking_authorization_granted"):
 		_plugin_singleton.connect("tracking_authorization_granted", _on_tracking_authorization_granted)
 	if _plugin_singleton.has_signal("tracking_authorization_denied"):
@@ -1258,6 +1261,26 @@ func update_consent_info(a_parameters: ConsentRequestParameters = null) -> void:
 		_plugin_singleton.update_consent_info(a_parameters.get_raw_data())
 
 
+## Whether the user must be given a way to change their consent choices (UMP's privacy options requirement
+## status). Valid after consent_info_updated. When true, show an entry point (e.g. a settings row) that calls
+## show_privacy_options_form().
+func is_privacy_options_required() -> bool:
+	if _plugin_singleton == null:
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+	else:
+		return _plugin_singleton.is_privacy_options_required()
+	return false
+
+
+## Presents UMP's privacy options form, so the user can change their consent choices. Emits
+## privacy_options_form_dismissed when it closes.
+func show_privacy_options_form() -> void:
+	if _plugin_singleton == null:
+		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
+	else:
+		_plugin_singleton.show_privacy_options_form()
+
+
 func reset_consent_info() -> void:
 	if _plugin_singleton == null:
 		GmpLogger.log_error("%s plugin not initialized" % PLUGIN_SINGLETON_NAME)
@@ -1534,6 +1557,10 @@ func _on_consent_info_updated() -> void:
 
 func _on_consent_info_update_failed(error_data: Dictionary) -> void:
 	consent_info_update_failed.emit(FormError.new(error_data))
+
+
+func _on_privacy_options_form_dismissed(error_data: Dictionary) -> void:
+	privacy_options_form_dismissed.emit(FormError.new(error_data))
 
 
 func _on_tracking_authorization_granted() -> void:

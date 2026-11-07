@@ -100,3 +100,4 @@ These signals are emitted during the User Messaging Platform (UMP) consent flow,
 | `consent_form_loaded` | The consent form was loaded and is ready to be displayed. |
 | `consent_form_failed_to_load(error_data: FormError)` | The consent form failed to load. Inspect `error_data` for the reason. |
 | `consent_form_dismissed(error_data: FormError)` | The user dismissed the consent form. If the user made a selection, `error_data` will be empty; otherwise it will contain the reason for dismissal. |
+| `privacy_options_form_dismissed(error_data: FormError)` | The privacy options form closed. `error_data` is empty unless it failed to present. |
