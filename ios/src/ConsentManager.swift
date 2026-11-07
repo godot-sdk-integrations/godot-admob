@@ -45,6 +45,10 @@ import UserMessagingPlatform
 		return ConsentInformation.shared.formStatus == .available
 	}
 
+	@objc public func isPrivacyOptionsRequired() -> Bool {
+		return ConsentInformation.shared.privacyOptionsRequirementStatus == .required
+	}
+
 	@objc public func reset() {
 		Self.logger.debug("ConsentManager.reset called")
 		ConsentInformation.shared.reset()
@@ -88,7 +92,23 @@ import UserMessagingPlatform
 			}
 
 			let wrapper = ConsentWrapperViewController()
-			wrapper.wrappedForm = form
+			wrapper.presentForm = { presenter, done in form.present(from: presenter, completionHandler: done) }
+			wrapper.presentationCompletion = completion
+			wrapper.modalPresentationStyle = .fullScreen
+
+			viewController.present(wrapper, animated: true, completion: nil)
+		}
+	}
+
+	@objc public func showPrivacyOptionsForm(
+		from viewController: UIViewController,
+		completion: @escaping (NSError?) -> Void
+	) {
+		runOnMain {
+			let wrapper = ConsentWrapperViewController()
+			wrapper.presentForm = { presenter, done in
+				ConsentForm.presentPrivacyOptionsForm(from: presenter, completionHandler: done)
+			}
 			wrapper.presentationCompletion = completion
 			wrapper.modalPresentationStyle = .fullScreen
 
@@ -99,7 +119,8 @@ import UserMessagingPlatform
 
 class ConsentWrapperViewController: UIViewController {
 
-	var wrappedForm: ConsentForm?
+	// Presents a UMP form (the consent form or the privacy options form) from this controller.
+	var presentForm: ((UIViewController, @escaping (Error?) -> Void) -> Void)?
 	var presentationCompletion: ((NSError?) -> Void)?
 
 	override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -113,13 +134,13 @@ class ConsentWrapperViewController: UIViewController {
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 
-		guard let form = wrappedForm else { return }
+		guard let presentNow = presentForm else { return }
 
-		form.present(from: self) { [weak self] error in
+		presentNow(self) { [weak self] error in
 			self?.presentationCompletion?(error as NSError?)
 			self?.dismiss(animated: false, completion: nil)
 		}
 
-		wrappedForm = nil
+		presentForm = nil
 	}
 }

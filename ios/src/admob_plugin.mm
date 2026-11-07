@@ -86,6 +86,7 @@ const String CONSENT_FORM_FAILED_TO_LOAD_SIGNAL = "consent_form_failed_to_load";
 const String CONSENT_FORM_DISMISSED_SIGNAL = "consent_form_dismissed";
 const String CONSENT_INFO_UPDATED_SIGNAL = "consent_info_updated";
 const String CONSENT_INFO_UPDATE_FAILED_SIGNAL = "consent_info_update_failed";
+const String PRIVACY_OPTIONS_FORM_DISMISSED_SIGNAL = "privacy_options_form_dismissed";
 const String TRACKING_AUTHORIZATION_GRANTED = "tracking_authorization_granted";
 const String TRACKING_AUTHORIZATION_DENIED = "tracking_authorization_denied";
 
@@ -234,12 +235,15 @@ void AdmobPlugin::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_consent_form_available"), &AdmobPlugin::is_consent_form_available);
 	ClassDB::bind_method(D_METHOD("update_consent_info"), &AdmobPlugin::update_consent_info);
 	ClassDB::bind_method(D_METHOD("reset_consent_info"), &AdmobPlugin::reset_consent_info);
+	ClassDB::bind_method(D_METHOD("is_privacy_options_required"), &AdmobPlugin::is_privacy_options_required);
+	ClassDB::bind_method(D_METHOD("show_privacy_options_form"), &AdmobPlugin::show_privacy_options_form);
 
 	ClassDB::bind_method(
 			D_METHOD("set_mediation_privacy_settings", "settings"), &AdmobPlugin::set_mediation_privacy_settings);
 
 	ADD_SIGNAL(MethodInfo(CONSENT_INFO_UPDATED_SIGNAL));
 	ADD_SIGNAL(MethodInfo(CONSENT_INFO_UPDATE_FAILED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "form_error_data")));
+	ADD_SIGNAL(MethodInfo(PRIVACY_OPTIONS_FORM_DISMISSED_SIGNAL, PropertyInfo(Variant::DICTIONARY, "form_error_data")));
 
 	ClassDB::bind_method(D_METHOD("request_tracking_authorization"), &AdmobPlugin::request_tracking_authorization);
 
@@ -965,6 +969,38 @@ void AdmobPlugin::update_consent_info(Dictionary consentRequestParameters) {
 void AdmobPlugin::reset_consent_info() {
 	os_log_debug(admob_log, "AdmobPlugin reset_consent_info");
 	[consentManager reset];
+}
+
+bool AdmobPlugin::is_privacy_options_required() {
+	return [consentManager isPrivacyOptionsRequired];
+}
+
+Error AdmobPlugin::show_privacy_options_form() {
+	os_log_debug(admob_log, "AdmobPlugin show_privacy_options_form");
+
+	UIViewController *rootVC = GDTAppDelegateService.viewController;
+
+	if (rootVC) {
+		[consentManager showPrivacyOptionsFormFrom:rootVC
+										completion:^(NSError *_Nullable error) {
+											Dictionary formErrorDictionary;
+											if (error) {
+												os_log_error(admob_log,
+														"AdmobPlugin show_privacy_options_form: Error "
+														"presenting privacy options form");
+												formErrorDictionary = [GAPConverter nsFormErrorToGodotDictionary:error];
+											}
+											AdmobPlugin::get_singleton()->call_deferred("emit_signal",
+													PRIVACY_OPTIONS_FORM_DISMISSED_SIGNAL, formErrorDictionary);
+										}];
+	} else {
+		os_log_error(admob_log,
+				"AdmobPlugin show_privacy_options_form: ERROR: Root View "
+				"Controller not found!");
+		return FAILED;
+	}
+
+	return OK;
 }
 
 void AdmobPlugin::set_mediation_privacy_settings(Dictionary settings) {
